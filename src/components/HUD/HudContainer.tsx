@@ -107,7 +107,6 @@ export function HudContainer(): React.ReactElement {
                 key={`player-${index}`}
                 player={player}
                 playerIndex={index}
-                units={report.units}
                 stratagems={report.stratagems}
               />
             ))}

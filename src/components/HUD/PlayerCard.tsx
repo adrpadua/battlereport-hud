@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Player, Unit, Stratagem } from '@/types/battle-report';
+import type { Player, Stratagem } from '@/types/battle-report';
 import { ConfidenceBadge } from './ConfidenceBadge';
 import { UnitList } from './UnitList';
 import { StratagemList } from './StratagemList';
@@ -7,14 +7,12 @@ import { StratagemList } from './StratagemList';
 interface PlayerCardProps {
   player: Player;
   playerIndex: number;
-  units: Unit[];
   stratagems: Stratagem[];
 }
 
 export function PlayerCard({
   player,
   playerIndex,
-  units,
   stratagems,
 }: PlayerCardProps): React.ReactElement {
   // Choose a color based on player index
@@ -37,7 +35,7 @@ export function PlayerCard({
         <ConfidenceBadge level={player.confidence} />
       </div>
 
-      <UnitList units={units} playerIndex={playerIndex} />
+      <UnitList playerIndex={playerIndex} />
       <StratagemList stratagems={stratagems} playerIndex={playerIndex} />
     </div>
   );
