@@ -4,6 +4,13 @@ import { useSettingsStore } from '@/store/settings-store';
 import { PlayerCard } from './PlayerCard';
 import { LoadingState } from './LoadingState';
 
+// Type for the global refresh function exposed by content script
+declare global {
+  interface Window {
+    battleReportHudRefresh?: () => Promise<void>;
+  }
+}
+
 export function HudContainer(): React.ReactElement {
   const { report, loading, error, isExpanded, toggleExpanded, reset } =
     useBattleStore();
@@ -13,10 +20,16 @@ export function HudContainer(): React.ReactElement {
     loadSettings();
   }, [loadSettings]);
 
-  const handleRefresh = () => {
-    reset();
-    // Trigger re-extraction by reloading the page
-    window.location.reload();
+  const handleRefresh = async () => {
+    // Use the forceRefresh function exposed by the content script
+    // This clears cache and re-extracts without page reload
+    if (window.battleReportHudRefresh) {
+      await window.battleReportHudRefresh();
+    } else {
+      // Fallback to page reload
+      reset();
+      window.location.reload();
+    }
   };
 
   return (
@@ -31,7 +44,21 @@ export function HudContainer(): React.ReactElement {
             </span>
           )}
         </div>
-        <span className={`hud-toggle ${isExpanded ? '' : 'collapsed'}`}>▼</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {!loading && (
+            <button
+              className="header-refresh-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRefresh();
+              }}
+              title="Re-extract battle report (clears cache)"
+            >
+              ↻
+            </button>
+          )}
+          <span className={`hud-toggle ${isExpanded ? '' : 'collapsed'}`}>▼</span>
+        </div>
       </div>
 
       <div className={`hud-content ${isExpanded ? '' : 'collapsed'}`}>

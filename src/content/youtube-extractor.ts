@@ -123,80 +123,150 @@ export async function getTranscript(): Promise<TranscriptSegment[]> {
   }
 
   // Click to open transcript
+  console.log('Battle Report HUD: Opening transcript panel...');
   transcriptButton.click();
 
-  // Wait for transcript to load
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  // Wait for transcript to load (longer wait for reliability)
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  // Find and scrape transcript segments
-  const segmentElements = document.querySelectorAll(
-    'ytd-transcript-segment-renderer'
-  );
+  // Try multiple selectors for transcript segments (YouTube updates these)
+  const segmentSelectors = [
+    'ytd-transcript-segment-renderer',
+    'ytd-transcript-segment-list-renderer ytd-transcript-segment-renderer',
+    '[target-id="engagement-panel-searchable-transcript"] ytd-transcript-segment-renderer',
+  ];
+
+  let segmentElements: NodeListOf<Element> | null = null;
+  for (const selector of segmentSelectors) {
+    segmentElements = document.querySelectorAll(selector);
+    if (segmentElements.length > 0) {
+      console.log(`Battle Report HUD: Found ${segmentElements.length} transcript segments with selector: ${selector}`);
+      break;
+    }
+  }
+
+  if (!segmentElements || segmentElements.length === 0) {
+    console.log('Battle Report HUD: No transcript segments found');
+    // Log what we can see in the transcript panel for debugging
+    const panel = document.querySelector('[target-id="engagement-panel-searchable-transcript"]');
+    console.log('Battle Report HUD: Transcript panel exists:', !!panel);
+    return segments;
+  }
 
   segmentElements.forEach((el) => {
-    const textEl = el.querySelector('.segment-text');
-    const timeEl = el.querySelector('.segment-timestamp');
+    // Try multiple selectors for text and timestamp
+    const textEl = el.querySelector('.segment-text, .ytd-transcript-segment-renderer yt-formatted-string, yt-formatted-string.segment-text');
+    const timeEl = el.querySelector('.segment-timestamp, .ytd-transcript-segment-renderer .segment-timestamp, [class*="timestamp"]');
 
     if (textEl?.textContent && timeEl?.textContent) {
       const timeStr = timeEl.textContent.trim();
       segments.push({
         text: textEl.textContent.trim(),
         startTime: parseTimeString(timeStr),
-        duration: 0, // Duration not easily available from DOM
+        duration: 0,
       });
     }
   });
 
+  console.log(`Battle Report HUD: Extracted ${segments.length} transcript segments`);
+
   // Close transcript panel to restore UI
-  const closeButton = document.querySelector(
-    'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-searchable-transcript"] #visibility-button button'
-  );
-  if (closeButton instanceof HTMLElement) {
-    closeButton.click();
+  const closeSelectors = [
+    'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-searchable-transcript"] #visibility-button button',
+    '[target-id="engagement-panel-searchable-transcript"] button[aria-label="Close"]',
+    'ytd-engagement-panel-title-header-renderer button',
+  ];
+
+  for (const selector of closeSelectors) {
+    const closeButton = document.querySelector(selector);
+    if (closeButton instanceof HTMLElement) {
+      closeButton.click();
+      break;
+    }
   }
 
   return segments;
 }
 
 async function findTranscriptButton(): Promise<HTMLElement | null> {
-  // First, try the "...more" button in the description to reveal transcript option
-  const moreButton = document.querySelector(
-    '#expand, tp-yt-paper-button#expand'
-  );
-  if (moreButton instanceof HTMLElement) {
-    moreButton.click();
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
+  console.log('Battle Report HUD: Looking for transcript button...');
 
-  // Look for "Show transcript" button
-  const buttons = document.querySelectorAll(
-    'ytd-video-description-transcript-section-renderer button, button[aria-label*="transcript" i]'
-  );
+  // First, try the "...more" button in the description to expand it
+  const moreButtonSelectors = [
+    '#expand',
+    'tp-yt-paper-button#expand',
+    '#description-inline-expander #expand',
+    'ytd-text-inline-expander #expand',
+    '#snippet #expand',
+  ];
 
-  for (const btn of buttons) {
-    if (btn instanceof HTMLElement) {
-      return btn;
+  for (const selector of moreButtonSelectors) {
+    const moreButton = document.querySelector(selector);
+    if (moreButton instanceof HTMLElement) {
+      console.log('Battle Report HUD: Found expand button, clicking...');
+      moreButton.click();
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      break;
     }
   }
 
-  // Fallback: look in menu
-  const menuButton = document.querySelector(
-    '#button-shape button[aria-label="More actions"]'
-  );
-  if (menuButton instanceof HTMLElement) {
-    menuButton.click();
-    await new Promise((resolve) => setTimeout(resolve, 300));
+  // Look for "Show transcript" button in the expanded description
+  const transcriptButtonSelectors = [
+    'ytd-video-description-transcript-section-renderer button',
+    'button[aria-label*="transcript" i]',
+    'button[aria-label*="Transcript" i]',
+    '#primary-button ytd-button-renderer button',
+    'ytd-video-description-transcript-section-renderer ytd-button-renderer button',
+    '[section-identifier="transcript"] button',
+  ];
 
-    const menuItems = document.querySelectorAll(
-      'ytd-menu-service-item-renderer'
-    );
-    for (const item of menuItems) {
-      if (item.textContent?.toLowerCase().includes('transcript')) {
-        return item as HTMLElement;
+  for (const selector of transcriptButtonSelectors) {
+    const buttons = document.querySelectorAll(selector);
+    for (const btn of buttons) {
+      if (btn instanceof HTMLElement) {
+        const text = btn.textContent?.toLowerCase() || '';
+        const ariaLabel = btn.getAttribute('aria-label')?.toLowerCase() || '';
+        if (text.includes('transcript') || ariaLabel.includes('transcript') || btn.closest('[section-identifier="transcript"]')) {
+          console.log('Battle Report HUD: Found transcript button via selector:', selector);
+          return btn;
+        }
       }
     }
   }
 
+  // Try finding by text content
+  const allButtons = document.querySelectorAll('button, ytd-button-renderer');
+  for (const btn of allButtons) {
+    if (btn.textContent?.toLowerCase().includes('show transcript')) {
+      console.log('Battle Report HUD: Found transcript button by text content');
+      return btn as HTMLElement;
+    }
+  }
+
+  // Fallback: look in the "..." menu below the video
+  console.log('Battle Report HUD: Trying menu fallback...');
+  const menuButton = document.querySelector(
+    '#button-shape button[aria-label="More actions"], ytd-menu-renderer button[aria-label="More actions"]'
+  );
+  if (menuButton instanceof HTMLElement) {
+    menuButton.click();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const menuItems = document.querySelectorAll(
+      'ytd-menu-service-item-renderer, tp-yt-paper-item'
+    );
+    for (const item of menuItems) {
+      if (item.textContent?.toLowerCase().includes('transcript')) {
+        console.log('Battle Report HUD: Found transcript in menu');
+        return item as HTMLElement;
+      }
+    }
+
+    // Close menu if we didn't find transcript
+    menuButton.click();
+  }
+
+  console.log('Battle Report HUD: No transcript button found');
   return null;
 }
 
@@ -230,11 +300,22 @@ export async function extractVideoData(): Promise<VideoData | null> {
     Promise.resolve(getChapters()),
   ]);
 
+  const description = getDescription();
+
+  console.log('Battle Report HUD: Extracted data summary:', {
+    videoId,
+    title: getVideoTitle(),
+    descriptionLength: description.length,
+    chaptersCount: chapters.length,
+    transcriptSegments: transcript.length,
+    transcriptPreview: transcript.slice(0, 3).map(s => s.text).join(' '),
+  });
+
   return {
     videoId,
     title: getVideoTitle(),
     channel: getChannelName(),
-    description: getDescription(),
+    description,
     chapters,
     transcript,
     pinnedComment: getPinnedComment(),

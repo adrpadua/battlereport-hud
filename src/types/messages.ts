@@ -10,6 +10,8 @@ export type MessageType =
   | 'GET_CACHED_REPORT'
   | 'CACHE_HIT'
   | 'CACHE_MISS'
+  | 'CLEAR_CACHE'
+  | 'CLEAR_CACHE_RESULT'
   | 'GET_API_KEY'
   | 'API_KEY_RESULT';
 
@@ -51,6 +53,16 @@ export interface ApiKeyResultMessage {
   payload: { apiKey: string | null };
 }
 
+export interface ClearCacheMessage {
+  type: 'CLEAR_CACHE';
+  payload: { videoId: string };
+}
+
+export interface ClearCacheResultMessage {
+  type: 'CLEAR_CACHE_RESULT';
+  payload: { success: boolean };
+}
+
 export type Message =
   | ExtractBattleReportMessage
   | ExtractionResultMessage
@@ -58,5 +70,7 @@ export type Message =
   | GetCachedReportMessage
   | CacheHitMessage
   | CacheMissMessage
+  | ClearCacheMessage
+  | ClearCacheResultMessage
   | GetApiKeyMessage
   | ApiKeyResultMessage;

@@ -1,12 +1,13 @@
-import type { BattleReport, Unit, ConfidenceLevel } from '@/types/battle-report';
+import type { BattleReport, Unit, ConfidenceLevel, UnitSuggestion } from '@/types/battle-report';
 import type { FactionData, UnitStats } from '@/types/bsdata';
 import { loadFactionByName } from '@/utils/faction-loader';
-import { validateUnit } from '@/utils/unit-validator';
+import { validateUnit, getBestMatch } from '@/utils/unit-validator';
 
 export interface EnrichedUnit extends Unit {
   stats?: UnitStats;
   keywords?: string[];
   isValidated?: boolean;
+  suggestedMatch?: UnitSuggestion;
 }
 
 export interface ProcessedBattleReport extends Omit<BattleReport, 'units'> {
@@ -87,13 +88,28 @@ export async function processBattleReport(
       };
     }
 
-    // Unit not validated - keep original with slightly lower confidence
-    return {
+    // Unit not validated - get best match as suggestion
+    const bestMatch = getBestMatch(unit.name, playerFaction);
+
+    const enrichedUnit: EnrichedUnit = {
       ...unit,
       isValidated: false,
       // Don't lower confidence if it was already low
       confidence: unit.confidence === 'low' ? 'low' : lowerConfidence(unit.confidence),
     };
+
+    // Add suggestion if there's a reasonable match
+    if (bestMatch && bestMatch.confidence >= 0.3) {
+      enrichedUnit.suggestedMatch = {
+        name: bestMatch.matchedName,
+        confidence: bestMatch.confidence,
+        stats: bestMatch.matchedUnit?.stats ?? undefined,
+        keywords: bestMatch.matchedUnit?.keywords,
+        pointsCost: bestMatch.matchedUnit?.pointsCost ?? undefined,
+      };
+    }
+
+    return enrichedUnit;
   });
 
   return {

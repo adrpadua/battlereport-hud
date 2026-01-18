@@ -115,6 +115,33 @@ export function validateUnitAcrossFactions(
 }
 
 /**
+ * Get the best match for a unit name, regardless of validation threshold.
+ * Useful for showing suggestions to the user.
+ */
+export function getBestMatch(
+  unitName: string,
+  faction: FactionData
+): ValidatedUnit | null {
+  const fuse = getFuseForFaction(faction);
+  const results = fuse.search(unitName);
+
+  if (results.length === 0 || results[0]!.score === undefined) {
+    return null;
+  }
+
+  const bestMatch = results[0]!;
+  const confidence = 1 - bestMatch.score!;
+
+  return {
+    originalName: unitName,
+    matchedName: bestMatch.item.name,
+    matchedUnit: bestMatch.item,
+    confidence,
+    isValidated: confidence >= 0.6,
+  };
+}
+
+/**
  * Clear the Fuse cache.
  */
 export function clearValidatorCache(): void {

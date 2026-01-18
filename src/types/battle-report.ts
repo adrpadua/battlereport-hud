@@ -9,6 +9,14 @@ export interface Player {
   confidence: ConfidenceLevel;
 }
 
+export interface UnitSuggestion {
+  name: string;
+  confidence: number; // 0-1 fuzzy match score
+  stats?: UnitStats;
+  keywords?: string[];
+  pointsCost?: number;
+}
+
 export interface Unit {
   name: string;
   playerIndex: number; // 0 or 1
@@ -18,6 +26,8 @@ export interface Unit {
   stats?: UnitStats;
   keywords?: string[];
   isValidated?: boolean;
+  // Suggestion for non-validated units
+  suggestedMatch?: UnitSuggestion;
 }
 
 export interface Stratagem {

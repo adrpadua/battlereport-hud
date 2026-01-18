@@ -179,6 +179,12 @@ function getHudStyles(): string {
       gap: 4px;
     }
 
+    .unit-item-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .unit-item {
       display: flex;
       align-items: center;
@@ -191,6 +197,48 @@ function getHudStyles(): string {
 
     .unit-name {
       color: #e5e5e5;
+    }
+
+    .unit-suggestion {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px 4px 16px;
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .suggestion-label {
+      color: #888;
+    }
+
+    .suggestion-name {
+      color: #eab308;
+      font-weight: 500;
+    }
+
+    .suggestion-confidence {
+      color: #666;
+      font-size: 11px;
+    }
+
+    .suggestion-accept-btn {
+      margin-left: auto;
+      padding: 2px 8px;
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      border-radius: 4px;
+      color: #22c55e;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suggestion-accept-btn:hover {
+      background: rgba(34, 197, 94, 0.3);
+      border-color: rgba(34, 197, 94, 0.6);
     }
 
     .confidence-badge {
@@ -274,6 +322,26 @@ function getHudStyles(): string {
     .refresh-button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    .header-refresh-button {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      color: #888;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .header-refresh-button:hover {
+      background: #3a3a3a;
+      color: #fff;
     }
 
     /* Scrollbar styles */

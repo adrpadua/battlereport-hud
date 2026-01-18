@@ -1,6 +1,6 @@
 import type { Message } from '@/types/messages';
 import type { VideoData } from '@/types/youtube';
-import { getCachedReport, setCachedReport } from './cache-manager';
+import { getCachedReport, setCachedReport, deleteCachedReport } from './cache-manager';
 import { extractBattleReport } from './ai-service';
 
 export function handleMessage(
@@ -68,6 +68,18 @@ async function processMessage(message: Message): Promise<Message> {
     case 'GET_API_KEY': {
       const apiKey = await getApiKey();
       return { type: 'API_KEY_RESULT', payload: { apiKey } };
+    }
+
+    case 'CLEAR_CACHE': {
+      const { videoId } = message.payload;
+      try {
+        await deleteCachedReport(videoId);
+        console.log('Battle Report HUD: Cleared cache for video', videoId);
+        return { type: 'CLEAR_CACHE_RESULT', payload: { success: true } };
+      } catch (error) {
+        console.error('Battle Report HUD: Failed to clear cache', error);
+        return { type: 'CLEAR_CACHE_RESULT', payload: { success: false } };
+      }
     }
 
     default:
