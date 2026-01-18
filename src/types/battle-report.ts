@@ -1,3 +1,5 @@
+import type { UnitStats } from './bsdata';
+
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
 export interface Player {
@@ -12,6 +14,10 @@ export interface Unit {
   playerIndex: number; // 0 or 1
   confidence: ConfidenceLevel;
   pointsCost?: number;
+  // BSData enrichment fields
+  stats?: UnitStats;
+  keywords?: string[];
+  isValidated?: boolean;
 }
 
 export interface Stratagem {

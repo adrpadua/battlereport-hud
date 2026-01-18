@@ -27,5 +27,8 @@ npm-debug.log*
 # Testing
 coverage/
 
+# Generated files
+src/data/generated/
+
 # Misc
 *.zip
