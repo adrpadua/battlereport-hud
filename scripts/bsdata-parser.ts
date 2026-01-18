@@ -89,6 +89,15 @@ interface ParsedSelectionEntryGroup {
   modifiers?: unknown;
 }
 
+interface ParsedEntryLink {
+  '@_name': string;
+  '@_id': string;
+  '@_targetId': string;
+  '@_type': string;
+  '@_hidden'?: string;
+  '@_import'?: string;
+}
+
 interface ParsedCatalogue {
   catalogue: {
     '@_id': string;
@@ -98,7 +107,7 @@ interface ParsedCatalogue {
     sharedSelectionEntries?: { selectionEntry: ParsedSelectionEntry | ParsedSelectionEntry[] };
     sharedSelectionEntryGroups?: { selectionEntryGroup: ParsedSelectionEntryGroup | ParsedSelectionEntryGroup[] };
     categoryEntries?: unknown;
-    entryLinks?: unknown;
+    entryLinks?: { entryLink: ParsedEntryLink | ParsedEntryLink[] };
     infoLinks?: unknown;
   };
 }
@@ -336,6 +345,36 @@ export function parseCatalogue(xmlContent: string, factionId: string, originalFi
     if (unit && !units.some((u) => u.name === unit.name)) {
       units.push(unit);
     }
+  }
+
+  // Extract unit names from entry links (for catalogues that reference other catalogues)
+  // These won't have full stats, but we need the names for fuzzy matching
+  const entryLinks = ensureArray(catalogue.entryLinks?.entryLink);
+  for (const link of entryLinks) {
+    // Only include selectionEntry type links that aren't hidden
+    if (link['@_type'] !== 'selectionEntry') continue;
+    if (link['@_hidden'] === 'true') continue;
+
+    const name = link['@_name'];
+    // Skip non-unit entries (detachments, options, etc.)
+    if (name.includes('Detachment') || name.includes('Order of Battle') ||
+        name.includes('Show/Hide') || name.includes('Configuration')) continue;
+
+    // Skip if we already have this unit from parsed entries
+    if (units.some((u) => u.name === name)) continue;
+
+    const canonicalName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    // Add as a unit entry without full stats (name-only for matching)
+    units.push({
+      name,
+      canonicalName,
+      stats: null,
+      weapons: [],
+      abilities: [],
+      keywords: [],
+      pointsCost: null,
+    });
   }
 
   return {
