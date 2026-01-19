@@ -11,23 +11,20 @@ const BASE_RETRY_DELAY_MS = 1000;
 
 interface PreprocessResponse {
   mappings: Record<string, string>;
-  normalizedText: string;
 }
 
-const PREPROCESS_SYSTEM_PROMPT = `You are a Warhammer 40,000 terminology expert. Your task is to normalize colloquial terms, abbreviations, and nicknames in battle report transcripts to their official game names.
+const PREPROCESS_SYSTEM_PROMPT = `You are a Warhammer 40,000 terminology expert. Extract colloquial terms, abbreviations, and nicknames from battle report transcripts and map them to their official game names.
 
-IMPORTANT GUIDELINES:
+GUIDELINES:
 - Only map terms that are clearly Warhammer 40k related
-- Preserve the original meaning and context
 - Map unit nicknames to official unit names (e.g., "las preds" → "Predator Destructor")
 - Map stratagem nicknames to official names (e.g., "popped smoke" → "Smokescreen")
-- Map abbreviated faction/unit names to full names
-- DO NOT change general English words or phrases that aren't game-specific
+- Map misspellings to correct names (e.g., "Drukari" → "Drukhari")
+- Map abbreviated names to full names (e.g., "termies" → "Terminators")
+- DO NOT map general English words that aren't game-specific
 - If no mappings are found, return an empty mappings object
 
-You must respond with a JSON object containing:
-1. "mappings": An object mapping each colloquial term found to its official name
-2. "normalizedText": The transcript chunk with colloquial terms replaced by official names
+Respond with a JSON object containing only "mappings" - an object mapping each colloquial term to its official name.
 
 Example:
 Input: "...las preds moving up, he popped smoke on the warriors..."
@@ -37,8 +34,7 @@ Output JSON:
     "las preds": "Predator Destructor",
     "popped smoke": "Smokescreen",
     "warriors": "Necron Warriors"
-  },
-  "normalizedText": "...Predator Destructor moving up, he used Smokescreen on the Necron Warriors..."
+  }
 }`;
 
 interface ChunkInfo {
@@ -128,12 +124,11 @@ function parseResponse(content: string): PreprocessResponse {
   try {
     const parsed = JSON.parse(content);
     return {
-      mappings: typeof parsed.mappings === 'object' ? parsed.mappings : {},
-      normalizedText: typeof parsed.normalizedText === 'string' ? parsed.normalizedText : '',
+      mappings: typeof parsed.mappings === 'object' && parsed.mappings !== null ? parsed.mappings : {},
     };
   } catch {
     console.warn('Failed to parse LLM response:', content.slice(0, 200));
-    return { mappings: {}, normalizedText: '' };
+    return { mappings: {} };
   }
 }
 
@@ -152,7 +147,7 @@ async function processChunk(
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         temperature: 0.1,
-        max_tokens: 2000,
+        max_tokens: 1000, // Only returning mappings, so less tokens needed
         messages: [
           { role: 'system', content: PREPROCESS_SYSTEM_PROMPT },
           { role: 'user', content: buildPreprocessPrompt(chunk, factions) },
@@ -166,12 +161,12 @@ async function processChunk(
       // Check finish reason for special cases
       if (choice?.finish_reason === 'length') {
         console.warn('Response truncated due to length, returning partial result');
-        return { mappings: {}, normalizedText: chunk.text };
+        return { mappings: {} };
       }
 
       if (choice?.finish_reason === 'content_filter') {
         console.warn('Response blocked by content filter');
-        return { mappings: {}, normalizedText: chunk.text };
+        return { mappings: {} };
       }
 
       if (!content) {
@@ -245,7 +240,7 @@ async function processChunksWithConcurrency(
         results[idx] = await processChunk(openai, chunk, factions);
       } catch (error) {
         console.error(`Failed to process chunk ${idx}:`, error);
-        results[idx] = { mappings: {}, normalizedText: chunk.text };
+        results[idx] = { mappings: {} };
       }
     }
   }
