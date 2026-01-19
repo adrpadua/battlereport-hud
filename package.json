@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "npm run generate:factions && tsc --noEmit && vite build",
     "preview": "vite preview",
-    "generate:factions": "tsx scripts/generate-faction-data.ts"
+    "generate:factions": "tsx scripts/generate-faction-data.ts",
+    "generate:stratagems": "tsx scripts/generate-stratagem-data.ts"
   },
   "dependencies": {
     "fuse.js": "^7.1.0",
@@ -19,6 +20,10 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.304",
+    "@types/pg": "^8.11.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.38.0",
+    "pg": "^8.13.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
@@ -29,6 +34,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5.7.3",
     "vite": "^5.4.14",
-    "vite-plugin-web-extension": "^4.3.1"
+    "vite-plugin-web-extension": "^4.3.1",
+    "youtube-transcript": "^1.2.1"
   }
 }

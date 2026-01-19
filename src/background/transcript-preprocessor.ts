@@ -4,7 +4,7 @@ import type { Stratagem, Unit } from '@/types/battle-report';
 export interface TermMatch {
   term: string;
   normalizedTerm: string;
-  type: 'stratagem' | 'unit' | 'game_term';
+  type: 'stratagem' | 'unit';
   timestamp: number; // seconds
   segmentText: string; // original text for context
 }
@@ -30,7 +30,7 @@ const CORE_STRATAGEMS = [
   'Epic Challenge',
 ];
 
-// Common faction stratagems (expanded list)
+// Common faction stratagems (extended list)
 const FACTION_STRATAGEMS = [
   // Space Marines
   'Armour of Contempt',
@@ -52,8 +52,8 @@ const FACTION_STRATAGEMS = [
   'Linked Fire',
   'Battle Focus',
   'Strands of Fate',
-  'Strike Swiftly', // Added from screenshot
-  'Focus Fire', // Added from screenshot
+  'Strike Swiftly',
+  'Focus Fire',
   // Necrons
   'Awakened by Murder',
   'Disruption Fields',
@@ -81,7 +81,7 @@ const FACTION_STRATAGEMS = [
   "Orks is Never Beaten",
   'Careen',
   'Get Stuck In',
-  "Unbridled Carnage",
+  'Unbridled Carnage',
   // T'au
   'For the Greater Good',
   'Photon Grenades',
@@ -107,14 +107,11 @@ const FACTION_STRATAGEMS = [
   // Leagues of Votann
   'Ancestral Sentence',
   'Void Armour',
-  // Generic terms that indicate stratagem use
-  'uses a stratagem',
-  'plays a stratagem',
-  'activates',
-  'pops',
-  'CP',
-  'command points',
 ];
+
+// Terms that indicate stratagem use but aren't stratagem names themselves
+// These are only matched when "stratagem" also appears in the text
+const STRATAGEM_CONTEXT_KEYWORDS = ['activates', 'pops', 'CP', 'command points'];
 
 const ALL_STRATAGEMS = [...CORE_STRATAGEMS, ...FACTION_STRATAGEMS];
 
@@ -123,6 +120,33 @@ const STRATAGEM_ALIASES = new Map<string, string>([
   ['overwatch', 'fire overwatch'],
   ['re-roll', 'command re-roll'],
   ['reroll', 'command re-roll'],
+]);
+
+// Map colloquial/shortened unit names to canonical names
+const UNIT_ALIASES = new Map<string, string>([
+  ['intercessors', 'intercessor squad'],
+  ['assault intercessors', 'assault intercessor squad'],
+  ['terminators', 'terminator squad'],
+  ['assault terminators', 'assault terminator squad'],
+  ['scouts', 'scout squad'],
+  ['hellblasters', 'hellblaster squad'],
+  ['devastators', 'devastator squad'],
+  ['tacticals', 'tactical squad'],
+  ['assault marines', 'assault squad'],
+  ['vanguard vets', 'vanguard veteran squad'],
+  ['sternguard', 'sternguard veteran squad'],
+  ['aggressors', 'aggressor squad'],
+  ['eradicators', 'eradicator squad'],
+  ['eliminators', 'eliminator squad'],
+  ['incursors', 'incursor squad'],
+  ['infiltrators', 'infiltrator squad'],
+  ['reivers', 'reiver squad'],
+  ['suppressors', 'suppressor squad'],
+  ['inceptors', 'inceptor squad'],
+  ['bladeguard', 'bladeguard veteran squad'],
+  // Common abbreviations
+  ['las preds', 'predator destructor'],
+  ['las pred', 'predator destructor'],
 ]);
 
 /**
@@ -171,6 +195,63 @@ function toCanonicalName(term: string, aliases: Map<string, string>): string {
 }
 
 /**
+ * Generic function to find the best matching timestamp for a name in mentions.
+ * Used for both stratagems and units.
+ */
+function findTimestamp(
+  name: string,
+  mentions: Map<string, number[]>,
+  minWordOverlap: number = 1
+): number | undefined {
+  const normalized = normalizeTerm(name);
+
+  // Exact match
+  if (mentions.has(normalized)) {
+    return mentions.get(normalized)![0]; // First mention
+  }
+
+  // Partial match - check if any mention contains or is contained by our name
+  for (const [mentionedName, timestamps] of mentions) {
+    if (mentionedName.includes(normalized) || normalized.includes(mentionedName)) {
+      return timestamps[0];
+    }
+
+    // Word overlap check
+    const nameWords = normalized.split(' ').filter((w) => w.length > 2);
+    const mentionWords = mentionedName.split(' ').filter((w) => w.length > 2);
+    const overlap = nameWords.filter((w) => mentionWords.includes(w));
+    if (
+      overlap.length >= minWordOverlap &&
+      overlap.length >= Math.min(nameWords.length, mentionWords.length) / 2
+    ) {
+      return timestamps[0];
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Find the best matching timestamp for a stratagem name.
+ */
+function findStratagemTimestamp(
+  stratagemName: string,
+  mentions: Map<string, number[]>
+): number | undefined {
+  return findTimestamp(stratagemName, mentions, 1);
+}
+
+/**
+ * Find the best matching timestamp for a unit name.
+ */
+function findUnitTimestamp(
+  unitName: string,
+  mentions: Map<string, number[]>
+): number | undefined {
+  return findTimestamp(unitName, mentions, 1);
+}
+
+/**
  * Pre-process transcript to find mentions of stratagems and units.
  */
 export function preprocessTranscript(
@@ -181,9 +262,9 @@ export function preprocessTranscript(
   const stratagemMentions = new Map<string, number[]>();
   const unitMentions = new Map<string, number[]>();
 
-  // Build patterns (include aliases for stratagems)
+  // Build patterns (include aliases for stratagems and units)
   const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
-  const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames) : null;
+  const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames, UNIT_ALIASES) : null;
 
   for (const seg of transcript) {
     const timestamp = Math.floor(seg.startTime);
@@ -196,8 +277,8 @@ export function preprocessTranscript(
 
       const normalized = normalizeTerm(term);
 
-      // Skip generic terms unless they're near stratagem keywords
-      if (['cp', 'command points', 'activates', 'pops'].includes(normalized)) {
+      // Skip generic context terms unless they're near "stratagem" keywords
+      if (STRATAGEM_CONTEXT_KEYWORDS.map(normalizeTerm).includes(normalized)) {
         // Only count if "stratagem" is also in the segment
         if (!text.toLowerCase().includes('stratagem')) {
           continue;
@@ -210,7 +291,12 @@ export function preprocessTranscript(
       if (!stratagemMentions.has(canonical)) {
         stratagemMentions.set(canonical, []);
       }
-      stratagemMentions.get(canonical)!.push(timestamp);
+
+      // Deduplicate timestamps
+      const timestamps = stratagemMentions.get(canonical)!;
+      if (!timestamps.includes(timestamp)) {
+        timestamps.push(timestamp);
+      }
 
       matches.push({
         term,
@@ -227,16 +313,22 @@ export function preprocessTranscript(
         const term = match[1];
         if (!term) continue; // Skip if no capture group
 
-        const normalized = normalizeTerm(term);
+        // Resolve alias to canonical name for storage
+        const canonical = toCanonicalName(term, UNIT_ALIASES);
 
-        if (!unitMentions.has(normalized)) {
-          unitMentions.set(normalized, []);
+        if (!unitMentions.has(canonical)) {
+          unitMentions.set(canonical, []);
         }
-        unitMentions.get(normalized)!.push(timestamp);
+
+        // Deduplicate timestamps
+        const timestamps = unitMentions.get(canonical)!;
+        if (!timestamps.includes(timestamp)) {
+          timestamps.push(timestamp);
+        }
 
         matches.push({
           term,
-          normalizedTerm: normalized,
+          normalizedTerm: canonical,
           type: 'unit',
           timestamp,
           segmentText: text,
@@ -246,38 +338,6 @@ export function preprocessTranscript(
   }
 
   return { matches, stratagemMentions, unitMentions };
-}
-
-/**
- * Find the best matching timestamp for a stratagem name.
- */
-function findStratagemTimestamp(
-  stratagemName: string,
-  mentions: Map<string, number[]>
-): number | undefined {
-  const normalized = normalizeTerm(stratagemName);
-
-  // Exact match
-  if (mentions.has(normalized)) {
-    return mentions.get(normalized)![0]; // First mention
-  }
-
-  // Partial match - check if any mention contains or is contained by our name
-  for (const [mentionedName, timestamps] of mentions) {
-    if (mentionedName.includes(normalized) || normalized.includes(mentionedName)) {
-      return timestamps[0];
-    }
-
-    // Word overlap check (at least 2 words must match)
-    const nameWords = normalized.split(' ').filter((w) => w.length > 2);
-    const mentionWords = mentionedName.split(' ').filter((w) => w.length > 2);
-    const overlap = nameWords.filter((w) => mentionWords.includes(w));
-    if (overlap.length >= 1 && overlap.length >= Math.min(nameWords.length, mentionWords.length) / 2) {
-      return timestamps[0];
-    }
-  }
-
-  return undefined;
 }
 
 /**
@@ -311,38 +371,6 @@ export function enrichStratagemTimestamps(
  */
 export function getDetectedStratagems(preprocessed: PreprocessedTranscript): string[] {
   return [...preprocessed.stratagemMentions.keys()];
-}
-
-/**
- * Find the best matching timestamp for a unit name.
- */
-function findUnitTimestamp(
-  unitName: string,
-  mentions: Map<string, number[]>
-): number | undefined {
-  const normalized = normalizeTerm(unitName);
-
-  // Exact match
-  if (mentions.has(normalized)) {
-    return mentions.get(normalized)![0]; // First mention
-  }
-
-  // Partial match - check if any mention contains or is contained by our name
-  for (const [mentionedName, timestamps] of mentions) {
-    if (mentionedName.includes(normalized) || normalized.includes(mentionedName)) {
-      return timestamps[0];
-    }
-
-    // Word overlap check (at least 1 significant word must match)
-    const nameWords = normalized.split(' ').filter((w) => w.length > 2);
-    const mentionWords = mentionedName.split(' ').filter((w) => w.length > 2);
-    const overlap = nameWords.filter((w) => mentionWords.includes(w));
-    if (overlap.length >= 1 && overlap.length >= Math.min(nameWords.length, mentionWords.length) / 2) {
-      return timestamps[0];
-    }
-  }
-
-  return undefined;
 }
 
 /**
