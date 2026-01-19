@@ -113,7 +113,11 @@ Example of the detail level expected:
 >
 > **Mandrakes** [10:05]: Move from their infiltration position toward the center objective. They shoot at the Neophytes, killing 2 models.
 >
-> **Venom #1** [10:45]: Advances 6" to get into rapid fire range. Splinter fire into the Acolytes - "3 dead" per the commentary.
+> **Venom** [10:45]: Advances 6" to get into rapid fire range. Splinter fire into the Acolytes - "3 dead" per the commentary.
+>
+> **Scourges** [12:39]: Dark lance shot damages the Rockgrinder, reducing it to 2 wounds remaining.
+
+IMPORTANT: Each line must be a **unit**, not a weapon. Write "**Scourges** [12:39]: Dark lance shot..." NOT "**Dark Lance**: From a Scourge...". The unit is always the subject.
 
 ## [Other Player] Turn 1
 Same level of detail for each unit.
@@ -150,9 +154,10 @@ Same level of detail for each unit.
 - If you can't cite it, don't include it
 
 ### Format Unit Actions Clearly
-- **Bold the unit name** at the start of each action
-- Include the timestamp immediately after
-- Describe what happened
+- **Bold the unit name** at the start of each action - ALWAYS the unit, never the weapon
+- Format: **Unit Name** [MM:SS]: Description of action
+- CORRECT: "**Scourges** [12:39]: Dark lance shot damages the Rockgrinder"
+- WRONG: "**Dark Lance**: From a Scourge, damages the Rockgrinder"
 - Quote commentary when available
 
 ### Track Unit Fates
