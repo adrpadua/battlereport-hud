@@ -13,6 +13,7 @@
  *   npx tsx scripts/test-game-narrator.ts --call-ai          # Actually call the AI (requires OPENAI_API_KEY)
  */
 
+import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
 import { preprocessTranscript } from '../src/background/transcript-preprocessor';
