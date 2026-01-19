@@ -1,0 +1,1388 @@
+{
+  "id": "agents-of-the-imperium",
+  "name": "Agents of the Imperium",
+  "units": [
+    {
+      "name": "Rogue Trader Entourage",
+      "canonicalName": "rogue-trader-entourage",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Household pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Pistol",
+            "Devastating Wounds"
+          ]
+        },
+        {
+          "name": "Dartmask",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 2,
+          "ap": -1,
+          "damage": "D3",
+          "keywords": [
+            "Anti-INFANTRY 2+",
+            "Pistol",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Voltaic pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Sustained Hits 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Backroom Deals",
+        "Leader",
+        "Warrant of Trade"
+      ],
+      "keywords": [
+        "Infantry",
+        "Character",
+        "Grenades",
+        "Imperium",
+        "Rogue Trader Entourage",
+        "Voidfarers",
+        "Voidfarer Character"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Voidsmen-at-Arms",
+      "canonicalName": "voidsmen-at-arms",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Artificer shotgun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Lasgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Voidsman rotor cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "6",
+          "skill": "5+",
+          "strength": 6,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Masters of Close Confines",
+        "Navy Bodyguards"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Voidsmen-at-Arms",
+        "Voidfarers"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Imperial Navy Breachers",
+      "canonicalName": "imperial-navy-breachers",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Autopistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Demolition charge",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "D6",
+          "skill": "5+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Blast",
+            "Hazardous",
+            "One Shot"
+          ]
+        },
+        {
+          "name": "Navis heavy shotgun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Navis las-volley",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 6,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - standard",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - supercharge",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Breaching Team",
+        "Gheistskull",
+        "CAT Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Imperial Navy Breachers",
+        "Battleline",
+        "Smoke",
+        "Voidfarers"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Subductor Squad",
+      "canonicalName": "subductor-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "3+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Dedication to Duty",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Subductor Squad",
+        "Adeptus Arbites"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Exaction Squad",
+      "canonicalName": "exaction-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Imperial Law"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Exaction Squad",
+        "Adeptus Arbites"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Vigilant Squad",
+      "canonicalName": "vigilant-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Merciless Judgement"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Vigilant Squad",
+        "Adeptus Arbites"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Damned Legionnaires [Legends]",
+      "canonicalName": "damned-legionnaires-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Grim Spectres",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Damned Legionaires",
+        "Retinue"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Inquisitorial Agents",
+      "canonicalName": "inquisitorial-agents",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "5+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "➤ Plasma pistol - standard",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol - supercharge",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma cannon - standard",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Plasma cannon - supercharge",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Hazardous",
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Loyal Henchmen",
+        "Inquisitorial Henchmen"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Inquisitorial Agents"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Grey Knights Terminator Squad",
+      "canonicalName": "grey-knights-terminator-squad",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Incinerator",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Psilencer",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Psychic",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Psycannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Rites of Teleportation",
+        "Hammerhand (Psychic)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Psyker",
+        "Terminator",
+        "Grenades",
+        "Imperium",
+        "Ordo Malleus",
+        "Requisitioned",
+        "Grey Knights Terminator Squad"
+      ],
+      "pointsCost": 190
+    },
+    {
+      "name": "Sisters of Battle Squad",
+      "canonicalName": "sisters-of-battle-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "3+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Condemnor boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-Psyker 2+",
+            "Devastating Wounds",
+            "Precision",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Combi-weapon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-Infantry 4+",
+            "Devastating Wounds",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Ministorum hand flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Inferno pistol",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -4,
+          "damage": "D3",
+          "keywords": [
+            "Melta 2",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol - supercharge",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol - standard",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Ministorum heavy flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Defenders of the Faith",
+        "Incensor Cherub",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Ordo Hereticus",
+        "Sisters of Battle Squad",
+        "Requisitioned"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Daemonhost [Legends]",
+      "canonicalName": "daemonhost-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Unholy gaze",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Malefic Warding",
+        "Invulnerable Save",
+        "Bound Daemon",
+        "Inquisitorial Retinue"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Psyker",
+        "Retinue",
+        "Daemon",
+        "Daemonhost"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Deathwatch Kill Team",
+      "canonicalName": "deathwatch-kill-team",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Combi-weapon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-Infantry 4+",
+            "Devastating Wounds",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Death to the Alien"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Retinue",
+        "Ordo Xenos",
+        "Deathwatch",
+        "Kill Team"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Deathwatch Terminator Squad [Legends]",
+      "canonicalName": "deathwatch-terminator-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Terminatus Assault",
+        "Teleport Homer",
+        "Invulnerable Save",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Terminator",
+        "Deathwatch Terminator Squad",
+        "Deathwatch"
+      ],
+      "pointsCost": 210
+    },
+    {
+      "name": "Fortis Kill Team [Legends]",
+      "canonicalName": "fortis-kill-team-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Fortis Doctrines",
+        "Attached Unit",
+        "Transport"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Deathwatch",
+        "Fortis Kill Team"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Indomitor Kill Team [Legends]",
+      "canonicalName": "indomitor-kill-team-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Indomitor Doctrines",
+        "Attached Unit",
+        "Transport"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Indomitor Kill Team",
+        "Deathwatch"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Kill Team Cassius [Legends]",
+      "canonicalName": "kill-team-cassius-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Frag cannon",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Heavy",
+            "Rapid Fire D3"
+          ]
+        },
+        {
+          "name": "Psychic Cleanse",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "D3",
+          "keywords": [
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Deathwatch twin boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "4",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Catechism of Death",
+        "Unflinching"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Kill Team",
+        "Kill Team Cassius",
+        "Deathwatch",
+        "Ordo Xenos"
+      ],
+      "pointsCost": 220
+    },
+    {
+      "name": "Proteus Kill Team [Legends]",
+      "canonicalName": "proteus-kill-team-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Proteus Doctrines",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Proteus Kill Team",
+        "Deathwatch",
+        "Kill Team"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Spectrus Kill Team [Legends]",
+      "canonicalName": "spectrus-kill-team-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Marksman bolt carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Accelerator autocannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Occulus bolt carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Ignores Cover"
+          ]
+        },
+        {
+          "name": "Special-issue bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Bolt carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Precision"
+          ]
+        },
+        {
+          "name": "Bolt sniper rifle",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Las fusil",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -3,
+          "damage": "D6",
+          "keywords": [
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Attached Unit",
+        "Spectrus Doctrines",
+        "Transport"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Smoke",
+        "Spectrus Kill Team",
+        "Deathwatch",
+        "Kill Team"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Veteran Bike Squad [Legends]",
+      "canonicalName": "veteran-bike-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Turbo-boost"
+      ],
+      "keywords": [
+        "Mounted",
+        "Grenades",
+        "Imperium",
+        "Veteran Bike Squad",
+        "Deathwatch"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Sanctifiers",
+      "canonicalName": "sanctifiers",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Holy fire",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 6,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "One Shot",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - standard",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - supercharge",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Ministorum Sermon",
+        "Cherub",
+        "Attached Unit",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Sanctifiers",
+        "Retinue"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Inquisitor Ostromandeus [Legends]",
+      "canonicalName": "inquisitor-ostromandeus-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Inferno pistol",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -4,
+          "damage": "D3",
+          "keywords": [
+            "Melta 2",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Ward Against the Malefic Arts",
+        "Vox‑cast Proclamations (Aura)",
+        "Leader"
+      ],
+      "keywords": [
+        "Epic Hero",
+        "Infantry",
+        "Imperium",
+        "Grenades",
+        "Character",
+        "Inquisitor",
+        "Ostromandeus"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Aquila Kill Team",
+      "canonicalName": "aquila-kill-team",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Death to the Alien",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Deathwatch",
+        "Aquila Kill Team",
+        "Retinue",
+        "Ordo Xenos"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Vindicare Assassin",
+      "canonicalName": "vindicare-assassin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Culexus Assassin",
+      "canonicalName": "culexus-assassin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Eversor Assassin",
+      "canonicalName": "eversor-assassin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Callidus Assassin",
+      "canonicalName": "callidus-assassin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor Draxus",
+      "canonicalName": "inquisitor-draxus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor Coteaz",
+      "canonicalName": "inquisitor-coteaz",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor Greyfax",
+      "canonicalName": "inquisitor-greyfax",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor Karamazov [Legends]",
+      "canonicalName": "inquisitor-karamazov-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "UR-025 [Legends]",
+      "canonicalName": "ur-025-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor Eisenhorn [Legends]",
+      "canonicalName": "inquisitor-eisenhorn-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor",
+      "canonicalName": "inquisitor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Neyam Shai Murad [Legends]",
+      "canonicalName": "neyam-shai-murad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Janus Draik [Legends]",
+      "canonicalName": "janus-draik-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitor in Terminator Armour [Legends]",
+      "canonicalName": "inquisitor-in-terminator-armour-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Navigator",
+      "canonicalName": "navigator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ministorum Priest",
+      "canonicalName": "ministorum-priest",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Inquisitorial Chimera",
+      "canonicalName": "inquisitorial-chimera",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Imperial Rhino",
+      "canonicalName": "imperial-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sisters of Battle Immolator",
+      "canonicalName": "sisters-of-battle-immolator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corvus Blackstar",
+      "canonicalName": "corvus-blackstar",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Watch Master",
+      "canonicalName": "watch-master",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Watch Captain Artemis",
+      "canonicalName": "watch-captain-artemis",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Jokaero Weaponsmith [Legends]",
+      "canonicalName": "jokaero-weaponsmith-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

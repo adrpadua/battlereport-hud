@@ -1,0 +1,24 @@
+{
+  "id": "raven-guard",
+  "name": "Raven Guard",
+  "units": [
+    {
+      "name": "Kayvaan Shrike",
+      "canonicalName": "kayvaan-shrike",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Aethon Shaan",
+      "canonicalName": "aethon-shaan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

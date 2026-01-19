@@ -1,0 +1,463 @@
+{
+  "id": "emperor-s-children",
+  "name": "Emperor's Children",
+  "units": [
+    {
+      "name": "Tormentors",
+      "canonicalName": "tormentors",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Precision"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - standard",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Precision",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - supercharge",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Precision",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2",
+            "Precision"
+          ]
+        }
+      ],
+      "abilities": [
+        "Objective Defiled"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Slaanesh",
+        "Tormentors"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Infractors",
+      "canonicalName": "infractors",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Excessive Assault"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Slaanesh",
+        "Infractors"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Flawless Blades",
+      "canonicalName": "flawless-blades",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Daemonic Patrons",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Chaos",
+        "Slaanesh",
+        "Flawless Blades"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Chaos Terminators",
+      "canonicalName": "chaos-terminators",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 5,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Heavy flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Reaper autocannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Lethal Obsession",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Terminator",
+        "Slaanesh",
+        "Terminator Squad"
+      ],
+      "pointsCost": 155
+    },
+    {
+      "name": "Chaos Spawn",
+      "canonicalName": "chaos-spawn",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Scuttling Horrors"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Slaanesh",
+        "Chaos Spawn"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Noise Marines",
+      "canonicalName": "noise-marines",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Screamer pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Blastmaster - varied frequency",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover"
+          ]
+        },
+        {
+          "name": "➤ Blastmaster - single frequency",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 10,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Ignores Cover"
+          ]
+        }
+      ],
+      "abilities": [
+        "Terrifying Crescendo"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Slaanesh",
+        "Noise Marines"
+      ],
+      "pointsCost": 145
+    },
+    {
+      "name": "Daemonettes",
+      "canonicalName": "daemonettes",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Horrifying Beauty",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Daemonettes",
+        "Summoned"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Fiends",
+      "canonicalName": "fiends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Soporific Musk"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Fiends",
+        "Summoned"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Seekers",
+      "canonicalName": "seekers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Unholy Speed",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Seekers",
+        "Summoned"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Lucius the Eternal",
+      "canonicalName": "lucius-the-eternal",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fulgrim",
+      "canonicalName": "fulgrim",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord Exultant",
+      "canonicalName": "lord-exultant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord Kakophonist",
+      "canonicalName": "lord-kakophonist",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer",
+      "canonicalName": "sorcerer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Slaanesh",
+      "canonicalName": "daemon-prince-of-slaanesh",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Slaanesh with Wings",
+      "canonicalName": "daemon-prince-of-slaanesh-with-wings",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Land Raider",
+      "canonicalName": "chaos-land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heldrake",
+      "canonicalName": "heldrake",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Maulerfiend",
+      "canonicalName": "maulerfiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Rhino",
+      "canonicalName": "chaos-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shalaxi Helbane",
+      "canonicalName": "shalaxi-helbane",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Keeper of Secrets",
+      "canonicalName": "keeper-of-secrets",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Combat Elixirs equipped in Current Battle",
+      "canonicalName": "combat-elixirs-equipped-in-current-battle",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

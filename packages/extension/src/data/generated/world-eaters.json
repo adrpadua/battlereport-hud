@@ -1,0 +1,737 @@
+{
+  "id": "world-eaters",
+  "name": "World Eaters",
+  "units": [
+    {
+      "name": "Khorne Berzerkers",
+      "canonicalName": "khorne-berzerkers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Blood Surge"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Khorne",
+        "Berzerkers"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Chaos Terminators",
+      "canonicalName": "chaos-terminators",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 5,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Reaper autocannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Rapid Fire 2",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Bloody Fury"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Khorne",
+        "Terminator",
+        "Terminator Squad"
+      ],
+      "pointsCost": 175
+    },
+    {
+      "name": "Jakhals",
+      "canonicalName": "jakhals",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 4,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Objective Ravaged"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Khorne",
+        "Jakhals",
+        "Grenades"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Eightbound",
+      "canonicalName": "eightbound",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Beacons of Rage (Aura)",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Khorne",
+        "Daemon",
+        "Eightbound",
+        "Possessed"
+      ],
+      "pointsCost": 135
+    },
+    {
+      "name": "Exalted Eightbound",
+      "canonicalName": "exalted-eightbound",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Rend and Tear",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Khorne",
+        "Daemon",
+        "Exalted Eightbound",
+        "Possessed"
+      ],
+      "pointsCost": 140
+    },
+    {
+      "name": "Chaos Spawn",
+      "canonicalName": "chaos-spawn",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": 7,
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "To Slake Its Rage"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Khorne",
+        "Spawn"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Goremongers",
+      "canonicalName": "goremongers",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 4,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Blood harpoon",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Sustained Hits D3"
+          ]
+        }
+      ],
+      "abilities": [
+        "Loping Speed"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Chaos",
+        "Khorne",
+        "Goremongers"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Bloodletters",
+      "canonicalName": "bloodletters",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Bane of Cowards"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Khorne",
+        "Summoned"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Bloodcrushers",
+      "canonicalName": "bloodcrushers",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 7,
+        "save": "3+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Brass Stampede"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Khorne",
+        "Summoned",
+        "Bloodcrushers"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Flesh Hounds",
+      "canonicalName": "flesh-hounds",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Burning roar",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Hunters from the Warp"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Khorne",
+        "Summoned",
+        "Flesh Hounds"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Angron",
+      "canonicalName": "angron",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Khârn the Betrayer",
+      "canonicalName": "kh-rn-the-betrayer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord Invocatus",
+      "canonicalName": "lord-invocatus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Khorne",
+      "canonicalName": "daemon-prince-of-khorne",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Khorne with wings",
+      "canonicalName": "daemon-prince-of-khorne-with-wings",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord on Juggernaut",
+      "canonicalName": "lord-on-juggernaut",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Master of Executions",
+      "canonicalName": "master-of-executions",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Land Raider",
+      "canonicalName": "chaos-land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Annihilator",
+      "canonicalName": "chaos-predator-annihilator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Destructor",
+      "canonicalName": "chaos-predator-destructor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Defiler",
+      "canonicalName": "defiler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Forgefiend",
+      "canonicalName": "forgefiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Helbrute",
+      "canonicalName": "helbrute",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heldrake",
+      "canonicalName": "heldrake",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Maulerfiend",
+      "canonicalName": "maulerfiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Rhino",
+      "canonicalName": "chaos-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Khorne Lord of Skulls",
+      "canonicalName": "khorne-lord-of-skulls",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Blessings of Khorne Reference",
+      "canonicalName": "blessings-of-khorne-reference",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerberus [Legends]",
+      "canonicalName": "cerberus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Thunderhawk [Legends]",
+      "canonicalName": "chaos-thunderhawk-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deredeo Dreadnought [Legends]",
+      "canonicalName": "deredeo-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Relic Contemptor Dreadnought [Legends]",
+      "canonicalName": "relic-contemptor-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Battle Tank [Legends]",
+      "canonicalName": "sicaran-battle-tank-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Punisher [Legends]",
+      "canonicalName": "sicaran-punisher-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Venator [Legends]",
+      "canonicalName": "sicaran-venator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rapier Carrier [Legends]",
+      "canonicalName": "rapier-carrier-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Whirlwind Scorpius [Legends]",
+      "canonicalName": "whirlwind-scorpius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Xiphon Interceptor [Legends]",
+      "canonicalName": "xiphon-interceptor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Terrax-pattern Termite [Legends]",
+      "canonicalName": "terrax-pattern-termite-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Storm Eagle Gunship [Legends]",
+      "canonicalName": "storm-eagle-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fire Raptor Gunship [Legends]",
+      "canonicalName": "fire-raptor-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Typhon [Legends]",
+      "canonicalName": "typhon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spartan [Legends]",
+      "canonicalName": "spartan-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fellblade [Legends]",
+      "canonicalName": "fellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Falchion [Legends]",
+      "canonicalName": "falchion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mastodon [Legends]",
+      "canonicalName": "mastodon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sokar-pattern Stormbird [Legends]",
+      "canonicalName": "sokar-pattern-stormbird-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Greater Brass Scorpion [Legends]",
+      "canonicalName": "greater-brass-scorpion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Blood Slaughterer [Legends]",
+      "canonicalName": "blood-slaughterer-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kytan Ravager [Legends]",
+      "canonicalName": "kytan-ravager-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hell Talon [Legends]",
+      "canonicalName": "hell-talon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hellblade [Legends]",
+      "canonicalName": "hellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Achilles [Legends]",
+      "canonicalName": "land-raider-achilles-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Proteus [Legends]",
+      "canonicalName": "land-raider-proteus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leviathan Dreadnought [Legends]",
+      "canonicalName": "leviathan-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kratos [Legends]",
+      "canonicalName": "kratos-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Slaughterbound",
+      "canonicalName": "slaughterbound",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skarbrand",
+      "canonicalName": "skarbrand",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Bloodthirster",
+      "canonicalName": "bloodthirster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

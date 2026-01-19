@@ -1,0 +1,852 @@
+{
+  "id": "craftworlds",
+  "name": "Craftworld Aeldari",
+  "units": [
+    {
+      "name": "Wraithguard",
+      "canonicalName": "wraithguard",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Windriders",
+      "canonicalName": "windriders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Asurmen",
+      "canonicalName": "asurmen",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Autarch",
+      "canonicalName": "autarch",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Autarch Skyrunner [Legends]",
+      "canonicalName": "autarch-skyrunner-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Autarch Wayleaper",
+      "canonicalName": "autarch-wayleaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Avatar of Khaine",
+      "canonicalName": "avatar-of-khaine",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Baharroth",
+      "canonicalName": "baharroth",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corsair Voidreavers",
+      "canonicalName": "corsair-voidreavers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corsair Voidscarred",
+      "canonicalName": "corsair-voidscarred",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Crimson Hunter",
+      "canonicalName": "crimson-hunter",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dark Reapers",
+      "canonicalName": "dark-reapers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Jester",
+      "canonicalName": "death-jester",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dire Avengers",
+      "canonicalName": "dire-avengers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Eldrad Ulthran",
+      "canonicalName": "eldrad-ulthran",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Falcon",
+      "canonicalName": "falcon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Farseer",
+      "canonicalName": "farseer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Farseer Skyrunner",
+      "canonicalName": "farseer-skyrunner",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fire Dragons",
+      "canonicalName": "fire-dragons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fire Prism",
+      "canonicalName": "fire-prism",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fuegan",
+      "canonicalName": "fuegan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Guardian Defenders",
+      "canonicalName": "guardian-defenders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hemlock Wraithfighter",
+      "canonicalName": "hemlock-wraithfighter",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Howling Banshees",
+      "canonicalName": "howling-banshees",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Illic Nightspear [Legends]",
+      "canonicalName": "illic-nightspear-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Jain Zar",
+      "canonicalName": "jain-zar",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Karandras [Legends]",
+      "canonicalName": "karandras-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Maugan Ra",
+      "canonicalName": "maugan-ra",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Night Spinner",
+      "canonicalName": "night-spinner",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Prince Yriel [Legends]",
+      "canonicalName": "prince-yriel-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rangers",
+      "canonicalName": "rangers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shadowseer",
+      "canonicalName": "shadowseer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shining Spears",
+      "canonicalName": "shining-spears",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shroud Runners",
+      "canonicalName": "shroud-runners",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skyweavers",
+      "canonicalName": "skyweavers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Solitaire",
+      "canonicalName": "solitaire",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spiritseer",
+      "canonicalName": "spiritseer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Starweaver",
+      "canonicalName": "starweaver",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Storm Guardians",
+      "canonicalName": "storm-guardians",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "D-Cannon Platform",
+      "canonicalName": "d-cannon-platform",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Swooping Hawks",
+      "canonicalName": "swooping-hawks",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Visarch",
+      "canonicalName": "the-visarch",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Yncarne",
+      "canonicalName": "the-yncarne",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Troupe",
+      "canonicalName": "troupe",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Troupe Master",
+      "canonicalName": "troupe-master",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Voidweaver",
+      "canonicalName": "voidweaver",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vypers",
+      "canonicalName": "vypers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Walkers",
+      "canonicalName": "war-walkers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warlock",
+      "canonicalName": "warlock",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warlock Conclave",
+      "canonicalName": "warlock-conclave",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warlock Skyrunners",
+      "canonicalName": "warlock-skyrunners",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warp Spiders",
+      "canonicalName": "warp-spiders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wave Serpent",
+      "canonicalName": "wave-serpent",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Webway Gate [Legends]",
+      "canonicalName": "webway-gate-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wraithblades",
+      "canonicalName": "wraithblades",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wraithknight",
+      "canonicalName": "wraithknight",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wraithlord",
+      "canonicalName": "wraithlord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Yvraine",
+      "canonicalName": "yvraine",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Striking Scorpions",
+      "canonicalName": "striking-scorpions",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cobra [Legends]",
+      "canonicalName": "cobra-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hornet [Legends]",
+      "canonicalName": "hornet-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Irillyth [Legends]",
+      "canonicalName": "irillyth-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lynx [Legends]",
+      "canonicalName": "lynx-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nightwing [Legends]",
+      "canonicalName": "nightwing-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Scorpion [Legends]",
+      "canonicalName": "scorpion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skathach Wraithknight [Legends]",
+      "canonicalName": "skathach-wraithknight-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shadow Spectres [Legends]",
+      "canonicalName": "shadow-spectres-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Phantom Titan",
+      "canonicalName": "phantom-titan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Revenant Titan",
+      "canonicalName": "revenant-titan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warp Hunter [Legends]",
+      "canonicalName": "warp-hunter-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wraithseer [Legends]",
+      "canonicalName": "wraithseer-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Amallyn Shadowguide [Legends]",
+      "canonicalName": "amallyn-shadowguide-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Bonesinger [Legends]",
+      "canonicalName": "bonesinger-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corsair Cloud Dancer Band [Legends]",
+      "canonicalName": "corsair-cloud-dancer-band-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corsair Reaver Band [Legends]",
+      "canonicalName": "corsair-reaver-band-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corsair Skyreaver Band [Legends]",
+      "canonicalName": "corsair-skyreaver-band-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Phoenix [Legends]",
+      "canonicalName": "phoenix-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Firestorm [Legends]",
+      "canonicalName": "firestorm-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vampire Hunter [Legends]",
+      "canonicalName": "vampire-hunter-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vampire Raider [Legends]",
+      "canonicalName": "vampire-raider-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wasp Assault Walker [Legends]",
+      "canonicalName": "wasp-assault-walker-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Archon",
+      "canonicalName": "ynnari-archon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Incubi",
+      "canonicalName": "ynnari-incubi",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Kabalite Warriors",
+      "canonicalName": "ynnari-kabalite-warriors",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Raider",
+      "canonicalName": "ynnari-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Reavers",
+      "canonicalName": "ynnari-reavers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Succubus",
+      "canonicalName": "ynnari-succubus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Venom",
+      "canonicalName": "ynnari-venom",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ynnari Wyches",
+      "canonicalName": "ynnari-wyches",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shadow Weaver Platform",
+      "canonicalName": "shadow-weaver-platform",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vibro Cannon Platform",
+      "canonicalName": "vibro-cannon-platform",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lhykhis",
+      "canonicalName": "lhykhis",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Battle Focus - Agile Manoeuvres",
+      "canonicalName": "battle-focus-agile-manoeuvres",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wraithknight with Ghostglaive",
+      "canonicalName": "wraithknight-with-ghostglaive",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

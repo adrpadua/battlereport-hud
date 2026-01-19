@@ -31,5 +31,8 @@ coverage/
 src/data/generated/
 !src/data/generated/aliases/
 
+# Turborepo
+.turbo
+
 # Misc
 *.zip

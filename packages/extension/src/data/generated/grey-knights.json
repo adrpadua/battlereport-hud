@@ -1,0 +1,462 @@
+{
+  "id": "grey-knights",
+  "name": "Grey Knights",
+  "units": [
+    {
+      "name": "Brotherhood Terminator Squad",
+      "canonicalName": "brotherhood-terminator-squad",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Force Edge (Psychic)"
+      ],
+      "keywords": [
+        "Battleline",
+        "Infantry",
+        "Grenades",
+        "Psyker",
+        "Imperium",
+        "Terminator",
+        "Brotherhood Terminator Squad"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Interceptor Squad",
+      "canonicalName": "interceptor-squad",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "2+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Personal Teleporters"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Fly",
+        "Psyker",
+        "Interceptor Squad"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Paladin Squad",
+      "canonicalName": "paladin-squad",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Attuned Onslaught (Psychic)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Psyker",
+        "Terminator",
+        "Paladin Squad"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Purgation Squad",
+      "canonicalName": "purgation-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "2+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Righteous Persecution"
+      ],
+      "keywords": [
+        "Purgation Squad",
+        "Psyker",
+        "Imperium",
+        "Grenades",
+        "Infantry"
+      ],
+      "pointsCost": 115
+    },
+    {
+      "name": "Purifier Squad",
+      "canonicalName": "purifier-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "2+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Sanctity of Purpose"
+      ],
+      "keywords": [
+        "Purifier Squad",
+        "Psyker",
+        "Imperium",
+        "Grenades",
+        "Infantry"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Servitors [Legends]",
+      "canonicalName": "servitors-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Multi-melta",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Heavy",
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "➤ Plasma cannon - standard",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Plasma cannon - supercharge",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Hazardous",
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save (6+)",
+        "Mindlock",
+        "Servitor Retinue"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Servitors"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Strike Squad",
+      "canonicalName": "strike-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "2+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Sanctifying Ritual (Psychic)"
+      ],
+      "keywords": [
+        "Strike Squad",
+        "Psyker",
+        "Imperium",
+        "Grenades",
+        "Battleline",
+        "Infantry"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Brother-Captain",
+      "canonicalName": "brother-captain",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Brother-Captain Stern [Legends]",
+      "canonicalName": "brother-captain-stern-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Brotherhood Champion",
+      "canonicalName": "brotherhood-champion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Brotherhood Chaplain",
+      "canonicalName": "brotherhood-chaplain",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Brotherhood Librarian",
+      "canonicalName": "brotherhood-librarian",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Brotherhood Techmarine",
+      "canonicalName": "brotherhood-techmarine",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Castellan Crowe",
+      "canonicalName": "castellan-crowe",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Grand Master",
+      "canonicalName": "grand-master",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Grand Master in Nemesis Dreadknight",
+      "canonicalName": "grand-master-in-nemesis-dreadknight",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Grand Master Voldus",
+      "canonicalName": "grand-master-voldus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider",
+      "canonicalName": "land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Crusader",
+      "canonicalName": "land-raider-crusader",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Redeemer",
+      "canonicalName": "land-raider-redeemer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Razorback",
+      "canonicalName": "razorback",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rhino",
+      "canonicalName": "rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormhawk Interceptor",
+      "canonicalName": "stormhawk-interceptor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormraven Gunship",
+      "canonicalName": "stormraven-gunship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormtalon Gunship",
+      "canonicalName": "stormtalon-gunship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Venerable Dreadnought",
+      "canonicalName": "venerable-dreadnought",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kaldor Draigo [Legends]",
+      "canonicalName": "kaldor-draigo-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Banisher",
+      "canonicalName": "land-raider-banisher",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nemesis Dreadknight",
+      "canonicalName": "nemesis-dreadknight",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Grey Knights Thunderhawk Gunship",
+      "canonicalName": "grey-knights-thunderhawk-gunship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Grey Knights Relic Razorback [Legends]",
+      "canonicalName": "grey-knights-relic-razorback-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Grey Knights Dreadnought [Legends]",
+      "canonicalName": "grey-knights-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

@@ -1,0 +1,644 @@
+{
+  "id": "adeptus-custodes",
+  "name": "Adeptus Custodes",
+  "units": [
+    {
+      "name": "Allarus Custodians",
+      "canonicalName": "allarus-custodians",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 7,
+        "save": "2+",
+        "wounds": 4,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Guardian Spear",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Castellan axe",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        }
+      ],
+      "abilities": [
+        "Slayers of Tyrants",
+        "From Golden Light"
+      ],
+      "keywords": [
+        "Allarus Custodians",
+        "Imperium",
+        "Terminator",
+        "Infantry"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Custodian Guard",
+      "canonicalName": "custodian-guard",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Guardian Spear",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Sentinel Blade",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Stand Vigil",
+        "Sentinel Storm"
+      ],
+      "keywords": [
+        "Custodian Guard",
+        "Infantry",
+        "Battleline",
+        "Imperium"
+      ],
+      "pointsCost": 150
+    },
+    {
+      "name": "Custodian Wardens",
+      "canonicalName": "custodian-wardens",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 6,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Guardian Spear",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Castellan axe",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        }
+      ],
+      "abilities": [
+        "Resolute Will",
+        "Living Fortress"
+      ],
+      "keywords": [
+        "Custodian Wardens",
+        "Infantry",
+        "Imperium"
+      ],
+      "pointsCost": 210
+    },
+    {
+      "name": "Prosecutors",
+      "canonicalName": "prosecutors",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Purity of Execution"
+      ],
+      "keywords": [
+        "Prosecutors",
+        "Imperium",
+        "Infantry",
+        "Anathema Psykana"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Vertus Praetors",
+      "canonicalName": "vertus-praetors",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 7,
+        "save": "2+",
+        "wounds": 5,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Salvo launcher",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 10,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "Vertus hurricane bolter",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Rapid Fire 3",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Turbo Boost",
+        "Quicksilver Execution"
+      ],
+      "keywords": [
+        "Fly",
+        "Mounted",
+        "Imperium",
+        "Vertus Praetors"
+      ],
+      "pointsCost": 150
+    },
+    {
+      "name": "Vigilators",
+      "canonicalName": "vigilators",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Deft Parry"
+      ],
+      "keywords": [
+        "Vigilators",
+        "Anathema Psykana",
+        "Infantry",
+        "Imperium"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Witchseekers",
+      "canonicalName": "witchseekers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Sanctified Flames"
+      ],
+      "keywords": [
+        "Witchseekers",
+        "Anathema Psykana",
+        "Infantry",
+        "Imperium"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Custodian Guard with Adrasite and Pyrithite spears",
+      "canonicalName": "custodian-guard-with-adrasite-and-pyrithite-spears",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Adrasite spear",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Pyrithite spear",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Stand Vigil",
+        "No Foe Shall Stand"
+      ],
+      "keywords": [
+        "Custodian Guard",
+        "Infantry",
+        "Imperium"
+      ],
+      "pointsCost": 250
+    },
+    {
+      "name": "Sagittarum Custodians",
+      "canonicalName": "sagittarum-custodians",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Adrastus bolt caliver",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "2+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Disintegration Beams",
+        "Saturation Volleys"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Sagittarum Custodians"
+      ],
+      "pointsCost": 225
+    },
+    {
+      "name": "Aquilon Custodians",
+      "canonicalName": "aquilon-custodians",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 7,
+        "save": "2+",
+        "wounds": 4,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Heavy Assault Infantry",
+        "From Golden Light"
+      ],
+      "keywords": [
+        "Imperium",
+        "Terminator",
+        "Infantry",
+        "Aquilon Custodians"
+      ],
+      "pointsCost": 195
+    },
+    {
+      "name": "Agamatus Custodians",
+      "canonicalName": "agamatus-custodians",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 6,
+        "save": "2+",
+        "wounds": 4,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Lastrum bolt cannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "2+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Adrathic devastator",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Twin las-pulsar",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 9,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Implacable Vanguard",
+        "Turbo Boost"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Imperium",
+        "Agamatus Custodians"
+      ],
+      "pointsCost": 225
+    },
+    {
+      "name": "Venatari Custodians",
+      "canonicalName": "venatari-custodians",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Venatari lance",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Kinetic destroyer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Strike from the Skies",
+        "Swooping Dive"
+      ],
+      "keywords": [
+        "Imperium",
+        "Infantry",
+        "Fly",
+        "Jump Pack",
+        "Venatari Custodians"
+      ],
+      "pointsCost": 165
+    },
+    {
+      "name": "Aleya",
+      "canonicalName": "aleya",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Anathema Psykana Rhino",
+      "canonicalName": "anathema-psykana-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Blade Champion",
+      "canonicalName": "blade-champion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight-Centura",
+      "canonicalName": "knight-centura",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shield-Captain",
+      "canonicalName": "shield-captain",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shield-Captain in Allarus Terminator Armour",
+      "canonicalName": "shield-captain-in-allarus-terminator-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shield-Captain on Dawneagle Jetbike",
+      "canonicalName": "shield-captain-on-dawneagle-jetbike",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Trajann Valoris",
+      "canonicalName": "trajann-valoris",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Valerian",
+      "canonicalName": "valerian",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Venerable Contemptor Dreadnought",
+      "canonicalName": "venerable-contemptor-dreadnought",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Venerable Land Raider",
+      "canonicalName": "venerable-land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Contemptor-Galatus Dreadnought",
+      "canonicalName": "contemptor-galatus-dreadnought",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Contemptor-Achillus Dreadnought",
+      "canonicalName": "contemptor-achillus-dreadnought",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Pallas Grav-attack",
+      "canonicalName": "pallas-grav-attack",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Caladius Grav-tank",
+      "canonicalName": "caladius-grav-tank",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Telemon Heavy Dreadnought",
+      "canonicalName": "telemon-heavy-dreadnought",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Coronus Grav-carrier",
+      "canonicalName": "coronus-grav-carrier",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ares Gunship",
+      "canonicalName": "ares-gunship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Orion Assault Dropship",
+      "canonicalName": "orion-assault-dropship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

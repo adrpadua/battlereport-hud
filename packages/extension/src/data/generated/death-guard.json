@@ -1,0 +1,1017 @@
+{
+  "id": "death-guard",
+  "name": "Death Guard",
+  "units": [
+    {
+      "name": "Plague Marines",
+      "canonicalName": "plague-marines",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Infused with the Blessings of Nurgle"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Grenades",
+        "Battleline",
+        "Plague Marines"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Death Guard Cultists [Legends]",
+      "canonicalName": "death-guard-cultists-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Heavy stubber",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "5+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 3"
+          ]
+        },
+        {
+          "name": "➤ Grenade launcher - frag",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Grenade launcher - krak",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Cultists"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Poxwalkers",
+      "canonicalName": "poxwalkers",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Curse of the Walking Pox"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Poxwalkers"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Deathshroud Terminators",
+      "canonicalName": "deathshroud-terminators",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 7,
+        "save": "2+",
+        "wounds": 4,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Silent Bodyguard",
+        "Invulnerable Save",
+        "Death Approaches"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Deathshroud Terminators",
+        "Terminator"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Blightlord Terminators",
+      "canonicalName": "blightlord-terminators",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 7,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Combi-bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits",
+            "Rapid Fire 2"
+          ]
+        },
+        {
+          "name": "Reaper autocannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Blistering Fusillade"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Blightlord Terminators",
+        "Terminator"
+      ],
+      "pointsCost": 115
+    },
+    {
+      "name": "Chaos Spawn",
+      "canonicalName": "chaos-spawn",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 7,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Lethal Ichor"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Nurgle",
+        "Spawn"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Myphitic Blight-hauler",
+      "canonicalName": "myphitic-blight-hauler",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Bile spurt",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - frag",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - krak",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D6",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Multi-melta",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Lethal Hits",
+            "Melta 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Tank Hunters",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Chaos",
+        "Nurgle",
+        "Daemon",
+        "Smoke",
+        "Myphitic Blight-hauler"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Gellerpox Infected [Legends]",
+      "canonicalName": "gellerpox-infected-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Belly flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Fearsome (Aura)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Gellerpox Infected"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Mutoid Vermin [Legends]",
+      "canonicalName": "mutoid-vermin-legends",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 2,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Mischief Makers (Aura)"
+      ],
+      "keywords": [
+        "Swarm",
+        "Chaos",
+        "Nurgle",
+        "Mutoid Vermin"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Death Guard Possessed [Legends]",
+      "canonicalName": "death-guard-possessed-legends",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Infectious Bloodshed",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Daemon",
+        "Possessed"
+      ],
+      "pointsCost": 155
+    },
+    {
+      "name": "Plaguebearers",
+      "canonicalName": "plaguebearers",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "7+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Infected Outbreak"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Plaguebearers",
+        "Summoned"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Plague Drones",
+      "canonicalName": "plague-drones",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 8,
+        "save": "6+",
+        "wounds": 5,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Death's heads",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Death’s Heads"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Summoned",
+        "Plague Drones"
+      ],
+      "pointsCost": 115
+    },
+    {
+      "name": "Beasts of Nurgle",
+      "canonicalName": "beasts-of-nurgle",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 9,
+        "save": "6+",
+        "wounds": 7,
+        "leadership": "7+",
+        "objectiveControl": 3
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Grotesque Regeneration"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Summoned",
+        "Beasts of Nurgle"
+      ],
+      "pointsCost": 0
+    },
+    {
+      "name": "Nurglings",
+      "canonicalName": "nurglings",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 4,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Mischief Makers (Aura)"
+      ],
+      "keywords": [
+        "Swarm",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Summoned",
+        "Nurglings"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Daemon Prince of Nurgle",
+      "canonicalName": "daemon-prince-of-nurgle",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Nurgle with wings",
+      "canonicalName": "daemon-prince-of-nurgle-with-wings",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Typhus",
+      "canonicalName": "typhus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Guard Chaos Lord [Legends]",
+      "canonicalName": "death-guard-chaos-lord-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Guard Chaos Lord in Terminator Armour [Legends]",
+      "canonicalName": "death-guard-chaos-lord-in-terminator-armour-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord of Virulence",
+      "canonicalName": "lord-of-virulence",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord of Contagion",
+      "canonicalName": "lord-of-contagion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Guard Sorcerer in Terminator Armour [Legends]",
+      "canonicalName": "death-guard-sorcerer-in-terminator-armour-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Malignant Plaguecaster",
+      "canonicalName": "malignant-plaguecaster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Noxious Blightbringer",
+      "canonicalName": "noxious-blightbringer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Foul Blightspawn",
+      "canonicalName": "foul-blightspawn",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Biologus Putrifier",
+      "canonicalName": "biologus-putrifier",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tallyman",
+      "canonicalName": "tallyman",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Plague Surgeon",
+      "canonicalName": "plague-surgeon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Helbrute",
+      "canonicalName": "helbrute",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Foetid Bloat-drone",
+      "canonicalName": "foetid-bloat-drone",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Plagueburst Crawler",
+      "canonicalName": "plagueburst-crawler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Land Raider",
+      "canonicalName": "chaos-land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Annihilator",
+      "canonicalName": "chaos-predator-annihilator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Destructor",
+      "canonicalName": "chaos-predator-destructor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Defiler",
+      "canonicalName": "defiler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Rhino",
+      "canonicalName": "chaos-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mortarion",
+      "canonicalName": "mortarion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Icon Bearer",
+      "canonicalName": "icon-bearer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Miasmic Malignifier",
+      "canonicalName": "miasmic-malignifier",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kratos [Legends]",
+      "canonicalName": "kratos-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerberus [Legends]",
+      "canonicalName": "cerberus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Relic Contemptor Dreadnought [Legends]",
+      "canonicalName": "relic-contemptor-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deredeo Dreadnought [Legends]",
+      "canonicalName": "deredeo-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leviathan Dreadnought [Legends]",
+      "canonicalName": "leviathan-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Proteus [Legends]",
+      "canonicalName": "land-raider-proteus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Achilles [Legends]",
+      "canonicalName": "land-raider-achilles-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Battle Tank [Legends]",
+      "canonicalName": "sicaran-battle-tank-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Punisher [Legends]",
+      "canonicalName": "sicaran-punisher-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Venator [Legends]",
+      "canonicalName": "sicaran-venator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rapier Carrier [Legends]",
+      "canonicalName": "rapier-carrier-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Whirlwind Scorpius [Legends]",
+      "canonicalName": "whirlwind-scorpius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Terrax-pattern Termite [Legends]",
+      "canonicalName": "terrax-pattern-termite-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Xiphon Interceptor [Legends]",
+      "canonicalName": "xiphon-interceptor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Storm Eagle Gunship [Legends]",
+      "canonicalName": "storm-eagle-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fire Raptor Gunship [Legends]",
+      "canonicalName": "fire-raptor-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Typhon [Legends]",
+      "canonicalName": "typhon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spartan [Legends]",
+      "canonicalName": "spartan-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fellblade [Legends]",
+      "canonicalName": "fellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Falchion [Legends]",
+      "canonicalName": "falchion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mastodon [Legends]",
+      "canonicalName": "mastodon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sokar-pattern Stormbird [Legends]",
+      "canonicalName": "sokar-pattern-stormbird-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Greater Blight Drone [Legends]",
+      "canonicalName": "greater-blight-drone-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Thunderhawk [Legends]",
+      "canonicalName": "chaos-thunderhawk-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Palanquin of Nurgle [Legends]",
+      "canonicalName": "chaos-lord-on-palanquin-of-nurgle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hellblade [Legends]",
+      "canonicalName": "hellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hell Talon [Legends]",
+      "canonicalName": "hell-talon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer on Palanquin of Nurgle [Legends]",
+      "canonicalName": "sorcerer-on-palanquin-of-nurgle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord of Poxes",
+      "canonicalName": "lord-of-poxes",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Great Unclean One",
+      "canonicalName": "great-unclean-one",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rotigus",
+      "canonicalName": "rotigus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Foetid Bloat-drone with heavy blight launcher",
+      "canonicalName": "foetid-bloat-drone-with-heavy-blight-launcher",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

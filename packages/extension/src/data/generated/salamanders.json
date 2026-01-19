@@ -1,0 +1,24 @@
+{
+  "id": "salamanders",
+  "name": "Salamanders",
+  "units": [
+    {
+      "name": "Adrax Agatone",
+      "canonicalName": "adrax-agatone",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vulkan He'stan",
+      "canonicalName": "vulkan-he-stan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

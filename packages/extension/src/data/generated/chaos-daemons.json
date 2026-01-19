@@ -1,0 +1,321 @@
+{
+  "id": "chaos-daemons",
+  "name": "Chaos Daemons",
+  "units": [
+    {
+      "name": "Show Khorne Daemons",
+      "canonicalName": "show-khorne-daemons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Show Nurgle Daemons",
+      "canonicalName": "show-nurgle-daemons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Show Tzeentch Daemons",
+      "canonicalName": "show-tzeentch-daemons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Show Slaanesh Daemons",
+      "canonicalName": "show-slaanesh-daemons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord",
+      "canonicalName": "chaos-lord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fellgor Beastmen",
+      "canonicalName": "fellgor-beastmen",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord with Jump Pack",
+      "canonicalName": "chaos-lord-with-jump-pack",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Terminator Squad",
+      "canonicalName": "chaos-terminator-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chosen",
+      "canonicalName": "chosen",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Legionaries",
+      "canonicalName": "legionaries",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dark Apostle",
+      "canonicalName": "dark-apostle",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dark Commune",
+      "canonicalName": "dark-commune",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Havocs",
+      "canonicalName": "havocs",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Master of Possession",
+      "canonicalName": "master-of-possession",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Possessed",
+      "canonicalName": "possessed",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Raptors",
+      "canonicalName": "raptors",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer",
+      "canonicalName": "sorcerer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer in Terminator Armour",
+      "canonicalName": "sorcerer-in-terminator-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warp Talons",
+      "canonicalName": "warp-talons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Traitor Guardsmen Squad",
+      "canonicalName": "traitor-guardsmen-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cultist Mob",
+      "canonicalName": "cultist-mob",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord in Terminator Armour",
+      "canonicalName": "chaos-lord-in-terminator-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cultist Firebrand",
+      "canonicalName": "cultist-firebrand",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cultist Mob with Firearms [Legends]",
+      "canonicalName": "cultist-mob-with-firearms-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rogue Psyker [Legends]",
+      "canonicalName": "rogue-psyker-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Traitor Enforcer",
+      "canonicalName": "traitor-enforcer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gellerpox Infected [Legends]",
+      "canonicalName": "gellerpox-infected-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Negavolt Cultists [Legends]",
+      "canonicalName": "negavolt-cultists-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Renegade Heavy Weapons Squad [Legends]",
+      "canonicalName": "renegade-heavy-weapons-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Renegade Ogryn Beast Handler [Legends]",
+      "canonicalName": "renegade-ogryn-beast-handler-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Renegade Ogryn Brutes [Legends]",
+      "canonicalName": "renegade-ogryn-brutes-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Renegade Plague Ogryns [Legends]",
+      "canonicalName": "renegade-plague-ogryns-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Renegade Enforcer [Legends]",
+      "canonicalName": "renegade-enforcer-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mutoid Vermin [Legends]",
+      "canonicalName": "mutoid-vermin-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Accursed Cultists",
+      "canonicalName": "accursed-cultists",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

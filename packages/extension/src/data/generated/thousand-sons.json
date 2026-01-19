@@ -1,0 +1,1000 @@
+{
+  "id": "thousand-sons",
+  "name": "Thousand Sons",
+  "units": [
+    {
+      "name": "Chaos Spawn",
+      "canonicalName": "chaos-spawn",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": 7,
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Regenerating Monstrosities",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Tzeentch",
+        "Spawn",
+        "Mutant"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Rubric Marines",
+      "canonicalName": "rubric-marines",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Malefic Curse",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -3,
+          "damage": "1",
+          "keywords": [
+            "Anti-INFANTRY 4+",
+            "Devastating Wounds",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Inferno bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Warpflame pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Inferno boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Warpflamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Soulreaper cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Bringers of Change",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Tzeentch",
+        "Rubric Marines",
+        "Rubricae"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Scarab Occult Terminators",
+      "canonicalName": "scarab-occult-terminators",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Malefic Curse",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -3,
+          "damage": "1",
+          "keywords": [
+            "Anti-INFANTRY 4+",
+            "Devastating Wounds",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Hellfyre missile rack",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 10,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Inferno combi-bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Rites of Coalescence",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Tzeentch",
+        "Scarab Occult",
+        "Rubricae",
+        "Terminator"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Tzaangor Enlightened",
+      "canonicalName": "tzaangor-enlightened",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 4,
+        "save": "5+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Prophesied Doom"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Chaos",
+        "Tzeentch",
+        "Tzaangor Enlightened",
+        "Mutant"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Tzaangors",
+      "canonicalName": "tzaangors",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Ambushing Hunters"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Tzeentch",
+        "Tzaangors",
+        "Mutant"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Sekhetar Robots",
+      "canonicalName": "sekhetar-robots",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Pyreflux meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 10,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "Warpflame projector",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D3",
+          "skill": "N/A",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Prophetic Sentinels",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Chaos",
+        "Tzeentch",
+        "Sekhetar Robots"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Tzaangor Enlightened with Fatecaster greatbows",
+      "canonicalName": "tzaangor-enlightened-with-fatecaster-greatbows",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 4,
+        "save": "5+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Malign Trickery"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Chaos",
+        "Tzeentch",
+        "Tzaangor Enlightened",
+        "Mutant",
+        "Tzaangor Enlightened with Fatecaster greatbows"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Flamers",
+      "canonicalName": "flamers",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Flickering flames",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Psychic",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Bounding Leaps"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Summoned",
+        "Flamers"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Screamers",
+      "canonicalName": "screamers",
+      "stats": {
+        "movement": "14\"",
+        "toughness": 4,
+        "save": "6+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Slashing Dive"
+      ],
+      "keywords": [
+        "Beast",
+        "Fly",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Summoned",
+        "Screamers"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Pink Horrors",
+      "canonicalName": "pink-horrors",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Coruscating Blue flames (ref. only)",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Coruscating Yellow flames (ref. only)",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 2,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Coruscating pink flames",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Split",
+        "Horrors are Pink. Horrors are Blue. Where once there was one, now there are two."
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Summoned",
+        "Horrors"
+      ],
+      "pointsCost": 115
+    },
+    {
+      "name": "Blue Horrors",
+      "canonicalName": "blue-horrors",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Coruscating Yellow flames (ref. only)",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 2,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Coruscating Blue flames",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Split",
+        "Sullen Malevolence (Aura)",
+        "Exploding Horrors"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Summoned",
+        "Horrors"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Chaos Spawn (Flesh Change)",
+      "canonicalName": "chaos-spawn-flesh-change",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": 7,
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Regenerating Monstrosities",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Tzeentch",
+        "Spawn",
+        "Mutant"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Ahriman",
+      "canonicalName": "ahriman",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Land Raider",
+      "canonicalName": "chaos-land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Annihilator",
+      "canonicalName": "chaos-predator-annihilator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Destructor",
+      "canonicalName": "chaos-predator-destructor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Rhino",
+      "canonicalName": "chaos-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Vindicator",
+      "canonicalName": "chaos-vindicator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Defiler",
+      "canonicalName": "defiler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exalted Sorcerer",
+      "canonicalName": "exalted-sorcerer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exalted Sorcerer on Disc of Tzeentch",
+      "canonicalName": "exalted-sorcerer-on-disc-of-tzeentch",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Forgefiend",
+      "canonicalName": "forgefiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Helbrute",
+      "canonicalName": "helbrute",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heldrake",
+      "canonicalName": "heldrake",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Infernal Master",
+      "canonicalName": "infernal-master",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Magnus the Red",
+      "canonicalName": "magnus-the-red",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Maulerfiend",
+      "canonicalName": "maulerfiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mutalith Vortex Beast",
+      "canonicalName": "mutalith-vortex-beast",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer",
+      "canonicalName": "sorcerer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer in Terminator Armour",
+      "canonicalName": "sorcerer-in-terminator-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Tzeentch",
+      "canonicalName": "daemon-prince-of-tzeentch",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Tzeentch with wings",
+      "canonicalName": "daemon-prince-of-tzeentch-with-wings",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tzaangor Shaman",
+      "canonicalName": "tzaangor-shaman",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Thunderhawk [Legends]",
+      "canonicalName": "chaos-thunderhawk-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kratos [Legends]",
+      "canonicalName": "kratos-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerberus [Legends]",
+      "canonicalName": "cerberus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deredeo Dreadnought [Legends]",
+      "canonicalName": "deredeo-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Relic Contemptor Dreadnought [Legends]",
+      "canonicalName": "relic-contemptor-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leviathan Dreadnought [Legends]",
+      "canonicalName": "leviathan-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Proteus [Legends]",
+      "canonicalName": "land-raider-proteus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Achilles [Legends]",
+      "canonicalName": "land-raider-achilles-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Battle Tank [Legends]",
+      "canonicalName": "sicaran-battle-tank-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Punisher [Legends]",
+      "canonicalName": "sicaran-punisher-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Venator [Legends]",
+      "canonicalName": "sicaran-venator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rapier Carrier [Legends]",
+      "canonicalName": "rapier-carrier-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Whirlwind Scorpius [Legends]",
+      "canonicalName": "whirlwind-scorpius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Xiphon Interceptor [Legends]",
+      "canonicalName": "xiphon-interceptor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Storm Eagle Gunship [Legends]",
+      "canonicalName": "storm-eagle-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fire Raptor Gunship [Legends]",
+      "canonicalName": "fire-raptor-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Typhon [Legends]",
+      "canonicalName": "typhon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spartan [Legends]",
+      "canonicalName": "spartan-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fellblade [Legends]",
+      "canonicalName": "fellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Falchion [Legends]",
+      "canonicalName": "falchion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mastodon [Legends]",
+      "canonicalName": "mastodon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sokar-pattern Stormbird [Legends]",
+      "canonicalName": "sokar-pattern-stormbird-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Terrax-pattern Termite [Legends]",
+      "canonicalName": "terrax-pattern-termite-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hell Talon [Legends]",
+      "canonicalName": "hell-talon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hellblade [Legends]",
+      "canonicalName": "hellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer on Disc of Tzeentch [Legends]",
+      "canonicalName": "sorcerer-on-disc-of-tzeentch-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Disc of Tzeentch [Legends]",
+      "canonicalName": "chaos-lord-on-disc-of-tzeentch-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord of Change",
+      "canonicalName": "lord-of-change",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kairos Fateweaver",
+      "canonicalName": "kairos-fateweaver",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

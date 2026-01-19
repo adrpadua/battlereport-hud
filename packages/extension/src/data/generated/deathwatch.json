@@ -1,0 +1,315 @@
+{
+  "id": "deathwatch",
+  "name": "Deathwatch",
+  "units": [
+    {
+      "name": "Deathwatch Terminator Squad",
+      "canonicalName": "deathwatch-terminator-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Terminatus Assault",
+        "Teleport Homer",
+        "Invulnerable Save",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Deathwatch Terminator Squad",
+        "Terminator",
+        "Kill Team"
+      ],
+      "pointsCost": 190
+    },
+    {
+      "name": "Fortis Kill Team",
+      "canonicalName": "fortis-kill-team",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Heavy bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Fortis Doctrines",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Fortis Kill Team",
+        "Tacticus",
+        "Kill Team"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Indomitor Kill Team",
+      "canonicalName": "indomitor-kill-team",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Indomitor Doctrines",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Indomitor Kill Team",
+        "Gravis",
+        "Kill Team"
+      ],
+      "pointsCost": 265
+    },
+    {
+      "name": "Spectrus Kill Team",
+      "canonicalName": "spectrus-kill-team",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Deathwatch marksman bolt carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Lethal Hits"
+          ]
+        },
+        {
+          "name": "Deathwatch occulus bolt carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Ignores Cover",
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Attached Unit",
+        "Spectrus Doctrines"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Smoke",
+        "Spectrus Kill Team",
+        "Kill Team",
+        "Phobos"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Deathwatch Veterans",
+      "canonicalName": "deathwatch-veterans",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Frag cannon",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Heavy",
+            "Rapid Fire D3"
+          ]
+        },
+        {
+          "name": "Stalker-pattern boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Deathwatch shotgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "2",
+          "keywords": [
+            "Assault"
+          ]
+        }
+      ],
+      "abilities": [
+        "Death to the Alien",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Ordo Xenos",
+        "Retinue",
+        "Deathwatch Kill Team"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Talonstrike Kill Team",
+      "canonicalName": "talonstrike-kill-team",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Assault bolters",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Pistol",
+            "Sustained Hits 2",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "➤ Plasma exterminators - standard",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Pistol",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "➤ Plasma exterminators - supercharge",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "3",
+          "keywords": [
+            "Assault",
+            "Hazardous",
+            "Pistol",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Talonstrike Doctrines",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Jump Pack",
+        "Grenades",
+        "Imperium",
+        "Kill Team",
+        "Talonstrike Kill Team"
+      ],
+      "pointsCost": 275
+    },
+    {
+      "name": "Decimus Kill Team",
+      "canonicalName": "decimus-kill-team",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Death to the Alien",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Kill Team",
+        "Tacticus",
+        "Decimus Kill Team"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Watch Master",
+      "canonicalName": "watch-master",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Watch Captain Artemis",
+      "canonicalName": "watch-captain-artemis",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Corvus Blackstar",
+      "canonicalName": "corvus-blackstar",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kill Team Cassius [Legends]",
+      "canonicalName": "kill-team-cassius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

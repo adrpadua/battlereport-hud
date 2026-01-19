@@ -1,0 +1,2201 @@
+{
+  "id": "chaos-space-marines",
+  "name": "Chaos Space Marines",
+  "units": [
+    {
+      "name": "Fabius Bile",
+      "canonicalName": "fabius-bile",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Xyclos needler",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "2+",
+          "strength": 2,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Anti-INFANTRY 2+",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Enhanced Warriors",
+        "Leader",
+        "Surgeon Acolyte",
+        "Chirurgeon"
+      ],
+      "keywords": [
+        "Epic Hero"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Dark Apostle",
+      "canonicalName": "dark-apostle",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Leader",
+        "Dark Zealotry",
+        "Demagogue",
+        "Malign Sacrifice",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Character",
+        "Infantry",
+        "Grenades",
+        "Chaos"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Dark Commune",
+      "canonicalName": "dark-commune",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Autopistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Warp Curse - witchfire",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Psychic"
+          ]
+        },
+        {
+          "name": "➤ Warp Curse - focused witchfire",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Psychic",
+            "Sustained Hits 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Leader",
+        "Faithful Flock",
+        "Dark Ritual"
+      ],
+      "keywords": [
+        "Character",
+        "Damned",
+        "Infantry",
+        "Grenades",
+        "Dark Commune",
+        "Chaos"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Legionaries",
+      "canonicalName": "legionaries",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Balefire tome",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Havoc autocannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Lascannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - frag",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - krak",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D6",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Reaper chaincannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "8",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Veterans of the Long War"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Grenades",
+        "Legionaries"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Cultist Mob",
+      "canonicalName": "cultist-mob",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Autopistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "For the Dark Gods"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Cultist Mob",
+        "Damned"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Accursed Cultists",
+      "canonicalName": "accursed-cultists",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Howling Horde"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Accursed Cultists",
+        "Damned"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Chaos Terminator Squad",
+      "canonicalName": "chaos-terminator-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Heavy flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Reaper autocannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Despoilers",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Terminator",
+        "Chaos Terminator Squad"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Possessed",
+      "canonicalName": "possessed",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Unholy Bloodshed"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Daemon",
+        "Possessed"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Chosen",
+      "canonicalName": "chosen",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Chosen Marauders"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Chaos",
+        "Chosen"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Chaos Bikers",
+      "canonicalName": "chaos-bikers",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Rapid Assault"
+      ],
+      "keywords": [
+        "Mounted",
+        "Grenades",
+        "Chaos",
+        "Chaos Bikers"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Raptors",
+      "canonicalName": "raptors",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Fearsome (Aura)",
+        "Terrifying Assault"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Jump Pack",
+        "Chaos",
+        "Raptors",
+        "Grenades"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Warp Talons",
+      "canonicalName": "warp-talons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Warp Strike",
+        "Invulnerable Save (5+)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Jump Pack",
+        "Chaos",
+        "Daemon",
+        "Warp Talons",
+        "Grenades"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Havocs",
+      "canonicalName": "havocs",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Havoc autocannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Havoc lascannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "➤ Havoc missile launcher - frag",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Havoc missile launcher - krak",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D6",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Havoc reaper chaincannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "8",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Havoc heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Stabilisation Talons"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Havocs"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Obliterators",
+      "canonicalName": "obliterators",
+      "stats": {
+        "movement": "4\"",
+        "toughness": 7,
+        "save": "2+",
+        "wounds": 5,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "➤ Fleshmetal guns - focused malice",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D3",
+          "skill": "3+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "4",
+          "keywords": [
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "➤ Fleshmetal guns - ruinous salvo",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Fleshmetal guns - warp hail",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D6+3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Sustained Hits 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Warp Rift Firepower",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Daemon",
+        "Obliterators"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Traitor Guardsmen Squad",
+      "canonicalName": "traitor-guardsmen-squad",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "5+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Corrupted pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Lasgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Twisted Defence Force"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Chaos",
+        "Traitor Guardsmen Squad",
+        "Damned"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Fellgor Beastmen",
+      "canonicalName": "fellgor-beastmen",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "5+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol - standard",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol- supercharge",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Autopistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Corrupted stave",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Bestial Raiders"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Chaos",
+        "Fellgor Beastmen",
+        "Damned"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Traitor Enforcer",
+      "canonicalName": "traitor-enforcer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Leader",
+        "Brutal Example",
+        "Mutated Bodyguard"
+      ],
+      "keywords": [
+        "Character",
+        "Damned"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Chaos Spawn",
+      "canonicalName": "chaos-spawn",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Mind-breaking Mutations (Aura)"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Chaos Spawn"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Khorne Berzerkers",
+      "canonicalName": "khorne-berzerkers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Blood Surge"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Khorne",
+        "Berzerkers"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Rubric Marines",
+      "canonicalName": "rubric-marines",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Malefic Curse",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -3,
+          "damage": "1",
+          "keywords": [
+            "Anti-INFANTRY 4+",
+            "Devastating Wounds",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Inferno boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Warpflamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Soulreaper cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Bringers of Change",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Tzeentch",
+        "Rubric Marines",
+        "Rubricae"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Plague Marines",
+      "canonicalName": "plague-marines",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Blight launcher",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Lethal Hits"
+          ]
+        },
+        {
+          "name": "Plague spewer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Anti-INFANTRY 2+",
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Infused with the Blessings of Nurgle"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Nurgle",
+        "Plague Marines"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Gellerpox Infected [Legends]",
+      "canonicalName": "gellerpox-infected-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Belly flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Fearsome (Aura)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Gellerpox Infected",
+        "Damned"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Mutoid Vermin [Legends]",
+      "canonicalName": "mutoid-vermin-legends",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 2,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Mischief Makers (Aura)"
+      ],
+      "keywords": [
+        "Swarm",
+        "Chaos",
+        "Nurgle",
+        "Mutoid Vermin",
+        "Damned"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Renegade Heavy Weapons Squad [Legends]",
+      "canonicalName": "renegade-heavy-weapons-squad-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "5+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Renegade firearm",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Heavy stubber",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "5+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Rapid Fire 3"
+          ]
+        },
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "5+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Autocannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 9,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Lascannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "5+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - frag",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "5+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - krak",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "5+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D6",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "Mortar",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "5+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy",
+            "Indirect Fire"
+          ]
+        }
+      ],
+      "abilities": [
+        "Covering Fire"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Chaos",
+        "Renegade Heavy Weapons Squad",
+        "Damned"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Renegade Plague Ogryns [Legends]",
+      "canonicalName": "renegade-plague-ogryns-legends",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 7,
+        "save": "5+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Wall of Muscle"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Nurgle",
+        "Renegade Plague Ogryns",
+        "Damned"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Mutilators [Legends]",
+      "canonicalName": "mutilators-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Death Frenzy"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Daemon",
+        "Mutilators"
+      ],
+      "pointsCost": 185
+    },
+    {
+      "name": "Renegade Ogryn Brutes [Legends]",
+      "canonicalName": "renegade-ogryn-brutes-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 6,
+        "save": "5+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Ogryn Combat Stimms"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Renegade Ogryn Brutes",
+        "Damned"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Negavolt Cultists [Legends]",
+      "canonicalName": "negavolt-cultists-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Voltagheist Field",
+        "Servants of the Abyss"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Negavolt Cultists",
+        "Damned"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Renegade Ogryn Beast Handler [Legends]",
+      "canonicalName": "renegade-ogryn-beast-handler-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Beastmaster"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Renegade Ogryn Beast Handler",
+        "Damned"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Cultist Mob with Firearms [Legends]",
+      "canonicalName": "cultist-mob-with-firearms-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Autopistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "➤ Cultist grenade launcher - frag",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Cultist grenade launcher - krak",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Heavy stubber",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "5+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Rapid Fire 3"
+          ]
+        }
+      ],
+      "abilities": [
+        "For the Dark Gods"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Chaos",
+        "Damned",
+        "Cultist Mob with Firearms"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Nemesis Claw",
+      "canonicalName": "nemesis-claw",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - frag",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Missile launcher - krak",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D6",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Visions of Suffering (Psychic)",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Psyker",
+        "Grenades",
+        "Nemesis Claw",
+        "Chaos"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Noise Marines",
+      "canonicalName": "noise-marines",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "➤ Blastmaster - varied frequency",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover"
+          ]
+        },
+        {
+          "name": "➤ Blastmaster - single frequency",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 10,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Ignores Cover"
+          ]
+        }
+      ],
+      "abilities": [
+        "Terrifying Crescendo"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Slaanesh",
+        "Noise Marines",
+        "Cults of the Dark Gods"
+      ],
+      "pointsCost": 145
+    },
+    {
+      "name": "Abaddon the Despoiler",
+      "canonicalName": "abaddon-the-despoiler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Haarken Worldclaimer",
+      "canonicalName": "haarken-worldclaimer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Huron Blackheart",
+      "canonicalName": "huron-blackheart",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heretic Astartes Daemon Prince",
+      "canonicalName": "heretic-astartes-daemon-prince",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heretic Astartes Daemon Prince with wings",
+      "canonicalName": "heretic-astartes-daemon-prince-with-wings",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cypher",
+      "canonicalName": "cypher",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Master of Possession",
+      "canonicalName": "master-of-possession",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord",
+      "canonicalName": "chaos-lord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord in Terminator Armour",
+      "canonicalName": "chaos-lord-in-terminator-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer",
+      "canonicalName": "sorcerer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer in Terminator Armour",
+      "canonicalName": "sorcerer-in-terminator-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord Discordant on Helstalker",
+      "canonicalName": "lord-discordant-on-helstalker",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warpsmith",
+      "canonicalName": "warpsmith",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exalted Champion [Legends]",
+      "canonicalName": "exalted-champion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Master of Executions",
+      "canonicalName": "master-of-executions",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Venomcrawler",
+      "canonicalName": "venomcrawler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Noctilith Crown",
+      "canonicalName": "noctilith-crown",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vashtorr the Arkifane",
+      "canonicalName": "vashtorr-the-arkifane",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Land Raider",
+      "canonicalName": "chaos-land-raider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Annihilator",
+      "canonicalName": "chaos-predator-annihilator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Predator Destructor",
+      "canonicalName": "chaos-predator-destructor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Vindicator",
+      "canonicalName": "chaos-vindicator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Defiler",
+      "canonicalName": "defiler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Forgefiend",
+      "canonicalName": "forgefiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Helbrute",
+      "canonicalName": "helbrute",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Maulerfiend",
+      "canonicalName": "maulerfiend",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Rhino",
+      "canonicalName": "chaos-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Khorne Lord of Skulls",
+      "canonicalName": "khorne-lord-of-skulls",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Decimator [Legends]",
+      "canonicalName": "decimator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Greater Blight Drone [Legends]",
+      "canonicalName": "greater-blight-drone-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dreadclaw Drop Pod [Legends]",
+      "canonicalName": "dreadclaw-drop-pod-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Blood Slaughterer [Legends]",
+      "canonicalName": "blood-slaughterer-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kytan Ravager [Legends]",
+      "canonicalName": "kytan-ravager-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Greater Brass Scorpion [Legends]",
+      "canonicalName": "greater-brass-scorpion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kharybdis Assault Claw [Legends]",
+      "canonicalName": "kharybdis-assault-claw-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Punisher [Legends]",
+      "canonicalName": "sicaran-punisher-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kratos [Legends]",
+      "canonicalName": "kratos-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deredeo Dreadnought [Legends]",
+      "canonicalName": "deredeo-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leviathan Dreadnought [Legends]",
+      "canonicalName": "leviathan-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Relic Contemptor Dreadnought [Legends]",
+      "canonicalName": "relic-contemptor-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Proteus [Legends]",
+      "canonicalName": "land-raider-proteus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Achilles [Legends]",
+      "canonicalName": "land-raider-achilles-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Battle Tank [Legends]",
+      "canonicalName": "sicaran-battle-tank-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sicaran Venator [Legends]",
+      "canonicalName": "sicaran-venator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Terrax-pattern Termite [Legends]",
+      "canonicalName": "terrax-pattern-termite-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rapier Carrier [Legends]",
+      "canonicalName": "rapier-carrier-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Whirlwind Scorpius [Legends]",
+      "canonicalName": "whirlwind-scorpius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Thunderhawk [Legends]",
+      "canonicalName": "chaos-thunderhawk-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Xiphon Interceptor [Legends]",
+      "canonicalName": "xiphon-interceptor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Storm Eagle Gunship [Legends]",
+      "canonicalName": "storm-eagle-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fire Raptor Gunship [Legends]",
+      "canonicalName": "fire-raptor-gunship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Typhon [Legends]",
+      "canonicalName": "typhon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerberus [Legends]",
+      "canonicalName": "cerberus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spartan [Legends]",
+      "canonicalName": "spartan-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fellblade [Legends]",
+      "canonicalName": "fellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Falchion [Legends]",
+      "canonicalName": "falchion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mastodon [Legends]",
+      "canonicalName": "mastodon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sokar-pattern Stormbird [Legends]",
+      "canonicalName": "sokar-pattern-stormbird-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heldrake",
+      "canonicalName": "heldrake",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hell Talon [Legends]",
+      "canonicalName": "hell-talon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hellblade [Legends]",
+      "canonicalName": "hellblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer on Disc of Tzeentch [Legends]",
+      "canonicalName": "sorcerer-on-disc-of-tzeentch-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer on Palanquin of Nurgle [Legends]",
+      "canonicalName": "sorcerer-on-palanquin-of-nurgle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Disc of Tzeentch [Legends]",
+      "canonicalName": "chaos-lord-on-disc-of-tzeentch-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Palanquin of Nurgle [Legends]",
+      "canonicalName": "chaos-lord-on-palanquin-of-nurgle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Juggernaut [Legends]",
+      "canonicalName": "chaos-lord-on-juggernaut-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Steed of Slaanesh [Legends]",
+      "canonicalName": "chaos-lord-on-steed-of-slaanesh-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer on Steed of Slaanesh [Legends]",
+      "canonicalName": "sorcerer-on-steed-of-slaanesh-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Renegade Enforcer [Legends]",
+      "canonicalName": "renegade-enforcer-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rogue Psyker [Legends]",
+      "canonicalName": "rogue-psyker-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sorcerer on Bike [Legends]",
+      "canonicalName": "sorcerer-on-bike-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord on Bike [Legends]",
+      "canonicalName": "chaos-lord-on-bike-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Deimos Predator [Legends]",
+      "canonicalName": "chaos-deimos-predator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Lord with Jump Pack",
+      "canonicalName": "chaos-lord-with-jump-pack",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cultist Firebrand",
+      "canonicalName": "cultist-firebrand",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

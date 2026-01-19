@@ -1,0 +1,174 @@
+import React from 'react';
+import { useBattleStore } from '../store/battle-store';
+import { PlayerCard } from './PlayerCard';
+import { LoadingState } from './LoadingState';
+import { FactionSelector } from './FactionSelector';
+
+interface HudContainerProps {
+  onRefresh?: () => void;
+  onStartExtraction?: () => void;
+  onContinueWithFactions?: (factions: [string, string]) => void;
+  onSeekToTimestamp?: (seconds: number) => void;
+}
+
+export function HudContainer({
+  onRefresh,
+  onStartExtraction,
+  onContinueWithFactions,
+  onSeekToTimestamp,
+}: HudContainerProps): React.ReactElement {
+  const {
+    report,
+    loading,
+    error,
+    isExpanded,
+    toggleExpanded,
+    reset,
+    phase,
+    statusMessage,
+  } = useBattleStore();
+
+  const handleRefresh = (): void => {
+    if (onRefresh) {
+      onRefresh();
+    } else {
+      reset();
+    }
+  };
+
+  const handleStartExtraction = (): void => {
+    if (onStartExtraction) {
+      onStartExtraction();
+    }
+  };
+
+  const handleSeek = (seconds: number): void => {
+    if (onSeekToTimestamp) {
+      onSeekToTimestamp(seconds);
+    }
+  };
+
+  const formatTimestamp = (seconds: number): string => {
+    return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="hud-container">
+      <div className="hud-header" onClick={toggleExpanded}>
+        <div className="hud-title">
+          <span>⚔️</span>
+          <span>Battle Report HUD</span>
+          {report && (
+            <span style={{ fontSize: '12px', color: '#888' }}>
+              {report.players.length} players, {report.units.length} units
+            </span>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {!loading && (
+            <button
+              className="header-refresh-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRefresh();
+              }}
+              title="Re-extract battle report (clears cache)"
+            >
+              ↻
+            </button>
+          )}
+          <span className={`hud-toggle ${isExpanded ? '' : 'collapsed'}`}>▼</span>
+        </div>
+      </div>
+
+      <div className={`hud-content ${isExpanded ? '' : 'collapsed'}`}>
+        {/* Idle state - show Extract button */}
+        {phase === 'idle' && !error && (
+          <div className="idle-state">
+            <div style={{ marginBottom: '12px', color: '#888' }}>
+              Ready to analyze this video
+            </div>
+            <button className="extract-button" onClick={handleStartExtraction}>
+              Extract Battle Report
+            </button>
+          </div>
+        )}
+
+        {/* Loading states */}
+        {(phase === 'extracting' || phase === 'ai-extracting') && (
+          <LoadingState message={statusMessage} />
+        )}
+
+        {/* Faction selection */}
+        {phase === 'faction-select' && (
+          <FactionSelector onContinue={onContinueWithFactions} />
+        )}
+
+        {/* Error state */}
+        {(phase === 'error' || error) && (
+          <div className="error-state">
+            <div style={{ fontWeight: 600, marginBottom: '8px' }}>
+              Error extracting battle report
+            </div>
+            <div>{error}</div>
+            <button className="refresh-button" onClick={handleRefresh}>
+              ↻ Try Again
+            </button>
+          </div>
+        )}
+
+        {report && (
+          <>
+            {report.mission && (
+              <div style={{ marginBottom: '12px', color: '#888' }}>
+                Mission: <span style={{ color: '#fff' }}>{report.mission}</span>
+                {report.pointsLimit && (
+                  <span> ({report.pointsLimit} points)</span>
+                )}
+              </div>
+            )}
+
+            {report.players.map((player, index) => (
+              <PlayerCard
+                key={`player-${index}`}
+                player={player}
+                playerIndex={index}
+                stratagems={report.stratagems}
+                onSeekToTimestamp={onSeekToTimestamp}
+              />
+            ))}
+
+            {/* Stratagems without player assignment */}
+            {report.stratagems.filter((s) => s.playerIndex === undefined)
+              .length > 0 && (
+              <div className="player-card">
+                <div className="section-title">Other Stratagems Mentioned</div>
+                <div className="unit-list">
+                  {report.stratagems
+                    .filter((s) => s.playerIndex === undefined)
+                    .map((stratagem, index) => (
+                      <div
+                        key={`strat-${index}`}
+                        className="unit-item"
+                      >
+                        <span style={{ color: '#a855f7' }}>{stratagem.name}</span>
+                        {stratagem.videoTimestamp !== undefined && onSeekToTimestamp && (
+                          <button
+                            className="timestamp-button"
+                            onClick={() => handleSeek(stratagem.videoTimestamp!)}
+                            title="Jump to this moment in the video"
+                          >
+                            {formatTimestamp(stratagem.videoTimestamp)}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

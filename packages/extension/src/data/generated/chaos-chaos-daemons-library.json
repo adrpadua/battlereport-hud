@@ -1,0 +1,1114 @@
+{
+  "id": "chaos-chaos-daemons-library",
+  "name": "Daemons Library",
+  "units": [
+    {
+      "name": "Bloodletters",
+      "canonicalName": "bloodletters",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Bane of Cowards"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Khorne",
+        "Bloodletters",
+        "Khorne Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Bloodcrushers",
+      "canonicalName": "bloodcrushers",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 7,
+        "save": "3+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Brass Stampede"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Khorne",
+        "Bloodcrushers",
+        "Khorne non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Flesh Hounds",
+      "canonicalName": "flesh-hounds",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Burning roar",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Hunters from the Warp"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Khorne",
+        "Flesh Hounds",
+        "Khorne non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Blue Horrors",
+      "canonicalName": "blue-horrors",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Coruscating Yellow flames (ref. only)",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 2,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Coruscating Blue flames",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Split",
+        "Sullen Malevolence (Aura)",
+        "Exploding Horrors"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Tzeentch Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Pink Horrors",
+      "canonicalName": "pink-horrors",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Coruscating Yellow flames (ref. only)",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 2,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Coruscating Blue flames (ref. only)",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Coruscating Pink flames",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Split",
+        "Horrors are Pink. Horrors are Blue. Where once there was one, now there are two."
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Tzeentch Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 140
+    },
+    {
+      "name": "Flamers",
+      "canonicalName": "flamers",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 4,
+        "save": "7+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Flickering Flames",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Psychic",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Bounding Leaps"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Flamers",
+        "Tzeentch non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Screamers",
+      "canonicalName": "screamers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Slashing Dive"
+      ],
+      "keywords": [
+        "Beast",
+        "Fly",
+        "Chaos",
+        "Daemon",
+        "Tzeentch",
+        "Screamers",
+        "Tzeentch non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Plaguebearers",
+      "canonicalName": "plaguebearers",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "7+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Infected Outbreak"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Plaguebearers",
+        "Nurgle Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Nurglings",
+      "canonicalName": "nurglings",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 4,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Mischief Makers (Aura)"
+      ],
+      "keywords": [
+        "Swarm",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Nurglings",
+        "Nurgle Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Beasts of Nurgle",
+      "canonicalName": "beasts-of-nurgle",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 9,
+        "save": "6+",
+        "wounds": 7,
+        "leadership": "7+",
+        "objectiveControl": 3
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Grotesque Regeneration"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Beasts of Nurgle",
+        "Nurgle non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 0
+    },
+    {
+      "name": "Plague Drones",
+      "canonicalName": "plague-drones",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 8,
+        "save": "6+",
+        "wounds": 5,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Death's heads",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Death’s Heads"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Plague Drones",
+        "Nurgle non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Daemonettes",
+      "canonicalName": "daemonettes",
+      "stats": {
+        "movement": "9\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Horrifying Beauty",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Daemonettes",
+        "Slaanesh Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Fiends",
+      "canonicalName": "fiends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Soporific Musk"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Fiends",
+        "Slaanesh non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Seekers",
+      "canonicalName": "seekers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Unholy Speed",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Seekers",
+        "Slaanesh non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Hellflayers",
+      "canonicalName": "hellflayers",
+      "stats": {
+        "movement": "14\"",
+        "toughness": 6,
+        "save": "5+",
+        "wounds": 7,
+        "leadership": "7+",
+        "objectiveControl": 3
+      },
+      "weapons": [
+        {
+          "name": "Lashes of torment",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Anti-INFANTRY 3+",
+            "Assault",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Cutting Down the Foe"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Hellflayer",
+        "Slaanesh non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 0
+    },
+    {
+      "name": "Seeker Chariot [Legends]",
+      "canonicalName": "seeker-chariot-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Lashes of torment",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-INFANTRY 3+",
+            "Assault",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Scythed Impact",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Slaanesh",
+        "Seeker Chariot",
+        "Slaanesh non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 0
+    },
+    {
+      "name": "Pox Riders [Legends]",
+      "canonicalName": "pox-riders-legends",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 8,
+        "save": "6+",
+        "wounds": 5,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Grasping tongue",
+          "type": "ranged",
+          "range": "9\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Grandfather's Blessing",
+        "Bounding Assault"
+      ],
+      "keywords": [
+        "Mounted",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Pox Riders",
+        "Nurgle non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Plague Toads [Legends]",
+      "canonicalName": "plague-toads-legends",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 8,
+        "save": "6+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Grasping tongue",
+          "type": "ranged",
+          "range": "9\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Grandfather's Blessing",
+        "Pouncing Leap"
+      ],
+      "keywords": [
+        "Beast",
+        "Chaos",
+        "Daemon",
+        "Nurgle",
+        "Plague Toads",
+        "Nurgle non-Battleline",
+        "Shadow Legion"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Furies [Legends]",
+      "canonicalName": "furies-legends",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Prey on the Weak",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Chaos",
+        "Daemon",
+        "Fly",
+        "Furies",
+        "Shadow Legion"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "An'ggrath the Unbound [Legends]",
+      "canonicalName": "an-ggrath-the-unbound-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Be'lakor",
+      "canonicalName": "be-lakor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Bloodmaster",
+      "canonicalName": "bloodmaster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Bloodthirster",
+      "canonicalName": "bloodthirster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Burning Chariot",
+      "canonicalName": "burning-chariot",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Aetaos'rau'keres [Legends]",
+      "canonicalName": "aetaos-rau-keres-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Changecaster",
+      "canonicalName": "changecaster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Contorted Epitome",
+      "canonicalName": "contorted-epitome",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Chaos",
+      "canonicalName": "daemon-prince-of-chaos",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Daemon Prince of Chaos with wings",
+      "canonicalName": "daemon-prince-of-chaos-with-wings",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Epidemius",
+      "canonicalName": "epidemius",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exalted Flamer",
+      "canonicalName": "exalted-flamer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exalted Seeker Chariot [Legends]",
+      "canonicalName": "exalted-seeker-chariot-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fateskimmer",
+      "canonicalName": "fateskimmer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Feculent Gnarlmaw",
+      "canonicalName": "feculent-gnarlmaw",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fluxmaster",
+      "canonicalName": "fluxmaster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Giant Chaos Spawn [Legends]",
+      "canonicalName": "giant-chaos-spawn-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Great Unclean One",
+      "canonicalName": "great-unclean-one",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Herald of Slaanesh on Steed of Slaanesh [Legends]",
+      "canonicalName": "herald-of-slaanesh-on-steed-of-slaanesh-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Horticulous Slimux",
+      "canonicalName": "horticulous-slimux",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Infernal Enrapturess",
+      "canonicalName": "infernal-enrapturess",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kairos Fateweaver",
+      "canonicalName": "kairos-fateweaver",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Karanak",
+      "canonicalName": "karanak",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Keeper of Secrets",
+      "canonicalName": "keeper-of-secrets",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Khorne Soul Grinder",
+      "canonicalName": "khorne-soul-grinder",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord of Change",
+      "canonicalName": "lord-of-change",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nurgle Soul Grinder",
+      "canonicalName": "nurgle-soul-grinder",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Poxbringer",
+      "canonicalName": "poxbringer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rendmaster on Blood Throne",
+      "canonicalName": "rendmaster-on-blood-throne",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rotigus",
+      "canonicalName": "rotigus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Scabeiathrax the Bloated [Legends]",
+      "canonicalName": "scabeiathrax-the-bloated-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shalaxi Helbane",
+      "canonicalName": "shalaxi-helbane",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skarbrand",
+      "canonicalName": "skarbrand",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skull Altar",
+      "canonicalName": "skull-altar",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skull Cannon",
+      "canonicalName": "skull-cannon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skullmaster",
+      "canonicalName": "skullmaster",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skulltaker",
+      "canonicalName": "skulltaker",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Slaanesh Soul Grinder",
+      "canonicalName": "slaanesh-soul-grinder",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sloppity Bilepiper",
+      "canonicalName": "sloppity-bilepiper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spined Chaos Beast [Legends]",
+      "canonicalName": "spined-chaos-beast-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Spoilpox Scrivener",
+      "canonicalName": "spoilpox-scrivener",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Syll'esske",
+      "canonicalName": "syll-esske",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Blue Scribes",
+      "canonicalName": "the-blue-scribes",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Changeling",
+      "canonicalName": "the-changeling",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Masque of Slaanesh",
+      "canonicalName": "the-masque-of-slaanesh",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tormentbringer",
+      "canonicalName": "tormentbringer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tranceweaver",
+      "canonicalName": "tranceweaver",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tzeentch Soul Grinder",
+      "canonicalName": "tzeentch-soul-grinder",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Zarakynel [Legends]",
+      "canonicalName": "zarakynel-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

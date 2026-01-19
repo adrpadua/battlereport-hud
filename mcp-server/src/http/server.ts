@@ -7,6 +7,7 @@ import { registerStratagemRoutes } from './routes/stratagems.js';
 import { registerEnhancementRoutes } from './routes/enhancements.js';
 import { registerValidationRoutes } from './routes/validation.js';
 import { registerObjectivesRoutes } from './routes/objectives.js';
+import { registerWebExtractionRoutes } from './routes/web-extraction.js';
 
 const HTTP_PORT = 40401;
 
@@ -32,6 +33,7 @@ export async function createHttpServer(db: Database) {
   registerEnhancementRoutes(fastify, db);
   registerValidationRoutes(fastify, db);
   registerObjectivesRoutes(fastify, db);
+  registerWebExtractionRoutes(fastify, db);
 
   return fastify;
 }

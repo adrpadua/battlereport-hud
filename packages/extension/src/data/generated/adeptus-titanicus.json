@@ -1,0 +1,42 @@
+{
+  "id": "adeptus-titanicus",
+  "name": "Adeptus Titanicus",
+  "units": [
+    {
+      "name": "Reaver Titan",
+      "canonicalName": "reaver-titan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warbringer Nemesis Titan",
+      "canonicalName": "warbringer-nemesis-titan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warhound Titan",
+      "canonicalName": "warhound-titan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Warlord Titan",
+      "canonicalName": "warlord-titan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

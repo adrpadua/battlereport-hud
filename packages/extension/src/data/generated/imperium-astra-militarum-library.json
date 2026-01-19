@@ -1,0 +1,1163 @@
+{
+  "id": "imperium-astra-militarum-library",
+  "name": "Astra Militarum",
+  "units": [
+    {
+      "name": "Armoured Sentinels",
+      "canonicalName": "armoured-sentinels",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Mobile Hunter-killers"
+      ],
+      "keywords": [
+        "Armoured Sentinels",
+        "Imperium",
+        "Smoke",
+        "Vehicle",
+        "Walker",
+        "Regiment",
+        "Squadron"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Attilan Rough Riders",
+      "canonicalName": "attilan-rough-riders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Horsemasters"
+      ],
+      "keywords": [
+        "Mounted",
+        "Imperium",
+        "Grenades",
+        "Regiment"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Bullgryn Squad",
+      "canonicalName": "bullgryn-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Wall of Muscle"
+      ],
+      "keywords": [
+        "Bullgryn Squad",
+        "Ogryn",
+        "Imperium",
+        "Infantry",
+        "Grenades"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Cadian Command Squad",
+      "canonicalName": "cadian-command-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Cadia Stands!"
+      ],
+      "keywords": [
+        "Imperium",
+        "Command Squad",
+        "Cadian",
+        "Grenades",
+        "Infantry",
+        "Character",
+        "Platoon"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Cadian Shock Troops",
+      "canonicalName": "cadian-shock-troops",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Shock Troops"
+      ],
+      "keywords": [
+        "Cadian Shock Troops",
+        "Imperium",
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Regiment",
+        "Platoon",
+        "Cadian"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Catachan Jungle Fighters",
+      "canonicalName": "catachan-jungle-fighters",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Jungle Fighters"
+      ],
+      "keywords": [
+        "Catachan Jungle Fighters",
+        "Imperium",
+        "Platoon",
+        "Infantry",
+        "Battleline",
+        "Regiment",
+        "Grenades"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Death Korps of Krieg",
+      "canonicalName": "death-korps-of-krieg",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Grim Demeanour"
+      ],
+      "keywords": [
+        "Death Korps of Krieg",
+        "Imperium",
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Regiment",
+        "Platoon"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Field Ordnance Battery",
+      "canonicalName": "field-ordnance-battery",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Malleus rocket launcher",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6+6",
+          "skill": "5+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Bombast field gun",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D6",
+          "skill": "5+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Heavy",
+            "Indirect Fire"
+          ]
+        },
+        {
+          "name": "Heavy lascannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 14,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Imperium",
+        "Infantry",
+        "Artillery",
+        "Grenades",
+        "Regiment",
+        "Field Ordnance Battery"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Gaunt’s Ghosts",
+      "canonicalName": "gaunt-s-ghosts",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Corbec's hot-shot lascarbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Larkin's long-las",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "4",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Lascarbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Rawne's lascarbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Bragg's autocannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "4",
+          "skill": "5+",
+          "strength": 9,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Covert Stealth Team",
+        "Tanith Camo-cloaks"
+      ],
+      "keywords": [
+        "Gaunt’s Ghosts",
+        "Imperium",
+        "Epic Hero",
+        "Infantry",
+        "Grenades"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Cadian Heavy Weapons Squad",
+      "canonicalName": "cadian-heavy-weapons-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Covering Fire"
+      ],
+      "keywords": [
+        "Cadian Heavy Weapons Squad",
+        "Imperium",
+        "Infantry",
+        "Grenades",
+        "Regiment"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Kasrkin",
+      "canonicalName": "kasrkin",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Hot-shot marksman rifle",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Hot-shot lasgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Warrior Elite"
+      ],
+      "keywords": [
+        "Kasrkin",
+        "Imperium",
+        "Regiment",
+        "Grenades",
+        "Infantry"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Militarum Tempestus Command Squad",
+      "canonicalName": "militarum-tempestus-command-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [
+        "Militarum Tempestus",
+        "Imperium",
+        "Infantry",
+        "Character",
+        "Grenades",
+        "Command Squad"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Munitorum Servitors [Legends]",
+      "canonicalName": "munitorum-servitors-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "6+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Multi-melta",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "6+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Heavy",
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "➤ Plasma cannon - standard",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D3",
+          "skill": "6+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "➤ Plasma cannon - supercharge",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D3",
+          "skill": "6+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Hazardous",
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Mindlock",
+        "Servitor Retinue",
+        "Invulnerable Save 6+"
+      ],
+      "keywords": [
+        "Munitorum Servitors",
+        "Imperium",
+        "Infantry"
+      ],
+      "pointsCost": 35
+    },
+    {
+      "name": "Ogryn Squad",
+      "canonicalName": "ogryn-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Point-blank Barrage"
+      ],
+      "keywords": [
+        "Ogryn Squad",
+        "Imperium",
+        "Infantry",
+        "Grenades",
+        "Ogryn"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Regimental Attachés [Legends]",
+      "canonicalName": "regimental-attach-s-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Aeronautica Commander",
+        "Divination (Psychic)",
+        "Attachés"
+      ],
+      "keywords": [
+        "Regimental Attachés",
+        "Imperium",
+        "Infantry"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Scout Sentinels",
+      "canonicalName": "scout-sentinels",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Daring Recon"
+      ],
+      "keywords": [
+        "Scout Sentinels",
+        "Imperium",
+        "Vehicle",
+        "Walker",
+        "Regiment",
+        "Squadron",
+        "Smoke"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Tempestus Scions",
+      "canonicalName": "tempestus-scions",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Storm Troopers"
+      ],
+      "keywords": [
+        "Tempestus Scions",
+        "Infantry",
+        "Grenades",
+        "Regiment",
+        "Militarum Tempestus",
+        "Imperium"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Death Riders",
+      "canonicalName": "death-riders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Screening Line"
+      ],
+      "keywords": [
+        "Mounted",
+        "Imperium",
+        "Grenades",
+        "Regiment",
+        "Death Riders"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Tarantula Battery [Legends]",
+      "canonicalName": "tarantula-battery-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Twin heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Sustained Hits 1",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "Twin lascannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Sentry Programming"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Imperium",
+        "Tarantula Battery"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Rapier Laser Destroyer Battery [Legends]",
+      "canonicalName": "rapier-laser-destroyer-battery-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Laser destroyer",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 12,
+          "ap": -2,
+          "damage": "D6+1",
+          "keywords": [
+            "Heavy",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Powerful Volley"
+      ],
+      "keywords": [
+        "Infantry",
+        "Artillery",
+        "Grenades",
+        "Regiment",
+        "Imperium",
+        "Rapier Laser Destroyer Battery"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Korps Grenadier Squad [Legends]",
+      "canonicalName": "death-korps-grenadier-squad-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Sergeant's pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Grenadiers",
+        "Grenadier Squad"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Grenades",
+        "Regiment",
+        "Platoon",
+        "Death Korps Grenadier Squad",
+        "Krieg"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Rein and Raus [Legends]",
+      "canonicalName": "rein-and-raus-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Demolition Charge",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "D6+3",
+          "skill": "4+",
+          "strength": 12,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Hazardous",
+            "One Shot"
+          ]
+        }
+      ],
+      "abilities": [
+        "Shoot Sharp and Scarper",
+        "The Ratling Twins"
+      ],
+      "keywords": [
+        "Epic Hero",
+        "Infantry",
+        "Imperium",
+        "Character",
+        "Rein and Raus"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Quartermaster Cadre Squad [Legends]",
+      "canonicalName": "quartermaster-cadre-squad-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Quartermaster's pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 3,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Medicae Medi-packs",
+        "Mindlock"
+      ],
+      "keywords": [
+        "Character",
+        "Infantry",
+        "Imperium",
+        "Grenades",
+        "Regiment",
+        "Quartermaster Cadre Squad",
+        "Krieg"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Sabre Weapons Battery [Legends]",
+      "canonicalName": "sabre-weapons-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Sentinel Directives",
+        "Fortification"
+      ],
+      "keywords": [
+        "Fortification",
+        "Imperium",
+        "Artillery",
+        "Sabre Weapons Battery"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Elysian Sniper Squad [Legends]",
+      "canonicalName": "elysian-sniper-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Mark the Target",
+        "Sniper Teams"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Grenades",
+        "Regiment",
+        "Elysian Sniper Squad"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Mukaali Riders [Legends]",
+      "canonicalName": "mukaali-riders-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "➤ Plasma pistol - standard",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol - supercharged",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Desert Riders"
+      ],
+      "keywords": [
+        "Mounted",
+        "Mukaali Riders",
+        "Imperium",
+        "Grenades",
+        "Regiment"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Tempestus Aquilons",
+      "canonicalName": "tempestus-aquilons",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Hot-shot long las",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "➤ Plasma carbine - standard",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "➤ Plasma carbine - supercharge",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Hazardous"
+          ]
+        },
+        {
+          "name": "Melta carbine",
+          "type": "ranged",
+          "range": "10\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Assault",
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "Sentry flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6+3",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Sentry hot-shot volley gun",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 4"
+          ]
+        },
+        {
+          "name": "➤ Sentry grenade launcher - frag",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3+3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Sentry grenade launcher - krak",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Precision Drop",
+        "Servo-sentry"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Smoke",
+        "Imperium",
+        "Regiment",
+        "Militarum Tempestus",
+        "Tempestus Aquilons"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Ratlings",
+      "canonicalName": "ratlings",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Tankstopper rifle",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -3,
+          "damage": "D6",
+          "keywords": [
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Shoot Sharp and Scarper"
+      ],
+      "keywords": [
+        "Imperium",
+        "Infantry",
+        "Ratlings"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Krieg Command Squad",
+      "canonicalName": "krieg-command-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "➤ Plasma pistol - standard",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma pistol - supercharge",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Grim Determination"
+      ],
+      "keywords": [
+        "Imperium",
+        "Command Squad",
+        "Grenades",
+        "Infantry",
+        "Character",
+        "Platoon",
+        "Krieg"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Catachan Command Squad",
+      "canonicalName": "catachan-command-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [
+        "Imperium",
+        "Command Squad",
+        "Grenades",
+        "Infantry",
+        "Character",
+        "Platoon",
+        "Catachan"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Krieg Combat Engineers",
+      "canonicalName": "krieg-combat-engineers",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Hand flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Grenadiers"
+      ],
+      "keywords": [
+        "Imperium",
+        "Regiment",
+        "Grenades",
+        "Infantry",
+        "Smoke",
+        "Krieg Combat Engineers"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Catachan Heavy Weapons Squad",
+      "canonicalName": "catachan-heavy-weapons-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Bring it Down!"
+      ],
+      "keywords": [
+        "Imperium",
+        "Infantry",
+        "Grenades",
+        "Regiment",
+        "Catachan Heavy Weapons Squad"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Krieg Heavy Weapons Squad",
+      "canonicalName": "krieg-heavy-weapons-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Krieg heavy flamer",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Twin Krieg heavy stubber",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "3",
+          "skill": "5+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Rapid Fire 3",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Final Duty",
+        "Embarking"
+      ],
+      "keywords": [
+        "Imperium",
+        "Infantry",
+        "Grenades",
+        "Regiment",
+        "Krieg Heavy Weapons Squad"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Hell's Last [Legends]",
+      "canonicalName": "hell-s-last-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Demolitions",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "D6",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "One Shot"
+          ]
+        }
+      ],
+      "abilities": [
+        "Lesk’s Heroes",
+        "Heroic Example",
+        "Invulnerable Save 5+"
+      ],
+      "keywords": [
+        "Imperium",
+        "Infantry",
+        "Grenades",
+        "Platoon",
+        "Command Squad",
+        "Hell's Last",
+        "Character"
+      ],
+      "pointsCost": 80
+    }
+  ]
+}

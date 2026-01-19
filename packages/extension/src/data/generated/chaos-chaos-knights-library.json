@@ -1,0 +1,186 @@
+{
+  "id": "chaos-chaos-knights-library",
+  "name": "Chaos Knights Library",
+  "units": [
+    {
+      "name": "Chaos Acastus Knight Asterius",
+      "canonicalName": "chaos-acastus-knight-asterius",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Acastus Knight Porphyrion",
+      "canonicalName": "chaos-acastus-knight-porphyrion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Cerastus Knight Acheron",
+      "canonicalName": "chaos-cerastus-knight-acheron",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Cerastus Knight Atrapos",
+      "canonicalName": "chaos-cerastus-knight-atrapos",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Cerastus Knight Castigator",
+      "canonicalName": "chaos-cerastus-knight-castigator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Cerastus Knight Lancer",
+      "canonicalName": "chaos-cerastus-knight-lancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Questoris Knight Magaera",
+      "canonicalName": "chaos-questoris-knight-magaera",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaos Questoris Knight Styrix",
+      "canonicalName": "chaos-questoris-knight-styrix",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Abominant",
+      "canonicalName": "knight-abominant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Desecrator",
+      "canonicalName": "knight-desecrator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Despoiler",
+      "canonicalName": "knight-despoiler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Rampager",
+      "canonicalName": "knight-rampager",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Tyrant",
+      "canonicalName": "knight-tyrant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Dog Brigand",
+      "canonicalName": "war-dog-brigand",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Dog Executioner",
+      "canonicalName": "war-dog-executioner",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Dog Huntsman",
+      "canonicalName": "war-dog-huntsman",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Dog Karnivore",
+      "canonicalName": "war-dog-karnivore",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Dog Moirax",
+      "canonicalName": "war-dog-moirax",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "War Dog Stalker",
+      "canonicalName": "war-dog-stalker",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Ruinator",
+      "canonicalName": "knight-ruinator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

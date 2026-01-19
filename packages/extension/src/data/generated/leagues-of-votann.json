@@ -1,0 +1,639 @@
+{
+  "id": "leagues-of-votann",
+  "name": "Leagues of Votann",
+  "units": [
+    {
+      "name": "Hearthkyn Warriors",
+      "canonicalName": "hearthkyn-warriors",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Autoch-pattern bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Autoch-pattern bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Ion blaster",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Theyn's pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Luck Has, Need Keeps, Toil Earns",
+        "Pan-spectral Scanning"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Hearthkyn Warriors"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Grimnyr",
+      "canonicalName": "grimnyr",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "➤ Ancestral Wrath - witchfire",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "Psychic"
+          ]
+        },
+        {
+          "name": "➤ Ancestral Wrath - focused witchfire",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "Hazardous",
+            "Psychic"
+          ]
+        },
+        {
+          "name": "Autoch-pattern bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Leader",
+        "Invulnerable Save",
+        "Fortify (Psychic)",
+        "Grimnyr's Regard",
+        "Unit Composition"
+      ],
+      "keywords": [
+        "Infantry",
+        "Character"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Brôkhyr Iron-master",
+      "canonicalName": "br-khyr-iron-master",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Graviton rifle",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "Anti-MONSTER 3+",
+            "Anti-VEHICLE 3+"
+          ]
+        },
+        {
+          "name": "Autoch-pattern bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Las-beam cutter",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -3,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Multi-spectral visor",
+        "Brôkhyr Guild Support",
+        "Leader",
+        "Unit Composition",
+        "Forgewrought Expertise"
+      ],
+      "keywords": [
+        "Infantry",
+        "Character",
+        "Brôkhyr"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Einhyr Hearthguard",
+      "canonicalName": "einhyr-hearthguard",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Exo-armour grenade launcher",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3",
+          "skill": "3+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "EtaCarn plasma gun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Volkanite disintegrator",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Decisive Destruction"
+      ],
+      "keywords": [
+        "Infantry",
+        "Exoarmour",
+        "Einhyr Hearthguard"
+      ],
+      "pointsCost": 135
+    },
+    {
+      "name": "Cthonian Beserks",
+      "canonicalName": "cthonian-beserks",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Mole grenade launcher",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "5+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Indirect Fire"
+          ]
+        }
+      ],
+      "abilities": [
+        "Cyberstimms"
+      ],
+      "keywords": [
+        "Infantry",
+        "Cthonian",
+        "Beserks"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Hernkyn Pioneers",
+      "canonicalName": "hernkyn-pioneers",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 6,
+        "save": "4+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Outflanking Mag-Riders"
+      ],
+      "keywords": [
+        "Mounted",
+        "Grenades",
+        "Fly",
+        "Hernkyn Pioneers"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Brôkhyr Thunderkyn",
+      "canonicalName": "br-khyr-thunderkyn",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Bolt cannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Sustained Hits 2"
+          ]
+        },
+        {
+          "name": "Graviton blast cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Anti-MONSTER 3+",
+            "Anti-VEHICLE 3+"
+          ]
+        },
+        {
+          "name": "SP conversion beamer",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Conversion",
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Breaching Fire"
+      ],
+      "keywords": [
+        "Infantry",
+        "Exoframe",
+        "Thunderkyn",
+        "Brôkhyr"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Hernkyn Yaegirs",
+      "canonicalName": "hernkyn-yaegirs",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 5,
+        "save": "5+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Bolt shotgun",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "APM launcher",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "D6",
+          "keywords": [
+            "Anti-MONSTER 3+",
+            "Anti-VEHICLE 3+"
+          ]
+        },
+        {
+          "name": "Magna-coil rifle",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "Precision"
+          ]
+        }
+      ],
+      "abilities": [
+        "Pragmatic Hunters"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Hernkyn Yaegirs"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Kapricus Defenders",
+      "canonicalName": "kapricus-defenders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Opportunistic Manoeuvre"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Fly",
+        "Hernkyn",
+        "Kapricus",
+        "Defenders"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Ironkin Steeljacks with Heavy Volkanite Disintegrators",
+      "canonicalName": "ironkin-steeljacks-with-heavy-volkanite-disintegrators",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 6,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Purge Response"
+      ],
+      "keywords": [
+        "Infantry",
+        "Ironkin Steeljacks",
+        "Ironkin Steeljacks with Heavy Volkanite Disintegrators"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Ironkin Steeljacks with Melee Weapons",
+      "canonicalName": "ironkin-steeljacks-with-melee-weapons",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 6,
+        "save": "2+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Merciless Eradication"
+      ],
+      "keywords": [
+        "Infantry",
+        "Ironkin Steeljacks",
+        "Ironkin Steeljacks with Melee Weapons"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Cthonian Earthshakers",
+      "canonicalName": "cthonian-earthshakers",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Autoch-pattern bolt pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Breacher ordnance",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D6+1",
+          "skill": "5+",
+          "strength": 10,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Heavy",
+            "Indirect Fire"
+          ]
+        },
+        {
+          "name": "Tremor shells",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D6+4",
+          "skill": "5+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy",
+            "Indirect Fire"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Infantry",
+        "Artillery",
+        "Cthonian",
+        "Earthshakers"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Ûthar the Destined",
+      "canonicalName": "thar-the-destined",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kâhl",
+      "canonicalName": "k-hl",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Einhyr Champion",
+      "canonicalName": "einhyr-champion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sagitaur",
+      "canonicalName": "sagitaur",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hekaton Land Fortress",
+      "canonicalName": "hekaton-land-fortress",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Buri Aegnirssen",
+      "canonicalName": "buri-aegnirssen",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Memnyr Strategist",
+      "canonicalName": "memnyr-strategist",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Arcanyst Evaluator",
+      "canonicalName": "arcanyst-evaluator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kapricus Carrier",
+      "canonicalName": "kapricus-carrier",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

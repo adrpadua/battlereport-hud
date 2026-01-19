@@ -178,7 +178,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
   }
 }
 
-async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null, refreshIndex: boolean = false): Promise<void> {
+async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null, refreshIndex: boolean = false, onlyPending: boolean = false, onlyFailed: boolean = false, skipUnchanged: boolean = false): Promise<void> {
   console.log('\n=== Scraping Units ===');
 
   let factions;
@@ -207,7 +207,17 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
 
       if (existingUnits.length > 0 && !refreshIndex) {
         console.log(`  Using indexed unit list (${existingUnits.length} units)`);
-        unitLinks = existingUnits.map(u => ({ name: u.name, slug: u.slug }));
+        if (onlyPending) {
+          const pendingUnits = existingUnits.filter(u => u.scrapeStatus === 'pending');
+          console.log(`  Filtering to ${pendingUnits.length} pending units (--only-pending)`);
+          unitLinks = pendingUnits.map(u => ({ name: u.name, slug: u.slug }));
+        } else if (onlyFailed) {
+          const failedUnits = existingUnits.filter(u => u.scrapeStatus === 'failed');
+          console.log(`  Filtering to ${failedUnits.length} failed units (--only-failed)`);
+          unitLinks = failedUnits.map(u => ({ name: u.name, slug: u.slug }));
+        } else {
+          unitLinks = existingUnits.map(u => ({ name: u.name, slug: u.slug }));
+        }
       } else {
         console.log(`  Fetching datasheets index${refreshIndex ? ' (refresh requested)' : ''}...`);
         const indexResult = await client.scrape(indexUrl);
@@ -240,12 +250,23 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
 
       let successCount = 0;
       let failedCount = 0;
+      let skippedCount = 0;
 
       for (const { name, slug } of unitLinks) {
         try {
           const unitUrl = WAHAPEDIA_URLS.unitDatasheet(faction.slug, slug);
           console.log(`    Scraping: ${name}`);
           const unitResult = await client.scrape(unitUrl);
+
+          // Skip processing if content unchanged and already successfully scraped
+          if (skipUnchanged && unitResult.fromCache) {
+            const existingUnit = existingUnits.find(u => u.slug === slug);
+            if (existingUnit?.scrapeStatus === 'success') {
+              console.log(`      Skipping (unchanged, already scraped)`);
+              skippedCount++;
+              continue;
+            }
+          }
 
           const units = parseDatasheets(unitResult.markdown, unitResult.url);
           if (units.length === 0) {
@@ -340,7 +361,7 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
         }
       }
 
-      console.log(`  Successfully scraped ${successCount}/${unitLinks.length} units (${failedCount} failed)`);
+      console.log(`  Successfully scraped ${successCount}/${unitLinks.length} units (${failedCount} failed${skippedCount > 0 ? `, ${skippedCount} skipped` : ''})`);
     } catch (error) {
       console.error(`  Failed to scrape units for ${faction.slug}:`, error);
 
@@ -498,8 +519,8 @@ async function scrapeMissions(client: FirecrawlClient, db: ReturnType<typeof get
   }
 }
 
-async function runScrape(options: { target?: ScrapeTarget; faction?: string; refreshIndex?: boolean; missionPack?: string }): Promise<void> {
-  const { target = 'all', faction: singleFaction, refreshIndex = false, missionPack } = options;
+async function runScrape(options: { target?: ScrapeTarget; faction?: string; refreshIndex?: boolean; missionPack?: string; onlyPending?: boolean; onlyFailed?: boolean; skipUnchanged?: boolean }): Promise<void> {
+  const { target = 'all', faction: singleFaction, refreshIndex = false, missionPack, onlyPending = false, onlyFailed = false, skipUnchanged = false } = options;
 
   if (singleFaction) {
     console.log(`Starting Wahapedia scraper for faction: ${singleFaction}`);
@@ -520,7 +541,7 @@ async function runScrape(options: { target?: ScrapeTarget; faction?: string; ref
     }
 
     if (target === 'units' || target === 'all') {
-      await scrapeUnits(client, db, singleFaction, refreshIndex);
+      await scrapeUnits(client, db, singleFaction, refreshIndex, onlyPending, onlyFailed, skipUnchanged);
     }
 
     if ((target === 'missions' || target === 'all') && !singleFaction) {
@@ -543,6 +564,9 @@ export const scrapeCommand = new Command('scrape')
   .option('-f, --faction <slug>', 'Scrape only a specific faction')
   .option('-m, --mission-pack <pack>', 'Scrape specific mission pack: chapter-approved, pariah-nexus, leviathan')
   .option('--refresh-index', 'Refresh unit index before scraping')
+  .option('--only-pending', 'Only scrape units with pending status (minimizes API usage)')
+  .option('--only-failed', 'Only retry units that previously failed to scrape')
+  .option('--skip-unchanged', 'Skip processing if cached content matches last successful scrape')
   .action(async (options) => {
     await runScrape(options);
   });
@@ -567,8 +591,11 @@ scrapeCommand
   .description('Scrape units only')
   .option('-f, --faction <slug>', 'Scrape only a specific faction')
   .option('--refresh-index', 'Refresh unit index before scraping')
+  .option('--only-pending', 'Only scrape units with pending status (minimizes API usage)')
+  .option('--only-failed', 'Only retry units that previously failed to scrape')
+  .option('--skip-unchanged', 'Skip processing if cached content matches last successful scrape')
   .action(async (options) => {
-    await runScrape({ target: 'units', faction: options.faction, refreshIndex: options.refreshIndex });
+    await runScrape({ target: 'units', faction: options.faction, refreshIndex: options.refreshIndex, onlyPending: options.onlyPending, onlyFailed: options.onlyFailed, skipUnchanged: options.skipUnchanged });
   });
 
 scrapeCommand

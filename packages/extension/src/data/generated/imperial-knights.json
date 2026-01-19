@@ -1,0 +1,51 @@
+{
+  "id": "imperial-knights",
+  "name": "Imperial Knights",
+  "units": [
+    {
+      "name": "Tech-Priest Manipulus",
+      "canonicalName": "tech-priest-manipulus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skitarii Marshal",
+      "canonicalName": "skitarii-marshal",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skitarii Rangers",
+      "canonicalName": "skitarii-rangers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skitarii Vanguard",
+      "canonicalName": "skitarii-vanguard",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tech-Priest Dominus",
+      "canonicalName": "tech-priest-dominus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

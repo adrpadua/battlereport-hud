@@ -1,0 +1,413 @@
+{
+  "id": "blood-angels",
+  "name": "Blood Angels",
+  "units": [
+    {
+      "name": "Death Company Marines with Boltguns [Legends]",
+      "canonicalName": "death-company-marines-with-boltguns-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "An Honourable Death in Combat",
+        "Attached Leader"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Death Company Marines with Boltguns",
+        "Death Company"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Death Company Marines with Jump Packs",
+      "canonicalName": "death-company-marines-with-jump-packs",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Savage Fury",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Death Company Marines with Jump Packs",
+        "Tacticus",
+        "Fly",
+        "Jump Pack",
+        "Death Company"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Sanguinary Guard",
+      "canonicalName": "sanguinary-guard",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Angelus Boltgun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Angelic Visage",
+        "Heirs of Azkaellon",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Grenades",
+        "Imperium",
+        "Sanguinary Guard",
+        "Jump Pack"
+      ],
+      "pointsCost": 125
+    },
+    {
+      "name": "Death Company Marines with Bolt Rifles",
+      "canonicalName": "death-company-marines-with-bolt-rifles",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "➤ Astartes Grenade Launcher - Frag",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "➤ Astartes Grenade Launcher - Krak",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Bolt Rifle",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Death Company Marines with Bolt Rifles",
+        "Tacticus",
+        "Death Company"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Death Company Marines",
+      "canonicalName": "death-company-marines",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Heavy Bolt Pistol",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "An Honourable Death in Combat",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Death Company Marines",
+        "Tacticus",
+        "Death Company"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Death Company Marines with Boltguns and Jump Packs [Legends]",
+      "canonicalName": "death-company-marines-with-boltguns-and-jump-packs-legends",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Beserk Fury",
+        "Attached Leader"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Death Company Marines with Boltguns and Jump Packs",
+        "Death Company"
+      ],
+      "pointsCost": 140
+    },
+    {
+      "name": "Death Company Intercessors",
+      "canonicalName": "death-company-intercessors",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Astorath",
+      "canonicalName": "astorath",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Baal Predator",
+      "canonicalName": "baal-predator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Brother Corbulo [Legends]",
+      "canonicalName": "brother-corbulo-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Captain Tycho [Legends]",
+      "canonicalName": "captain-tycho-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chief Librarian Mephiston",
+      "canonicalName": "chief-librarian-mephiston",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Commander Dante",
+      "canonicalName": "commander-dante",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Company Dreadnought with Magna-Grapple [Legends]",
+      "canonicalName": "death-company-dreadnought-with-magna-grapple-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Furioso Dreadnought [Legends]",
+      "canonicalName": "furioso-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gabriel Seth [Legends]",
+      "canonicalName": "gabriel-seth-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lemartes",
+      "canonicalName": "lemartes",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Librarian Dreadnought [Legends]",
+      "canonicalName": "librarian-dreadnought-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sanguinary Priest",
+      "canonicalName": "sanguinary-priest",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tycho the Lost [Legends]",
+      "canonicalName": "tycho-the-lost-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Sanguinor",
+      "canonicalName": "the-sanguinor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sanguinary Priest with Jump Pack [Legends]",
+      "canonicalName": "sanguinary-priest-with-jump-pack-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sanguinary Priest on Bike [Legends]",
+      "canonicalName": "sanguinary-priest-on-bike-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Blood Angels Captain",
+      "canonicalName": "blood-angels-captain",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Company Captain",
+      "canonicalName": "death-company-captain",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Company Captain with Jump Pack",
+      "canonicalName": "death-company-captain-with-jump-pack",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Company Dreadnought",
+      "canonicalName": "death-company-dreadnought",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

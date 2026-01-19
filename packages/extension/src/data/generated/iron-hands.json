@@ -1,0 +1,24 @@
+{
+  "id": "iron-hands",
+  "name": "Iron Hands",
+  "units": [
+    {
+      "name": "Iron Father Feirros",
+      "canonicalName": "iron-father-feirros",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Caanok Var",
+      "canonicalName": "caanok-var",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

@@ -1,0 +1,1379 @@
+{
+  "id": "genestealer-cults",
+  "name": "Genestealer Cults",
+  "units": [
+    {
+      "name": "Aberrants",
+      "canonicalName": "aberrants",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Feel No Pain 5+",
+        "Hulking Bodyguards"
+      ],
+      "keywords": [
+        "Aberrants",
+        "Infantry",
+        "Great Devourer"
+      ],
+      "pointsCost": 135
+    },
+    {
+      "name": "Achilles Ridgerunners",
+      "canonicalName": "achilles-ridgerunners",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Twin heavy stubber",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Twin-linked",
+            "Rapid Fire 3"
+          ]
+        }
+      ],
+      "abilities": [
+        "Crossfire"
+      ],
+      "keywords": [
+        "Achilles Ridgerunners",
+        "Vehicle",
+        "Great Devourer"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Acolyte Hybrids with Hand Flamers",
+      "canonicalName": "acolyte-hybrids-with-hand-flamers",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Demolition charge",
+          "type": "ranged",
+          "range": "8\"",
+          "attacks": "D6",
+          "skill": "5+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Assault",
+            "Blast",
+            "Hazardous",
+            "One Shot"
+          ]
+        }
+      ],
+      "abilities": [
+        "Industrialised Destruction"
+      ],
+      "keywords": [
+        "Acolyte Hybrids",
+        "Infantry",
+        "Grenades",
+        "Great Devourer",
+        "Battleline",
+        "Acolyte Hybrids with Hand Flamers"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Atalan Jackals",
+      "canonicalName": "atalan-jackals",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Mining laser",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Atalan incinerator",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Outrider Gangs",
+        "Demolition Run"
+      ],
+      "keywords": [
+        "Atalan Jackals",
+        "Mounted",
+        "Grenades",
+        "Great Devourer"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Hybrid Metamorphs",
+      "canonicalName": "hybrid-metamorphs",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Brood Surge"
+      ],
+      "keywords": [
+        "Hybrid Metamorphs",
+        "Infantry",
+        "Grenades",
+        "Great Devourer"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Neophyte Hybrids",
+      "canonicalName": "neophyte-hybrids",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Mining Laser",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "5+",
+          "strength": 10,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Seismic Cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "5+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "D3",
+          "keywords": [
+            "Heavy",
+            "Rapid Fire 2"
+          ]
+        },
+        {
+          "name": "Flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Webber",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 2,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "A Plan Generations in the Making"
+      ],
+      "keywords": [
+        "Neophyte Hybrids",
+        "Infantry",
+        "Grenades",
+        "Great Devourer",
+        "Battleline"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Purestrain Genestealers",
+      "canonicalName": "purestrain-genestealers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Swift and Deadly"
+      ],
+      "keywords": [
+        "Purestrain Genestealers",
+        "Infantry",
+        "Great Devourer"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Acolyte Hybrids with Autopistols",
+      "canonicalName": "acolyte-hybrids-with-autopistols",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Claimed for the Cult"
+      ],
+      "keywords": [
+        "Acolyte Hybrids",
+        "Infantry",
+        "Grenades",
+        "Great Devourer",
+        "Battleline",
+        "Acolyte Hybrids with Autopistols"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Abominant",
+      "canonicalName": "abominant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Acolyte Iconward",
+      "canonicalName": "acolyte-iconward",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Biophagus",
+      "canonicalName": "biophagus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Clamavus",
+      "canonicalName": "clamavus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Goliath Rockgrinder",
+      "canonicalName": "goliath-rockgrinder",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Goliath Truck",
+      "canonicalName": "goliath-truck",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Jackal Alphus",
+      "canonicalName": "jackal-alphus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kelermorph",
+      "canonicalName": "kelermorph",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Locus",
+      "canonicalName": "locus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Magus",
+      "canonicalName": "magus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nexos",
+      "canonicalName": "nexos",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Patriarch",
+      "canonicalName": "patriarch",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Primus",
+      "canonicalName": "primus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Reductus Saboteur",
+      "canonicalName": "reductus-saboteur",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sanctus",
+      "canonicalName": "sanctus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Aegis Defence Line",
+      "canonicalName": "aegis-defence-line",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Armoured Sentinels",
+      "canonicalName": "armoured-sentinels",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Attilan Rough Riders",
+      "canonicalName": "attilan-rough-riders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Baneblade",
+      "canonicalName": "baneblade",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Banehammer",
+      "canonicalName": "banehammer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Banesword",
+      "canonicalName": "banesword",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Basilisk",
+      "canonicalName": "basilisk",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cadian Castellan",
+      "canonicalName": "cadian-castellan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cadian Command Squad",
+      "canonicalName": "cadian-command-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cadian Shock Troops",
+      "canonicalName": "cadian-shock-troops",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chimera",
+      "canonicalName": "chimera",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Korps of Krieg",
+      "canonicalName": "death-korps-of-krieg",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deathstrike",
+      "canonicalName": "deathstrike",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Doomhammer",
+      "canonicalName": "doomhammer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Field Ordnance Battery",
+      "canonicalName": "field-ordnance-battery",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cadian Heavy Weapons Squad",
+      "canonicalName": "cadian-heavy-weapons-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hellhammer",
+      "canonicalName": "hellhammer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hellhound",
+      "canonicalName": "hellhound",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hydra",
+      "canonicalName": "hydra",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kasrkin",
+      "canonicalName": "kasrkin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Battle Tank",
+      "canonicalName": "leman-russ-battle-tank",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Eradicator",
+      "canonicalName": "leman-russ-eradicator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Demolisher",
+      "canonicalName": "leman-russ-demolisher",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Exterminator",
+      "canonicalName": "leman-russ-exterminator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Vanquisher",
+      "canonicalName": "leman-russ-vanquisher",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Punisher",
+      "canonicalName": "leman-russ-punisher",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Manticore",
+      "canonicalName": "manticore",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Primaris Psyker",
+      "canonicalName": "primaris-psyker",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Regimental Attachés [Legends]",
+      "canonicalName": "regimental-attach-s-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rogal Dorn Battle Tank",
+      "canonicalName": "rogal-dorn-battle-tank",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Scout Sentinels",
+      "canonicalName": "scout-sentinels",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shadowsword",
+      "canonicalName": "shadowsword",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormlord",
+      "canonicalName": "stormlord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Commander",
+      "canonicalName": "leman-russ-commander",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Taurox",
+      "canonicalName": "taurox",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Taurox Prime",
+      "canonicalName": "taurox-prime",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wyvern",
+      "canonicalName": "wyvern",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Medusa Carriage Battery [Legends]",
+      "canonicalName": "medusa-carriage-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tarantula Battery [Legends]",
+      "canonicalName": "tarantula-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Trojan Support Vehicle [Legends]",
+      "canonicalName": "trojan-support-vehicle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rapier Laser Destroyer Battery [Legends]",
+      "canonicalName": "rapier-laser-destroyer-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hades Breaching Drill [Legends]",
+      "canonicalName": "hades-breaching-drill-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Riders",
+      "canonicalName": "death-riders",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Carnodon [Legends]",
+      "canonicalName": "carnodon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cyclops Demolition Vehicle",
+      "canonicalName": "cyclops-demolition-vehicle",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Malcador [Legends]",
+      "canonicalName": "malcador-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Malcador Annihilator [Legends]",
+      "canonicalName": "malcador-annihilator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Malcador Defender [Legends]",
+      "canonicalName": "malcador-defender-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Malcador Infernus [Legends]",
+      "canonicalName": "malcador-infernus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Earthshaker Carriage Battery [Legends]",
+      "canonicalName": "earthshaker-carriage-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormblade [Legends]",
+      "canonicalName": "stormblade-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Macharius [Legends]",
+      "canonicalName": "macharius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Macharius Vanquisher [Legends]",
+      "canonicalName": "macharius-vanquisher-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Macharius Vulcan [Legends]",
+      "canonicalName": "macharius-vulcan-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Praetor [Legends]",
+      "canonicalName": "praetor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Crassus [Legends]",
+      "canonicalName": "crassus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Colossus [Legends]",
+      "canonicalName": "colossus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Valdor [Legends]",
+      "canonicalName": "valdor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gorgon Heavy Transport [Legends]",
+      "canonicalName": "gorgon-heavy-transport-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Arkurian Stormhammer [Legends]",
+      "canonicalName": "arkurian-stormhammer-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dominus Armoured Siege Bombard [Legends]",
+      "canonicalName": "dominus-armoured-siege-bombard-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Death Korps Grenadier Squad [Legends]",
+      "canonicalName": "death-korps-grenadier-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heavy Mortar Team [Legends]",
+      "canonicalName": "heavy-mortar-team-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Heavy Quad Launcher Team [Legends]",
+      "canonicalName": "heavy-quad-launcher-team-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Atlas Recovery Vehicle [Legends]",
+      "canonicalName": "atlas-recovery-vehicle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Elysian Drop Sentinel [Legends]",
+      "canonicalName": "elysian-drop-sentinel-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Earthshaker Platform [Legends]",
+      "canonicalName": "earthshaker-platform-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mukaali Riders [Legends]",
+      "canonicalName": "mukaali-riders-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Salamander Scout Vehicle [Legends]",
+      "canonicalName": "salamander-scout-vehicle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tauros Venator [Legends]",
+      "canonicalName": "tauros-venator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tauros Assault Vehicle [Legends]",
+      "canonicalName": "tauros-assault-vehicle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Salamander Command Vehicle [Legends]",
+      "canonicalName": "salamander-command-vehicle-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Storm Chimera [Legends]",
+      "canonicalName": "storm-chimera-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Centaur Light Carrier [Legends]",
+      "canonicalName": "centaur-light-carrier-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Macharius Omega [Legends]",
+      "canonicalName": "macharius-omega-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stygies Destroyer Tank Hunter [Legends]",
+      "canonicalName": "stygies-destroyer-tank-hunter-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Leman Russ Executioner",
+      "canonicalName": "leman-russ-executioner",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Armageddon-pattern Medusa [Legends]",
+      "canonicalName": "armageddon-pattern-medusa-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Elysian Sniper Squad [Legends]",
+      "canonicalName": "elysian-sniper-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Griffon Mortar Carrier [Legends]",
+      "canonicalName": "griffon-mortar-carrier-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tectonic Fragdrill [Legends]",
+      "canonicalName": "tectonic-fragdrill-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hydra Platform [Legends]",
+      "canonicalName": "hydra-platform-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Manticore Platform [Legends]",
+      "canonicalName": "manticore-platform-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Minotaur [Legends]",
+      "canonicalName": "minotaur-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Quartermaster Cadre Squad [Legends]",
+      "canonicalName": "quartermaster-cadre-squad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sabre Weapons Battery [Legends]",
+      "canonicalName": "sabre-weapons-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sentinel Powerlifter [Legends]",
+      "canonicalName": "sentinel-powerlifter-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Catachan Jungle Fighters",
+      "canonicalName": "catachan-jungle-fighters",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormsword",
+      "canonicalName": "stormsword",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Benefictus",
+      "canonicalName": "benefictus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Von Ryan's Leapers",
+      "canonicalName": "von-ryan-s-leapers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lictor",
+      "canonicalName": "lictor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Winged Tyranid Prime",
+      "canonicalName": "winged-tyranid-prime",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gargoyles",
+      "canonicalName": "gargoyles",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deathleaper",
+      "canonicalName": "deathleaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mawloc",
+      "canonicalName": "mawloc",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Parasite of Mortrex",
+      "canonicalName": "parasite-of-mortrex",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tyrannocyte",
+      "canonicalName": "tyrannocyte",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Trygon",
+      "canonicalName": "trygon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Raveners",
+      "canonicalName": "raveners",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Neurolictor",
+      "canonicalName": "neurolictor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Krieg Command Squad",
+      "canonicalName": "krieg-command-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Catachan Command Squad",
+      "canonicalName": "catachan-command-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Rogal Dorn Commander",
+      "canonicalName": "rogal-dorn-commander",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Artillery Team",
+      "canonicalName": "artillery-team",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Krieg Combat Engineers",
+      "canonicalName": "krieg-combat-engineers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Krieg Heavy Weapons Squad",
+      "canonicalName": "krieg-heavy-weapons-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Catachan Heavy Weapons Squad",
+      "canonicalName": "catachan-heavy-weapons-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Winged Hive Tyrant",
+      "canonicalName": "winged-hive-tyrant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hyperadapted Raveners",
+      "canonicalName": "hyperadapted-raveners",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

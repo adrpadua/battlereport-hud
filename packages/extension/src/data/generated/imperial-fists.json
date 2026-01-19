@@ -1,0 +1,33 @@
+{
+  "id": "imperial-fists",
+  "name": "Imperial Fists",
+  "units": [
+    {
+      "name": "Darnath Lysander",
+      "canonicalName": "darnath-lysander",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tor Garadon",
+      "canonicalName": "tor-garadon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Pedro Kantor",
+      "canonicalName": "pedro-kantor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

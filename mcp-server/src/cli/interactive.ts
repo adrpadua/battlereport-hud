@@ -275,8 +275,13 @@ async function buildUnitIndex(factionSlugs: string[], force: boolean): Promise<v
   console.log('\nIndex building complete!');
 }
 
-async function scrapeUnits(factionSlugs: string[]): Promise<void> {
+type ScrapeFilter = 'all' | 'pending' | 'failed' | 'skip-unchanged';
+
+async function scrapeUnits(factionSlugs: string[], filter: ScrapeFilter = 'all'): Promise<void> {
   console.log('\n=== Scraping Units ===\n');
+  if (filter !== 'all') {
+    console.log(`Filter: ${filter}\n`);
+  }
 
   const client = new FirecrawlClient();
   const db = getDb();
@@ -288,7 +293,7 @@ async function scrapeUnits(factionSlugs: string[]): Promise<void> {
       : sql`1=1`);
 
   for (const faction of factions) {
-    const unitLinks = await db.select()
+    let unitLinks = await db.select()
       .from(schema.unitIndex)
       .where(eq(schema.unitIndex.factionId, faction.id));
 
@@ -297,15 +302,36 @@ async function scrapeUnits(factionSlugs: string[]): Promise<void> {
       continue;
     }
 
-    console.log(`\n${faction.name}: scraping ${unitLinks.length} units`);
+    // Apply filter
+    const totalUnits = unitLinks.length;
+    if (filter === 'pending') {
+      unitLinks = unitLinks.filter(u => u.scrapeStatus === 'pending');
+    } else if (filter === 'failed') {
+      unitLinks = unitLinks.filter(u => u.scrapeStatus === 'failed');
+    }
+
+    if (unitLinks.length === 0) {
+      console.log(`${faction.name}: no units match filter (${totalUnits} total)`);
+      continue;
+    }
+
+    console.log(`\n${faction.name}: scraping ${unitLinks.length}${filter !== 'all' ? ` ${filter}` : ''} units${filter !== 'all' ? ` (${totalUnits} total)` : ''}`);
     let successCount = 0;
     let failedCount = 0;
+    let skippedCount = 0;
 
     for (const unitLink of unitLinks) {
       try {
         const unitUrl = WAHAPEDIA_URLS.unitDatasheet(faction.slug, unitLink.slug);
         process.stdout.write(`  ${unitLink.name}... `);
         const unitResult = await client.scrape(unitUrl);
+
+        // Skip processing if content unchanged and already successfully scraped
+        if (filter === 'skip-unchanged' && unitResult.fromCache && unitLink.scrapeStatus === 'success') {
+          console.log('skipped (unchanged)');
+          skippedCount++;
+          continue;
+        }
 
         const units = parseDatasheets(unitResult.markdown, unitResult.url);
         if (units.length === 0) {
@@ -380,7 +406,7 @@ async function scrapeUnits(factionSlugs: string[]): Promise<void> {
       }
     }
 
-    console.log(`  Completed: ${successCount}/${unitLinks.length} (${failedCount} failed)`);
+    console.log(`  Completed: ${successCount}/${unitLinks.length} (${failedCount} failed${skippedCount > 0 ? `, ${skippedCount} skipped` : ''})`);
   }
 
   console.log('\nUnit scraping complete!');
@@ -399,6 +425,19 @@ async function runMigration(): Promise<void> {
   await db.execute(sql`DO $$ BEGIN CREATE TYPE scrape_status AS ENUM ('pending', 'success', 'failed'); EXCEPTION WHEN duplicate_object THEN null; END $$;`);
 
   console.log('Migration complete!\n');
+}
+
+async function selectScrapeFilter(): Promise<ScrapeFilter> {
+  const filter = await select({
+    message: 'Which units to scrape?',
+    choices: [
+      { name: 'All units', value: 'all' },
+      { name: 'Only pending (not yet scraped)', value: 'pending' },
+      { name: 'Only failed (retry errors)', value: 'failed' },
+      { name: 'Skip unchanged (use cache, skip processing if already successful)', value: 'skip-unchanged' },
+    ],
+  });
+  return filter as ScrapeFilter;
 }
 
 async function scrapeMenu(): Promise<void> {
@@ -430,15 +469,17 @@ async function scrapeMenu(): Promise<void> {
   } else if (action === 'units') {
     const factions = await selectFactions();
     if (factions.length > 0) {
-      await scrapeUnits(factions);
+      const filter = await selectScrapeFilter();
+      await scrapeUnits(factions, filter);
     }
   } else if (action === 'all') {
+    const filter = await selectScrapeFilter();
     const confirmed = await confirm({ message: 'This will scrape everything. Continue?', default: true });
     if (confirmed) {
       await scrapeCoreRules();
       await scrapeFactions(FACTION_SLUGS as unknown as string[]);
       await buildUnitIndex([], false);
-      await scrapeUnits([]);
+      await scrapeUnits([], filter);
     }
   }
 }

@@ -1,0 +1,798 @@
+{
+  "id": "tyranids",
+  "name": "Tyranids",
+  "units": [
+    {
+      "name": "Tyranid Warriors with Ranged Bio-Weapons",
+      "canonicalName": "tyranid-warriors-with-ranged-bio-weapons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Adaptable Predators"
+      ],
+      "keywords": [
+        "Infantry",
+        "Tyranid Warriors with Ranged Bio-weapons",
+        "Synapse",
+        "Great Devourer"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Tyranid Warriors with Melee Bio-Weapons",
+      "canonicalName": "tyranid-warriors-with-melee-bio-weapons",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Adaptive Instincts"
+      ],
+      "keywords": [
+        "Infantry",
+        "Tyranid Warriors with Melee Bio-weapons",
+        "Great Devourer",
+        "Synapse",
+        "Tyranid Warriors"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Termagants",
+      "canonicalName": "termagants",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Fleshborer",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "Termagant spinefist",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Pistol",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "Termagant devourer",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Shardlauncher",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Spike rifle",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Heavy"
+          ]
+        },
+        {
+          "name": "Strangleweb",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 2,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Devastating Wounds",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Skulking Horrors"
+      ],
+      "keywords": [
+        "Battleline",
+        "Infantry",
+        "Great Devourer",
+        "Endless Multitude",
+        "Termagants"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Hormagaunts",
+      "canonicalName": "hormagaunts",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Bounding Leap"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Great Devourer",
+        "Endless Multitude",
+        "Hormagaunts"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Tyrant Guard",
+      "canonicalName": "tyrant-guard",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Guardian Organism"
+      ],
+      "keywords": [
+        "Infantry",
+        "Great Devourer",
+        "Tyrant Guard"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Pyrovores",
+      "canonicalName": "pyrovores",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Flamespurt",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6+1",
+          "skill": "N/A",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Burning Spray"
+      ],
+      "keywords": [
+        "Pyrovores",
+        "Infantry",
+        "Great Devourer",
+        "Harvester"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Venomthropes",
+      "canonicalName": "venomthropes",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Foul Spores (Aura)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Venomthropes",
+        "Great Devourer"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Neurogaunts",
+      "canonicalName": "neurogaunts",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Neurocytes"
+      ],
+      "keywords": [
+        "Infantry",
+        "Great Devourer",
+        "Neurogaunts",
+        "Endless Multitude"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Zoanthropes",
+      "canonicalName": "zoanthropes",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Spirit Leech (Aura, Psychic)",
+        "Warp Field (Aura, Psychic)"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Psyker",
+        "Great Devourer",
+        "Zoanthropes",
+        "Synapse"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Mucolid Spores",
+      "canonicalName": "mucolid-spores",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [
+        "Mucolid Spores",
+        "Beast",
+        "Fly",
+        "Great Devourer"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Spore Mines",
+      "canonicalName": "spore-mines",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [
+        "Spore Mines",
+        "Beast",
+        "Fly",
+        "Great Devourer"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Biovores",
+      "canonicalName": "biovores",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Spore mine launcher",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Devastating Wounds",
+            "Heavy",
+            "Indirect Fire"
+          ]
+        }
+      ],
+      "abilities": [
+        "Seed Spore Mines"
+      ],
+      "keywords": [
+        "Infantry",
+        "Great Devourer",
+        "Biovore"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Carnifexes",
+      "canonicalName": "carnifexes",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Blistering Assault"
+      ],
+      "keywords": [
+        "Monster",
+        "Great Devourer",
+        "Carnifexes"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Hive Guard",
+      "canonicalName": "hive-guard",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Shockcannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "Anti-Vehicle 2+"
+          ]
+        },
+        {
+          "name": "Impaler cannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Indirect Fire"
+          ]
+        }
+      ],
+      "abilities": [
+        "Defensive Stance"
+      ],
+      "keywords": [
+        "Infantry",
+        "Great Devourer",
+        "Hive Guard"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Barbgaunts",
+      "canonicalName": "barbgaunts",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Barblauncher",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D6",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Disruption Bombardment"
+      ],
+      "keywords": [
+        "Barbgaunts",
+        "Infantry",
+        "Great Devourer"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Genestealers",
+      "canonicalName": "genestealers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Vanguard Predator"
+      ],
+      "keywords": [
+        "Infantry",
+        "Great Devourer",
+        "Genestealers",
+        "Vanguard Invader"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Sky-slasher Swarms [Legends]",
+      "canonicalName": "sky-slasher-swarms-legends",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 2,
+        "save": "6+",
+        "wounds": 4,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [
+        {
+          "name": "Spinemaws",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "4",
+          "skill": "5+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Chitinous Horrors"
+      ],
+      "keywords": [
+        "Swarm",
+        "Great Devourer",
+        "Fly",
+        "Sky-slasher Swarms"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Winged Hive Tyrant",
+      "canonicalName": "winged-hive-tyrant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hive Tyrant",
+      "canonicalName": "hive-tyrant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tervigon",
+      "canonicalName": "tervigon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Swarmlord",
+      "canonicalName": "the-swarmlord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Broodlord",
+      "canonicalName": "broodlord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Old One Eye",
+      "canonicalName": "old-one-eye",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gargoyles",
+      "canonicalName": "gargoyles",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Toxicrene",
+      "canonicalName": "toxicrene",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Winged Tyranid Prime",
+      "canonicalName": "winged-tyranid-prime",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lictor",
+      "canonicalName": "lictor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deathleaper",
+      "canonicalName": "deathleaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Maleceptor",
+      "canonicalName": "maleceptor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Neurotyrant",
+      "canonicalName": "neurotyrant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Haruspex",
+      "canonicalName": "haruspex",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Von Ryan's Leapers",
+      "canonicalName": "von-ryan-s-leapers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ripper Swarms",
+      "canonicalName": "ripper-swarms",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Parasite of Mortrex",
+      "canonicalName": "parasite-of-mortrex",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Mawloc",
+      "canonicalName": "mawloc",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Trygon",
+      "canonicalName": "trygon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exocrine",
+      "canonicalName": "exocrine",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Screamer-killer",
+      "canonicalName": "screamer-killer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tyrannofex",
+      "canonicalName": "tyrannofex",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tyrannocyte",
+      "canonicalName": "tyrannocyte",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Harpy",
+      "canonicalName": "harpy",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hive Crone",
+      "canonicalName": "hive-crone",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sporocyst",
+      "canonicalName": "sporocyst",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Psychophage",
+      "canonicalName": "psychophage",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Barbed Hierodule [Legends]",
+      "canonicalName": "barbed-hierodule-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Scythed Hierodule [Legends]",
+      "canonicalName": "scythed-hierodule-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Harridan",
+      "canonicalName": "harridan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hierophant",
+      "canonicalName": "hierophant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Raveners",
+      "canonicalName": "raveners",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dimachaeron [Legends]",
+      "canonicalName": "dimachaeron-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Malanthrope [Legends]",
+      "canonicalName": "malanthrope-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Neurolictor",
+      "canonicalName": "neurolictor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Norn Emissary",
+      "canonicalName": "norn-emissary",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Norn Assimilator",
+      "canonicalName": "norn-assimilator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hyperadapted Raveners",
+      "canonicalName": "hyperadapted-raveners",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

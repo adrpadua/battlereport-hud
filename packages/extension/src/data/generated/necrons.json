@@ -1,0 +1,1178 @@
+{
+  "id": "necrons",
+  "name": "Necrons",
+  "units": [
+    {
+      "name": "Necron Warriors",
+      "canonicalName": "necron-warriors",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Gauss flayer",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Gauss reaper",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Their Number is Legion"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Necron Warriors"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Immortals",
+      "canonicalName": "immortals",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Gauss blaster",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        },
+        {
+          "name": "Tesla carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Sustained Hits 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Implacable Eradication"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Immortals"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Lychguard",
+      "canonicalName": "lychguard",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Guardian Protocols"
+      ],
+      "keywords": [
+        "Infantry",
+        "Lychguard"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Deathmarks",
+      "canonicalName": "deathmarks",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Synaptic disintegrator",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        }
+      ],
+      "abilities": [
+        "Hyperspace Hunters"
+      ],
+      "keywords": [
+        "Infantry",
+        "Deathmarks"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Flayed Ones",
+      "canonicalName": "flayed-ones",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Flesh Hunger"
+      ],
+      "keywords": [
+        "Infantry",
+        "Flayed Ones"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Cryptothralls",
+      "canonicalName": "cryptothralls",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Scouring eye",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Bound Creation",
+        "Systematic Vigour",
+        "Cryptek Retinue"
+      ],
+      "keywords": [
+        "Infantry",
+        "Cryptothralls"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Skorpekh Destroyers",
+      "canonicalName": "skorpekh-destroyers",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Whirling Onslaught"
+      ],
+      "keywords": [
+        "Infantry",
+        "Destroyer Cult",
+        "Skorpekh Destroyers"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Canoptek Spyders",
+      "canonicalName": "canoptek-spyders",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Particle beamer",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Canoptek Swarm"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Fly",
+        "Canoptek",
+        "Spyders"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoptek Scarab Swarms",
+      "canonicalName": "canoptek-scarab-swarms",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 2,
+        "save": "6+",
+        "wounds": 4,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Self-destruction",
+        "Chittering Swarm"
+      ],
+      "keywords": [
+        "Swarm",
+        "Fly",
+        "Canoptek",
+        "Scarab Swarms"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Ophydian Destroyers",
+      "canonicalName": "ophydian-destroyers",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 5,
+        "save": "4+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Tunnelling Horrors"
+      ],
+      "keywords": [
+        "Infantry",
+        "Destroyer Cult",
+        "Ophydian Destroyers"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Tomb Blades",
+      "canonicalName": "tomb-blades",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Twin gauss blaster",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "Particle beamer",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Devastating Wounds"
+          ]
+        },
+        {
+          "name": "Twin tesla carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Sustained Hits 2",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Evasion Engrams"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Tomb Blades"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Triarch Praetorians",
+      "canonicalName": "triarch-praetorians",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Rod of covenant",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Particle caster",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Relentless Combatants"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Triarch Praetorians"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Canoptek Wraiths",
+      "canonicalName": "canoptek-wraiths",
+      "stats": {
+        "movement": "10\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 4,
+        "leadership": "8+",
+        "objectiveControl": 2
+      },
+      "weapons": [],
+      "abilities": [
+        "Wraith Form",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Beast",
+        "Fly",
+        "Canoptek",
+        "Wraiths"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Lokhust Destroyers",
+      "canonicalName": "lokhust-destroyers",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Gauss cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Hard-wired for Destruction"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Destroyer Cult",
+        "Lokhust Destroyers"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Lokhust Heavy Destroyers",
+      "canonicalName": "lokhust-heavy-destroyers",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Enmitic exterminator",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "6",
+          "skill": "3+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Heavy",
+            "Rapid Fire 6",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Gauss destructor",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 14,
+          "ap": -4,
+          "damage": "6",
+          "keywords": [
+            "Heavy",
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Optimised for Slaughter"
+      ],
+      "keywords": [
+        "Mounted",
+        "Fly",
+        "Destroyer Cult",
+        "Lokhust Heavy Destroyers"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "The Silent King",
+      "canonicalName": "the-silent-king",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Sceptre of Eternal Glory",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 10,
+          "ap": -3,
+          "damage": "3",
+          "keywords": [
+            "Devastating Wounds"
+          ]
+        },
+        {
+          "name": "Staff of Stars",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "12",
+          "skill": "2+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Indirect Fire"
+          ]
+        },
+        {
+          "name": "Annihilator beam",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 14,
+          "ap": -4,
+          "damage": "6",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Damaged: 1-6 wounds remaining",
+        "Voice of the Triarch",
+        "The Silent King (Aura)"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Epic Hero",
+        "Triarch"
+      ],
+      "pointsCost": 400
+    },
+    {
+      "name": "Convergence of Dominion",
+      "canonicalName": "convergence-of-dominion",
+      "stats": {
+        "movement": "-",
+        "toughness": 9,
+        "save": "3+",
+        "wounds": 7,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [
+        {
+          "name": "Transdimensional abductor",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Reanimation Nodes (Aura)",
+        "Ancient Cover",
+        "Deployment"
+      ],
+      "keywords": [
+        "Fortification",
+        "Vehicle",
+        "Convergence of Dominion"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoptek Acanthrites [Legends]",
+      "canonicalName": "canoptek-acanthrites-legends",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 5,
+        "save": "3+",
+        "wounds": 2,
+        "leadership": "8+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Cutting beam",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Damaged Armour"
+      ],
+      "keywords": [
+        "Beast",
+        "Fly",
+        "Canoptek",
+        "Acanthrites"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Canoptek Macrocytes",
+      "canonicalName": "canoptek-macrocytes",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Atomiser beam",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Tesla caster",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Gauss scalpel",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits"
+          ]
+        }
+      ],
+      "abilities": [
+        "Harassment Swarm (Aura)"
+      ],
+      "keywords": [
+        "Beast",
+        "Fly",
+        "Canoptek",
+        "Macrocytes"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Canoptek Tomb Crawlers",
+      "canonicalName": "canoptek-tomb-crawlers",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Twin gauss reaper",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Lethal Hits",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "Dimensional isolator",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Weapon Sentinels",
+        "Canoptek Retinue"
+      ],
+      "keywords": [
+        "Beast",
+        "Canoptek",
+        "Tomb Crawlers"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Imotekh the Stormlord",
+      "canonicalName": "imotekh-the-stormlord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Orikan the Diviner",
+      "canonicalName": "orikan-the-diviner",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Anrakyr the Traveller [Legends]",
+      "canonicalName": "anrakyr-the-traveller-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Illuminor Szeras",
+      "canonicalName": "illuminor-szeras",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Varguard Obyron [Legends]",
+      "canonicalName": "varguard-obyron-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nemesor Zahndrekh [Legends]",
+      "canonicalName": "nemesor-zahndrekh-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Trazyn the Infinite",
+      "canonicalName": "trazyn-the-infinite",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Royal Warden",
+      "canonicalName": "royal-warden",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skorpekh Lord",
+      "canonicalName": "skorpekh-lord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lokhust Lord",
+      "canonicalName": "lokhust-lord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lord [Legends]",
+      "canonicalName": "lord-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Catacomb Command Barge",
+      "canonicalName": "catacomb-command-barge",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Overlord",
+      "canonicalName": "overlord",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Technomancer",
+      "canonicalName": "technomancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Psychomancer",
+      "canonicalName": "psychomancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chronomancer",
+      "canonicalName": "chronomancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Plasmancer",
+      "canonicalName": "plasmancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoptek Reanimator",
+      "canonicalName": "canoptek-reanimator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hexmark Destroyer",
+      "canonicalName": "hexmark-destroyer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Triarch Stalker",
+      "canonicalName": "triarch-stalker",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "C'tan Shard of the Deceiver",
+      "canonicalName": "c-tan-shard-of-the-deceiver",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "C'tan Shard of the Nightbringer",
+      "canonicalName": "c-tan-shard-of-the-nightbringer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "C'tan Shard of the Void Dragon",
+      "canonicalName": "c-tan-shard-of-the-void-dragon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Transcendent C'tan",
+      "canonicalName": "transcendent-c-tan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Annihilation Barge",
+      "canonicalName": "annihilation-barge",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Doomsday Ark",
+      "canonicalName": "doomsday-ark",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoptek Doomstalker",
+      "canonicalName": "canoptek-doomstalker",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ghost Ark",
+      "canonicalName": "ghost-ark",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Night Scythe",
+      "canonicalName": "night-scythe",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Doom Scythe",
+      "canonicalName": "doom-scythe",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Obelisk",
+      "canonicalName": "obelisk",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tesseract Vault",
+      "canonicalName": "tesseract-vault",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Monolith",
+      "canonicalName": "monolith",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoptek Tomb Stalker [Legends]",
+      "canonicalName": "canoptek-tomb-stalker-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoptek Tomb Sentinel [Legends]",
+      "canonicalName": "canoptek-tomb-sentinel-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tesseract Ark [Legends]",
+      "canonicalName": "tesseract-ark-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Seraptek Heavy Construct",
+      "canonicalName": "seraptek-heavy-construct",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gauss Pylon [Legends]",
+      "canonicalName": "gauss-pylon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sentry Pylon [Legends]",
+      "canonicalName": "sentry-pylon-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Night Shroud [Legends]",
+      "canonicalName": "night-shroud-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Overlord with Translocation Shroud",
+      "canonicalName": "overlord-with-translocation-shroud",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Geomancer",
+      "canonicalName": "geomancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nekrosor Ammentar",
+      "canonicalName": "nekrosor-ammentar",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

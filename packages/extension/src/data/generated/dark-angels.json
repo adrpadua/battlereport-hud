@@ -1,0 +1,364 @@
+{
+  "id": "dark-angels",
+  "name": "Dark Angels",
+  "units": [
+    {
+      "name": "Ravenwing Black Knights",
+      "canonicalName": "ravenwing-black-knights",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Bolt Pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma talon - Standard",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma talon - Supercharged",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Knights of Caliban",
+        "Attached Unit",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Mounted",
+        "Grenades",
+        "Imperium",
+        "Ravenwing Black Knights",
+        "Ravenwing"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Ravenwing Command Squad",
+      "canonicalName": "ravenwing-command-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Bolt Pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma talon - Standard",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma talon - Supercharged",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Leader",
+        "Invulnerable Save",
+        "Narthecium",
+        "Astartes Banner",
+        "Honour or Death"
+      ],
+      "keywords": [
+        "Mounted",
+        "Grenades",
+        "Imperium",
+        "Ravenwing Command Squad",
+        "Ravenwing",
+        "Character"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Deathwing Knights",
+      "canonicalName": "deathwing-knights",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Inner Circle",
+        "Invulnerable Save",
+        "Attached Unit",
+        "Teleport Homer"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Deathwing Knights",
+        "Terminator",
+        "Deathwing"
+      ],
+      "pointsCost": 250
+    },
+    {
+      "name": "Deathwing Terminator Squad",
+      "canonicalName": "deathwing-terminator-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Storm Bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Deathwing",
+        "Attached Unit",
+        "Teleport Homer"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Deathwing Terminator Squad",
+        "Terminator",
+        "Deathwing"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Inner Circle Companions",
+      "canonicalName": "inner-circle-companions",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Heavy Bolt Pistol",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Attached Unit",
+        "Braziers of Judgement",
+        "Emnity for the Unworthy"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Tacticus",
+        "Inner Circle Companions",
+        "Deathwing"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Deathwing Command Squad [Legends]",
+      "canonicalName": "deathwing-command-squad-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Storm Bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Deathwing",
+        "Deathwing Command Squad",
+        "Terminator"
+      ],
+      "pointsCost": 200
+    },
+    {
+      "name": "Azrael",
+      "canonicalName": "azrael",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Belial",
+      "canonicalName": "belial",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sammael",
+      "canonicalName": "sammael",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ezekiel",
+      "canonicalName": "ezekiel",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Asmodai",
+      "canonicalName": "asmodai",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lion El'Jonson",
+      "canonicalName": "lion-el-jonson",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lazarus",
+      "canonicalName": "lazarus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Nephilim Jetfighter",
+      "canonicalName": "nephilim-jetfighter",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ravenwing Dark Talon",
+      "canonicalName": "ravenwing-dark-talon",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Speeder Vengeance",
+      "canonicalName": "land-speeder-vengeance",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ravenwing Darkshroud",
+      "canonicalName": "ravenwing-darkshroud",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ravenwing Talonmaster [Legends]",
+      "canonicalName": "ravenwing-talonmaster-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Deathwing Strikemaster [Legends]",
+      "canonicalName": "deathwing-strikemaster-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

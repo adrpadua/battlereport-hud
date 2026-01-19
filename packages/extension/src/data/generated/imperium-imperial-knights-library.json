@@ -1,0 +1,272 @@
+{
+  "id": "imperium-imperial-knights-library",
+  "name": "Imperial Knights",
+  "units": [
+    {
+      "name": "Canis Rex",
+      "canonicalName": "canis-rex",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "➤ Las-impulsor - high intensity",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D6",
+          "skill": "2+",
+          "strength": 14,
+          "ap": -3,
+          "damage": "4",
+          "keywords": [
+            "Blast",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "➤ Las-impulsor - low intensity",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "2D6",
+          "skill": "2+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Blast",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Questoris multi-laser",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "4",
+          "skill": "2+",
+          "strength": 6,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Hekhtur's pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Epic Hero",
+        "Character",
+        "Imperium"
+      ],
+      "pointsCost": 415
+    },
+    {
+      "name": "Armiger Warglaive",
+      "canonicalName": "armiger-warglaive",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Armiger Helverin",
+      "canonicalName": "armiger-helverin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Paladin",
+      "canonicalName": "knight-paladin",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Errant",
+      "canonicalName": "knight-errant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Gallant",
+      "canonicalName": "knight-gallant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Warden",
+      "canonicalName": "knight-warden",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Crusader",
+      "canonicalName": "knight-crusader",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Preceptor",
+      "canonicalName": "knight-preceptor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Castellan",
+      "canonicalName": "knight-castellan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Valiant",
+      "canonicalName": "knight-valiant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Acastus Knight Asterius",
+      "canonicalName": "acastus-knight-asterius",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Acastus Knight Porphyrion",
+      "canonicalName": "acastus-knight-porphyrion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerastus Knight Lancer",
+      "canonicalName": "cerastus-knight-lancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerastus Knight Castigator",
+      "canonicalName": "cerastus-knight-castigator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerastus Knight Acheron",
+      "canonicalName": "cerastus-knight-acheron",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cerastus Knight Atrapos",
+      "canonicalName": "cerastus-knight-atrapos",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Questoris Knight Magaera",
+      "canonicalName": "questoris-knight-magaera",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Questoris Knight Styrix",
+      "canonicalName": "questoris-knight-styrix",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Armiger Moirax",
+      "canonicalName": "armiger-moirax",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Code Chivalric",
+      "canonicalName": "code-chivalric",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Knight Defender",
+      "canonicalName": "knight-defender",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Unseated Pilot",
+      "canonicalName": "unseated-pilot",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

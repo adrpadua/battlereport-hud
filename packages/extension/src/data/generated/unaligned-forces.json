@@ -1,0 +1,231 @@
+{
+  "id": "unaligned-forces",
+  "name": "Unaligned Forces",
+  "units": [
+    {
+      "name": "Spindle Drones [Legends]",
+      "canonicalName": "spindle-drones-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Drone pulse",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Allied Units",
+        "Infantry",
+        "Spindle Drones"
+      ],
+      "pointsCost": 35
+    },
+    {
+      "name": "Aegis Defence Line with Weapon Emplacement [Legends]",
+      "canonicalName": "aegis-defence-line-with-weapon-emplacement-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ambull [Legends]",
+      "canonicalName": "ambull-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Bastion [Legends]",
+      "canonicalName": "bastion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Firestorm Redoubt [Legends]",
+      "canonicalName": "firestorm-redoubt-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Fortress of Redemption [Legends]",
+      "canonicalName": "fortress-of-redemption-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Guardian Drone [Legends]",
+      "canonicalName": "guardian-drone-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Macro-cannon Aquila Strongpoint [Legends]",
+      "canonicalName": "macro-cannon-aquila-strongpoint-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Plasma Obliterator [Legends]",
+      "canonicalName": "plasma-obliterator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Primaris Redoubt [Legends]",
+      "canonicalName": "primaris-redoubt-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skyshield Landing Pad [Legends]",
+      "canonicalName": "skyshield-landing-pad-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "The Archivist [Legends]",
+      "canonicalName": "the-archivist-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vengeance Weapon Battery [Legends]",
+      "canonicalName": "vengeance-weapon-battery-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Void Shield Generator [Legends]",
+      "canonicalName": "void-shield-generator-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Vortex Missile Strongpoint [Legends]",
+      "canonicalName": "vortex-missile-strongpoint-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wall of Martyrs Bunker [Legends]",
+      "canonicalName": "wall-of-martyrs-bunker-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wall of Martyrs Defence Emplacement [Legends]",
+      "canonicalName": "wall-of-martyrs-defence-emplacement-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Wall of Martyrs Defence Line [Legends]",
+      "canonicalName": "wall-of-martyrs-defence-line-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Imperial Fortress Walls [Legends]",
+      "canonicalName": "imperial-fortress-walls-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Castellum Stronghold [Legends]",
+      "canonicalName": "castellum-stronghold-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sentry Gun",
+      "canonicalName": "sentry-gun",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Searchlight",
+      "canonicalName": "searchlight",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Breaching Robot",
+      "canonicalName": "breaching-robot",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

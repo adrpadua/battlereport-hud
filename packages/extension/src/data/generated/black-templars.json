@@ -1,0 +1,284 @@
+{
+  "id": "black-templars",
+  "name": "Black Templars",
+  "units": [
+    {
+      "name": "Chaplain Grimaldus",
+      "canonicalName": "chaplain-grimaldus",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": 3,
+        "wounds": 4,
+        "leadership": "5+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "➤ Plasma Pistol - Supercharge",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "➤ Plasma Pistol - Standard",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "2+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Litanies of the Devout",
+        "Temple Relics",
+        "Leader"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Tacticus"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Crusader Squad",
+      "canonicalName": "crusader-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Righteous Zeal"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Tacticus",
+        "Crusader Squad"
+      ],
+      "pointsCost": 150
+    },
+    {
+      "name": "Sword Brethren Squad",
+      "canonicalName": "sword-brethren-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Exploit Their Cowardice"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Tacticus",
+        "Primaris Sword Brethren"
+      ],
+      "pointsCost": 105
+    },
+    {
+      "name": "Crusader Squad [Legends]",
+      "canonicalName": "crusader-squad-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Astartes Shotgun",
+          "type": "ranged",
+          "range": "18",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        }
+      ],
+      "abilities": [
+        "Righteous Zeal"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Imperium",
+        "Crusader Squad"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Sternguard Veteran Squad",
+      "canonicalName": "sternguard-veteran-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Vitruous Onslaught"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Tacticus",
+        "Sternguard Veteran Squad"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Terminator Squad",
+      "canonicalName": "terminator-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Teleport Homer",
+        "Judgement of the Weak"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Terminator",
+        "Terminator Squad"
+      ],
+      "pointsCost": 175
+    },
+    {
+      "name": "High Marshal Helbrecht",
+      "canonicalName": "high-marshal-helbrecht",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Emperor's Champion",
+      "canonicalName": "emperor-s-champion",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gladiator Lancer",
+      "canonicalName": "gladiator-lancer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gladiator Reaper",
+      "canonicalName": "gladiator-reaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Gladiator Valiant",
+      "canonicalName": "gladiator-valiant",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Impulsor",
+      "canonicalName": "impulsor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Repulsor",
+      "canonicalName": "repulsor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Repulsor Executioner",
+      "canonicalName": "repulsor-executioner",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Marshal",
+      "canonicalName": "marshal",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Castellan",
+      "canonicalName": "castellan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Execrator",
+      "canonicalName": "execrator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Crusade Ancient",
+      "canonicalName": "crusade-ancient",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Land Raider Crusader",
+      "canonicalName": "land-raider-crusader",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Emperor's Champion (Anointed)",
+      "canonicalName": "emperor-s-champion-anointed",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

@@ -1,0 +1,1116 @@
+{
+  "id": "adeptus-mechanicus",
+  "name": "Adeptus Mechanicus",
+  "units": [
+    {
+      "name": "Corpuscarii Electro-Priests",
+      "canonicalName": "corpuscarii-electro-priests",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Electrostatic gauntlets",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol",
+            "Sustained Hits 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Electro-shock"
+      ],
+      "keywords": [
+        "Electro-Priests",
+        "Corpuscarii",
+        "Imperium",
+        "Infantry",
+        "Cult Mechanicus"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Fulgurite Electro-Priests",
+      "canonicalName": "fulgurite-electro-priests",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Electro-Infusion"
+      ],
+      "keywords": [
+        "Electro-Priests",
+        "Fulgurite",
+        "Infantry",
+        "Imperium",
+        "Cult Mechanicus"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Ironstrider Ballistarii",
+      "canonicalName": "ironstrider-ballistarii",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Twin cognis autocannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -1,
+          "damage": "3",
+          "keywords": [
+            "Sustained Hits 1",
+            "Twin-linked"
+          ]
+        },
+        {
+          "name": "Twin cognis lascannon",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 12,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "Sustained Hits 1",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Elevated Strider",
+        "Broad Spectrum Data-tether"
+      ],
+      "keywords": [
+        "Ironstrider Ballistarii",
+        "Vehicle",
+        "Smoke",
+        "Skitarii",
+        "Walker",
+        "Imperium"
+      ],
+      "pointsCost": 0
+    },
+    {
+      "name": "Kastelan Robots",
+      "canonicalName": "kastelan-robots",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Robotic Bodyguard",
+        "Repulsor Grid"
+      ],
+      "keywords": [
+        "Kastelan Robots",
+        "Imperium",
+        "Vehicle",
+        "Walker",
+        "Legio Cybernetica"
+      ],
+      "pointsCost": 180
+    },
+    {
+      "name": "Kataphron Breachers",
+      "canonicalName": "kataphron-breachers",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 7,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Breaching Command",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Breachers",
+        "Kataphron",
+        "Infantry",
+        "Imperium",
+        "Cult Mechanicus"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Kataphron Destroyers",
+      "canonicalName": "kataphron-destroyers",
+      "stats": {
+        "movement": "5\"",
+        "toughness": 6,
+        "save": "3+",
+        "wounds": 3,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Sentinel Directive",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Destroyers",
+        "Kataphron",
+        "Infantry",
+        "Imperium",
+        "Cult Mechanicus"
+      ],
+      "pointsCost": 105
+    },
+    {
+      "name": "Pteraxii Skystalkers",
+      "canonicalName": "pteraxii-skystalkers",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Flechette blaster",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "5",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Flechette carbine",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "6",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Ride the Thermals"
+      ],
+      "keywords": [
+        "Skystalkers",
+        "Imperium",
+        "Infantry",
+        "Fly",
+        "Jump Pack",
+        "Grenades",
+        "Skitarii",
+        "Pteraxii"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Pteraxii Sterylizors",
+      "canonicalName": "pteraxii-sterylizors",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Flechette blaster",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "5",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Phosphor torch",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Searing Conflagaration"
+      ],
+      "keywords": [
+        "Sterylizors",
+        "Imperium",
+        "Infantry",
+        "Fly",
+        "Jump Pack",
+        "Skitarii",
+        "Pteraxii"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Serberys Raiders",
+      "canonicalName": "serberys-raiders",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Galvanic carbine",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Tactica Obliqua"
+      ],
+      "keywords": [
+        "Serberys Raiders",
+        "Imperium",
+        "Skitarii",
+        "Mounted"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Serberys Sulphurhounds",
+      "canonicalName": "serberys-sulphurhounds",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Phosphor pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Phosphor blast carbine",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "4+",
+          "strength": 6,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Ignores cover"
+          ]
+        }
+      ],
+      "abilities": [
+        "Line-breakers"
+      ],
+      "keywords": [
+        "Serberys Sulphurhounds",
+        "Imperium",
+        "Skitarii",
+        "Mounted"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Sicarian Infiltrators",
+      "canonicalName": "sicarian-infiltrators",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Stubcarbine",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Flechette blaster",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "5",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Neurostatic Interference (Aura)"
+      ],
+      "keywords": [
+        "Imperium",
+        "Skitarii",
+        "Infantry",
+        "Sicarian",
+        "Infiltrators"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Sicarian Ruststalkers",
+      "canonicalName": "sicarian-ruststalkers",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 2,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Optimised Gait"
+      ],
+      "keywords": [
+        "Ruststalkers",
+        "Imperium",
+        "Infantry",
+        "Skitarii",
+        "Sicarian"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Skitarii Rangers",
+      "canonicalName": "skitarii-rangers",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Galvanic rifle",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Transuranic arquebus",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Arc rifle",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -1,
+          "damage": "D3",
+          "keywords": [
+            "Anti-Vehicle 4+",
+            "Devastating Wounds",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma caliver -  supercharge",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous"
+          ]
+        },
+        {
+          "name": "➤ Plasma caliver - standard",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Objective Scouted"
+      ],
+      "keywords": [
+        "Rangers",
+        "Imperium",
+        "Infantry",
+        "Skitarii",
+        "Battleline"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Skitarii Vanguard",
+      "canonicalName": "skitarii-vanguard",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Radium carbine",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-Infantry 4+"
+          ]
+        },
+        {
+          "name": "Transuranic arquebus",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "Heavy",
+            "Precision"
+          ]
+        },
+        {
+          "name": "Arc rifle",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -1,
+          "damage": "D3",
+          "keywords": [
+            "Anti-Vehicle 4+",
+            "Devastating Wounds",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma caliver -  supercharge",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous"
+          ]
+        },
+        {
+          "name": "➤ Plasma caliver - standard",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Rad-saturation (Aura)"
+      ],
+      "keywords": [
+        "Vanguard",
+        "Imperium",
+        "Infantry",
+        "Skitarii",
+        "Battleline"
+      ],
+      "pointsCost": 95
+    },
+    {
+      "name": "Sydonian Dragoons with taser lances",
+      "canonicalName": "sydonian-dragoons-with-taser-lances",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Phosphor serpenta",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Dynamic Efficiency",
+        "Broad Spectrum Data-tether"
+      ],
+      "keywords": [
+        "Imperium",
+        "Skitarii",
+        "Vehicle",
+        "Walker",
+        "Sydonian",
+        "Dragoons with Taser Lances",
+        "Smoke"
+      ],
+      "pointsCost": 0
+    },
+    {
+      "name": "Secutarii Hoplites [Legends]",
+      "canonicalName": "secutarii-hoplites-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "5+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Arc lance",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Anti-Vehicle 4+",
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Titan Guard",
+        "Secutarii"
+      ],
+      "keywords": [
+        "Secutarii Hoplites",
+        "Infantry",
+        "Imperium",
+        "Skitarii"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Secutarii Peltasts [Legends]",
+      "canonicalName": "secutarii-peltasts-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "5+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "➤ Galvanic caster - flechette",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "5",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault"
+          ]
+        },
+        {
+          "name": "➤ Galvanic caster - hammershot",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Invulnerable Save",
+        "Blind Barrage",
+        "Secutarii"
+      ],
+      "keywords": [
+        "Infantry",
+        "Secutarii Peltasts",
+        "Skitarii",
+        "Imperium"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Sydonian Skatros",
+      "canonicalName": "sydonian-skatros",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Dread Snipers",
+        "Sydonian Sentinel"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Skitarii",
+        "Sydonian",
+        "Character",
+        "Skatros"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Sydonian Dragoons with radium jezzails",
+      "canonicalName": "sydonian-dragoons-with-radium-jezzails",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Phosphor serpenta",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Radium jezzail",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Anti-Infantry 3+",
+            "Heavy",
+            "Precision"
+          ]
+        }
+      ],
+      "abilities": [
+        "Focused Hunters",
+        "Broad Spectrum Data-tether"
+      ],
+      "keywords": [
+        "Imperium",
+        "Skitarii",
+        "Vehicle",
+        "Walker",
+        "Sydonian",
+        "Dragoons with Radium Jezzails",
+        "Smoke"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Servitors [Legends]",
+      "canonicalName": "servitors-legends",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Mindlock",
+        "Servitor Retinue"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Cult Mechanicus",
+        "Servitors"
+      ],
+      "pointsCost": 50
+    },
+    {
+      "name": "Servitor Battleclade",
+      "canonicalName": "servitor-battleclade",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Mechanicus pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Devastating Wounds",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Heavy arc rifle",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 8,
+          "ap": -2,
+          "damage": "3",
+          "keywords": [
+            "Anti-VEHICLE 4+",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Heavy bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Heavy",
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Incendine igniter",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 3,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "Meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        },
+        {
+          "name": "Phosphor blaster",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [
+        "Network Override",
+        "Invulnerable Save",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Cult Mechanicus",
+        "Servitor Battleclade"
+      ],
+      "pointsCost": 60
+    },
+    {
+      "name": "Archaeopter Fusilave",
+      "canonicalName": "archaeopter-fusilave",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Archaeopter Stratoraptor",
+      "canonicalName": "archaeopter-stratoraptor",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Archaeopter Transvector",
+      "canonicalName": "archaeopter-transvector",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Belisarius Cawl",
+      "canonicalName": "belisarius-cawl",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cybernetica Datasmith",
+      "canonicalName": "cybernetica-datasmith",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Onager Dunecrawler",
+      "canonicalName": "onager-dunecrawler",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skitarii Marshal",
+      "canonicalName": "skitarii-marshal",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skorpius Disintegrator",
+      "canonicalName": "skorpius-disintegrator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Skorpius Dunerider",
+      "canonicalName": "skorpius-dunerider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tech-Priest Dominus",
+      "canonicalName": "tech-priest-dominus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tech-Priest Enginseer",
+      "canonicalName": "tech-priest-enginseer",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tech-Priest Manipulus",
+      "canonicalName": "tech-priest-manipulus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Technoarcheologist",
+      "canonicalName": "technoarcheologist",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Terrax-Pattern Termite [Legends]",
+      "canonicalName": "terrax-pattern-termite-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "X-101 [Legends]",
+      "canonicalName": "x-101-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

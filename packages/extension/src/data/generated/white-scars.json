@@ -1,0 +1,24 @@
+{
+  "id": "white-scars",
+  "name": "White Scars",
+  "units": [
+    {
+      "name": "Kor'sarro Khan",
+      "canonicalName": "kor-sarro-khan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Suboden Khan",
+      "canonicalName": "suboden-khan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

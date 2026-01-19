@@ -1,0 +1,1053 @@
+{
+  "id": "t-au-empire",
+  "name": "T'au Empire",
+  "units": [
+    {
+      "name": "Aun'va [Legends]",
+      "canonicalName": "aun-va-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Duality Shield",
+        "Invulnerable Save (4+)",
+        "Paradox of Duality",
+        "Supreme Loyalty (Aura)"
+      ],
+      "keywords": [
+        "Epic Hero",
+        "Non-Kroot"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Strike Team",
+      "canonicalName": "strike-team",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Pulse carbine",
+          "type": "ranged",
+          "range": "20\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Suppression Volley",
+        "DS8 Support Turret"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Markerlight",
+        "Fire Warrior",
+        "Strike Team",
+        "Non-Kroot"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Breacher Team",
+      "canonicalName": "breacher-team",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Breach and Clear",
+        "DS8 Support Turret"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Markerlight",
+        "Fire Warrior",
+        "Breacher Team",
+        "Non-Kroot"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Kroot Carnivores",
+      "canonicalName": "kroot-carnivores",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Tanglebomb launcher",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "D3",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast"
+          ]
+        },
+        {
+          "name": "Kroot pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Fieldcraft",
+        "Bodyguard"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Kroot",
+        "Carnivores"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Krootox Riders",
+      "canonicalName": "krootox-riders",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 6,
+        "save": "5+",
+        "wounds": 5,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Repeater cannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 7,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Rapid Fire 2"
+          ]
+        },
+        {
+          "name": "Tanglecannon",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "D6+1",
+          "skill": "4+",
+          "strength": 6,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Heavy"
+          ]
+        }
+      ],
+      "abilities": [
+        "Kroot Packmates"
+      ],
+      "keywords": [
+        "Mounted",
+        "Kroot",
+        "Krootox Riders",
+        "Grenades"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Crisis Battlesuits [Legends]",
+      "canonicalName": "crisis-battlesuits-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Turbo-jets",
+        "Crisis Bodyguard"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Fly",
+        "Battlesuit",
+        "Crisis",
+        "Non-Kroot"
+      ],
+      "pointsCost": 200
+    },
+    {
+      "name": "Stealth Battlesuits",
+      "canonicalName": "stealth-battlesuits",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Forward Observers"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Battlesuit",
+        "Stealth",
+        "Grenades",
+        "Markerlight",
+        "Non-Kroot"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Pathfinder Team",
+      "canonicalName": "pathfinder-team",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Pulse carbine",
+          "type": "ranged",
+          "range": "20\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        }
+      ],
+      "abilities": [
+        "Target Uploaded"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Markerlight",
+        "Pathfinder Team",
+        "Non-Kroot"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Piranha",
+      "canonicalName": "piranha",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Piranha"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Fly",
+        "Piranha",
+        "Non-Kroot"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Vespid Stingwings",
+      "canonicalName": "vespid-stingwings",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 4,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Neutron grenade launcher",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "D6",
+          "skill": "4+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Anti-Infantry 3+",
+            "Blast"
+          ]
+        },
+        {
+          "name": "Neutron rail rifle",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 10,
+          "ap": -4,
+          "damage": "3",
+          "keywords": [
+            "Devastating Wounds"
+          ]
+        }
+      ],
+      "abilities": [
+        "Airborne Agility"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Vespid Stingwings",
+        "Non-Kroot"
+      ],
+      "pointsCost": 65
+    },
+    {
+      "name": "Kroot Hounds",
+      "canonicalName": "kroot-hounds",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "8+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [
+        "Loping Pounce",
+        "Hunting Hounds"
+      ],
+      "keywords": [
+        "Beast",
+        "Kroot",
+        "Hounds"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Broadside Battlesuits",
+      "canonicalName": "broadside-battlesuits",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Battlesuit",
+        "Broadside",
+        "Non-Kroot"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Tactical Drones [Legends]",
+      "canonicalName": "tactical-drones-legends",
+      "stats": {
+        "movement": "8\"",
+        "toughness": 3,
+        "save": "4+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 0
+      },
+      "weapons": [],
+      "abilities": [],
+      "keywords": [
+        "Drone",
+        "Fly",
+        "Tactical Drones",
+        "Non-Kroot"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Kroot Farstalkers",
+      "canonicalName": "kroot-farstalkers",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Kroot pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Farstalker firearm",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "T'au tech rifle",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Kroot",
+        "Farstalkers"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Tetras [Legends]",
+      "canonicalName": "tetras-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "High-intensity Markerlights"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Fly",
+        "Markerlight",
+        "Tetras",
+        "Non-Kroot"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Remora Stealth Drones [Legends]",
+      "canonicalName": "remora-stealth-drones-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Remora seeker missile",
+          "type": "ranged",
+          "range": "48\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 14,
+          "ap": -3,
+          "damage": "D6+1",
+          "keywords": [
+            "One Shot"
+          ]
+        },
+        {
+          "name": "Twin long-barrelled burst cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Aerial Disengagement"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Fly",
+        "Markerlight",
+        "Remora Stealth Drones",
+        "Non-Kroot"
+      ],
+      "pointsCost": 160
+    },
+    {
+      "name": "Heavy Gun Drones [Legends]",
+      "canonicalName": "heavy-gun-drones-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Drone Escort"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Fly",
+        "Heavy Gun Drones",
+        "Non-Kroot"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Knarloc Riders [Legends]",
+      "canonicalName": "knarloc-riders-legends",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 5,
+        "save": "5+",
+        "wounds": 4,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Kroot rifle (Ranged)",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        }
+      ],
+      "abilities": [],
+      "keywords": [
+        "Mounted",
+        "Kroot",
+        "Knarloc Riders"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "XV9 Hazard Battlesuits [Legends]",
+      "canonicalName": "xv9-hazard-battlesuits-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Fusion cascade",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 4"
+          ]
+        },
+        {
+          "name": "Phased ion gun",
+          "type": "ranged",
+          "range": "30\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 6,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "-"
+          ]
+        },
+        {
+          "name": "Twin hazard burst cannon",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "4",
+          "skill": "4+",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Photon Casters"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Fly",
+        "XV9 Hazard",
+        "Battlesuit",
+        "Non-Kroot"
+      ],
+      "pointsCost": null
+    },
+    {
+      "name": "Crisis Sunforge Battlesuits",
+      "canonicalName": "crisis-sunforge-battlesuits",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Sunforge",
+        "Invulnerable Save (4+)"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Fly",
+        "Battlesuit",
+        "Crisis",
+        "Sunforge",
+        "Non-Kroot"
+      ],
+      "pointsCost": 140
+    },
+    {
+      "name": "Crisis Fireknife Battlesuits",
+      "canonicalName": "crisis-fireknife-battlesuits",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Fireknife",
+        "Weapon Support System"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Fly",
+        "Battlesuit",
+        "Crisis",
+        "Fireknife",
+        "Non-Kroot"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Crisis Starscythe Battlesuits",
+      "canonicalName": "crisis-starscythe-battlesuits",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Starscythe",
+        "Battlesuit Support System"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Fly",
+        "Battlesuit",
+        "Crisis",
+        "Starscythe",
+        "Non-Kroot"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Krootox Rampagers",
+      "canonicalName": "krootox-rampagers",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 6,
+        "save": "5+",
+        "wounds": 5,
+        "leadership": "7+",
+        "objectiveControl": 2
+      },
+      "weapons": [
+        {
+          "name": "Kroot pistol and hunting javelins",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2",
+          "skill": "4+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Kroot Linebreakers"
+      ],
+      "keywords": [
+        "Mounted",
+        "Grenades",
+        "Kroot",
+        "Krootox Rampagers"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Commander Shadowsun",
+      "canonicalName": "commander-shadowsun",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Commander Farsight",
+      "canonicalName": "commander-farsight",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Commander in Crisis Battlesuit [Legends]",
+      "canonicalName": "commander-in-crisis-battlesuit-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Commander in Enforcer Battlesuit",
+      "canonicalName": "commander-in-enforcer-battlesuit",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Commander in Coldstar Battlesuit",
+      "canonicalName": "commander-in-coldstar-battlesuit",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cadre Fireblade",
+      "canonicalName": "cadre-fireblade",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ethereal",
+      "canonicalName": "ethereal",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Aun'shi [Legends]",
+      "canonicalName": "aun-shi-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Darkstrider",
+      "canonicalName": "darkstrider",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Longstrike [Legends]",
+      "canonicalName": "longstrike-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ghostkeel Battlesuit",
+      "canonicalName": "ghostkeel-battlesuit",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Firesight Team",
+      "canonicalName": "firesight-team",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Riptide Battlesuit",
+      "canonicalName": "riptide-battlesuit",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hammerhead Gunship",
+      "canonicalName": "hammerhead-gunship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sky Ray Gunship",
+      "canonicalName": "sky-ray-gunship",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Devilfish",
+      "canonicalName": "devilfish",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Razorshark Strike Fighter",
+      "canonicalName": "razorshark-strike-fighter",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sun Shark Bomber",
+      "canonicalName": "sun-shark-bomber",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tidewall Shieldline",
+      "canonicalName": "tidewall-shieldline",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tidewall Droneport",
+      "canonicalName": "tidewall-droneport",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tidewall Gunrig",
+      "canonicalName": "tidewall-gunrig",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Stormsurge",
+      "canonicalName": "stormsurge",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "R'varna Battlesuit [Legends]",
+      "canonicalName": "r-varna-battlesuit-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Y'vahra Battlesuit [Legends]",
+      "canonicalName": "y-vahra-battlesuit-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ta'unar Supremacy Armour",
+      "canonicalName": "ta-unar-supremacy-armour",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Barracuda [Legends]",
+      "canonicalName": "barracuda-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Tiger Shark",
+      "canonicalName": "tiger-shark",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "AX-1-0 Tiger Shark",
+      "canonicalName": "ax-1-0-tiger-shark",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Manta",
+      "canonicalName": "manta",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Orca Dropship [Legends]",
+      "canonicalName": "orca-dropship-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Great Knarloc [Legends]",
+      "canonicalName": "great-knarloc-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "TX42 Piranha [Legends]",
+      "canonicalName": "tx42-piranha-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Shas'o R'alai [Legends]",
+      "canonicalName": "shas-o-r-alai-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Remote Sensor Tower [Legends]",
+      "canonicalName": "remote-sensor-tower-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Drone Sentry Turret [Legends]",
+      "canonicalName": "drone-sentry-turret-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kroot Trail Shaper",
+      "canonicalName": "kroot-trail-shaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kroot War Shaper",
+      "canonicalName": "kroot-war-shaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kroot Flesh Shaper",
+      "canonicalName": "kroot-flesh-shaper",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Kroot Lone-spear",
+      "canonicalName": "kroot-lone-spear",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

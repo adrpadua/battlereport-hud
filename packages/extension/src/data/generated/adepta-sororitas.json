@@ -1,0 +1,741 @@
+{
+  "id": "adepta-sororitas",
+  "name": "Adepta Sororitas",
+  "units": [
+    {
+      "name": "Aestred Thurga and Agathae Dolan",
+      "canonicalName": "aestred-thurga-and-agathae-dolan",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Epic Hero",
+        "Aestred Thurga and Agathae Dolan",
+        "Character",
+        "Imperium",
+        "Grenades",
+        "Infantry"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Arco-Flagellants",
+      "canonicalName": "arco-flagellants",
+      "stats": {
+        "movement": "7\"",
+        "toughness": 3,
+        "save": "7+",
+        "wounds": 2,
+        "leadership": "8+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Extremis Trigger Word",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Penitent"
+      ],
+      "pointsCost": 45
+    },
+    {
+      "name": "Battle Sisters Squad",
+      "canonicalName": "battle-sisters-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Defenders of the Faith",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Battleline",
+        "Grenades",
+        "Battle Sisters Squad",
+        "Imperium"
+      ],
+      "pointsCost": 105
+    },
+    {
+      "name": "Celestian Sacresants",
+      "canonicalName": "celestian-sacresants",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Sworn Protectors",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Celestian Sacresants"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Daemonifuge",
+      "canonicalName": "daemonifuge",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Holy Judgement",
+        "Mysterious Savious",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Epic Hero",
+        "Infantry",
+        "Grenades",
+        "Character",
+        "Imperium",
+        "Daemonifuge"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Dominion Squad",
+      "canonicalName": "dominion-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Artificer-crafted storm bolter",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "2",
+          "keywords": [
+            "Rapid Fire 2",
+            "Assault"
+          ]
+        },
+        {
+          "name": "Meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2",
+            "Assault"
+          ]
+        },
+        {
+          "name": "Ministorum flamer",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Holy Vanguard",
+        "Righteous Awareness",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Dominion Squad"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Mortifiers",
+      "canonicalName": "mortifiers",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Anguish of the Unredeemed",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Imperium",
+        "Mortifiers",
+        "Penitent"
+      ],
+      "pointsCost": 70
+    },
+    {
+      "name": "Paragon Warsuits",
+      "canonicalName": "paragon-warsuits",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Paragon Storm Bolters",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 2",
+            "Twin-Linked"
+          ]
+        },
+        {
+          "name": "Paragon Grenade Launchers",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -2,
+          "damage": "D3",
+          "keywords": [
+            "Twin-Linked"
+          ]
+        },
+        {
+          "name": "Heavy Bolter",
+          "type": "ranged",
+          "range": "36\"",
+          "attacks": "3",
+          "skill": "3+",
+          "strength": 5,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Sustained Hits 1"
+          ]
+        },
+        {
+          "name": "Multi-melta",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Righteous Paragons",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Grenades",
+        "Imperium",
+        "Paragon Warsuits"
+      ],
+      "pointsCost": 210
+    },
+    {
+      "name": "Penitent Engines",
+      "canonicalName": "penitent-engines",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Penitent Flamers",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "2D6",
+          "skill": "N/A",
+          "strength": 5,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Assault",
+            "Ignores Cover",
+            "Torrent",
+            "Twin-Linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Endless Suffering",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Vehicle",
+        "Walker",
+        "Imperium",
+        "Penitent Engines",
+        "Penitent"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Repentia Squad",
+      "canonicalName": "repentia-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Overseer of Redemption",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Repentia Squad",
+        "Penitent"
+      ],
+      "pointsCost": 75
+    },
+    {
+      "name": "Retributor Squad",
+      "canonicalName": "retributor-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Cherubs",
+        "Storm of Retribution",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Retributor Squad"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Saint Celestine",
+      "canonicalName": "saint-celestine",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "The Ardent Blade",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 6,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Ignores Cover",
+            "Torrent"
+          ]
+        }
+      ],
+      "abilities": [
+        "Healing Tears",
+        "Lifewards",
+        "Miraculous Intervention",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Grenades",
+        "Imperium",
+        "Epic Hero",
+        "Jump Pack"
+      ],
+      "pointsCost": 150
+    },
+    {
+      "name": "Seraphim Squad",
+      "canonicalName": "seraphim-squad",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Inferno Pistol",
+          "type": "ranged",
+          "range": "6\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -4,
+          "damage": "D3",
+          "keywords": [
+            "Melta 2",
+            "Pistol"
+          ]
+        }
+      ],
+      "abilities": [
+        "Angelic Ascent",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Grenades",
+        "Imperium",
+        "Seraphim Squad",
+        "Jump Pack"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Sisters Novitiate Squad",
+      "canonicalName": "sisters-novitiate-squad",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Impetuous Fervour",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Sisters Novitiate Squad"
+      ],
+      "pointsCost": 100
+    },
+    {
+      "name": "Zephyrim Squad",
+      "canonicalName": "zephyrim-squad",
+      "stats": {
+        "movement": "12\"",
+        "toughness": 3,
+        "save": "3+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Embodied Prophecy",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Fly",
+        "Grenades",
+        "Imperium",
+        "Zephyrim Squad",
+        "Jump Pack"
+      ],
+      "pointsCost": 80
+    },
+    {
+      "name": "Death Cult Assassins [Legends]",
+      "canonicalName": "death-cult-assassins-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Death Cult",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Death Cult Assassins"
+      ],
+      "pointsCost": 55
+    },
+    {
+      "name": "Crusaders [Legends]",
+      "canonicalName": "crusaders-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [
+        "Spiritual Fortitude",
+        "Attached Unit",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Crusaders"
+      ],
+      "pointsCost": 40
+    },
+    {
+      "name": "Sanctifiers",
+      "canonicalName": "sanctifiers",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "6+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Holy fire",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "N/A",
+          "strength": 6,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Ignores Cover",
+            "One Shot",
+            "Torrent"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - standard",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 7,
+          "ap": -2,
+          "damage": "1",
+          "keywords": [
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "➤ Plasma gun - supercharge",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 8,
+          "ap": -3,
+          "damage": "2",
+          "keywords": [
+            "Hazardous",
+            "Rapid Fire 1"
+          ]
+        },
+        {
+          "name": "Meltagun",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "4+",
+          "strength": 9,
+          "ap": -4,
+          "damage": "D6",
+          "keywords": [
+            "Melta 2"
+          ]
+        }
+      ],
+      "abilities": [
+        "Ministorum Sermon",
+        "Cherub",
+        "Attached Unit",
+        "Invulnerable Save"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Sanctifiers"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Celestian Insidiants",
+      "canonicalName": "celestian-insidiants",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 3,
+        "save": "3+",
+        "wounds": 1,
+        "leadership": "7+",
+        "objectiveControl": 1
+      },
+      "weapons": [],
+      "abilities": [
+        "Invulnerable Save",
+        "Rituale Nullificatus",
+        "Virtue of Intolerance",
+        "Attached Unit"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Celestian Insidiants"
+      ],
+      "pointsCost": 120
+    },
+    {
+      "name": "Canoness",
+      "canonicalName": "canoness",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Castigator",
+      "canonicalName": "castigator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dogmata",
+      "canonicalName": "dogmata",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Dialogus",
+      "canonicalName": "dialogus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Exorcist",
+      "canonicalName": "exorcist",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Hospitaller",
+      "canonicalName": "hospitaller",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Imagifier",
+      "canonicalName": "imagifier",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Immolator",
+      "canonicalName": "immolator",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Junith Eruita",
+      "canonicalName": "junith-eruita",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Morvenn Vahl",
+      "canonicalName": "morvenn-vahl",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Palatine",
+      "canonicalName": "palatine",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ministorum Priest",
+      "canonicalName": "ministorum-priest",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sororitas Rhino",
+      "canonicalName": "sororitas-rhino",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Triumph of Saint Katherine",
+      "canonicalName": "triumph-of-saint-katherine",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Repressor [Legends]",
+      "canonicalName": "repressor-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Canoness with Jump Pack",
+      "canonicalName": "canoness-with-jump-pack",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Battle Sanctum [Legends]",
+      "canonicalName": "battle-sanctum-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Celestian Sacresant Aveline [Legends]",
+      "canonicalName": "celestian-sacresant-aveline-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}

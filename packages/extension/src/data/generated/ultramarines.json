@@ -1,0 +1,268 @@
+{
+  "id": "ultramarines",
+  "name": "Ultramarines",
+  "units": [
+    {
+      "name": "Marneus Calgar",
+      "canonicalName": "marneus-calgar",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 6,
+        "save": "2+",
+        "wounds": 6,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Gauntlets of Ultramar",
+          "type": "ranged",
+          "range": "18\"",
+          "attacks": "4",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2",
+          "keywords": [
+            "Pistol",
+            "Twin-linked"
+          ]
+        }
+      ],
+      "abilities": [
+        "Inspiring Leader",
+        "Master Tactician",
+        "Honour Guard of Macragge",
+        "Leader"
+      ],
+      "keywords": [
+        "Imperium",
+        "Infantry"
+      ],
+      "pointsCost": 200
+    },
+    {
+      "name": "Tyrannic War Veterans [Legends]",
+      "canonicalName": "tyrannic-war-veterans-legends",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Bolt Pistol",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "1",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-Tyranids 4+",
+            "Pistol"
+          ]
+        },
+        {
+          "name": "Boltgun",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "3+",
+          "strength": 4,
+          "ap": 0,
+          "damage": "1",
+          "keywords": [
+            "Anti-Tyranids 4+"
+          ]
+        }
+      ],
+      "abilities": [
+        "Tyrannic War Veterans"
+      ],
+      "keywords": [
+        "Infantry",
+        "Grenades",
+        "Imperium",
+        "Tyrannic War Veterans"
+      ],
+      "pointsCost": 85
+    },
+    {
+      "name": "Victrix Honour Guard",
+      "canonicalName": "victrix-honour-guard",
+      "stats": null,
+      "weapons": [
+        {
+          "name": "Master-crafted Bolt Carbine",
+          "type": "ranged",
+          "range": "24\"",
+          "attacks": "2",
+          "skill": "2+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "2"
+        }
+      ],
+      "abilities": [
+        "Ultramarines Honour Guard",
+        "Glory of Ultramar"
+      ],
+      "keywords": [
+        "Infantry",
+        "Imperium",
+        "Tacticus",
+        "Honor Guard",
+        "Victrix"
+      ],
+      "pointsCost": 110
+    },
+    {
+      "name": "Wardens of Ultramar",
+      "canonicalName": "wardens-of-ultramar",
+      "stats": {
+        "movement": "6\"",
+        "toughness": 4,
+        "save": "3+",
+        "wounds": 4,
+        "leadership": "6+",
+        "objectiveControl": 1
+      },
+      "weapons": [
+        {
+          "name": "Astropathic Blast",
+          "type": "ranged",
+          "range": "12\"",
+          "attacks": "D6",
+          "skill": "3+",
+          "strength": 4,
+          "ap": -1,
+          "damage": "1",
+          "keywords": [
+            "Blast",
+            "Psychic"
+          ]
+        }
+      ],
+      "abilities": [
+        "Second Company Banner",
+        "Strategium Command",
+        "Heroes of Ultramar"
+      ],
+      "keywords": [
+        "Infantry",
+        "Epic Hero",
+        "Grenades",
+        "Imperium",
+        "Tacticus",
+        "Wardens of Ultramar"
+      ],
+      "pointsCost": 90
+    },
+    {
+      "name": "Captain Sicarius",
+      "canonicalName": "captain-sicarius",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chaplain Cassius [Legends]",
+      "canonicalName": "chaplain-cassius-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Chief Librarian Tigurius",
+      "canonicalName": "chief-librarian-tigurius",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Roboute Guilliman",
+      "canonicalName": "roboute-guilliman",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sergeant Chronus [Legends]",
+      "canonicalName": "sergeant-chronus-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Sergeant Telion [Legends]",
+      "canonicalName": "sergeant-telion-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Uriel Ventris",
+      "canonicalName": "uriel-ventris",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Ultramarines Honour Guard [Legends]",
+      "canonicalName": "ultramarines-honour-guard-legends",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Lieutenant Titus",
+      "canonicalName": "lieutenant-titus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Marneus Calgar in Armour of Antilochus",
+      "canonicalName": "marneus-calgar-in-armour-of-antilochus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Cato Sicarius",
+      "canonicalName": "cato-sicarius",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    },
+    {
+      "name": "Captain Titus",
+      "canonicalName": "captain-titus",
+      "stats": null,
+      "weapons": [],
+      "abilities": [],
+      "keywords": [],
+      "pointsCost": null
+    }
+  ]
+}
