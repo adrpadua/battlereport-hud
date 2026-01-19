@@ -6,6 +6,7 @@ import { registerUnitRoutes } from './routes/units.js';
 import { registerStratagemRoutes } from './routes/stratagems.js';
 import { registerEnhancementRoutes } from './routes/enhancements.js';
 import { registerValidationRoutes } from './routes/validation.js';
+import { registerObjectivesRoutes } from './routes/objectives.js';
 
 const HTTP_PORT = 40401;
 
@@ -32,6 +33,7 @@ export async function createHttpServer(db: Database) {
   registerStratagemRoutes(fastify, db);
   registerEnhancementRoutes(fastify, db);
   registerValidationRoutes(fastify, db);
+  registerObjectivesRoutes(fastify, db);
 
   return fastify;
 }

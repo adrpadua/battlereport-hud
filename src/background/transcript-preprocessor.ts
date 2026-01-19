@@ -1,5 +1,88 @@
 import type { TranscriptSegment } from '@/types/youtube';
 import type { Stratagem, Unit } from '@/types/battle-report';
+import { getMultiFactionAliases } from '@/data/generated/aliases';
+
+// MCP Server API configuration
+const MCP_SERVER_URL = 'http://localhost:40401';
+
+// Objectives API response type
+interface ObjectivesApiResponse {
+  primaryMissions: string[];
+  secondaryObjectives: string[];
+  gambits: string[];
+  aliases: Record<string, string>;
+}
+
+// Cache for objectives fetched from API
+let objectivesCache: ObjectivesApiResponse | null = null;
+let objectivesCacheTime = 0;
+const OBJECTIVES_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Fetch objectives from MCP server API
+ * Returns cached data if available and not expired
+ */
+export async function fetchObjectivesFromApi(): Promise<ObjectivesApiResponse | null> {
+  const now = Date.now();
+  if (objectivesCache && now - objectivesCacheTime < OBJECTIVES_CACHE_TTL) {
+    return objectivesCache;
+  }
+
+  try {
+    const response = await fetch(`${MCP_SERVER_URL}/api/objectives`);
+    if (!response.ok) {
+      console.warn(`Failed to fetch objectives from MCP server: ${response.status}`);
+      return null;
+    }
+    objectivesCache = await response.json();
+    objectivesCacheTime = now;
+    return objectivesCache;
+  } catch (error) {
+    console.warn('Failed to connect to MCP server for objectives:', error);
+    return null;
+  }
+}
+
+/**
+ * Initialize objectives from MCP server API
+ * Updates the module-level objectives arrays with data from the database
+ * Falls back to hardcoded values if API is unavailable
+ */
+export async function initializeObjectivesFromApi(): Promise<boolean> {
+  const apiData = await fetchObjectivesFromApi();
+  if (!apiData) {
+    console.log('Using fallback hardcoded objectives');
+    return false;
+  }
+
+  // Update objectives if we got data from API
+  if (apiData.primaryMissions.length > 0) {
+    dynamicPrimaryObjectives = apiData.primaryMissions;
+  }
+  if (apiData.secondaryObjectives.length > 0) {
+    dynamicSecondaryObjectives = apiData.secondaryObjectives;
+  }
+  if (apiData.gambits.length > 0) {
+    dynamicGambits = apiData.gambits;
+  }
+
+  // Merge API aliases with existing ones
+  for (const [alias, canonical] of Object.entries(apiData.aliases)) {
+    dynamicObjectiveAliases.set(alias.toLowerCase(), canonical);
+  }
+
+  // Rebuild derived values
+  rebuildObjectivePatterns();
+
+  console.log(`Loaded ${dynamicPrimaryObjectives.length} primary missions, ${dynamicSecondaryObjectives.length} secondary objectives from API`);
+  return true;
+}
+
+// Dynamic objectives storage (can be updated from API)
+let dynamicSecondaryObjectives: string[] = [];
+let dynamicPrimaryObjectives: string[] = [];
+let dynamicGambits: string[] = [];
+let dynamicObjectiveAliases = new Map<string, string>();
 
 export interface TermMatch {
   term: string;
@@ -133,8 +216,8 @@ const STRATAGEM_ALIASES = new Map<string, string>([
   ['reroll', 'Command Re-roll'],
 ]);
 
-// Secondary Objectives (Chapter Approved 2025-26 and Leviathan)
-const SECONDARY_OBJECTIVES = [
+// Fallback Secondary Objectives (used if API unavailable)
+const FALLBACK_SECONDARY_OBJECTIVES = [
   // Kill-based
   'Assassination',
   'Bring It Down',
@@ -164,8 +247,8 @@ const SECONDARY_OBJECTIVES = [
   'Search and Destroy',
 ];
 
-// Primary Objectives / Mission Names (Chapter Approved 2025-26)
-const PRIMARY_OBJECTIVES = [
+// Fallback Primary Objectives / Mission Names (used if API unavailable)
+const FALLBACK_PRIMARY_OBJECTIVES = [
   'Hidden Supplies',
   'Take and Hold',
   'The Ritual',
@@ -183,17 +266,59 @@ const PRIMARY_OBJECTIVES = [
   'Hold Out',
 ];
 
-const ALL_OBJECTIVES = [...SECONDARY_OBJECTIVES, ...PRIMARY_OBJECTIVES];
-
-// Map colloquial objective names to canonical names
-// Use proper capitalization matching official naming
-const OBJECTIVE_ALIASES = new Map<string, string>([
+// Fallback colloquial objective name aliases
+const FALLBACK_OBJECTIVE_ALIASES = new Map<string, string>([
   ['storm hostile', 'Storm Hostile Objective'],
   ['secure no man', 'Secure No Man\'s Land'],
   ['no mans land', 'Secure No Man\'s Land'],
   ['teleport homers', 'Deploy Teleport Homers'],
   ['extend lines', 'Extend Battle Lines'],
 ]);
+
+/**
+ * Get all objectives (from API if available, otherwise fallback)
+ */
+function getAllObjectives(): string[] {
+  if (dynamicSecondaryObjectives.length > 0 || dynamicPrimaryObjectives.length > 0) {
+    return [...dynamicSecondaryObjectives, ...dynamicPrimaryObjectives, ...dynamicGambits];
+  }
+  return [...FALLBACK_SECONDARY_OBJECTIVES, ...FALLBACK_PRIMARY_OBJECTIVES];
+}
+
+/**
+ * Get objective aliases (from API if available, merged with fallback)
+ */
+function getObjectiveAliases(): Map<string, string> {
+  if (dynamicObjectiveAliases.size > 0) {
+    // Merge fallback with dynamic (dynamic takes precedence)
+    const merged = new Map(FALLBACK_OBJECTIVE_ALIASES);
+    for (const [key, value] of dynamicObjectiveAliases) {
+      merged.set(key, value);
+    }
+    return merged;
+  }
+  return FALLBACK_OBJECTIVE_ALIASES;
+}
+
+// Cached patterns for objectives (rebuilt when API data is loaded)
+let cachedObjectiveAliasesWithCase: Map<string, string> | null = null;
+
+/**
+ * Rebuild objective patterns after loading from API
+ */
+function rebuildObjectivePatterns(): void {
+  cachedObjectiveAliasesWithCase = buildCasePreservingAliases(getAllObjectives(), getObjectiveAliases());
+}
+
+/**
+ * Get objective aliases with case preservation
+ */
+function getObjectiveAliasesWithCase(): Map<string, string> {
+  if (!cachedObjectiveAliasesWithCase) {
+    cachedObjectiveAliasesWithCase = buildCasePreservingAliases(getAllObjectives(), getObjectiveAliases());
+  }
+  return cachedObjectiveAliasesWithCase;
+}
 
 // All 40K Factions
 const FACTIONS = [
@@ -461,12 +586,10 @@ const GENERIC_WORDS = new Set([
 ]);
 
 /**
- * Build fuzzy aliases from official unit names.
- * Creates mappings for common variations and misspellings.
+ * Add dynamic aliases for official unit names (singular/plural, suffix removal).
+ * Shared helper for both sync and async alias building.
  */
-export function buildFuzzyUnitAliases(officialNames: string[]): Map<string, string> {
-  const aliases = new Map<string, string>(UNIT_ALIASES);
-
+function addDynamicAliases(aliases: Map<string, string>, officialNames: string[]): void {
   for (const name of officialNames) {
     const lower = name.toLowerCase();
 
@@ -488,11 +611,49 @@ export function buildFuzzyUnitAliases(officialNames: string[]): Map<string, stri
     if (withoutSuffix !== lower && withoutSuffix.length > 5 && !GENERIC_WORDS.has(withoutSuffix)) {
       aliases.set(withoutSuffix, name);
     }
+  }
+}
 
-    // Don't add first word as alias - too many false positives
-    // The explicit UNIT_ALIASES map handles specific cases
+/**
+ * Build fuzzy aliases from official unit names.
+ * Creates mappings for common variations and misspellings.
+ * Loads pre-generated LLM aliases for specified factions.
+ *
+ * @param officialNames - List of official unit names
+ * @param factionIds - Optional faction IDs to load generated aliases for
+ */
+export async function buildFuzzyUnitAliases(
+  officialNames: string[],
+  factionIds: string[] = []
+): Promise<Map<string, string>> {
+  // Start with hardcoded aliases as base
+  const aliases = new Map<string, string>(UNIT_ALIASES);
+
+  // Load pre-generated LLM aliases for specified factions
+  if (factionIds.length > 0) {
+    try {
+      const generatedAliases = await getMultiFactionAliases(factionIds);
+      for (const [alias, canonical] of generatedAliases) {
+        aliases.set(alias, canonical);
+      }
+    } catch (error) {
+      console.warn('Failed to load generated aliases:', error);
+    }
   }
 
+  // Add dynamic aliases from official names
+  addDynamicAliases(aliases, officialNames);
+
+  return aliases;
+}
+
+/**
+ * Build fuzzy aliases synchronously (for backwards compatibility).
+ * Does not load generated aliases - use buildFuzzyUnitAliases() for full functionality.
+ */
+export function buildFuzzyUnitAliasesSync(officialNames: string[]): Map<string, string> {
+  const aliases = new Map<string, string>(UNIT_ALIASES);
+  addDynamicAliases(aliases, officialNames);
   return aliases;
 }
 
@@ -604,7 +765,7 @@ function buildCasePreservingAliases(
 
 // Build case-preserving alias maps for all tag types
 const STRATAGEM_ALIASES_WITH_CASE = buildCasePreservingAliases(ALL_STRATAGEMS, STRATAGEM_ALIASES);
-const OBJECTIVE_ALIASES_WITH_CASE = buildCasePreservingAliases(ALL_OBJECTIVES, OBJECTIVE_ALIASES);
+// OBJECTIVE_ALIASES_WITH_CASE is now dynamic - use getObjectiveAliasesWithCase()
 const FACTION_ALIASES_WITH_CASE = buildCasePreservingAliases(FACTIONS, FACTION_ALIASES);
 const DETACHMENT_ALIASES_WITH_CASE = buildCasePreservingAliases(DETACHMENTS, DETACHMENT_ALIASES);
 
@@ -685,8 +846,8 @@ export function preprocessTranscriptWithLlmMappings(
     colloquialToOfficial.set(colloquial.toLowerCase(), official);
   }
 
-  // Build fuzzy aliases from official unit names
-  const unitAliases = buildFuzzyUnitAliases(unitNames);
+  // Build fuzzy aliases from official unit names (sync version for backwards compatibility)
+  const unitAliases = buildFuzzyUnitAliasesSync(unitNames);
 
   // Merge LLM mappings into aliases (LLM takes priority)
   for (const [colloquial, official] of Object.entries(llmMappings)) {
@@ -877,6 +1038,212 @@ export function preprocessTranscriptWithLlmMappings(
 }
 
 /**
+ * Pre-process transcript with LLM term mappings and generated aliases.
+ * This is the async version that loads pre-generated LLM aliases for better matching.
+ */
+export async function preprocessTranscriptWithGeneratedAliases(
+  transcript: TranscriptSegment[],
+  unitNames: string[] = [],
+  factionIds: string[] = [],
+  llmMappings: Record<string, string> = {}
+): Promise<PreprocessedTranscript> {
+  const matches: TermMatch[] = [];
+  const stratagemMentions = new Map<string, number[]>();
+  const unitMentions = new Map<string, number[]>();
+  const normalizedSegments: NormalizedSegment[] = [];
+  const colloquialToOfficial = new Map<string, string>();
+
+  // Merge LLM mappings into colloquialToOfficial
+  for (const [colloquial, official] of Object.entries(llmMappings)) {
+    colloquialToOfficial.set(colloquial.toLowerCase(), official);
+  }
+
+  // Build fuzzy aliases from official unit names AND generated aliases
+  const unitAliases = await buildFuzzyUnitAliases(unitNames, factionIds);
+
+  // Merge LLM mappings into aliases (LLM takes priority)
+  for (const [colloquial, official] of Object.entries(llmMappings)) {
+    unitAliases.set(colloquial.toLowerCase(), official);
+  }
+
+  // Build patterns (include LLM mappings, aliases for stratagems and units)
+  const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
+  const allSearchTerms = [...unitNames, ...Object.keys(llmMappings)];
+  const unitPattern = allSearchTerms.length > 0 ? buildTermPattern(allSearchTerms, unitAliases) : null;
+
+  for (const seg of transcript) {
+    const timestamp = Math.floor(seg.startTime);
+    let text = seg.text;
+    let normalizedText = text;
+    let taggedText = text;
+
+    // Track replacements for this segment to avoid double-processing
+    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' }> = [];
+
+    // First, apply LLM mappings directly
+    for (const [colloquial, official] of Object.entries(llmMappings)) {
+      const escapedColloquial = colloquial.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escapedColloquial}\\b`, 'gi');
+
+      for (const match of text.matchAll(regex)) {
+        const term = match[0];
+        if (!term) continue;
+
+        const isStratagem = ALL_STRATAGEMS.some(s => s.toLowerCase() === official.toLowerCase());
+        const type: 'unit' | 'stratagem' = isStratagem ? 'stratagem' : 'unit';
+
+        const mentionMap = isStratagem ? stratagemMentions : unitMentions;
+        const canonical = official.toLowerCase();
+
+        if (!mentionMap.has(canonical)) {
+          mentionMap.set(canonical, []);
+        }
+        const timestamps = mentionMap.get(canonical)!;
+        if (!timestamps.includes(timestamp)) {
+          timestamps.push(timestamp);
+        }
+
+        matches.push({
+          term,
+          normalizedTerm: official,
+          type,
+          timestamp,
+          segmentText: text,
+        });
+
+        replacements.push({ original: term, official, type });
+      }
+    }
+
+    // Find stratagem mentions (pattern-based)
+    for (const match of text.matchAll(stratagemPattern)) {
+      const term = match[1];
+      if (!term) continue;
+
+      const normalized = normalizeTerm(term);
+
+      if (replacements.some(r => r.original.toLowerCase() === term.toLowerCase())) {
+        continue;
+      }
+
+      if (STRATAGEM_CONTEXT_KEYWORDS.map(normalizeTerm).includes(normalized)) {
+        if (!text.toLowerCase().includes('stratagem')) {
+          continue;
+        }
+      }
+
+      const canonical = toCanonicalName(term, STRATAGEM_ALIASES_WITH_CASE);
+
+      if (term.toLowerCase() !== canonical.toLowerCase()) {
+        colloquialToOfficial.set(term.toLowerCase(), canonical);
+      }
+
+      if (!stratagemMentions.has(canonical)) {
+        stratagemMentions.set(canonical, []);
+      }
+
+      const timestamps = stratagemMentions.get(canonical)!;
+      if (!timestamps.includes(timestamp)) {
+        timestamps.push(timestamp);
+      }
+
+      matches.push({
+        term,
+        normalizedTerm: canonical,
+        type: 'stratagem',
+        timestamp,
+        segmentText: text,
+      });
+
+      replacements.push({ original: term, official: canonical, type: 'stratagem' });
+    }
+
+    // Find unit mentions (pattern-based)
+    if (unitPattern) {
+      for (const match of text.matchAll(unitPattern)) {
+        const term = match[1];
+        if (!term) continue;
+
+        if (replacements.some(r => r.original.toLowerCase() === term.toLowerCase())) {
+          continue;
+        }
+
+        let canonical = toCanonicalName(term, unitAliases);
+
+        if (canonical === normalizeTerm(term)) {
+          const fuzzyMatch = findBestMatch(term, unitNames, unitAliases, 0.75);
+          if (fuzzyMatch) {
+            canonical = fuzzyMatch;
+          }
+        }
+
+        if (term.toLowerCase() !== canonical.toLowerCase()) {
+          colloquialToOfficial.set(term.toLowerCase(), canonical);
+        }
+
+        if (!unitMentions.has(canonical)) {
+          unitMentions.set(canonical, []);
+        }
+
+        const timestamps = unitMentions.get(canonical)!;
+        if (!timestamps.includes(timestamp)) {
+          timestamps.push(timestamp);
+        }
+
+        matches.push({
+          term,
+          normalizedTerm: canonical,
+          type: 'unit',
+          timestamp,
+          segmentText: text,
+        });
+
+        replacements.push({ original: term, official: canonical, type: 'unit' });
+      }
+    }
+
+    // Apply replacements to create normalized and tagged text
+    replacements.sort((a, b) => b.original.length - a.original.length);
+
+    const seenOriginals = new Set<string>();
+    const uniqueReplacements = replacements.filter(({ original }) => {
+      const lower = original.toLowerCase();
+      if (seenOriginals.has(lower)) {
+        return false;
+      }
+      seenOriginals.add(lower);
+      return true;
+    });
+
+    for (const { original, official, type } of uniqueReplacements) {
+      const regex = new RegExp(`\\b${escapeRegex(original)}\\b`, 'gi');
+
+      normalizedText = normalizedText.replace(regex, (match) => {
+        const firstChar = match[0];
+        const isUpperCase = firstChar ? firstChar === firstChar.toUpperCase() : false;
+        return isUpperCase
+          ? official.charAt(0).toUpperCase() + official.slice(1)
+          : official.toLowerCase();
+      });
+
+      const tag = type === 'unit' ? 'UNIT' : type === 'stratagem' ? 'STRATAGEM' : 'OBJECTIVE';
+      taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
+    }
+
+    normalizedSegments.push({
+      ...seg,
+      normalizedText,
+      taggedText,
+    });
+  }
+
+  const objectiveMentions = new Map<string, number[]>();
+  const factionMentions = new Map<string, number[]>();
+  const detachmentMentions = new Map<string, number[]>();
+  return { matches, stratagemMentions, unitMentions, objectiveMentions, factionMentions, detachmentMentions, normalizedSegments, colloquialToOfficial };
+}
+
+/**
  * Pre-process transcript to find mentions of stratagems, units, objectives, factions, and detachments.
  * Also normalizes and tags the transcript text with official names.
  * Deduplicates consecutive identical transcript lines (common in YouTube auto-captions).
@@ -904,13 +1271,13 @@ export function preprocessTranscript(
     }
   }
 
-  // Build fuzzy aliases from official unit names
-  const unitAliases = buildFuzzyUnitAliases(unitNames);
+  // Build fuzzy aliases from official unit names (sync version)
+  const unitAliases = buildFuzzyUnitAliasesSync(unitNames);
 
   // Build patterns (include aliases for stratagems, units, objectives, factions, detachments)
   const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
   const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames, unitAliases) : null;
-  const objectivePattern = buildTermPattern(ALL_OBJECTIVES, OBJECTIVE_ALIASES);
+  const objectivePattern = buildTermPattern(getAllObjectives(), getObjectiveAliases());
   const factionPattern = buildTermPattern(FACTIONS, FACTION_ALIASES);
   const detachmentPattern = buildTermPattern(DETACHMENTS, DETACHMENT_ALIASES);
 
@@ -1017,7 +1384,7 @@ export function preprocessTranscript(
       if (!term) continue;
 
       // Resolve alias to canonical name
-      const canonical = toCanonicalName(term, OBJECTIVE_ALIASES_WITH_CASE);
+      const canonical = toCanonicalName(term, getObjectiveAliasesWithCase());
 
       // Track colloquial -> official mapping
       if (term.toLowerCase() !== canonical.toLowerCase()) {
