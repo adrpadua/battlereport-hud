@@ -5,12 +5,12 @@
  * 1. Loading saved captions from test-data
  * 2. Running preprocessing with detected factions
  * 3. Building the narrator prompts
- * 4. Optionally calling the AI to generate narration
+ * 4. Saving preprocessed transcript to test-data
+ * 5. Optionally calling the AI to generate narration
  *
  * Usage:
- *   npx tsx scripts/test-game-narrator.ts                    # Test with default video
- *   npx tsx scripts/test-game-narrator.ts QtqshWdUeiQ        # Test with specific video ID
- *   npx tsx scripts/test-game-narrator.ts --call-ai          # Actually call the AI (requires OPENAI_API_KEY)
+ *   npx tsx scripts/test-game-narrator.ts <videoId>          # Test with specific video ID (required)
+ *   npx tsx scripts/test-game-narrator.ts <videoId> --call-ai  # Generate narration (requires OPENAI_API_KEY)
  */
 
 import 'dotenv/config';
@@ -32,7 +32,6 @@ import type { TranscriptSegment } from '../src/types/youtube';
 import { formatTimestamp } from './transcript-extractor';
 
 const CAPTIONS_DIR = path.join(process.cwd(), 'test-data', 'captions');
-const DEFAULT_VIDEO_ID = 'QtqshWdUeiQ';
 
 interface CaptionFile {
   videoId: string;
@@ -103,8 +102,13 @@ function detectFactionsFromTitle(title: string): string[] {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const callAi = args.includes('--call-ai');
-  const dumpTranscript = args.includes('--dump-transcript');
-  const videoId = args.find((a) => !a.startsWith('--')) ?? DEFAULT_VIDEO_ID;
+  const videoId = args.find((a) => !a.startsWith('--'));
+
+  if (!videoId) {
+    console.error('Usage: npx tsx scripts/test-game-narrator.ts <videoId> [--call-ai]');
+    console.error('Example: npx tsx scripts/test-game-narrator.ts QtqshWdUeiQ --call-ai');
+    process.exit(1);
+  }
 
   console.log('='.repeat(80));
   console.log('Game Narrator Prompt Test');
@@ -145,19 +149,17 @@ async function main(): Promise<void> {
   console.log(`Units detected: ${preprocessed.unitMentions.size}`);
   console.log(`Term corrections: ${preprocessed.colloquialToOfficial.size}`);
 
-  // Dump preprocessed transcript if requested
-  if (dumpTranscript) {
-    const transcriptLines = preprocessed.normalizedSegments
-      .map((s) => {
-        const mins = Math.floor(s.startTime / 60);
-        const secs = String(Math.floor(s.startTime % 60)).padStart(2, '0');
-        return `[${mins}:${secs}] ${s.taggedText}`;
-      })
-      .join('\n');
-    const outputPath = path.join(process.cwd(), 'test-data', `transcript-${videoId}.txt`);
-    fs.writeFileSync(outputPath, transcriptLines);
-    console.log(`\nPreprocessed transcript saved to: ${outputPath}`);
-  }
+  // Save preprocessed transcript
+  const transcriptLines = preprocessed.normalizedSegments
+    .map((s) => {
+      const mins = Math.floor(s.startTime / 60);
+      const secs = String(Math.floor(s.startTime % 60)).padStart(2, '0');
+      return `[${mins}:${secs}] ${s.taggedText}`;
+    })
+    .join('\n');
+  const transcriptPath = path.join(process.cwd(), 'test-data', `transcript-${videoId}.txt`);
+  fs.writeFileSync(transcriptPath, transcriptLines);
+  console.log(`\nPreprocessed transcript saved to: ${transcriptPath}`);
 
   // Build faction data for prompt
   let factionData: { faction1?: FactionData; faction2?: FactionData } | undefined;
@@ -287,7 +289,7 @@ async function main(): Promise<void> {
     }
   } else {
     console.log('\n--- To generate actual narration, run with --call-ai flag ---');
-    console.log('npx tsx scripts/test-game-narrator.ts --call-ai');
+    console.log(`npx tsx scripts/test-game-narrator.ts ${videoId} --call-ai`);
   }
 }
 

@@ -380,12 +380,18 @@ const UNIT_ALIASES = new Map<string, string>([
   // Drukhari common misspellings
   ['cabalite warriors', 'Kabalite Warriors'],
   ['cabalite', 'Kabalite Warriors'],
+  ['cabalites', 'Kabalite Warriors'],
+  ['drazhar', 'Drazhar'],
+  ['drazar', 'Drazhar'],
   ['mandrekes', 'Mandrakes'],
   ['cronos', 'Cronos'],
   ['kronos', 'Cronos'],
   ['lady malice', 'Lady Malys'],
   ['reaver jet bikes', 'Reavers'],
   ['reaver jetbikes', 'Reavers'],
+  ['lilith hesperax', 'Lelith Hesperax'],
+  ['lilith', 'Lelith Hesperax'],
+  ['lelith', 'Lelith Hesperax'],
   // GSC common misspellings
   ['genestealers', 'Purestrain Genestealers'],
   ['genesteelers', 'Purestrain Genestealers'],
