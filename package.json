@@ -2,7 +2,11 @@
   "name": "battlereport-hud",
   "private": true,
   "packageManager": "npm@11.5.2",
-  "workspaces": ["packages/*", "apps/*", "mcp-server"],
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "mcp-server"
+  ],
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -15,8 +19,9 @@
     "generate:aliases": "tsx scripts/generate-unit-aliases.ts"
   },
   "devDependencies": {
+    "@turbo/gen": "^2.7.5",
+    "tsx": "^4.21.0",
     "turbo": "^2.0.0",
-    "typescript": "^5.7.3",
-    "tsx": "^4.21.0"
+    "typescript": "^5.7.3"
   }
 }
