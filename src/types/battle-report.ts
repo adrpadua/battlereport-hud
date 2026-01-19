@@ -28,12 +28,14 @@ export interface Unit {
   isValidated?: boolean;
   // Suggestion for non-validated units
   suggestedMatch?: UnitSuggestion;
+  videoTimestamp?: number; // seconds in video when first mentioned
 }
 
 export interface Stratagem {
   name: string;
   playerIndex?: number;
   confidence: ConfidenceLevel;
+  videoTimestamp?: number; // seconds in video when used
 }
 
 export interface BattleReport {

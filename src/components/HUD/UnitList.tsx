@@ -6,6 +6,19 @@ interface UnitListProps {
   playerIndex: number;
 }
 
+function formatTimestamp(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function seekToTimestamp(seconds: number): void {
+  const video = document.querySelector('video');
+  if (video) {
+    video.currentTime = seconds;
+  }
+}
+
 export function UnitList({ playerIndex }: UnitListProps): React.ReactElement | null {
   const acceptSuggestion = useBattleStore((state) => state.acceptSuggestion);
   const allUnits = useBattleStore((state) => state.report?.units ?? []);
@@ -43,6 +56,15 @@ export function UnitList({ playerIndex }: UnitListProps): React.ReactElement | n
                   </span>
                 )}
               </span>
+              {unit.videoTimestamp !== undefined && (
+                <button
+                  onClick={() => seekToTimestamp(unit.videoTimestamp!)}
+                  className="timestamp-button"
+                  title="Jump to this moment in the video"
+                >
+                  {formatTimestamp(unit.videoTimestamp)}
+                </button>
+              )}
               <ConfidenceBadge level={unit.confidence} />
             </div>
             {/* Show suggestion for non-validated units */}

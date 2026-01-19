@@ -20,6 +20,11 @@ export const StratagemSchema = z.object({
   name: z.string().describe('Stratagem name'),
   playerIndex: z.number().min(0).max(1).nullable().optional().describe('Which player used it'),
   confidence: ConfidenceLevelSchema,
+  videoTimestamp: z
+    .number()
+    .nullable()
+    .optional()
+    .describe('Approximate video timestamp in seconds when the stratagem was mentioned'),
 });
 
 export const BattleReportExtractionSchema = z.object({

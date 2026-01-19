@@ -3,6 +3,7 @@ import { BattleReportExtractionSchema } from '@/types/ai-response';
 import type { BattleReport } from '@/types/battle-report';
 import type { VideoData } from '@/types/youtube';
 import { getFactionContextForPrompt, processBattleReport } from './report-processor';
+import { preprocessTranscript, enrichStratagemTimestamps, enrichUnitTimestamps } from './transcript-preprocessor';
 
 const BASE_SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
 
@@ -21,7 +22,9 @@ Guidelines:
   - "medium": Unit mentioned but player association less clear
   - "low": Partial name or uncertain identification
 
-Your JSON response must include: players (array with name, faction, detachment, confidence), units (array with name, playerIndex, confidence, pointsCost), stratagems (array with name, playerIndex, confidence), mission (optional string), and pointsLimit (optional number).`;
+Your JSON response must include: players (array with name, faction, detachment, confidence), units (array with name, playerIndex, confidence, pointsCost), stratagems (array with name, playerIndex, confidence, videoTimestamp), mission (optional string), and pointsLimit (optional number).
+
+- For each stratagem, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
 
 /**
  * Build system prompt with faction-specific unit names.
@@ -73,9 +76,10 @@ ${videoData.description}
   if (videoData.transcript.length > 0) {
     // Use more of the transcript to capture units mentioned throughout the game
     // Take first 15 minutes (army list intro) + sample from the rest of the video
+    // Include timestamps so AI can report when stratagems were mentioned
     const introTranscript = videoData.transcript
       .filter((seg) => seg.startTime < 900) // First 15 minutes
-      .map((seg) => seg.text)
+      .map((seg) => `[${Math.floor(seg.startTime)}s] ${seg.text}`)
       .join(' ');
 
     // Sample from the rest of the video (every 5 minutes) to catch units mentioned during gameplay
@@ -84,7 +88,7 @@ ${videoData.description}
     for (const time of sampleTimes) {
       const segment = videoData.transcript
         .filter((seg) => seg.startTime >= time && seg.startTime < time + 180) // 3 min windows
-        .map((seg) => seg.text)
+        .map((seg) => `[${Math.floor(seg.startTime)}s] ${seg.text}`)
         .join(' ');
       if (segment) {
         gameplaySegments.push(segment);
@@ -172,6 +176,10 @@ export async function extractBattleReport(
   // Detect factions and get unit names for prompt enhancement
   const factionUnitNames = await detectFactionsFromVideo(videoData);
 
+  // Pre-process transcript to detect stratagems and units with timestamps
+  const allUnitNames = [...factionUnitNames.values()].flat();
+  const preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
+
   // Build faction-aware system prompt
   const systemPrompt = buildSystemPrompt(factionUnitNames);
 
@@ -194,6 +202,25 @@ export async function extractBattleReport(
   const validated = BattleReportExtractionSchema.parse(parsed);
 
   // Convert to BattleReport format (convert null to undefined)
+  const extractedStratagems = validated.stratagems.map((s) => ({
+    name: s.name,
+    playerIndex: s.playerIndex ?? undefined,
+    confidence: s.confidence,
+    videoTimestamp: s.videoTimestamp ?? undefined,
+  }));
+
+  // Enrich stratagems with timestamps from transcript preprocessing
+  const enrichedStratagems = enrichStratagemTimestamps(extractedStratagems, preprocessed);
+
+  // Convert validated units and enrich with timestamps
+  const extractedUnits = validated.units.map((u) => ({
+    name: u.name,
+    playerIndex: u.playerIndex,
+    confidence: u.confidence,
+    pointsCost: u.pointsCost ?? undefined,
+  }));
+  const enrichedUnits = enrichUnitTimestamps(extractedUnits, preprocessed);
+
   const rawReport: BattleReport = {
     players: validated.players.map((p) => ({
       name: p.name,
@@ -201,17 +228,8 @@ export async function extractBattleReport(
       detachment: p.detachment ?? undefined,
       confidence: p.confidence,
     })) as BattleReport['players'],
-    units: validated.units.map((u) => ({
-      name: u.name,
-      playerIndex: u.playerIndex,
-      confidence: u.confidence,
-      pointsCost: u.pointsCost ?? undefined,
-    })),
-    stratagems: validated.stratagems.map((s) => ({
-      name: s.name,
-      playerIndex: s.playerIndex ?? undefined,
-      confidence: s.confidence,
-    })),
+    units: enrichedUnits,
+    stratagems: enrichedStratagems,
     mission: validated.mission ?? undefined,
     pointsLimit: validated.pointsLimit ?? undefined,
     extractedAt: Date.now(),
