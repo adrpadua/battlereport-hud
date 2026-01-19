@@ -16,10 +16,14 @@
     "scrape:factions": "tsx src/scraper/run-scraper.ts --target factions",
     "scrape:units": "tsx src/scraper/run-scraper.ts --target units",
     "scrape:all": "tsx src/scraper/run-scraper.ts --target all",
+    "crawl": "tsx src/scraper/crawl-wahapedia.ts",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
     "ingest": "tsx src/ingestion/run-ingestion.ts",
-    "ingest:bsdata": "tsx src/ingestion/ingest-bsdata.ts"
+    "ingest:bsdata": "tsx src/ingestion/ingest-bsdata.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
@@ -29,13 +33,15 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@firecrawl/firecrawl-js": "^1.0.0",
+    "@mendable/firecrawl-js": "^1.0.0",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.0",
-    "drizzle-kit": "^0.30.0",
+    "@vitest/coverage-v8": "^4.0.17",
     "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.30.0",
     "fast-xml-parser": "^4.5.3",
     "tsx": "^4.21.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^4.0.17"
   }
 }

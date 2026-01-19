@@ -81,7 +81,9 @@ export function parseFactionPage(
 }
 
 /**
- * Parse detachments page for a faction
+ * Parse detachments from faction main page
+ * Structure: ## DetachmentName -> ## Detachment Rule -> ## Enhancements -> ## Stratagems
+ * Each is a separate ## section
  */
 export function parseDetachments(
   markdown: string,
@@ -89,39 +91,57 @@ export function parseDetachments(
 ): Omit<NewDetachment, 'factionId'>[] {
   const detachments: Omit<NewDetachment, 'factionId'>[] = [];
 
-  // Split by h2 headers to get each detachment
+  // Section names that are NOT detachment names
+  const systemSections = [
+    'detachment rule', 'enhancements', 'stratagems', 'army rules',
+    'datasheets', 'books', 'introduction', 'contents', 'boarding actions',
+    'crusade rules', 'allied units', 'requisitions', 'agendas', 'battle traits',
+    'kindred legend', 'not found', 'void salvagers', 'hearthfire strike'
+  ];
+
+  // Split by ## headers
   const sections = markdown.split(/^## /m).filter(Boolean);
 
-  for (const section of sections) {
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i]!;
     const lines = section.split('\n');
     const name = lines[0]?.trim();
 
-    if (!name || name.toLowerCase().includes('detachment')) {
-      // Skip header sections
+    if (!name) continue;
+
+    const nameLower = name.toLowerCase();
+
+    // Skip system sections
+    if (systemSections.some(sys => nameLower === sys || nameLower.startsWith(sys))) {
       continue;
     }
 
-    const content = lines.slice(1).join('\n');
+    // Check if next section is "Detachment Rule" - that confirms this is a detachment
+    const nextSection = sections[i + 1];
+    if (!nextSection) continue;
 
-    // Extract detachment rule
-    let detachmentRule = '';
+    const nextName = nextSection.split('\n')[0]?.trim().toLowerCase();
+    if (nextName !== 'detachment rule') {
+      continue;
+    }
+
+    // This is a valid detachment!
+    // Extract lore from current section
+    const lore = lines.slice(1).join('\n').trim().slice(0, 1000) || null;
+
+    // Get detachment rule from next section
     let detachmentRuleName = '';
+    let detachmentRule = '';
 
-    // Look for the rule name and description
-    const ruleNameMatch = content.match(/### ([^\n]+)/);
+    const ruleContent = nextSection.split('\n').slice(1).join('\n');
+    const ruleNameMatch = ruleContent.match(/^### ([^\n]+)/m);
     if (ruleNameMatch?.[1]) {
       detachmentRuleName = ruleNameMatch[1].trim();
     }
-
-    // The rule text usually follows the name
-    const ruleMatch = content.match(/### [^\n]+\n([\s\S]*?)(?=###|$)/);
-    if (ruleMatch?.[1]) {
-      detachmentRule = ruleMatch[1].trim();
+    const ruleTextMatch = ruleContent.match(/### [^\n]+\n([\s\S]*?)(?=## |$)/);
+    if (ruleTextMatch?.[1]) {
+      detachmentRule = ruleTextMatch[1].trim().slice(0, 2000);
     }
-
-    // Extract lore if present
-    const loreMatch = content.match(/(?:^|\n)([A-Z][^#\n]*(?:\n(?![#\-\*])[^\n]+)*)/);
-    const lore = loreMatch?.[1]?.trim() || null;
 
     detachments.push({
       slug: slugify(name),
@@ -138,57 +158,64 @@ export function parseDetachments(
 }
 
 /**
- * Parse stratagems from a detachment or faction page
+ * Parse stratagems from faction page
+ * Wahapedia format:
+ * STRATAGEM NAME
+ * 1CP
+ * {Detachment} – {Type} Stratagem
+ * Description...
+ * **WHEN:** ...
+ * **TARGET:** ...
+ * **EFFECT:** ...
  */
 export function parseStratagems(
   markdown: string,
   sourceUrl: string
 ): Omit<NewStratagem, 'factionId' | 'detachmentId'>[] {
   const stratagems: Omit<NewStratagem, 'factionId' | 'detachmentId'>[] = [];
+  const seen = new Set<string>();
 
-  // Stratagems are usually in a table or list format
-  // Look for stratagem patterns
+  // Pattern: ALL CAPS NAME followed by CP cost and "Stratagem" type
+  // Example: VOID HARDENED\n1CP\nNeedgaârd Oathband – Wargear Stratagem
+  const stratagemPattern = /([A-Z][A-Z\s']+)\n(\d+)CP\n([^\n]+Stratagem)\n([\s\S]*?)(?=\n[A-Z][A-Z\s']+\n\d+CP|## |$)/g;
 
-  // Pattern 1: Table format with headers
-  const tableMatch = markdown.match(
-    /\|.*Name.*\|.*CP.*\|.*Phase.*\|[\s\S]*?\n\|[-\s|]+\|\n([\s\S]*?)(?=\n\n|$)/i
-  );
-
-  if (tableMatch?.[1]) {
-    const rows = tableMatch[1].split('\n').filter((r) => r.includes('|'));
-    for (const row of rows) {
-      const cells = row.split('|').map((c) => c.trim()).filter(Boolean);
-      if (cells.length >= 3) {
-        stratagems.push(parseStratagemRow(cells, sourceUrl));
-      }
-    }
-  }
-
-  // Pattern 2: Block format
-  const blockPattern = /### ([^\n]+)\n(?:.*?CP[:\s]*(\d+))?[\s\S]*?(?:WHEN|When)[:\s]*([^\n]+)[\s\S]*?(?:TARGET|Target)[:\s]*([^\n]+)[\s\S]*?(?:EFFECT|Effect)[:\s]*([\s\S]*?)(?=###|$)/g;
   let match;
-
-  while ((match = blockPattern.exec(markdown)) !== null) {
+  while ((match = stratagemPattern.exec(markdown)) !== null) {
     const name = match[1]?.trim();
     const cpCost = match[2] || '1';
-    const when = match[3]?.trim();
-    const target = match[4]?.trim();
-    const effect = match[5]?.trim();
+    const typeInfo = match[3]?.trim() || '';
+    const content = match[4] || '';
 
-    if (name && effect) {
-      stratagems.push({
-        slug: slugify(name),
-        name,
-        cpCost,
-        phase: detectPhase(when || ''),
-        when: when ?? null,
-        target: target ?? null,
-        effect,
-        sourceUrl,
-        dataSource: 'wahapedia' as const,
-        isCore: false,
-      });
-    }
+    if (!name || seen.has(name)) continue;
+    seen.add(name);
+
+    // Extract WHEN, TARGET, EFFECT
+    const whenMatch = content.match(/\*\*WHEN:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+    const targetMatch = content.match(/\*\*TARGET:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+    const effectMatch = content.match(/\*\*EFFECT:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+
+    const when = whenMatch?.[1]?.trim() || null;
+    const target = targetMatch?.[1]?.trim() || null;
+    const effect = effectMatch?.[1]?.trim() || '';
+
+    // Determine stratagem type from typeInfo
+    let stratagemType = 'other';
+    if (typeInfo.includes('Battle Tactic')) stratagemType = 'battle_tactic';
+    else if (typeInfo.includes('Strategic Ploy')) stratagemType = 'strategic_ploy';
+    else if (typeInfo.includes('Wargear')) stratagemType = 'wargear';
+
+    stratagems.push({
+      slug: slugify(name),
+      name,
+      cpCost,
+      phase: detectPhase(when || ''),
+      when,
+      target,
+      effect: effect.slice(0, 2000), // Limit length
+      sourceUrl,
+      dataSource: 'wahapedia' as const,
+      isCore: false,
+    });
   }
 
   return stratagems;
@@ -258,14 +285,14 @@ export function parseEnhancements(
   return enhancements;
 }
 
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 }
 
-function detectPhase(text: string): 'command' | 'movement' | 'shooting' | 'charge' | 'fight' | 'any' {
+export function detectPhase(text: string): 'command' | 'movement' | 'shooting' | 'charge' | 'fight' | 'any' {
   const lower = text.toLowerCase();
 
   if (lower.includes('command')) return 'command';
