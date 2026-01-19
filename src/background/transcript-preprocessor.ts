@@ -126,10 +126,11 @@ const STRATAGEM_CONTEXT_KEYWORDS = ['activates', 'pops', 'CP', 'command points']
 const ALL_STRATAGEMS = [...CORE_STRATAGEMS, ...FACTION_STRATAGEMS];
 
 // Map colloquial/shortened names to canonical names
+// Use proper capitalization matching official naming
 const STRATAGEM_ALIASES = new Map<string, string>([
-  ['overwatch', 'fire overwatch'],
-  ['re-roll', 'command re-roll'],
-  ['reroll', 'command re-roll'],
+  ['overwatch', 'Fire Overwatch'],
+  ['re-roll', 'Command Re-roll'],
+  ['reroll', 'Command Re-roll'],
 ]);
 
 // Secondary Objectives (Chapter Approved 2025-26 and Leviathan)
@@ -185,12 +186,13 @@ const PRIMARY_OBJECTIVES = [
 const ALL_OBJECTIVES = [...SECONDARY_OBJECTIVES, ...PRIMARY_OBJECTIVES];
 
 // Map colloquial objective names to canonical names
+// Use proper capitalization matching official naming
 const OBJECTIVE_ALIASES = new Map<string, string>([
-  ['storm hostile', 'storm hostile objective'],
-  ['secure no man', 'secure no man\'s land'],
-  ['no mans land', 'secure no man\'s land'],
-  ['teleport homers', 'deploy teleport homers'],
-  ['extend lines', 'extend battle lines'],
+  ['storm hostile', 'Storm Hostile Objective'],
+  ['secure no man', 'Secure No Man\'s Land'],
+  ['no mans land', 'Secure No Man\'s Land'],
+  ['teleport homers', 'Deploy Teleport Homers'],
+  ['extend lines', 'Extend Battle Lines'],
 ]);
 
 // All 40K Factions
@@ -224,29 +226,30 @@ const FACTIONS = [
   'World Eaters',
 ];
 
+// Use proper capitalization matching official naming
 const FACTION_ALIASES = new Map<string, string>([
-  ['eldar', 'aeldari'],
-  ['craftworlds', 'aeldari'],
-  ['craftworld', 'aeldari'],
-  ['dark eldar', 'drukhari'],
-  ['sisters of battle', 'adepta sororitas'],
-  ['sisters', 'adepta sororitas'],
-  ['admech', 'adeptus mechanicus'],
-  ['ad mech', 'adeptus mechanicus'],
-  ['custodes', 'adeptus custodes'],
-  ['imperial guard', 'astra militarum'],
-  ['guard', 'astra militarum'],
-  ['tau', 't\'au empire'],
-  ['tau empire', 't\'au empire'],
-  ['gsc', 'genestealer cults'],
-  ['genestealers', 'genestealer cults'],
-  ['genestealer cult', 'genestealer cults'],
-  ['csm', 'chaos space marines'],
-  ['death guard', 'death guard'],
-  ['dg', 'death guard'],
-  ['tsons', 'thousand sons'],
-  ['nids', 'tyranids'],
-  ['votann', 'leagues of votann'],
+  ['eldar', 'Aeldari'],
+  ['craftworlds', 'Aeldari'],
+  ['craftworld', 'Aeldari'],
+  ['dark eldar', 'Drukhari'],
+  ['sisters of battle', 'Adepta Sororitas'],
+  ['sisters', 'Adepta Sororitas'],
+  ['admech', 'Adeptus Mechanicus'],
+  ['ad mech', 'Adeptus Mechanicus'],
+  ['custodes', 'Adeptus Custodes'],
+  ['imperial guard', 'Astra Militarum'],
+  ['guard', 'Astra Militarum'],
+  ['tau', 'T\'au Empire'],
+  ['tau empire', 'T\'au Empire'],
+  ['gsc', 'Genestealer Cults'],
+  ['genestealers', 'Genestealer Cults'],
+  ['genestealer cult', 'Genestealer Cults'],
+  ['csm', 'Chaos Space Marines'],
+  ['death guard', 'Death Guard'],
+  ['dg', 'Death Guard'],
+  ['tsons', 'Thousand Sons'],
+  ['nids', 'Tyranids'],
+  ['votann', 'Leagues of Votann'],
 ]);
 
 // Army Detachments by faction
@@ -338,12 +341,13 @@ const DETACHMENTS = [
   'Skitarii Hunter Cohort',
 ];
 
+// Use proper capitalization matching official naming
 const DETACHMENT_ALIASES = new Map<string, string>([
-  ['cartel', 'kabalite cartel'],
-  ['cabalite cartel', 'kabalite cartel'],
-  ['gladius', 'gladius task force'],
-  ['kauyon', 'kauyon'],
-  ['montka', 'mont\'ka'],
+  ['cartel', 'Kabalite Cartel'],
+  ['cabalite cartel', 'Kabalite Cartel'],
+  ['gladius', 'Gladius Task Force'],
+  ['kauyon', 'Kauyon'],
+  ['montka', 'Mont\'ka'],
 ]);
 
 // Map colloquial/shortened unit names to canonical names
@@ -578,6 +582,27 @@ function toCanonicalName(term: string, aliases: Map<string, string>): string {
 }
 
 /**
+ * Build a case-preserving alias map from an array of properly-cased terms.
+ * Maps lowercase versions to their proper-cased originals.
+ */
+function buildCasePreservingAliases(
+  terms: string[],
+  existingAliases: Map<string, string>
+): Map<string, string> {
+  const aliases = new Map<string, string>(existingAliases);
+  for (const term of terms) {
+    aliases.set(term.toLowerCase(), term);
+  }
+  return aliases;
+}
+
+// Build case-preserving alias maps for all tag types
+const STRATAGEM_ALIASES_WITH_CASE = buildCasePreservingAliases(ALL_STRATAGEMS, STRATAGEM_ALIASES);
+const OBJECTIVE_ALIASES_WITH_CASE = buildCasePreservingAliases(ALL_OBJECTIVES, OBJECTIVE_ALIASES);
+const FACTION_ALIASES_WITH_CASE = buildCasePreservingAliases(FACTIONS, FACTION_ALIASES);
+const DETACHMENT_ALIASES_WITH_CASE = buildCasePreservingAliases(DETACHMENTS, DETACHMENT_ALIASES);
+
+/**
  * Generic function to find the best matching timestamp for a name in mentions.
  * Used for both stratagems and units.
  */
@@ -731,7 +756,7 @@ export function preprocessTranscriptWithLlmMappings(
         }
       }
 
-      const canonical = toCanonicalName(term, STRATAGEM_ALIASES);
+      const canonical = toCanonicalName(term, STRATAGEM_ALIASES_WITH_CASE);
 
       if (term.toLowerCase() !== canonical.toLowerCase()) {
         colloquialToOfficial.set(term.toLowerCase(), canonical);
@@ -908,7 +933,7 @@ export function preprocessTranscript(
       }
 
       // Resolve alias to canonical name for storage
-      const canonical = toCanonicalName(term, STRATAGEM_ALIASES);
+      const canonical = toCanonicalName(term, STRATAGEM_ALIASES_WITH_CASE);
 
       // Track colloquial -> official mapping
       if (term.toLowerCase() !== canonical.toLowerCase()) {
@@ -986,7 +1011,7 @@ export function preprocessTranscript(
       if (!term) continue;
 
       // Resolve alias to canonical name
-      const canonical = toCanonicalName(term, OBJECTIVE_ALIASES);
+      const canonical = toCanonicalName(term, OBJECTIVE_ALIASES_WITH_CASE);
 
       // Track colloquial -> official mapping
       if (term.toLowerCase() !== canonical.toLowerCase()) {
@@ -1019,7 +1044,7 @@ export function preprocessTranscript(
       const term = match[1];
       if (!term) continue;
 
-      const canonical = toCanonicalName(term, FACTION_ALIASES);
+      const canonical = toCanonicalName(term, FACTION_ALIASES_WITH_CASE);
 
       if (term.toLowerCase() !== canonical.toLowerCase()) {
         colloquialToOfficial.set(term.toLowerCase(), canonical);
@@ -1050,7 +1075,7 @@ export function preprocessTranscript(
       const term = match[1];
       if (!term) continue;
 
-      const canonical = toCanonicalName(term, DETACHMENT_ALIASES);
+      const canonical = toCanonicalName(term, DETACHMENT_ALIASES_WITH_CASE);
 
       if (term.toLowerCase() !== canonical.toLowerCase()) {
         colloquialToOfficial.set(term.toLowerCase(), canonical);
