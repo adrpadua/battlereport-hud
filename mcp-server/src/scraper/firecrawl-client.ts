@@ -21,6 +21,7 @@ export interface ScrapeOptions {
   includeHtml?: boolean;
   extractLinks?: boolean;
   waitFor?: number; // ms to wait for JS rendering
+  timeout?: number; // request timeout in ms (default 30000)
 }
 
 export class FirecrawlClient {
@@ -92,6 +93,7 @@ export class FirecrawlClient {
       forceRefresh = false,
       includeHtml = false,
       extractLinks = true,
+      timeout = 30000,
     } = options;
 
     // Check cache first
@@ -117,6 +119,7 @@ export class FirecrawlClient {
 
         const response = await this.client.scrapeUrl(url, {
           formats,
+          timeout,
         });
 
         if (!response.success) {

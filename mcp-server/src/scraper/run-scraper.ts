@@ -229,9 +229,9 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
         console.log(`  Using indexed unit list (${existingUnits.length} units)`);
         unitLinks = existingUnits.map(u => ({ name: u.name, slug: u.slug }));
       } else {
-        // Scrape datasheets index to discover units
+        // Scrape datasheets index to discover units (use longer timeout for large pages)
         console.log(`  Fetching datasheets index${refreshIndex ? ' (refresh requested)' : ''}...`);
-        const indexResult = await client.scrape(indexUrl);
+        const indexResult = await client.scrape(indexUrl, { timeout: 60000 });
 
         // Extract unit slugs from TOC links
         unitLinks = extractUnitLinksFromTOC(indexResult.markdown);
