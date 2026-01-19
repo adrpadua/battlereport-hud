@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync, statSync } from 'fs';
 import { join } from 'path';
 import { fetchAllCatalogues } from './bsdata-fetcher';
 import { parseCatalogue, extractFactionAliases } from './bsdata-parser';
@@ -13,10 +13,13 @@ async function main() {
   if (!existsSync(OUTPUT_DIR)) {
     mkdirSync(OUTPUT_DIR, { recursive: true });
   } else {
-    // Clean existing generated files
+    // Clean existing generated files (skip directories like aliases/)
     const existingFiles = readdirSync(OUTPUT_DIR);
     for (const file of existingFiles) {
-      unlinkSync(join(OUTPUT_DIR, file));
+      const filePath = join(OUTPUT_DIR, file);
+      if (statSync(filePath).isFile()) {
+        unlinkSync(filePath);
+      }
     }
   }
 
