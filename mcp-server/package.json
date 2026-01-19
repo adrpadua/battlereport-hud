@@ -1,0 +1,41 @@
+{
+  "name": "wh40k-rules-mcp",
+  "version": "1.0.0",
+  "description": "MCP server providing Warhammer 40k rules data from Wahapedia and BSData",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "wh40k-rules-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "scrape": "tsx src/scraper/run-scraper.ts",
+    "scrape:core": "tsx src/scraper/run-scraper.ts --target core",
+    "scrape:factions": "tsx src/scraper/run-scraper.ts --target factions",
+    "scrape:units": "tsx src/scraper/run-scraper.ts --target units",
+    "scrape:all": "tsx src/scraper/run-scraper.ts --target all",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/db/seed.ts",
+    "ingest": "tsx src/ingestion/run-ingestion.ts",
+    "ingest:bsdata": "tsx src/ingestion/ingest-bsdata.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "drizzle-orm": "^0.38.0",
+    "pg": "^8.13.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@firecrawl/firecrawl-js": "^1.0.0",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.0",
+    "drizzle-kit": "^0.30.0",
+    "dotenv": "^16.4.5",
+    "fast-xml-parser": "^4.5.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.3"
+  }
+}

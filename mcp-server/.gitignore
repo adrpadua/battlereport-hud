@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment
+.env
+
+# Cache directories
+.scrape-cache/
+.bsdata-cache/
+
+# Drizzle
+drizzle/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
