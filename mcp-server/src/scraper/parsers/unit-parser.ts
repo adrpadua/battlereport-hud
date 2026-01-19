@@ -393,6 +393,73 @@ function parseWeaponAbilities(abilities: string): string[] {
 }
 
 /**
+ * Patterns that indicate we've left the unit abilities section
+ * and entered core rules, stratagems, or reference material
+ */
+const ABILITIES_STOP_MARKERS = [
+  'STRATAGEMS',
+  'UNIT COMPOSITION',
+  'KEYWORDS:',           // Note: "KEYWORDS:" alone, not "FACTION KEYWORDS:"
+  'FACTION KEYWORDS:',   // Separate faction keywords section
+  'Army List',
+  'Core Rules',
+  'Datasheets collated',
+  'DETACHMENT RULE',
+  'ENHANCEMENTS',
+  '## ',  // New major section
+];
+
+/**
+ * Ability names/patterns to skip - these are not unit abilities
+ */
+const SKIP_ABILITY_PATTERNS = [
+  /^WHEN:?$/i,
+  /^TARGET:?$/i,
+  /^EFFECT:?$/i,
+  /^RESTRICTIONS:?$/i,
+  /^Example:?$/i,
+  /^D6 RESULT/i,
+  /^NUMBER OF D6/i,
+  /^FATE DICE/i,
+  /^Characters$/i,
+  /^Battleline$/i,
+  /^Dedicated Transports$/i,
+  /^Fortifications$/i,
+  /^Other$/i,
+  /keyword is used/i,
+  /Army List/i,
+  /Datasheets/i,
+  /^\d+$/,  // Just a number
+  /^\+$/,   // Just a plus sign
+  /^and others\.\.\.$/i,
+];
+
+/**
+ * Check if an ability name should be skipped
+ */
+function shouldSkipAbility(name: string, description: string): boolean {
+  // Skip if name matches any skip pattern
+  for (const pattern of SKIP_ABILITY_PATTERNS) {
+    if (pattern.test(name)) return true;
+  }
+
+  // Skip if name is too short or too long
+  if (name.length < 3 || name.length > 100) return true;
+
+  // Skip if description looks like a URL list or reference section
+  if (description.includes('](https://wahapedia.ru') && description.split('](').length > 3) {
+    return true;
+  }
+
+  // Skip if description is just table formatting
+  if (/^\|[\s|]*$/.test(description) || /^\s*\|\s*\d+\s*\|/.test(description)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Extract abilities from unit content
  */
 function extractAbilities(
@@ -401,35 +468,76 @@ function extractAbilities(
 ): Omit<NewAbility, 'factionId'>[] {
   const abilities: Omit<NewAbility, 'factionId'>[] = [];
 
-  // Look for abilities section
+  // Look for abilities section with better boundaries
   const abilitiesSection = content.match(
-    /(?:### Abilities|ABILITIES)[\s\S]*?\n([\s\S]*?)(?=###|$)/i
+    /(?:### Abilities|\*\*ABILITIES\*\*|ABILITIES)[\s\S]*?\n([\s\S]*?)(?=###|STRATAGEMS|DETACHMENT RULE|ENHANCEMENTS|Army List|Datasheets collated|$)/i
   );
 
   if (!abilitiesSection?.[1]) {
     return abilities;
   }
 
-  const abilitiesContent = abilitiesSection[1];
+  let abilitiesContent = abilitiesSection[1];
 
-  // Pattern: **Ability Name:** Description
-  const abilityPattern = /\*\*([^*]+)\*\*[:\s]*([\s\S]*?)(?=\*\*|$)/g;
-  let match;
+  // Find where the actual unit abilities end by looking for stop markers
+  for (const marker of ABILITIES_STOP_MARKERS) {
+    const markerIndex = abilitiesContent.indexOf(marker);
+    if (markerIndex > 0) {
+      abilitiesContent = abilitiesContent.slice(0, markerIndex);
+    }
+  }
 
-  while ((match = abilityPattern.exec(abilitiesContent)) !== null) {
-    const name = match[1]?.trim();
-    const description = match[2]?.trim();
+  // Limit content length to prevent runaway parsing (unit abilities are typically < 3000 chars)
+  abilitiesContent = abilitiesContent.slice(0, 3000);
 
-    if (name && description && description.length > 5) {
+  // First, extract CORE and FACTION labeled abilities (format: CORE: **AbilityName**)
+  const labeledAbilityPattern = /^(CORE|FACTION):\s*\*\*([^*]+)\*\*/gm;
+  let labelMatch;
+  while ((labelMatch = labeledAbilityPattern.exec(abilitiesContent)) !== null) {
+    const abilityType = labelMatch[1]!.toLowerCase() as 'core' | 'faction';
+    const name = labelMatch[2]?.trim();
+    if (name && name.length >= 3) {
       abilities.push({
         slug: slugify(name),
         name,
-        abilityType: detectAbilityType(name, description),
-        description,
+        abilityType,
+        description: `${abilityType.toUpperCase()} ability`, // Minimal description for labeled abilities
         sourceUrl,
         dataSource: 'wahapedia' as const,
       });
     }
+  }
+
+  // Then extract regular abilities with descriptions: **Ability Name:** Description
+  const abilityPattern = /^\*\*([^*:]+):\*\*\s*([\s\S]*?)(?=\n\*\*[^*]+\*\*|\n\n|$)/gm;
+  let match;
+
+  while ((match = abilityPattern.exec(abilitiesContent)) !== null) {
+    const name = match[1]?.trim();
+    let description = match[2]?.trim();
+
+    if (!name || !description) continue;
+
+    // Clean up description - remove trailing table junk
+    description = description
+      .replace(/\n\s*\|[\s\S]*$/, '')  // Remove trailing table rows
+      .replace(/\n\s*-{3,}[\s\S]*$/, '')  // Remove trailing separators
+      .trim();
+
+    // Skip non-unit abilities
+    if (shouldSkipAbility(name, description)) continue;
+
+    // Skip if description is too short after cleanup
+    if (description.length < 10) continue;
+
+    abilities.push({
+      slug: slugify(name),
+      name,
+      abilityType: 'unit',
+      description,
+      sourceUrl,
+      dataSource: 'wahapedia' as const,
+    });
   }
 
   return abilities;
