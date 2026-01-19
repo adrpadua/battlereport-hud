@@ -11,6 +11,10 @@ import {
 import { getDb, closeConnection } from './db/connection.js';
 import { createTools, handleToolCall } from './tools/index.js';
 import { createResources, handleResourceRead } from './resources/index.js';
+import { startHttpServer } from './http/server.js';
+
+// Check if running in HTTP-only mode
+const httpOnlyMode = process.argv.includes('--http-only');
 
 const server = new Server(
   {
@@ -48,7 +52,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
 // Start server
 async function main() {
-  const transport = new StdioServerTransport();
+  const db = getDb();
 
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
@@ -61,8 +65,17 @@ async function main() {
     process.exit(0);
   });
 
-  await server.connect(transport);
-  console.error('WH40K Rules MCP Server running on stdio');
+  // Start HTTP API server
+  await startHttpServer(db);
+
+  // Start stdio MCP server unless in HTTP-only mode
+  if (!httpOnlyMode) {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error('WH40K Rules MCP Server running on stdio');
+  } else {
+    console.error('Running in HTTP-only mode (no stdio MCP)');
+  }
 }
 
 main().catch((error) => {

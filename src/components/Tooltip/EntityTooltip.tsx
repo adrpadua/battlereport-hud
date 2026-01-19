@@ -1,6 +1,10 @@
 import React from 'react';
 import type { Unit, Stratagem } from '@/types/battle-report';
+import type { EnhancedUnitData, EnhancedStratagemData } from '@/types/mcp-types';
 import { ConfidenceBadge } from '../HUD/ConfidenceBadge';
+import { McpBadge } from './McpBadge';
+import { WeaponList } from './WeaponList';
+import { AbilityList } from './AbilityList';
 
 interface EntityTooltipProps {
   entity: Unit | Stratagem | null;
@@ -9,6 +13,10 @@ interface EntityTooltipProps {
   x: number;
   y: number;
   visible: boolean;
+  // Enhanced MCP data
+  mcpAvailable?: boolean;
+  enhancedUnitData?: EnhancedUnitData | null;
+  enhancedStratagemData?: EnhancedStratagemData | null;
 }
 
 /** Stat block component for unit characteristics */
@@ -123,6 +131,73 @@ function KeywordTags({ keywords }: { keywords: string[] }): React.ReactElement |
   );
 }
 
+/** Stratagem details component */
+function StratagemDetails({
+  enhancedData,
+}: {
+  enhancedData: EnhancedStratagemData;
+}): React.ReactElement {
+  const containerStyle: React.CSSProperties = {
+    marginTop: 10,
+    padding: 8,
+    background: '#1e1e1e',
+    borderRadius: 6,
+    borderLeft: '2px solid #a855f7',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: 9,
+    color: '#666',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  };
+
+  const valueStyle: React.CSSProperties = {
+    fontSize: 11,
+    color: '#ccc',
+    lineHeight: 1.3,
+  };
+
+  return (
+    <div style={containerStyle}>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
+        <div>
+          <div style={labelStyle}>CP</div>
+          <div style={{ ...valueStyle, color: '#fbbf24', fontWeight: 600 }}>
+            {enhancedData.cpCost}
+          </div>
+        </div>
+        <div>
+          <div style={labelStyle}>Phase</div>
+          <div style={valueStyle}>{enhancedData.phase}</div>
+        </div>
+        {enhancedData.detachment && (
+          <div>
+            <div style={labelStyle}>Detachment</div>
+            <div style={valueStyle}>{enhancedData.detachment}</div>
+          </div>
+        )}
+      </div>
+      {enhancedData.effect && (
+        <div>
+          <div style={labelStyle}>Effect</div>
+          <div
+            style={{
+              ...valueStyle,
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {enhancedData.effect}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function EntityTooltip({
   entity,
   playerName,
@@ -130,6 +205,9 @@ export function EntityTooltip({
   x,
   y,
   visible,
+  mcpAvailable = false,
+  enhancedUnitData,
+  enhancedStratagemData,
 }: EntityTooltipProps): React.ReactElement | null {
   if (!visible || !entity) {
     return null;
@@ -137,6 +215,7 @@ export function EntityTooltip({
 
   const isUnit = 'playerIndex' in entity && entity.playerIndex !== undefined;
   const unit = isUnit ? (entity as Unit) : null;
+  const stratagem = !isUnit ? (entity as Stratagem) : null;
 
   // Position tooltip above cursor with offset
   const style: React.CSSProperties = {
@@ -145,7 +224,7 @@ export function EntityTooltip({
     top: y - 10,
     transform: 'translate(-50%, -100%)',
     zIndex: 9999,
-    maxWidth: 340,
+    maxWidth: 360,
     background: '#242424',
     border: '1px solid #3a3a3a',
     borderRadius: 8,
@@ -156,6 +235,8 @@ export function EntityTooltip({
     fontSize: 14,
     color: '#e5e5e5',
   };
+
+  const hasMcpData = enhancedUnitData?.mcpFetched || enhancedStratagemData?.mcpFetched;
 
   return (
     <div style={style}>
@@ -168,7 +249,7 @@ export function EntityTooltip({
           gap: 8,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <span
             style={{
               fontWeight: 600,
@@ -191,33 +272,41 @@ export function EntityTooltip({
               BSData
             </span>
           )}
+          {mcpAvailable && <McpBadge available={hasMcpData ?? false} />}
         </div>
         <ConfidenceBadge level={entity.confidence} />
       </div>
 
       <div style={{ fontSize: 12, color: '#888' }}>
         {isUnit ? 'Unit' : 'Stratagem'}
+        {playerFaction && <span> • {playerFaction}</span>}
+        {unit?.pointsCost && <span> • {unit.pointsCost}pts</span>}
       </div>
 
       {playerName && (
         <div style={{ marginTop: 8, fontSize: 13 }}>
           <span style={{ color: '#888' }}>Player: </span>
           <span style={{ color: '#fff' }}>{playerName}</span>
-          {playerFaction && (
-            <span style={{ color: '#888' }}> ({playerFaction})</span>
-          )}
-        </div>
-      )}
-
-      {unit?.pointsCost && (
-        <div style={{ marginTop: 4, fontSize: 13 }}>
-          <span style={{ color: '#888' }}>Points: </span>
-          <span style={{ color: '#fff' }}>{unit.pointsCost}</span>
         </div>
       )}
 
       {/* Unit stats block */}
       {unit?.stats && <StatBlock unit={unit} />}
+
+      {/* MCP-enhanced weapons for units */}
+      {enhancedUnitData?.weapons && enhancedUnitData.weapons.length > 0 && (
+        <WeaponList weapons={enhancedUnitData.weapons} />
+      )}
+
+      {/* MCP-enhanced abilities for units */}
+      {enhancedUnitData?.abilities && enhancedUnitData.abilities.length > 0 && (
+        <AbilityList abilities={enhancedUnitData.abilities} />
+      )}
+
+      {/* MCP-enhanced stratagem details */}
+      {stratagem && enhancedStratagemData?.mcpFetched && (
+        <StratagemDetails enhancedData={enhancedStratagemData} />
+      )}
 
       {/* Keywords */}
       {unit?.keywords && unit.keywords.length > 0 && (
