@@ -22,6 +22,7 @@ import {
   GAME_NARRATOR_SYSTEM_PROMPT,
   buildNarratorUserPrompt,
   formatStratagemTimeline,
+  formatObjectiveTimeline,
   formatUnitTimeline,
   type FactionData,
 } from '../src/prompts/game-narrator-prompt';
@@ -165,6 +166,11 @@ async function main(): Promise<void> {
   console.log('STRATAGEM TIMELINE');
   console.log('='.repeat(80));
   console.log(formatStratagemTimeline(preprocessed.stratagemMentions));
+
+  console.log('\n' + '='.repeat(80));
+  console.log('OBJECTIVE TIMELINE');
+  console.log('='.repeat(80));
+  console.log(formatObjectiveTimeline(preprocessed.objectiveMentions));
 
   console.log('\n' + '='.repeat(80));
   console.log('UNIT TIMELINE');

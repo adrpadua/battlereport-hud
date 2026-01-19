@@ -4,7 +4,7 @@ import type { Stratagem, Unit } from '@/types/battle-report';
 export interface TermMatch {
   term: string;
   normalizedTerm: string;
-  type: 'stratagem' | 'unit';
+  type: 'stratagem' | 'unit' | 'objective';
   timestamp: number; // seconds
   segmentText: string; // original text for context
 }
@@ -18,6 +18,7 @@ export interface PreprocessedTranscript {
   matches: TermMatch[];
   stratagemMentions: Map<string, number[]>; // normalized name -> timestamps
   unitMentions: Map<string, number[]>;
+  objectiveMentions: Map<string, number[]>; // objective name -> timestamps
   normalizedSegments: NormalizedSegment[]; // Segments with corrected/tagged terms
   colloquialToOfficial: Map<string, string>; // Mapping of corrections made
 }
@@ -127,6 +128,67 @@ const STRATAGEM_ALIASES = new Map<string, string>([
   ['overwatch', 'fire overwatch'],
   ['re-roll', 'command re-roll'],
   ['reroll', 'command re-roll'],
+]);
+
+// Secondary Objectives (Chapter Approved 2025-26 and Leviathan)
+const SECONDARY_OBJECTIVES = [
+  // Kill-based
+  'Assassination',
+  'Bring It Down',
+  'No Prisoners',
+  'Marked for Death',
+  'Cull the Horde',
+  // Positional/Action
+  'Behind Enemy Lines',
+  'Engage on All Fronts',
+  'Area Denial',
+  'Secure No Man\'s Land',
+  'Deploy Teleport Homers',
+  'Investigate Signals',
+  'Cleanse',
+  'Recover Assets',
+  // Tactical
+  'Storm Hostile Objective',
+  'Defend Stronghold',
+  'Overwhelming Force',
+  'Display of Might',
+  'Sabotage',
+  'Tempting Target',
+  // Fixed secondaries
+  'Extend Battle Lines',
+  'Grind Them Down',
+  'Surgical Strikes',
+  'Search and Destroy',
+];
+
+// Primary Objectives / Mission Names (Chapter Approved 2025-26)
+const PRIMARY_OBJECTIVES = [
+  'Hidden Supplies',
+  'Take and Hold',
+  'The Ritual',
+  'Terraform',
+  'Purge the Foe',
+  'Scorched Earth',
+  'Unexploded Ordnance',
+  'Supply Drop',
+  'Linchpin',
+  'Burden of Trust',
+  'Syphoned Power',
+  'Establish Control',
+  'Uneven Ground',
+  'Denied Resources',
+  'Hold Out',
+];
+
+const ALL_OBJECTIVES = [...SECONDARY_OBJECTIVES, ...PRIMARY_OBJECTIVES];
+
+// Map colloquial objective names to canonical names
+const OBJECTIVE_ALIASES = new Map<string, string>([
+  ['storm hostile', 'storm hostile objective'],
+  ['secure no man', 'secure no man\'s land'],
+  ['no mans land', 'secure no man\'s land'],
+  ['teleport homers', 'deploy teleport homers'],
+  ['extend lines', 'extend battle lines'],
 ]);
 
 // Map colloquial/shortened unit names to canonical names
@@ -454,7 +516,7 @@ export function preprocessTranscriptWithLlmMappings(
     let taggedText = text;
 
     // Track replacements for this segment to avoid double-processing
-    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' }> = [];
+    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' }> = [];
 
     // First, apply LLM mappings directly
     for (const [colloquial, official] of Object.entries(llmMappings)) {
@@ -596,7 +658,7 @@ export function preprocessTranscriptWithLlmMappings(
           : official.toLowerCase();
       });
 
-      const tag = type === 'unit' ? 'UNIT' : 'STRAT';
+      const tag = type === 'unit' ? 'UNIT' : type === 'stratagem' ? 'STRATAGEM' : 'OBJECTIVE';
       taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
     }
 
@@ -607,11 +669,13 @@ export function preprocessTranscriptWithLlmMappings(
     });
   }
 
-  return { matches, stratagemMentions, unitMentions, normalizedSegments, colloquialToOfficial };
+  // Note: preprocessTranscriptWithLlmMappings doesn't detect objectives yet - use preprocessTranscript for that
+  const objectiveMentions = new Map<string, number[]>();
+  return { matches, stratagemMentions, unitMentions, objectiveMentions, normalizedSegments, colloquialToOfficial };
 }
 
 /**
- * Pre-process transcript to find mentions of stratagems and units.
+ * Pre-process transcript to find mentions of stratagems, units, and objectives.
  * Also normalizes and tags the transcript text with official names.
  */
 export function preprocessTranscript(
@@ -621,15 +685,17 @@ export function preprocessTranscript(
   const matches: TermMatch[] = [];
   const stratagemMentions = new Map<string, number[]>();
   const unitMentions = new Map<string, number[]>();
+  const objectiveMentions = new Map<string, number[]>();
   const normalizedSegments: NormalizedSegment[] = [];
   const colloquialToOfficial = new Map<string, string>();
 
   // Build fuzzy aliases from official unit names
   const unitAliases = buildFuzzyUnitAliases(unitNames);
 
-  // Build patterns (include aliases for stratagems and units)
+  // Build patterns (include aliases for stratagems, units, and objectives)
   const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
   const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames, unitAliases) : null;
+  const objectivePattern = buildTermPattern(ALL_OBJECTIVES, OBJECTIVE_ALIASES);
 
   for (const seg of transcript) {
     const timestamp = Math.floor(seg.startTime);
@@ -638,7 +704,7 @@ export function preprocessTranscript(
     let taggedText = text;
 
     // Track replacements for this segment to avoid double-processing
-    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' }> = [];
+    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' }> = [];
 
     // Find stratagem mentions
     for (const match of text.matchAll(stratagemPattern)) {
@@ -728,6 +794,40 @@ export function preprocessTranscript(
       }
     }
 
+    // Find objective mentions
+    for (const match of text.matchAll(objectivePattern)) {
+      const term = match[1];
+      if (!term) continue;
+
+      // Resolve alias to canonical name
+      const canonical = toCanonicalName(term, OBJECTIVE_ALIASES);
+
+      // Track colloquial -> official mapping
+      if (term.toLowerCase() !== canonical.toLowerCase()) {
+        colloquialToOfficial.set(term.toLowerCase(), canonical);
+      }
+
+      if (!objectiveMentions.has(canonical)) {
+        objectiveMentions.set(canonical, []);
+      }
+
+      // Deduplicate timestamps
+      const timestamps = objectiveMentions.get(canonical)!;
+      if (!timestamps.includes(timestamp)) {
+        timestamps.push(timestamp);
+      }
+
+      matches.push({
+        term,
+        normalizedTerm: canonical,
+        type: 'objective',
+        timestamp,
+        segmentText: text,
+      });
+
+      replacements.push({ original: term, official: canonical, type: 'objective' });
+    }
+
     // Apply replacements to create normalized and tagged text
     // Sort by length (longest first) to avoid partial replacements
     replacements.sort((a, b) => b.original.length - a.original.length);
@@ -746,7 +846,7 @@ export function preprocessTranscript(
       });
 
       // Tag: wrap with type marker
-      const tag = type === 'unit' ? 'UNIT' : 'STRAT';
+      const tag = type === 'unit' ? 'UNIT' : type === 'stratagem' ? 'STRATAGEM' : 'OBJECTIVE';
       taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
     }
 
@@ -757,7 +857,7 @@ export function preprocessTranscript(
     });
   }
 
-  return { matches, stratagemMentions, unitMentions, normalizedSegments, colloquialToOfficial };
+  return { matches, stratagemMentions, unitMentions, objectiveMentions, normalizedSegments, colloquialToOfficial };
 }
 
 /**

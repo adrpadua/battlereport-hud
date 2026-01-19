@@ -68,7 +68,8 @@ export const GAME_NARRATOR_SYSTEM_PROMPT = `You are an expert Warhammer 40,000 1
 ## TRANSCRIPT FORMAT
 The transcript has been pre-processed with tagged gameplay terms:
 - \`[UNIT:Name]\` = A unit from one of the armies
-- \`[STRAT:Name]\` = A stratagem being used
+- \`[STRATAGEM:Name]\` = A stratagem being used
+- \`[OBJECTIVE:Name]\` = A mission objective (primary or secondary)
 - Each line starts with a timestamp in [MM:SS] format
 
 ## CRITICAL: TIMESTAMP CITATIONS ARE MANDATORY
@@ -208,8 +209,33 @@ export function formatUnitTimeline(
 }
 
 /**
+ * Format objective mentions timeline for the user prompt.
+ */
+export function formatObjectiveTimeline(
+  mentions: Map<string, number[]>
+): string {
+  if (mentions.size === 0) {
+    return 'No objectives detected in transcript.';
+  }
+
+  const lines: string[] = [];
+  // Sort by first mention time
+  const sorted = [...mentions.entries()].sort(
+    (a, b) => (a[1][0] ?? 0) - (b[1][0] ?? 0)
+  );
+
+  for (const [name, timestamps] of sorted) {
+    const formattedTimes = timestamps.slice(0, 5).map(formatTimestamp).join(', ');
+    const suffix = timestamps.length > 5 ? ` ... (${timestamps.length} total mentions)` : '';
+    lines.push(`- ${name}: [${formattedTimes}]${suffix}`);
+  }
+
+  return lines.join('\n');
+}
+
+/**
  * Format preprocessed transcript segments for the user prompt.
- * Uses the tagged text which contains [UNIT:Name] and [STRAT:Name] markers.
+ * Uses the tagged text which contains [UNIT:Name], [STRATAGEM:Name], and [OBJECTIVE:Name] markers.
  * Deduplicates consecutive identical lines (common in YouTube auto-captions).
  */
 export function formatPreprocessedTranscript(
@@ -304,6 +330,11 @@ Units: ${unitList}${suffix}
 ${formatStratagemTimeline(preprocessed.stratagemMentions)}
 `);
 
+  // Objective timeline
+  sections.push(`## OBJECTIVE MENTIONS TIMELINE
+${formatObjectiveTimeline(preprocessed.objectiveMentions)}
+`);
+
   // Unit mentions timeline
   sections.push(`## UNIT MENTIONS TIMELINE
 ${formatUnitTimeline(preprocessed.unitMentions)}
@@ -311,7 +342,7 @@ ${formatUnitTimeline(preprocessed.unitMentions)}
 
   // Preprocessed transcript
   sections.push(`## PREPROCESSED TRANSCRIPT
-The following transcript has gameplay terms tagged with [UNIT:Name] and [STRAT:Name].
+The following transcript has gameplay terms tagged with [UNIT:Name], [STRATAGEM:Name], and [OBJECTIVE:Name].
 
 ${formatPreprocessedTranscript(preprocessed)}
 `);
