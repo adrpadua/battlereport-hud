@@ -370,6 +370,32 @@ async function migrate() {
       CREATE INDEX IF NOT EXISTS scrape_log_type_idx ON scrape_log(scrape_type);
     `);
 
+    // Scrape status enum for unit_index
+    await db.execute(sql`
+      DO $$ BEGIN
+        CREATE TYPE scrape_status AS ENUM ('pending', 'success', 'failed');
+      EXCEPTION
+        WHEN duplicate_object THEN null;
+      END $$;
+    `);
+
+    // Unit index (for tracking discovered units before full scrape)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS unit_index (
+        id SERIAL PRIMARY KEY,
+        faction_id INTEGER REFERENCES factions(id) NOT NULL,
+        slug VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        wahapedia_url TEXT,
+        discovered_at TIMESTAMP DEFAULT NOW(),
+        last_scraped_at TIMESTAMP,
+        scrape_status scrape_status DEFAULT 'pending'
+      );
+      CREATE INDEX IF NOT EXISTS unit_index_faction_idx ON unit_index(faction_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS unit_index_slug_faction_idx ON unit_index(slug, faction_id);
+      CREATE INDEX IF NOT EXISTS unit_index_status_idx ON unit_index(scrape_status);
+    `);
+
     console.log('Migration completed successfully!');
   } catch (error) {
     console.error('Migration failed:', error);
