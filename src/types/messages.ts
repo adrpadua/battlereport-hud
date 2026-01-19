@@ -13,7 +13,11 @@ export type MessageType =
   | 'CLEAR_CACHE'
   | 'CLEAR_CACHE_RESULT'
   | 'GET_API_KEY'
-  | 'API_KEY_RESULT';
+  | 'API_KEY_RESULT'
+  // Phased extraction messages
+  | 'DETECT_FACTIONS'
+  | 'FACTIONS_DETECTED'
+  | 'EXTRACT_WITH_FACTIONS';
 
 export interface ExtractBattleReportMessage {
   type: 'EXTRACT_BATTLE_REPORT';
@@ -63,6 +67,29 @@ export interface ClearCacheResultMessage {
   payload: { success: boolean };
 }
 
+// Phased extraction messages
+
+export interface DetectFactionsMessage {
+  type: 'DETECT_FACTIONS';
+  payload: VideoData;
+}
+
+export interface FactionsDetectedMessage {
+  type: 'FACTIONS_DETECTED';
+  payload: {
+    detectedFactions: string[];
+    allFactions: string[];
+  };
+}
+
+export interface ExtractWithFactionsMessage {
+  type: 'EXTRACT_WITH_FACTIONS';
+  payload: {
+    videoData: VideoData;
+    factions: [string, string];
+  };
+}
+
 export type Message =
   | ExtractBattleReportMessage
   | ExtractionResultMessage
@@ -73,4 +100,7 @@ export type Message =
   | ClearCacheMessage
   | ClearCacheResultMessage
   | GetApiKeyMessage
-  | ApiKeyResultMessage;
+  | ApiKeyResultMessage
+  | DetectFactionsMessage
+  | FactionsDetectedMessage
+  | ExtractWithFactionsMessage;

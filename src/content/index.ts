@@ -18,10 +18,12 @@ import type { BattleReport, Unit, Stratagem } from '@/types/battle-report';
 let currentVideoId: string | null = null;
 let navigationObserver: MutationObserver | null = null;
 
-// Expose forceRefresh globally for HUD to call
+// Expose extraction functions globally for HUD to call
 declare global {
   interface Window {
     battleReportHudRefresh?: () => Promise<void>;
+    battleReportStartExtraction?: () => Promise<void>;
+    battleReportContinueWithFactions?: (factions: [string, string]) => Promise<void>;
   }
 }
 
@@ -46,13 +48,12 @@ async function initialize(): Promise<void> {
   // Reset state
   store.reset();
   store.setVideoId(videoId);
-  store.setLoading(true);
 
   // Inject HUD
   injectHud();
   injectCaptionStyles();
 
-  // Check cache first
+  // Check cache first - if cached, show results immediately
   const cachedReport = await checkCache(videoId);
   if (cachedReport) {
     console.log('Battle Report HUD: Using cached report');
@@ -61,34 +62,9 @@ async function initialize(): Promise<void> {
     return;
   }
 
-  // Extract video data and send to service worker
-  try {
-    const videoData = await extractVideoData();
-    if (!videoData) {
-      store.setError('Failed to extract video data');
-      return;
-    }
-
-    console.log('Battle Report HUD: Extracted video data', videoData);
-
-    // Send to service worker for AI processing
-    const response = await sendMessageWithRetry({
-      type: 'EXTRACT_BATTLE_REPORT',
-      payload: videoData,
-    });
-
-    if (response.type === 'EXTRACTION_RESULT') {
-      store.setReport(response.payload, videoId);
-      initializeTooltips(response.payload);
-    } else if (response.type === 'EXTRACTION_ERROR') {
-      store.setError(response.payload.error);
-    }
-  } catch (error) {
-    console.error('Battle Report HUD: Error', error);
-    store.setError(
-      error instanceof Error ? error.message : 'An unexpected error occurred'
-    );
-  }
+  // No cache - stay in idle state, user must click Extract
+  console.log('Battle Report HUD: Ready for extraction');
+  store.setPhase('idle', 'Click Extract to analyze this video');
 }
 
 async function checkCache(videoId: string): Promise<BattleReport | null> {
@@ -200,47 +176,76 @@ function handleTooltip(
   }
 }
 
-// Force refresh: clear cache and re-extract
-async function forceRefresh(): Promise<void> {
+// Phase 1: Start extraction - extract video data and detect factions
+async function startExtraction(): Promise<void> {
   const videoId = getVideoId();
   if (!videoId) {
-    console.log('Battle Report HUD: Cannot refresh - not on a watch page');
+    console.log('Battle Report HUD: Cannot extract - not on a watch page');
     return;
   }
 
   const store = useBattleStore.getState();
-  store.setLoading(true);
-  store.setError(null);
+  store.startExtraction();
 
-  // Clear cache for this video
   try {
-    await sendMessageWithRetry({
-      type: 'CLEAR_CACHE',
-      payload: { videoId },
-    });
-    console.log('Battle Report HUD: Cache cleared, re-extracting...');
-  } catch (error) {
-    console.error('Battle Report HUD: Failed to clear cache', error);
-  }
-
-  // Re-extract video data
-  try {
+    // Extract video data
     const videoData = await extractVideoData();
     if (!videoData) {
       store.setError('Failed to extract video data');
       return;
     }
 
-    console.log('Battle Report HUD: Extracted video data for refresh', {
+    console.log('Battle Report HUD: Extracted video data', {
       videoId: videoData.videoId,
       transcriptLength: videoData.transcript.length,
-      transcriptPreview: videoData.transcript.slice(0, 3).map(s => s.text).join(' '),
     });
 
-    // Send to service worker for AI processing
+    store.setVideoData(videoData);
+    store.setPhase('extracting', 'Detecting factions...');
+
+    // Detect factions
     const response = await sendMessageWithRetry({
-      type: 'EXTRACT_BATTLE_REPORT',
+      type: 'DETECT_FACTIONS',
       payload: videoData,
+    });
+
+    if (response.type === 'FACTIONS_DETECTED') {
+      const { detectedFactions, allFactions } = response.payload;
+      console.log('Battle Report HUD: Detected factions', detectedFactions);
+
+      store.setDetectedFactions(detectedFactions, allFactions);
+      store.setPhase('faction-select', 'Select factions');
+      store.setLoading(false);
+    } else {
+      store.setError('Failed to detect factions');
+    }
+  } catch (error) {
+    console.error('Battle Report HUD: Extraction error', error);
+    store.setError(
+      error instanceof Error ? error.message : 'An unexpected error occurred'
+    );
+  }
+}
+
+// Phase 2: Continue with selected factions - preprocess and extract
+async function continueWithFactions(factions: [string, string]): Promise<void> {
+  const store = useBattleStore.getState();
+  const { videoData, videoId } = store;
+
+  if (!videoData || !videoId) {
+    store.setError('No video data available');
+    return;
+  }
+
+  store.setSelectedFactions(factions);
+  store.setPhase('ai-extracting', 'Extracting army lists...');
+  store.setLoading(true);
+
+  try {
+    // Send to service worker for AI processing with selected factions
+    const response = await sendMessageWithRetry({
+      type: 'EXTRACT_WITH_FACTIONS',
+      payload: { videoData, factions },
     });
 
     if (response.type === 'EXTRACTION_RESULT') {
@@ -250,15 +255,46 @@ async function forceRefresh(): Promise<void> {
       store.setError(response.payload.error);
     }
   } catch (error) {
-    console.error('Battle Report HUD: Refresh error', error);
+    console.error('Battle Report HUD: Extraction error', error);
     store.setError(
       error instanceof Error ? error.message : 'An unexpected error occurred'
     );
   }
 }
 
+// Force refresh: clear cache and restart extraction
+async function forceRefresh(): Promise<void> {
+  const videoId = getVideoId();
+  if (!videoId) {
+    console.log('Battle Report HUD: Cannot refresh - not on a watch page');
+    return;
+  }
+
+  const store = useBattleStore.getState();
+
+  // Clear cache for this video
+  try {
+    await sendMessageWithRetry({
+      type: 'CLEAR_CACHE',
+      payload: { videoId },
+    });
+    console.log('Battle Report HUD: Cache cleared');
+  } catch (error) {
+    console.error('Battle Report HUD: Failed to clear cache', error);
+  }
+
+  // Reset and start fresh extraction
+  store.reset();
+  store.setVideoId(videoId);
+
+  // Start the phased extraction flow
+  await startExtraction();
+}
+
 // Expose to window for HUD component
 window.battleReportHudRefresh = forceRefresh;
+window.battleReportStartExtraction = startExtraction;
+window.battleReportContinueWithFactions = continueWithFactions;
 
 function cleanup(): void {
   stopCaptionObserver();

@@ -3,17 +3,27 @@ import { useBattleStore } from '@/store/battle-store';
 import { useSettingsStore } from '@/store/settings-store';
 import { PlayerCard } from './PlayerCard';
 import { LoadingState } from './LoadingState';
+import { FactionSelector } from './FactionSelector';
 
-// Type for the global refresh function exposed by content script
+// Type for the global functions exposed by content script
 declare global {
   interface Window {
     battleReportHudRefresh?: () => Promise<void>;
+    battleReportStartExtraction?: () => Promise<void>;
   }
 }
 
 export function HudContainer(): React.ReactElement {
-  const { report, loading, error, isExpanded, toggleExpanded, reset } =
-    useBattleStore();
+  const {
+    report,
+    loading,
+    error,
+    isExpanded,
+    toggleExpanded,
+    reset,
+    phase,
+    statusMessage,
+  } = useBattleStore();
   const { loadSettings } = useSettingsStore();
 
   useEffect(() => {
@@ -29,6 +39,12 @@ export function HudContainer(): React.ReactElement {
       // Fallback to page reload
       reset();
       window.location.reload();
+    }
+  };
+
+  const handleStartExtraction = async () => {
+    if (window.battleReportStartExtraction) {
+      await window.battleReportStartExtraction();
     }
   };
 
@@ -62,9 +78,28 @@ export function HudContainer(): React.ReactElement {
       </div>
 
       <div className={`hud-content ${isExpanded ? '' : 'collapsed'}`}>
-        {loading && <LoadingState />}
+        {/* Idle state - show Extract button */}
+        {phase === 'idle' && !error && (
+          <div className="idle-state">
+            <div style={{ marginBottom: '12px', color: '#888' }}>
+              Ready to analyze this video
+            </div>
+            <button className="extract-button" onClick={handleStartExtraction}>
+              Extract Battle Report
+            </button>
+          </div>
+        )}
 
-        {error && (
+        {/* Loading states */}
+        {(phase === 'extracting' || phase === 'ai-extracting') && (
+          <LoadingState message={statusMessage} />
+        )}
+
+        {/* Faction selection */}
+        {phase === 'faction-select' && <FactionSelector />}
+
+        {/* Error state */}
+        {(phase === 'error' || error) && (
           <div className="error-state">
             <div style={{ fontWeight: 600, marginBottom: '8px' }}>
               Error extracting battle report
@@ -72,21 +107,6 @@ export function HudContainer(): React.ReactElement {
             <div>{error}</div>
             <button className="refresh-button" onClick={handleRefresh}>
               ↻ Try Again
-            </button>
-          </div>
-        )}
-
-        {!loading && !error && !report && (
-          <div className="empty-state">
-            <div style={{ marginBottom: '8px' }}>
-              No battle report data found
-            </div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              This video may not be a Warhammer 40k battle report, or the
-              analysis failed.
-            </div>
-            <button className="refresh-button" onClick={handleRefresh}>
-              ↻ Retry Analysis
             </button>
           </div>
         )}
@@ -123,9 +143,20 @@ export function HudContainer(): React.ReactElement {
                       <div
                         key={`strat-${index}`}
                         className="unit-item"
-                        style={{ color: '#a855f7' }}
                       >
-                        {stratagem.name}
+                        <span style={{ color: '#a855f7' }}>{stratagem.name}</span>
+                        {stratagem.videoTimestamp !== undefined && (
+                          <button
+                            className="timestamp-button"
+                            onClick={() => {
+                              const video = document.querySelector('video');
+                              if (video) video.currentTime = stratagem.videoTimestamp!;
+                            }}
+                            title="Jump to this moment in the video"
+                          >
+                            {Math.floor(stratagem.videoTimestamp / 60)}:{(stratagem.videoTimestamp % 60).toString().padStart(2, '0')}
+                          </button>
+                        )}
                       </div>
                     ))}
                 </div>

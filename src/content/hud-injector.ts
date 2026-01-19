@@ -301,6 +301,118 @@ function getHudStyles(): string {
       color: #888;
     }
 
+    .idle-state {
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    .extract-button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    .extract-button:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .extract-button:active {
+      transform: translateY(0);
+    }
+
+    /* Faction Selector Styles */
+    .faction-selector {
+      padding: 16px;
+    }
+
+    .faction-selector-header {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .detected-factions {
+      font-size: 12px;
+      color: #22c55e;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border-radius: 6px;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .faction-dropdowns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .faction-dropdown-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .faction-dropdown-group label {
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+    }
+
+    .faction-select {
+      padding: 8px 12px;
+      background: #2a2a2a;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      color: #e5e5e5;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .faction-select:hover {
+      border-color: #4a4a4a;
+    }
+
+    .faction-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .continue-button {
+      width: 100%;
+      padding: 10px 16px;
+      background: #22c55e;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .continue-button:hover:not(:disabled) {
+      background: #16a34a;
+    }
+
+    .continue-button:disabled {
+      background: #3a3a3a;
+      color: #666;
+      cursor: not-allowed;
+    }
+
     .refresh-button {
       display: flex;
       align-items: center;
@@ -342,6 +454,23 @@ function getHudStyles(): string {
     .header-refresh-button:hover {
       background: #3a3a3a;
       color: #fff;
+    }
+
+    .timestamp-button {
+      padding: 2px 6px;
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 4px;
+      color: #a855f7;
+      font-size: 11px;
+      font-family: monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .timestamp-button:hover {
+      background: rgba(168, 85, 247, 0.3);
+      border-color: rgba(168, 85, 247, 0.6);
     }
 
     /* Scrollbar styles */
