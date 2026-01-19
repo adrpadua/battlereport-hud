@@ -18,7 +18,6 @@ export interface PreprocessedTranscript {
 // Core stratagems available to all armies (10th edition)
 const CORE_STRATAGEMS = [
   'Fire Overwatch',
-  'Overwatch',
   'Go to Ground',
   'Smokescreen',
   'Rapid Ingress',
@@ -119,6 +118,13 @@ const FACTION_STRATAGEMS = [
 
 const ALL_STRATAGEMS = [...CORE_STRATAGEMS, ...FACTION_STRATAGEMS];
 
+// Map colloquial/shortened names to canonical names
+const STRATAGEM_ALIASES = new Map<string, string>([
+  ['overwatch', 'fire overwatch'],
+  ['re-roll', 'command re-roll'],
+  ['reroll', 'command re-roll'],
+]);
+
 /**
  * Escape special regex characters in a string.
  */
@@ -136,9 +142,15 @@ function normalizeTerm(term: string): string {
 /**
  * Build a regex pattern from a list of terms.
  * Handles word boundaries appropriately.
+ * If aliases are provided, includes alias terms in the pattern.
  */
-function buildTermPattern(terms: string[]): RegExp {
-  const escapedTerms = terms
+function buildTermPattern(terms: string[], aliases?: Map<string, string>): RegExp {
+  const allTerms = [...terms];
+  if (aliases) {
+    allTerms.push(...aliases.keys());
+  }
+
+  const escapedTerms = allTerms
     .filter((t) => t.length >= 2) // Skip very short terms
     .map(escapeRegex)
     .sort((a, b) => b.length - a.length); // Longer terms first for greedy matching
@@ -148,6 +160,14 @@ function buildTermPattern(terms: string[]): RegExp {
   }
 
   return new RegExp(`\\b(${escapedTerms.join('|')})\\b`, 'gi');
+}
+
+/**
+ * Resolve a term to its canonical name using the alias map.
+ */
+function toCanonicalName(term: string, aliases: Map<string, string>): string {
+  const normalized = normalizeTerm(term);
+  return aliases.get(normalized) ?? normalized;
 }
 
 /**
@@ -161,8 +181,8 @@ export function preprocessTranscript(
   const stratagemMentions = new Map<string, number[]>();
   const unitMentions = new Map<string, number[]>();
 
-  // Build patterns
-  const stratagemPattern = buildTermPattern(ALL_STRATAGEMS);
+  // Build patterns (include aliases for stratagems)
+  const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
   const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames) : null;
 
   for (const seg of transcript) {
@@ -184,14 +204,17 @@ export function preprocessTranscript(
         }
       }
 
-      if (!stratagemMentions.has(normalized)) {
-        stratagemMentions.set(normalized, []);
+      // Resolve alias to canonical name for storage
+      const canonical = toCanonicalName(term, STRATAGEM_ALIASES);
+
+      if (!stratagemMentions.has(canonical)) {
+        stratagemMentions.set(canonical, []);
       }
-      stratagemMentions.get(normalized)!.push(timestamp);
+      stratagemMentions.get(canonical)!.push(timestamp);
 
       matches.push({
         term,
-        normalizedTerm: normalized,
+        normalizedTerm: canonical,
         type: 'stratagem',
         timestamp,
         segmentText: text,
