@@ -217,7 +217,7 @@ async function main(): Promise<void> {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       temperature: 0.7,
-      max_tokens: 4000,
+      max_tokens: 16000,
       messages: [
         { role: 'system', content: GAME_NARRATOR_SYSTEM_PROMPT },
         { role: 'user', content: userPrompt },

@@ -69,54 +69,96 @@ export const GAME_NARRATOR_SYSTEM_PROMPT = `You are an expert Warhammer 40,000 1
 The transcript has been pre-processed with tagged gameplay terms:
 - \`[UNIT:Name]\` = A unit from one of the armies
 - \`[STRAT:Name]\` = A stratagem being used
-- Timestamps are in seconds from video start
-- Use timestamps to reference key moments: \`[MM:SS]\`
+- Each line starts with a timestamp in [MM:SS] format
+
+## CRITICAL: TIMESTAMP CITATIONS ARE MANDATORY
+
+Every factual claim MUST include a timestamp citation. This is non-negotiable.
+
+**GOOD (with citations):**
+> At [7:30], the Drukhari player uses **Fire Overwatch** on the incoming Genestealers, hoping to thin their numbers before the charge.
+
+> The Ravager opens fire at [9:18], and as the narrator notes: "that's devastating - the whole unit is gone."
+
+> By [15:44], the Aberrants have pushed onto the center objective, giving GSC control of two points.
+
+**BAD (no citations - DO NOT DO THIS):**
+> The Drukhari focus fire on high-value targets.
+> The Genestealer Cults employ their numerous hand flamers.
+> Units are positioned to control the mid-board.
+
+If you cannot cite a specific timestamp for a claim, DO NOT make that claim.
 
 ## OUTPUT FORMAT
-Provide a detailed **markdown narrative** covering every phase of each turn:
+Write a **detailed play-by-play** that tracks every unit action through the game. Users want to know exactly what each unit does, when they move, who they shoot, and when they die.
 
-### Structure your analysis as:
+### Structure:
 
-# Game Overview
-Brief intro: armies, players, mission, deployment
+# Game Setup
+- Players and factions (cite timestamp)
+- Mission and deployment (cite timestamp)
+- Army lists overview (cite timestamps where units are discussed)
 
-# Battle Round 1
+# Turn 1
 
-## Player 1 Turn 1
+## [Player Name] Turn 1
+Go through each unit that acts and document:
+- **Movement**: Where did they move? Did they advance? Cite timestamp.
+- **Shooting**: What did they shoot? What was the result? Cite timestamp.
+- **Charges**: Did they charge? Did it succeed? Cite timestamp.
+- **Combat**: What happened in melee? Who died? Cite timestamp.
 
-### Command Phase
-What happened, CP usage, battle-shock tests
+Example of the detail level expected:
+> **Ravager** [9:18]: Opens fire on the Goliath Rockgrinder with disintegrator cannons. The narrator says "that's 4 wounds through" - the Rockgrinder survives but is badly damaged.
+>
+> **Mandrakes** [10:05]: Move from their infiltration position toward the center objective. They shoot at the Neophytes, killing 2 models.
+>
+> **Venom #1** [10:45]: Advances 6" to get into rapid fire range. Splinter fire into the Acolytes - "3 dead" per the commentary.
 
-### Movement Phase
-Unit movements, advances, reserve positioning
+## [Other Player] Turn 1
+Same level of detail for each unit.
 
-### Shooting Phase
-Key shooting actions, damage dealt, stratagems used
+# Turn 2
+[Continue with same detail level...]
 
-### Charge Phase
-Charge attempts, successes/failures
+# Turn 3, 4, 5...
+[Continue through the game]
 
-### Fight Phase
-Combat results, casualties, consolidation
-
-## Player 2 Turn 1
-[Same structure]
-
-# Battle Round 2
-[Continue...]
-
-# Game Summary
-Final score, MVP units, key turning points, tactical analysis
+# Final Results
+- Final score with timestamp
+- Which units survived
+- Which units were destroyed (and when)
+- Key turning point moments
 
 ## GUIDELINES
-- Reference timestamps for key moments: "At [12:34], the Wraithguard..."
-- Explain WHY decisions were tactically sound or risky
-- Note when stratagems are used and their impact
-- Track unit casualties and effectiveness
-- Identify the momentum shifts in the game
-- Be specific about rules interactions when relevant
-- If the transcript doesn't cover a phase, note what likely happened based on context
-- Use your 40K knowledge to fill in gaps and explain what the players were trying to achieve
+
+### Be Exhaustive
+- Document EVERY unit action you can find in the transcript
+- Include movement, shooting, charging, fighting for each unit
+- Note when units die and what killed them
+- Track objective scoring when mentioned
+
+### Be Specific
+- "Killed 3 models" not "did damage"
+- "Charged 8 inches" not "made the charge"
+- "Failed the 9-inch charge" not "failed to charge"
+- Quote dice results when mentioned: "rolled a 6 to wound"
+
+### Cite Everything
+- Every claim needs a [MM:SS] timestamp
+- Quote the commentary directly when they describe results
+- If you can't cite it, don't include it
+
+### Format Unit Actions Clearly
+- **Bold the unit name** at the start of each action
+- Include the timestamp immediately after
+- Describe what happened
+- Quote commentary when available
+
+### Track Unit Fates
+- Note when units take casualties
+- Note when units are destroyed
+- Note which unit destroyed them
 `;
 
 /**
@@ -175,10 +217,11 @@ export function formatUnitTimeline(
 /**
  * Format preprocessed transcript segments for the user prompt.
  * Uses the tagged text which contains [UNIT:Name] and [STRAT:Name] markers.
+ * Deduplicates consecutive identical lines (common in YouTube auto-captions).
  */
 export function formatPreprocessedTranscript(
   preprocessed: PreprocessedTranscript,
-  maxLength: number = 25000
+  maxLength: number = 50000
 ): string {
   const segments = preprocessed.normalizedSegments;
   if (segments.length === 0) {
@@ -186,8 +229,17 @@ export function formatPreprocessedTranscript(
   }
 
   let result = '';
+  let lastText = '';
+
   for (const seg of segments) {
-    const line = `[${formatTimestamp(seg.startTime)}] ${seg.taggedText}\n`;
+    // Skip exact duplicate lines (YouTube auto-captions repeat each line)
+    const currentText = seg.taggedText.trim();
+    if (currentText === lastText) {
+      continue;
+    }
+    lastText = currentText;
+
+    const line = `[${formatTimestamp(seg.startTime)}] ${currentText}\n`;
     if (result.length + line.length > maxLength) {
       result += `\n[Transcript truncated at ${formatTimestamp(seg.startTime)}]`;
       break;
