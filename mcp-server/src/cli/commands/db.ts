@@ -424,7 +424,7 @@ async function checkStatus(): Promise<void> {
 
     // Get table counts
     const db2 = drizzle(pool);
-    const tables = ['factions', 'units', 'weapons', 'abilities', 'stratagems', 'detachments', 'core_rules'];
+    const tables = ['factions', 'units', 'weapons', 'abilities', 'stratagems', 'detachments', 'core_rules', 'missions', 'secondary_objectives'];
 
     console.log('\n=== Table Counts ===');
     for (const table of tables) {

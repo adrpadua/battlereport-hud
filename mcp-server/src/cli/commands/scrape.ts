@@ -4,11 +4,12 @@ import { WAHAPEDIA_URLS, FACTION_SLUGS } from '../../scraper/config.js';
 import { parseCoreRules } from '../../scraper/parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements } from '../../scraper/parsers/faction-parser.js';
 import { parseDatasheets } from '../../scraper/parsers/unit-parser.js';
+import { parseMissionPack, detectMissionPackType } from '../../scraper/parsers/mission-pack-parser.js';
 import { getDb, closeConnection } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
 
-type ScrapeTarget = 'core' | 'factions' | 'units' | 'all';
+type ScrapeTarget = 'core' | 'factions' | 'units' | 'missions' | 'all';
 
 /**
  * Extract unit links from the datasheets TOC
@@ -352,8 +353,152 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
   }
 }
 
-async function runScrape(options: { target?: ScrapeTarget; faction?: string; refreshIndex?: boolean }): Promise<void> {
-  const { target = 'all', faction: singleFaction, refreshIndex = false } = options;
+async function scrapeMissions(client: FirecrawlClient, db: ReturnType<typeof getDb>, missionPack?: string): Promise<void> {
+  console.log('\n=== Scraping Mission Packs ===');
+
+  // Determine which mission packs to scrape
+  const packsToScrape: { name: string; url: string }[] = [];
+
+  if (missionPack) {
+    // Scrape specific pack
+    const packKey = missionPack.toLowerCase().replace(/-/g, '');
+    if (packKey.includes('chapter') || packKey.includes('2025')) {
+      packsToScrape.push({ name: 'Chapter Approved 2025-26', url: WAHAPEDIA_URLS.missionPacks.chapterApproved });
+    } else if (packKey.includes('pariah') || packKey.includes('nexus')) {
+      packsToScrape.push({ name: 'Pariah Nexus', url: WAHAPEDIA_URLS.missionPacks.pariahNexus });
+    } else if (packKey.includes('leviathan')) {
+      packsToScrape.push({ name: 'Leviathan', url: WAHAPEDIA_URLS.missionPacks.leviathan });
+    } else {
+      console.error(`Unknown mission pack: ${missionPack}`);
+      console.log('Available packs: chapter-approved, pariah-nexus, leviathan');
+      return;
+    }
+  } else {
+    // Scrape all mission packs
+    packsToScrape.push(
+      { name: 'Chapter Approved 2025-26', url: WAHAPEDIA_URLS.missionPacks.chapterApproved },
+      { name: 'Pariah Nexus', url: WAHAPEDIA_URLS.missionPacks.pariahNexus },
+      { name: 'Leviathan', url: WAHAPEDIA_URLS.missionPacks.leviathan },
+    );
+  }
+
+  for (const pack of packsToScrape) {
+    console.log(`\n--- Scraping: ${pack.name} ---`);
+
+    try {
+      const result = await client.scrape(pack.url, { timeout: 60000 });
+      const missionType = detectMissionPackType(pack.url);
+      const parsed = parseMissionPack(result.markdown, result.url, missionType);
+
+      console.log(`  Parsed ${parsed.missions.length} missions`);
+      console.log(`  Parsed ${parsed.secondaryObjectives.length} secondary objectives`);
+      console.log(`  Parsed ${parsed.gambits.length} gambits`);
+      console.log(`  Parsed ${parsed.rules.length} matched play rules`);
+
+      // Log scrape
+      await db.insert(schema.scrapeLog).values({
+        url: result.url,
+        scrapeType: 'mission_pack',
+        status: 'success',
+        contentHash: result.contentHash,
+      });
+
+      // Insert missions
+      for (const mission of parsed.missions) {
+        await db
+          .insert(schema.missions)
+          .values(mission)
+          .onConflictDoUpdate({
+            target: schema.missions.slug,
+            set: {
+              name: mission.name,
+              missionType: mission.missionType,
+              primaryObjective: mission.primaryObjective,
+              deployment: mission.deployment,
+              missionRule: mission.missionRule,
+              sourceUrl: mission.sourceUrl,
+              updatedAt: new Date(),
+            },
+          });
+      }
+      console.log(`  Saved ${parsed.missions.length} missions`);
+
+      // Insert secondary objectives
+      for (const objective of parsed.secondaryObjectives) {
+        await db
+          .insert(schema.secondaryObjectives)
+          .values(objective)
+          .onConflictDoNothing();
+      }
+      console.log(`  Saved ${parsed.secondaryObjectives.length} secondary objectives`);
+
+      // Store gambits as core rules with category 'gambit'
+      for (const gambit of parsed.gambits) {
+        await db
+          .insert(schema.coreRules)
+          .values({
+            slug: `gambit-${gambit.slug}`,
+            title: gambit.name,
+            category: 'gambit',
+            subcategory: missionType,
+            content: `**Timing:** ${gambit.timing}\n\n**Effect:** ${gambit.effect}\n\n${gambit.description}`,
+            sourceUrl: result.url,
+            dataSource: 'wahapedia',
+          })
+          .onConflictDoUpdate({
+            target: schema.coreRules.slug,
+            set: {
+              title: gambit.name,
+              content: `**Timing:** ${gambit.timing}\n\n**Effect:** ${gambit.effect}\n\n${gambit.description}`,
+              updatedAt: new Date(),
+            },
+          });
+      }
+      if (parsed.gambits.length > 0) {
+        console.log(`  Saved ${parsed.gambits.length} gambits`);
+      }
+
+      // Store matched play rules as core rules
+      for (const rule of parsed.rules) {
+        await db
+          .insert(schema.coreRules)
+          .values({
+            slug: `matched-play-${rule.slug}`,
+            title: rule.title,
+            category: 'matched_play',
+            subcategory: rule.category,
+            content: rule.content,
+            sourceUrl: result.url,
+            dataSource: 'wahapedia',
+          })
+          .onConflictDoUpdate({
+            target: schema.coreRules.slug,
+            set: {
+              title: rule.title,
+              content: rule.content,
+              updatedAt: new Date(),
+            },
+          });
+      }
+      if (parsed.rules.length > 0) {
+        console.log(`  Saved ${parsed.rules.length} matched play rules`);
+      }
+
+    } catch (error) {
+      console.error(`Failed to scrape ${pack.name}:`, error);
+
+      await db.insert(schema.scrapeLog).values({
+        url: pack.url,
+        scrapeType: 'mission_pack',
+        status: 'failed',
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+}
+
+async function runScrape(options: { target?: ScrapeTarget; faction?: string; refreshIndex?: boolean; missionPack?: string }): Promise<void> {
+  const { target = 'all', faction: singleFaction, refreshIndex = false, missionPack } = options;
 
   if (singleFaction) {
     console.log(`Starting Wahapedia scraper for faction: ${singleFaction}`);
@@ -369,12 +514,16 @@ async function runScrape(options: { target?: ScrapeTarget; faction?: string; ref
       await scrapeCoreRules(client, db);
     }
 
-    if (target === 'factions' || target === 'all' || (singleFaction && target !== 'units')) {
+    if (target === 'factions' || target === 'all' || (singleFaction && target !== 'units' && target !== 'missions')) {
       await scrapeFactions(client, db, singleFaction);
     }
 
     if (target === 'units' || target === 'all') {
       await scrapeUnits(client, db, singleFaction, refreshIndex);
+    }
+
+    if ((target === 'missions' || target === 'all') && !singleFaction) {
+      await scrapeMissions(client, db, missionPack);
     }
 
     console.log('\nScraping completed!');
@@ -389,8 +538,9 @@ async function runScrape(options: { target?: ScrapeTarget; faction?: string; ref
 
 export const scrapeCommand = new Command('scrape')
   .description('Scrape Wahapedia data')
-  .option('-t, --target <target>', 'Scrape target: core, factions, units, all', 'all')
+  .option('-t, --target <target>', 'Scrape target: core, factions, units, missions, all', 'all')
   .option('-f, --faction <slug>', 'Scrape only a specific faction')
+  .option('-m, --mission-pack <pack>', 'Scrape specific mission pack: chapter-approved, pariah-nexus, leviathan')
   .option('--refresh-index', 'Refresh unit index before scraping')
   .action(async (options) => {
     await runScrape(options);
@@ -418,4 +568,12 @@ scrapeCommand
   .option('--refresh-index', 'Refresh unit index before scraping')
   .action(async (options) => {
     await runScrape({ target: 'units', faction: options.faction, refreshIndex: options.refreshIndex });
+  });
+
+scrapeCommand
+  .command('missions')
+  .description('Scrape mission packs (Chapter Approved, Pariah Nexus, Leviathan)')
+  .option('-m, --mission-pack <pack>', 'Scrape specific pack: chapter-approved, pariah-nexus, leviathan')
+  .action(async (options) => {
+    await runScrape({ target: 'missions', missionPack: options.missionPack });
   });
