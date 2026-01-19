@@ -1,6 +1,4 @@
 import OpenAI from 'openai';
-import { z } from 'zod';
-import { zodResponseFormat } from 'openai/helpers/zod';
 import type { TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
 import type { NormalizedSegment } from './transcript-preprocessor';
@@ -11,17 +9,10 @@ const MAX_CONCURRENT_REQUESTS = 3;
 const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY_MS = 1000;
 
-// Zod schema for LLM preprocessing response
-const PreprocessResponseSchema = z.object({
-  mappings: z.record(z.string(), z.string()).describe(
-    'Object mapping colloquial/abbreviated terms to their official Warhammer 40k names'
-  ),
-  normalizedText: z.string().describe(
-    'The transcript chunk with colloquial terms replaced by official names'
-  ),
-});
-
-type PreprocessResponse = z.infer<typeof PreprocessResponseSchema>;
+interface PreprocessResponse {
+  mappings: Record<string, string>;
+  normalizedText: string;
+}
 
 const PREPROCESS_SYSTEM_PROMPT = `You are a Warhammer 40,000 terminology expert. Your task is to normalize colloquial terms, abbreviations, and nicknames in battle report transcripts to their official game names.
 
@@ -34,9 +25,13 @@ IMPORTANT GUIDELINES:
 - DO NOT change general English words or phrases that aren't game-specific
 - If no mappings are found, return an empty mappings object
 
+You must respond with a JSON object containing:
+1. "mappings": An object mapping each colloquial term found to its official name
+2. "normalizedText": The transcript chunk with colloquial terms replaced by official names
+
 Example:
 Input: "...las preds moving up, he popped smoke on the warriors..."
-Output:
+Output JSON:
 {
   "mappings": {
     "las preds": "Predator Destructor",
@@ -127,6 +122,22 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
+ * Parse and validate the LLM response.
+ */
+function parseResponse(content: string): PreprocessResponse {
+  try {
+    const parsed = JSON.parse(content);
+    return {
+      mappings: typeof parsed.mappings === 'object' ? parsed.mappings : {},
+      normalizedText: typeof parsed.normalizedText === 'string' ? parsed.normalizedText : '',
+    };
+  } catch {
+    console.warn('Failed to parse LLM response:', content.slice(0, 200));
+    return { mappings: {}, normalizedText: '' };
+  }
+}
+
+/**
  * Process a single chunk with the LLM, with retry logic for rate limits.
  */
 async function processChunk(
@@ -138,7 +149,7 @@ async function processChunk(
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
-      const completion = await openai.beta.chat.completions.parse({
+      const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         temperature: 0.1,
         max_tokens: 2000,
@@ -146,11 +157,11 @@ async function processChunk(
           { role: 'system', content: PREPROCESS_SYSTEM_PROMPT },
           { role: 'user', content: buildPreprocessPrompt(chunk, factions) },
         ],
-        response_format: zodResponseFormat(PreprocessResponseSchema, 'preprocess_response'),
+        response_format: { type: 'json_object' },
       });
 
       const choice = completion.choices[0];
-      const message = choice?.message;
+      const content = choice?.message?.content;
 
       // Check finish reason for special cases
       if (choice?.finish_reason === 'length') {
@@ -163,24 +174,11 @@ async function processChunk(
         return { mappings: {}, normalizedText: chunk.text };
       }
 
-      // Check for refusal
-      if (message?.refusal) {
-        console.warn('LLM refused to process chunk:', message.refusal);
-        return { mappings: {}, normalizedText: chunk.text };
+      if (!content) {
+        throw new Error('No content in LLM response');
       }
 
-      // Return parsed response
-      if (message?.parsed) {
-        return message.parsed;
-      }
-
-      // Fallback to manual parsing if parsed is not available
-      const content = message?.content;
-      if (content) {
-        return PreprocessResponseSchema.parse(JSON.parse(content));
-      }
-
-      throw new Error('No valid response from LLM');
+      return parseResponse(content);
     } catch (error) {
       lastError = error as Error;
 
