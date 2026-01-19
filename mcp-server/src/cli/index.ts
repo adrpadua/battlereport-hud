@@ -6,6 +6,7 @@ import { scrapeCommand } from './commands/scrape.js';
 import { dbCommand } from './commands/db.js';
 import { ingestCommand } from './commands/ingest.js';
 import { validateCommand } from './commands/validate.js';
+import { runInteractive } from './interactive.js';
 
 const program = new Command();
 
@@ -20,4 +21,9 @@ program.addCommand(dbCommand);
 program.addCommand(ingestCommand);
 program.addCommand(validateCommand);
 
-program.parse();
+// If no arguments provided, run interactive mode
+if (process.argv.length <= 2) {
+  runInteractive().catch(console.error);
+} else {
+  program.parse();
+}
