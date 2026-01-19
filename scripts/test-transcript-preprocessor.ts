@@ -9,6 +9,7 @@
  */
 
 import * as fs from 'fs';
+import * as path from 'path';
 import {
   preprocessTranscript,
   getDetectedStratagems,
@@ -21,7 +22,26 @@ import {
   extractVideoId,
   formatTimestamp,
   isYtDlpInstalled,
+  type TranscriptResult,
 } from './transcript-extractor';
+
+const CAPTIONS_DIR = path.join(process.cwd(), 'test-data', 'captions');
+
+/**
+ * Save transcript to a JSON file in the captions directory.
+ */
+function saveTranscript(transcript: TranscriptResult): void {
+  // Ensure the directory exists
+  if (!fs.existsSync(CAPTIONS_DIR)) {
+    fs.mkdirSync(CAPTIONS_DIR, { recursive: true });
+  }
+
+  const filename = `${transcript.videoId}.json`;
+  const filepath = path.join(CAPTIONS_DIR, filename);
+
+  fs.writeFileSync(filepath, JSON.stringify(transcript, null, 2));
+  console.log(`Saved transcript to: ${filepath}`);
+}
 
 // Mock unit names from BSData that might appear in the transcript
 const MOCK_UNIT_NAMES = [
@@ -208,6 +228,10 @@ async function testWithVideoId(videoId: string): Promise<void> {
 
   try {
     const result = await extractTranscript(videoId);
+
+    // Save transcript to file
+    saveTranscript(result);
+
     testWithTranscript(result.segments, result.title);
   } catch (error) {
     console.error('Failed to fetch transcript:', error instanceof Error ? error.message : error);
