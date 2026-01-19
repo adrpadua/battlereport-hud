@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "wh40k-rules": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/adrpadua/dev/battlereport-hud/mcp-server/dist/index.js"],
+      "env": {
+        "DATABASE_URL": "postgresql://devuser:devpassword@localhost:5432/wh40k_rules"
+      }
+    }
+  }
+}

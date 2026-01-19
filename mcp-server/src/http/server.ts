@@ -12,9 +12,7 @@ const HTTP_PORT = 40401;
 
 export async function createHttpServer(db: Database) {
   const fastify = Fastify({
-    logger: {
-      level: 'info',
-    },
+    logger: false, // Disable logger for MCP stdio compatibility
   });
 
   // Register CORS for browser extension and local service access
