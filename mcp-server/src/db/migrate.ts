@@ -396,6 +396,32 @@ async function migrate() {
       CREATE INDEX IF NOT EXISTS unit_index_status_idx ON unit_index(scrape_status);
     `);
 
+    // Detachment unit restrictions (which units are allowed in which detachments)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS detachment_units (
+        id SERIAL PRIMARY KEY,
+        detachment_id INTEGER REFERENCES detachments(id) NOT NULL,
+        unit_id INTEGER REFERENCES units(id) NOT NULL,
+        is_allowed BOOLEAN DEFAULT TRUE
+      );
+      CREATE INDEX IF NOT EXISTS detachment_units_detachment_idx ON detachment_units(detachment_id);
+      CREATE INDEX IF NOT EXISTS detachment_units_unit_idx ON detachment_units(unit_id);
+      CREATE UNIQUE INDEX IF NOT EXISTS detachment_units_unique_idx ON detachment_units(detachment_id, unit_id);
+    `);
+
+    // Detachment keyword restrictions (keyword-based rules for detachments)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS detachment_keyword_restrictions (
+        id SERIAL PRIMARY KEY,
+        detachment_id INTEGER REFERENCES detachments(id) NOT NULL,
+        keyword_id INTEGER REFERENCES keywords(id) NOT NULL,
+        restriction_type VARCHAR(20) NOT NULL,
+        description TEXT
+      );
+      CREATE INDEX IF NOT EXISTS detachment_keyword_restrictions_detachment_idx ON detachment_keyword_restrictions(detachment_id);
+      CREATE INDEX IF NOT EXISTS detachment_keyword_restrictions_keyword_idx ON detachment_keyword_restrictions(keyword_id);
+    `);
+
     console.log('Migration completed successfully!');
   } catch (error) {
     console.error('Migration failed:', error);

@@ -275,6 +275,36 @@ export const stratagems = pgTable('stratagems', {
 }));
 
 // ============================================================================
+// DETACHMENT UNIT RESTRICTIONS
+// ============================================================================
+
+// Junction table for detachment-specific unit availability
+// This tracks which units are explicitly allowed/excluded in a detachment
+export const detachmentUnits = pgTable('detachment_units', {
+  id: serial('id').primaryKey(),
+  detachmentId: integer('detachment_id').references(() => detachments.id).notNull(),
+  unitId: integer('unit_id').references(() => units.id).notNull(),
+  isAllowed: boolean('is_allowed').default(true), // true = allowed, false = excluded
+}, (table) => ({
+  detachmentIdx: index('detachment_units_detachment_idx').on(table.detachmentId),
+  unitIdx: index('detachment_units_unit_idx').on(table.unitId),
+  uniqueIdx: uniqueIndex('detachment_units_unique_idx').on(table.detachmentId, table.unitId),
+}));
+
+// Keyword-based restrictions for detachments
+// e.g., "Only INFANTRY and MOUNTED units" or "No VEHICLE units"
+export const detachmentKeywordRestrictions = pgTable('detachment_keyword_restrictions', {
+  id: serial('id').primaryKey(),
+  detachmentId: integer('detachment_id').references(() => detachments.id).notNull(),
+  keywordId: integer('keyword_id').references(() => keywords.id).notNull(),
+  restrictionType: varchar('restriction_type', { length: 20 }).notNull(), // 'required', 'allowed', 'excluded'
+  description: text('description'), // Human-readable explanation
+}, (table) => ({
+  detachmentIdx: index('detachment_keyword_restrictions_detachment_idx').on(table.detachmentId),
+  keywordIdx: index('detachment_keyword_restrictions_keyword_idx').on(table.keywordId),
+}));
+
+// ============================================================================
 // ENHANCEMENTS
 // ============================================================================
 
@@ -471,3 +501,9 @@ export type NewSecondaryObjective = typeof secondaryObjectives.$inferInsert;
 
 export type UnitIndex = typeof unitIndex.$inferSelect;
 export type NewUnitIndex = typeof unitIndex.$inferInsert;
+
+export type DetachmentUnit = typeof detachmentUnits.$inferSelect;
+export type NewDetachmentUnit = typeof detachmentUnits.$inferInsert;
+
+export type DetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferSelect;
+export type NewDetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferInsert;

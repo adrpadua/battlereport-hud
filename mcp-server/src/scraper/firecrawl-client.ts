@@ -1,4 +1,4 @@
-import FirecrawlApp from '@firecrawl/firecrawl-js';
+import FirecrawlApp from '@mendable/firecrawl-js';
 import { getScraperConfig, type ScraperConfig } from './config.js';
 import { createHash } from 'crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
