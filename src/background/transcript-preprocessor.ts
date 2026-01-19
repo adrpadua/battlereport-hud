@@ -347,59 +347,62 @@ const DETACHMENT_ALIASES = new Map<string, string>([
 ]);
 
 // Map colloquial/shortened unit names to canonical names
+// Use proper capitalization matching BSData conventions
 const UNIT_ALIASES = new Map<string, string>([
-  ['intercessors', 'intercessor squad'],
-  ['assault intercessors', 'assault intercessor squad'],
-  ['terminators', 'terminator squad'],
-  ['assault terminators', 'assault terminator squad'],
-  ['scouts', 'scout squad'],
-  ['hellblasters', 'hellblaster squad'],
-  ['devastators', 'devastator squad'],
-  ['tacticals', 'tactical squad'],
-  ['assault marines', 'assault squad'],
-  ['vanguard vets', 'vanguard veteran squad'],
-  ['sternguard', 'sternguard veteran squad'],
-  ['aggressors', 'aggressor squad'],
-  ['eradicators', 'eradicator squad'],
-  ['eliminators', 'eliminator squad'],
-  ['incursors', 'incursor squad'],
-  ['infiltrators', 'infiltrator squad'],
-  ['reivers', 'reiver squad'],
-  ['suppressors', 'suppressor squad'],
-  ['inceptors', 'inceptor squad'],
-  ['bladeguard', 'bladeguard veteran squad'],
+  // Space Marines
+  ['intercessors', 'Intercessor Squad'],
+  ['assault intercessors', 'Assault Intercessor Squad'],
+  ['terminators', 'Terminator Squad'],
+  ['assault terminators', 'Assault Terminator Squad'],
+  ['scouts', 'Scout Squad'],
+  ['hellblasters', 'Hellblaster Squad'],
+  ['devastators', 'Devastator Squad'],
+  ['tacticals', 'Tactical Squad'],
+  ['assault marines', 'Assault Squad'],
+  ['vanguard vets', 'Vanguard Veteran Squad'],
+  ['sternguard', 'Sternguard Veteran Squad'],
+  ['aggressors', 'Aggressor Squad'],
+  ['eradicators', 'Eradicator Squad'],
+  ['eliminators', 'Eliminator Squad'],
+  ['incursors', 'Incursor Squad'],
+  ['infiltrators', 'Infiltrator Squad'],
+  ['reivers', 'Reiver Squad'],
+  ['suppressors', 'Suppressor Squad'],
+  ['inceptors', 'Inceptor Squad'],
+  ['bladeguard', 'Bladeguard Veteran Squad'],
   // Common abbreviations
-  ['las preds', 'predator destructor'],
-  ['las pred', 'predator destructor'],
+  ['las preds', 'Predator Destructor'],
+  ['las pred', 'Predator Destructor'],
   // Drukhari common misspellings
-  ['cabalite warriors', 'kabalite warriors'],
-  ['cabalite', 'kabalite warriors'],
-  ['mandrekes', 'mandrakes'],
-  ['cronos', 'cronos'],
-  ['kronos', 'cronos'],
-  ['lady malice', 'lady malys'],
-  ['reaver jet bikes', 'reavers'],
-  ['reaver jetbikes', 'reavers'],
+  ['cabalite warriors', 'Kabalite Warriors'],
+  ['cabalite', 'Kabalite Warriors'],
+  ['mandrekes', 'Mandrakes'],
+  ['cronos', 'Cronos'],
+  ['kronos', 'Cronos'],
+  ['lady malice', 'Lady Malys'],
+  ['reaver jet bikes', 'Reavers'],
+  ['reaver jetbikes', 'Reavers'],
   // GSC common misspellings
-  ['genestealers', 'purestrain genestealers'],
-  ['genesteelers', 'purestrain genestealers'],
-  ['genest steelers', 'purestrain genestealers'],
-  ['ridgerunners', 'achilles ridgerunners'],
-  ['ridge runners', 'achilles ridgerunners'],
-  ['rockgrinder', 'goliath rockgrinder'],
-  ['rock grinder', 'goliath rockgrinder'],
-  ['kelermorph', 'kelermorph'],
-  ['kellerorph', 'kelermorph'],
-  ['calamorph', 'kelermorph'],
-  ['sabotur', 'reductus saboteur'],
-  ['saboteur', 'reductus saboteur'],
-  ['reducted sabotur', 'reductus saboteur'],
-  ['hand flamer acolytes', 'acolyte hybrids with hand flamers'],
-  ['rocksaw acolytes', 'hybrid metamorphs'],
+  ['genestealers', 'Purestrain Genestealers'],
+  ['genesteelers', 'Purestrain Genestealers'],
+  ['genest steelers', 'Purestrain Genestealers'],
+  ['ridgerunners', 'Achilles Ridgerunners'],
+  ['ridge runners', 'Achilles Ridgerunners'],
+  ['rockgrinder', 'Goliath Rockgrinder'],
+  ['rock grinder', 'Goliath Rockgrinder'],
+  ['kelermorph', 'Kelermorph'],
+  ['kellerorph', 'Kelermorph'],
+  ['calamorph', 'Kelermorph'],
+  ['sabotur', 'Reductus Saboteur'],
+  ['saboteur', 'Reductus Saboteur'],
+  ['reducted sabotur', 'Reductus Saboteur'],
+  ['hand flamer acolytes', 'Acolyte Hybrids with Hand Flamers'],
+  ['rocksaw acolytes', 'Hybrid Metamorphs'],
   // Common unit shorthand
-  ['flamers', 'flamers'],
-  ['aberrants', 'aberrants'],
-  ['aber', 'aberrants'],
+  // Note: 'flamers' removed - it's a weapon type, not a unit
+  // Actual unit is 'Acolyte Hybrids with Hand Flamers'
+  ['aberrants', 'Aberrants'],
+  ['aber', 'Aberrants'],
 ]);
 
 /**
@@ -770,11 +773,11 @@ export function preprocessTranscriptWithLlmMappings(
         if (canonical === normalizeTerm(term)) {
           const fuzzyMatch = findBestMatch(term, unitNames, unitAliases, 0.75);
           if (fuzzyMatch) {
-            canonical = fuzzyMatch.toLowerCase();
+            canonical = fuzzyMatch; // Preserve proper capitalization from BSData
           }
         }
 
-        if (term.toLowerCase() !== canonical) {
+        if (term.toLowerCase() !== canonical.toLowerCase()) {
           colloquialToOfficial.set(term.toLowerCase(), canonical);
         }
 
@@ -802,7 +805,18 @@ export function preprocessTranscriptWithLlmMappings(
     // Apply replacements to create normalized and tagged text
     replacements.sort((a, b) => b.original.length - a.original.length);
 
-    for (const { original, official, type } of replacements) {
+    // Deduplicate replacements by original term (case-insensitive) to avoid double-tagging
+    const seenOriginals = new Set<string>();
+    const uniqueReplacements = replacements.filter(({ original }) => {
+      const lower = original.toLowerCase();
+      if (seenOriginals.has(lower)) {
+        return false;
+      }
+      seenOriginals.add(lower);
+      return true;
+    });
+
+    for (const { original, official, type } of uniqueReplacements) {
       const regex = new RegExp(`\\b${escapeRegex(original)}\\b`, 'gi');
 
       normalizedText = normalizedText.replace(regex, (match) => {
@@ -935,12 +949,12 @@ export function preprocessTranscript(
         if (canonical === normalizeTerm(term)) {
           const fuzzyMatch = findBestMatch(term, unitNames, unitAliases, 0.75);
           if (fuzzyMatch) {
-            canonical = fuzzyMatch.toLowerCase();
+            canonical = fuzzyMatch; // Preserve proper capitalization from BSData
           }
         }
 
         // Track colloquial -> official mapping
-        if (term.toLowerCase() !== canonical) {
+        if (term.toLowerCase() !== canonical.toLowerCase()) {
           colloquialToOfficial.set(term.toLowerCase(), canonical);
         }
 
@@ -1066,7 +1080,18 @@ export function preprocessTranscript(
     // Sort by length (longest first) to avoid partial replacements
     replacements.sort((a, b) => b.original.length - a.original.length);
 
-    for (const { original, official, type } of replacements) {
+    // Deduplicate replacements by original term (case-insensitive) to avoid double-tagging
+    const seenOriginals = new Set<string>();
+    const uniqueReplacements = replacements.filter(({ original }) => {
+      const lower = original.toLowerCase();
+      if (seenOriginals.has(lower)) {
+        return false;
+      }
+      seenOriginals.add(lower);
+      return true;
+    });
+
+    for (const { original, official, type } of uniqueReplacements) {
       // Create case-insensitive regex for replacement
       const regex = new RegExp(`\\b${escapeRegex(original)}\\b`, 'gi');
 
