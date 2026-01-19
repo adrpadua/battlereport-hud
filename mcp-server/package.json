@@ -12,6 +12,7 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "scrape": "tsx src/scraper/run-scraper.ts",
+    "scrape:dry-run": "tsx src/scraper/dry-run.ts",
     "scrape:core": "tsx src/scraper/run-scraper.ts --target core",
     "scrape:factions": "tsx src/scraper/run-scraper.ts --target factions",
     "scrape:units": "tsx src/scraper/run-scraper.ts --target units",

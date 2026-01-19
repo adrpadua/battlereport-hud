@@ -4,6 +4,7 @@ import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
+import { getCachedUnits, cacheUnits, clearCache } from './unit-cache.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { eq } from 'drizzle-orm';
@@ -18,6 +19,18 @@ async function main() {
   // Optional: scrape only a specific faction
   const factionIndex = args.indexOf('--faction');
   const singleFaction = factionIndex >= 0 ? args[factionIndex + 1] : null;
+
+  // Optional: refresh unit cache
+  const refreshCache = args.includes('--refresh-cache');
+  if (refreshCache) {
+    if (singleFaction) {
+      clearCache(singleFaction);
+      console.log(`Cleared unit cache for: ${singleFaction}`);
+    } else {
+      clearCache();
+      console.log('Cleared all unit cache');
+    }
+  }
 
   if (singleFaction) {
     console.log(`Starting Wahapedia scraper for faction: ${singleFaction}`);
@@ -212,13 +225,27 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
     console.log(`\n--- Scraping units for: ${faction.name} ---`);
 
     try {
-      // First, get the datasheets index to extract unit slugs
+      // Check cache first for unit slugs
+      let unitLinks = getCachedUnits(faction.slug);
+      let scrapedIndex = false;
       const indexUrl = WAHAPEDIA_URLS.datasheets(faction.slug);
-      const indexResult = await client.scrape(indexUrl);
 
-      // Extract unit slugs from TOC links
-      const unitLinks = extractUnitLinksFromTOC(indexResult.markdown, faction.slug);
-      console.log(`  Found ${unitLinks.length} unit links in TOC`);
+      if (unitLinks) {
+        console.log(`  Using cached unit list (${unitLinks.length} units)`);
+      } else {
+        // Scrape datasheets index to extract unit slugs
+        console.log(`  Fetching datasheets index...`);
+        const indexResult = await client.scrape(indexUrl);
+        scrapedIndex = true;
+
+        // Extract unit slugs from TOC links
+        unitLinks = extractUnitLinksFromTOC(indexResult.markdown, faction.slug);
+        console.log(`  Found ${unitLinks.length} unit links in TOC`);
+
+        // Cache for next time
+        cacheUnits(faction.slug, unitLinks);
+        console.log(`  Cached unit list for future runs`);
+      }
 
       let successCount = 0;
 
@@ -311,13 +338,14 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
 
       console.log(`  Successfully scraped ${successCount}/${unitLinks.length} units`);
 
-      // Log scrape
-      await db.insert(schema.scrapeLog).values({
-        url: indexUrl,
-        scrapeType: 'units',
-        status: 'success',
-        contentHash: indexResult.contentHash,
-      });
+      // Log scrape (only if we fetched the index)
+      if (scrapedIndex) {
+        await db.insert(schema.scrapeLog).values({
+          url: indexUrl,
+          scrapeType: 'units',
+          status: 'success',
+        });
+      }
     } catch (error) {
       console.error(`  Failed to scrape units for ${faction.slug}:`, error);
 

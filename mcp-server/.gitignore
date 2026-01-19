@@ -8,6 +8,7 @@ dist/
 .env
 
 # Cache directories
+.cache/
 .scrape-cache/
 .bsdata-cache/
 
