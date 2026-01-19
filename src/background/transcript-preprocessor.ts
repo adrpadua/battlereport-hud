@@ -4,7 +4,7 @@ import type { Stratagem, Unit } from '@/types/battle-report';
 export interface TermMatch {
   term: string;
   normalizedTerm: string;
-  type: 'stratagem' | 'unit' | 'objective';
+  type: 'stratagem' | 'unit' | 'objective' | 'faction' | 'detachment';
   timestamp: number; // seconds
   segmentText: string; // original text for context
 }
@@ -19,7 +19,9 @@ export interface PreprocessedTranscript {
   stratagemMentions: Map<string, number[]>; // normalized name -> timestamps
   unitMentions: Map<string, number[]>;
   objectiveMentions: Map<string, number[]>; // objective name -> timestamps
-  normalizedSegments: NormalizedSegment[]; // Segments with corrected/tagged terms
+  factionMentions: Map<string, number[]>; // faction name -> timestamps
+  detachmentMentions: Map<string, number[]>; // detachment name -> timestamps
+  normalizedSegments: NormalizedSegment[]; // Segments with corrected/tagged terms (deduped)
   colloquialToOfficial: Map<string, string>; // Mapping of corrections made
 }
 
@@ -189,6 +191,159 @@ const OBJECTIVE_ALIASES = new Map<string, string>([
   ['no mans land', 'secure no man\'s land'],
   ['teleport homers', 'deploy teleport homers'],
   ['extend lines', 'extend battle lines'],
+]);
+
+// All 40K Factions
+const FACTIONS = [
+  'Adepta Sororitas',
+  'Adeptus Custodes',
+  'Adeptus Mechanicus',
+  'Aeldari',
+  'Agents of the Imperium',
+  'Astra Militarum',
+  'Black Templars',
+  'Blood Angels',
+  'Chaos Daemons',
+  'Chaos Knights',
+  'Chaos Space Marines',
+  'Dark Angels',
+  'Death Guard',
+  'Deathwatch',
+  'Drukhari',
+  'Genestealer Cults',
+  'Grey Knights',
+  'Imperial Knights',
+  'Leagues of Votann',
+  'Necrons',
+  'Orks',
+  'Space Marines',
+  'Space Wolves',
+  'T\'au Empire',
+  'Thousand Sons',
+  'Tyranids',
+  'World Eaters',
+];
+
+const FACTION_ALIASES = new Map<string, string>([
+  ['eldar', 'aeldari'],
+  ['craftworlds', 'aeldari'],
+  ['craftworld', 'aeldari'],
+  ['dark eldar', 'drukhari'],
+  ['sisters of battle', 'adepta sororitas'],
+  ['sisters', 'adepta sororitas'],
+  ['admech', 'adeptus mechanicus'],
+  ['ad mech', 'adeptus mechanicus'],
+  ['custodes', 'adeptus custodes'],
+  ['imperial guard', 'astra militarum'],
+  ['guard', 'astra militarum'],
+  ['tau', 't\'au empire'],
+  ['tau empire', 't\'au empire'],
+  ['gsc', 'genestealer cults'],
+  ['genestealers', 'genestealer cults'],
+  ['genestealer cult', 'genestealer cults'],
+  ['csm', 'chaos space marines'],
+  ['death guard', 'death guard'],
+  ['dg', 'death guard'],
+  ['tsons', 'thousand sons'],
+  ['nids', 'tyranids'],
+  ['votann', 'leagues of votann'],
+]);
+
+// Army Detachments by faction
+const DETACHMENTS = [
+  // Drukhari
+  'Realspace Raiders',
+  'Skysplinter Assault',
+  'Spectacle of Spite',
+  'Covenite Coterie',
+  'Kabalite Cartel',
+  'Reaper\'s Wager',
+  // Genestealer Cults
+  'Host of Ascension',
+  'Xenocreed Congregation',
+  'Biosanctic Broodsurge',
+  'Outlander Claw',
+  'Brood Brother Auxilia',
+  'Final Day',
+  // Space Marines
+  'Gladius Task Force',
+  'Anvil Siege Force',
+  'Ironstorm Spearhead',
+  'Firestorm Assault Force',
+  'Vanguard Spearhead',
+  'First Company Task Force',
+  '1st Company Task Force',
+  'Stormlance Task Force',
+  // Aeldari
+  'Battle Host',
+  'Windrider Host',
+  'Starhost',
+  // Necrons
+  'Awakened Dynasty',
+  'Annihilation Legion',
+  'Canoptek Court',
+  'Hypercrypt Legion',
+  'Obeisance Phalanx',
+  // Tyranids
+  'Invasion Fleet',
+  'Crusher Stampede',
+  'Synaptic Nexus',
+  'Assimilation Swarm',
+  'Vanguard Onslaught',
+  'Unending Swarm',
+  // Orks
+  'Waaagh! Tribe',
+  'War Horde',
+  'Bully Boyz',
+  'Kult of Speed',
+  'Dread Mob',
+  'Green Tide',
+  // T\'au
+  'Kauyon',
+  'Mont\'ka',
+  'Retaliation Cadre',
+  // Chaos Space Marines
+  'Slaves to Darkness',
+  'Veterans of the Long War',
+  'Pactbound Zealots',
+  'Deceptors',
+  'Dread Talons',
+  'Soulforged Warpack',
+  // Death Guard
+  'Plague Company',
+  'Creeping Death',
+  // World Eaters
+  'Berzerker Warband',
+  // Thousand Sons
+  'Cult of Magic',
+  // Custodes
+  'Shield Host',
+  'Auric Champions',
+  // Sisters
+  'Hallowed Martyrs',
+  'Bringers of Flame',
+  'Penitent Host',
+  // Imperial Knights
+  'Noble Lance',
+  // Chaos Knights
+  'Traitoris Lance',
+  // Guard
+  'Combined Regiment',
+  'Armoured Spearhead',
+  // Ad Mech
+  'Rad-Zone Corps',
+  'Data-Psalm Conclave',
+  'Explorator Maniple',
+  'Cohort Cybernetica',
+  'Skitarii Hunter Cohort',
+];
+
+const DETACHMENT_ALIASES = new Map<string, string>([
+  ['cartel', 'kabalite cartel'],
+  ['cabalite cartel', 'kabalite cartel'],
+  ['gladius', 'gladius task force'],
+  ['kauyon', 'kauyon'],
+  ['montka', 'mont\'ka'],
 ]);
 
 // Map colloquial/shortened unit names to canonical names
@@ -669,14 +824,17 @@ export function preprocessTranscriptWithLlmMappings(
     });
   }
 
-  // Note: preprocessTranscriptWithLlmMappings doesn't detect objectives yet - use preprocessTranscript for that
+  // Note: preprocessTranscriptWithLlmMappings doesn't detect objectives/factions/detachments yet - use preprocessTranscript for that
   const objectiveMentions = new Map<string, number[]>();
-  return { matches, stratagemMentions, unitMentions, objectiveMentions, normalizedSegments, colloquialToOfficial };
+  const factionMentions = new Map<string, number[]>();
+  const detachmentMentions = new Map<string, number[]>();
+  return { matches, stratagemMentions, unitMentions, objectiveMentions, factionMentions, detachmentMentions, normalizedSegments, colloquialToOfficial };
 }
 
 /**
- * Pre-process transcript to find mentions of stratagems, units, and objectives.
+ * Pre-process transcript to find mentions of stratagems, units, objectives, factions, and detachments.
  * Also normalizes and tags the transcript text with official names.
+ * Deduplicates consecutive identical transcript lines (common in YouTube auto-captions).
  */
 export function preprocessTranscript(
   transcript: TranscriptSegment[],
@@ -686,25 +844,39 @@ export function preprocessTranscript(
   const stratagemMentions = new Map<string, number[]>();
   const unitMentions = new Map<string, number[]>();
   const objectiveMentions = new Map<string, number[]>();
+  const factionMentions = new Map<string, number[]>();
+  const detachmentMentions = new Map<string, number[]>();
   const normalizedSegments: NormalizedSegment[] = [];
   const colloquialToOfficial = new Map<string, string>();
+
+  // Deduplicate consecutive identical lines (YouTube auto-captions repeat lines)
+  const dedupedTranscript: TranscriptSegment[] = [];
+  let lastText = '';
+  for (const seg of transcript) {
+    if (seg.text.trim() !== lastText) {
+      dedupedTranscript.push(seg);
+      lastText = seg.text.trim();
+    }
+  }
 
   // Build fuzzy aliases from official unit names
   const unitAliases = buildFuzzyUnitAliases(unitNames);
 
-  // Build patterns (include aliases for stratagems, units, and objectives)
+  // Build patterns (include aliases for stratagems, units, objectives, factions, detachments)
   const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
   const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames, unitAliases) : null;
   const objectivePattern = buildTermPattern(ALL_OBJECTIVES, OBJECTIVE_ALIASES);
+  const factionPattern = buildTermPattern(FACTIONS, FACTION_ALIASES);
+  const detachmentPattern = buildTermPattern(DETACHMENTS, DETACHMENT_ALIASES);
 
-  for (const seg of transcript) {
+  for (const seg of dedupedTranscript) {
     const timestamp = Math.floor(seg.startTime);
     let text = seg.text;
     let normalizedText = text;
     let taggedText = text;
 
     // Track replacements for this segment to avoid double-processing
-    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' }> = [];
+    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' | 'faction' | 'detachment' }> = [];
 
     // Find stratagem mentions
     for (const match of text.matchAll(stratagemPattern)) {
@@ -828,6 +1000,68 @@ export function preprocessTranscript(
       replacements.push({ original: term, official: canonical, type: 'objective' });
     }
 
+    // Find faction mentions
+    for (const match of text.matchAll(factionPattern)) {
+      const term = match[1];
+      if (!term) continue;
+
+      const canonical = toCanonicalName(term, FACTION_ALIASES);
+
+      if (term.toLowerCase() !== canonical.toLowerCase()) {
+        colloquialToOfficial.set(term.toLowerCase(), canonical);
+      }
+
+      if (!factionMentions.has(canonical)) {
+        factionMentions.set(canonical, []);
+      }
+
+      const timestamps = factionMentions.get(canonical)!;
+      if (!timestamps.includes(timestamp)) {
+        timestamps.push(timestamp);
+      }
+
+      matches.push({
+        term,
+        normalizedTerm: canonical,
+        type: 'faction',
+        timestamp,
+        segmentText: text,
+      });
+
+      replacements.push({ original: term, official: canonical, type: 'faction' });
+    }
+
+    // Find detachment mentions
+    for (const match of text.matchAll(detachmentPattern)) {
+      const term = match[1];
+      if (!term) continue;
+
+      const canonical = toCanonicalName(term, DETACHMENT_ALIASES);
+
+      if (term.toLowerCase() !== canonical.toLowerCase()) {
+        colloquialToOfficial.set(term.toLowerCase(), canonical);
+      }
+
+      if (!detachmentMentions.has(canonical)) {
+        detachmentMentions.set(canonical, []);
+      }
+
+      const timestamps = detachmentMentions.get(canonical)!;
+      if (!timestamps.includes(timestamp)) {
+        timestamps.push(timestamp);
+      }
+
+      matches.push({
+        term,
+        normalizedTerm: canonical,
+        type: 'detachment',
+        timestamp,
+        segmentText: text,
+      });
+
+      replacements.push({ original: term, official: canonical, type: 'detachment' });
+    }
+
     // Apply replacements to create normalized and tagged text
     // Sort by length (longest first) to avoid partial replacements
     replacements.sort((a, b) => b.original.length - a.original.length);
@@ -846,7 +1080,14 @@ export function preprocessTranscript(
       });
 
       // Tag: wrap with type marker
-      const tag = type === 'unit' ? 'UNIT' : type === 'stratagem' ? 'STRATAGEM' : 'OBJECTIVE';
+      const tagMap: Record<string, string> = {
+        unit: 'UNIT',
+        stratagem: 'STRATAGEM',
+        objective: 'OBJECTIVE',
+        faction: 'FACTION',
+        detachment: 'DETACHMENT',
+      };
+      const tag = tagMap[type];
       taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
     }
 
@@ -857,7 +1098,7 @@ export function preprocessTranscript(
     });
   }
 
-  return { matches, stratagemMentions, unitMentions, objectiveMentions, normalizedSegments, colloquialToOfficial };
+  return { matches, stratagemMentions, unitMentions, objectiveMentions, factionMentions, detachmentMentions, normalizedSegments, colloquialToOfficial };
 }
 
 /**

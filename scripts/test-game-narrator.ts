@@ -24,6 +24,8 @@ import {
   formatStratagemTimeline,
   formatObjectiveTimeline,
   formatUnitTimeline,
+  formatFactionTimeline,
+  formatDetachmentTimeline,
   type FactionData,
 } from '../src/prompts/game-narrator-prompt';
 import type { TranscriptSegment } from '../src/types/youtube';
@@ -136,6 +138,8 @@ async function main(): Promise<void> {
   const allUnitNames = [...factionUnitNames.values()].flat();
   const preprocessed = preprocessTranscript(captions.segments, allUnitNames);
 
+  console.log(`Factions detected: ${preprocessed.factionMentions.size}`);
+  console.log(`Detachments detected: ${preprocessed.detachmentMentions.size}`);
   console.log(`Stratagems detected: ${preprocessed.stratagemMentions.size}`);
   console.log(`Objectives detected: ${preprocessed.objectiveMentions.size}`);
   console.log(`Units detected: ${preprocessed.unitMentions.size}`);
@@ -178,6 +182,16 @@ async function main(): Promise<void> {
   );
 
   // Display results
+  console.log('\n' + '='.repeat(80));
+  console.log('FACTION TIMELINE');
+  console.log('='.repeat(80));
+  console.log(formatFactionTimeline(preprocessed.factionMentions));
+
+  console.log('\n' + '='.repeat(80));
+  console.log('DETACHMENT TIMELINE');
+  console.log('='.repeat(80));
+  console.log(formatDetachmentTimeline(preprocessed.detachmentMentions));
+
   console.log('\n' + '='.repeat(80));
   console.log('STRATAGEM TIMELINE');
   console.log('='.repeat(80));

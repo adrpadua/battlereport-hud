@@ -70,6 +70,8 @@ The transcript has been pre-processed with tagged gameplay terms:
 - \`[UNIT:Name]\` = A unit from one of the armies
 - \`[STRATAGEM:Name]\` = A stratagem being used
 - \`[OBJECTIVE:Name]\` = A mission objective (primary or secondary)
+- \`[FACTION:Name]\` = A faction/army name
+- \`[DETACHMENT:Name]\` = An army detachment
 - Each line starts with a timestamp in [MM:SS] format
 
 ## CRITICAL: TIMESTAMP CITATIONS ARE MANDATORY
@@ -234,9 +236,57 @@ export function formatObjectiveTimeline(
 }
 
 /**
+ * Format faction mentions timeline for the user prompt.
+ */
+export function formatFactionTimeline(
+  mentions: Map<string, number[]>
+): string {
+  if (mentions.size === 0) {
+    return 'No factions detected in transcript.';
+  }
+
+  const lines: string[] = [];
+  const sorted = [...mentions.entries()].sort(
+    (a, b) => (a[1][0] ?? 0) - (b[1][0] ?? 0)
+  );
+
+  for (const [name, timestamps] of sorted) {
+    const formattedTimes = timestamps.slice(0, 5).map(formatTimestamp).join(', ');
+    const suffix = timestamps.length > 5 ? ` ... (${timestamps.length} total mentions)` : '';
+    lines.push(`- ${name}: [${formattedTimes}]${suffix}`);
+  }
+
+  return lines.join('\n');
+}
+
+/**
+ * Format detachment mentions timeline for the user prompt.
+ */
+export function formatDetachmentTimeline(
+  mentions: Map<string, number[]>
+): string {
+  if (mentions.size === 0) {
+    return 'No detachments detected in transcript.';
+  }
+
+  const lines: string[] = [];
+  const sorted = [...mentions.entries()].sort(
+    (a, b) => (a[1][0] ?? 0) - (b[1][0] ?? 0)
+  );
+
+  for (const [name, timestamps] of sorted) {
+    const formattedTimes = timestamps.slice(0, 5).map(formatTimestamp).join(', ');
+    const suffix = timestamps.length > 5 ? ` ... (${timestamps.length} total mentions)` : '';
+    lines.push(`- ${name}: [${formattedTimes}]${suffix}`);
+  }
+
+  return lines.join('\n');
+}
+
+/**
  * Format preprocessed transcript segments for the user prompt.
- * Uses the tagged text which contains [UNIT:Name], [STRATAGEM:Name], and [OBJECTIVE:Name] markers.
- * Deduplicates consecutive identical lines (common in YouTube auto-captions).
+ * Uses the tagged text which contains [UNIT:Name], [STRATAGEM:Name], [OBJECTIVE:Name], etc. markers.
+ * Note: Deduplication is now done during preprocessing.
  */
 export function formatPreprocessedTranscript(
   preprocessed: PreprocessedTranscript,
@@ -248,17 +298,9 @@ export function formatPreprocessedTranscript(
   }
 
   let result = '';
-  let lastText = '';
 
   for (const seg of segments) {
-    // Skip exact duplicate lines (YouTube auto-captions repeat each line)
-    const currentText = seg.taggedText.trim();
-    if (currentText === lastText) {
-      continue;
-    }
-    lastText = currentText;
-
-    const line = `[${formatTimestamp(seg.startTime)}] ${currentText}\n`;
+    const line = `[${formatTimestamp(seg.startTime)}] ${seg.taggedText.trim()}\n`;
     if (result.length + line.length > maxLength) {
       result += `\n[Transcript truncated at ${formatTimestamp(seg.startTime)}]`;
       break;
@@ -325,6 +367,16 @@ Units: ${unitList}${suffix}
     }
   }
 
+  // Faction timeline
+  sections.push(`## FACTION MENTIONS TIMELINE
+${formatFactionTimeline(preprocessed.factionMentions)}
+`);
+
+  // Detachment timeline
+  sections.push(`## DETACHMENT MENTIONS TIMELINE
+${formatDetachmentTimeline(preprocessed.detachmentMentions)}
+`);
+
   // Stratagem timeline
   sections.push(`## STRATAGEM USAGE TIMELINE
 ${formatStratagemTimeline(preprocessed.stratagemMentions)}
@@ -342,7 +394,7 @@ ${formatUnitTimeline(preprocessed.unitMentions)}
 
   // Preprocessed transcript
   sections.push(`## PREPROCESSED TRANSCRIPT
-The following transcript has gameplay terms tagged with [UNIT:Name], [STRATAGEM:Name], and [OBJECTIVE:Name].
+The following transcript has gameplay terms tagged.
 
 ${formatPreprocessedTranscript(preprocessed)}
 `);
