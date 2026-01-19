@@ -1,0 +1,150 @@
+{
+  "factionId": "dark-angels",
+  "factionName": "Dark Angels",
+  "generatedAt": "2026-01-19T10:31:18.928Z",
+  "aliases": {
+    "Ravenwing Black Knights": [
+      "ravenwing black night",
+      "raven wing black knights",
+      "rw black knights",
+      "raven knights",
+      "black knights",
+      "raven black knights",
+      "ravenwing bk"
+    ],
+    "Ravenwing Command Squad": [
+      "ravenwing command",
+      "rw command squad",
+      "raven command squad",
+      "ravenwing cs",
+      "raven command",
+      "ravenwing csq",
+      "ravenwing com squad"
+    ],
+    "Deathwing Knights": [
+      "deathwing night",
+      "death wing knights",
+      "dw knights",
+      "deathwing kights",
+      "deathwing night squad",
+      "deathwing knighs"
+    ],
+    "Deathwing Terminator Squad": [
+      "deathwing termies",
+      "dw terminator squad",
+      "deathwing terminator",
+      "deathwing term squad",
+      "deathwing term",
+      "death wing terminators"
+    ],
+    "Inner Circle Companions": [
+      "inner circle comp",
+      "inner circle",
+      "inner companions",
+      "icc",
+      "inner circle com",
+      "inner circle compainions"
+    ],
+    "Deathwing Command Squad [Legends]": [
+      "deathwing command",
+      "dw command squad",
+      "deathwing cs",
+      "deathwing legends",
+      "deathwing com squad",
+      "deathwing command legends"
+    ],
+    "Azrael": [
+      "azreal",
+      "azraell",
+      "azraiel",
+      "azrael the fallen",
+      "azrael the dark"
+    ],
+    "Belial": [
+      "belial the dark",
+      "belail",
+      "belial the fallen",
+      "belial the angel",
+      "beliol"
+    ],
+    "Sammael": [
+      "samail",
+      "sammael the dark",
+      "samael",
+      "samail the fallen",
+      "samael the angel"
+    ],
+    "Ezekiel": [
+      "ezekiel the dark",
+      "ezekiel the fallen",
+      "ezekiel the angel",
+      "ezekiel the wise"
+    ],
+    "Asmodai": [
+      "asmodai the dark",
+      "asmodai the fallen",
+      "asmodai the angel",
+      "asmodai the wise"
+    ],
+    "Lion El'Jonson": [
+      "lion el jonson",
+      "lion el'johnson",
+      "lion el jonsen",
+      "lion el johnson"
+    ],
+    "Lazarus": [
+      "lazurus",
+      "lazaroos",
+      "lazurus the dark",
+      "lazarus the fallen",
+      "laz"
+    ],
+    "Nephilim Jetfighter": [
+      "nephilim jet fighter",
+      "nephilim jet",
+      "nephilim fighter",
+      "nephilim",
+      "neph jet"
+    ],
+    "Ravenwing Dark Talon": [
+      "rw dark talon",
+      "raven dark talon",
+      "ravenwing dt"
+    ],
+    "Land Speeder Vengeance": [
+      "land speeder vengeans",
+      "land speeder venge",
+      "lsv",
+      "vengeance speeder",
+      "land speedo",
+      "land speeda",
+      "land speeder"
+    ],
+    "Ravenwing Darkshroud": [
+      "ravenwing dark shroud",
+      "rwd",
+      "dark shroud",
+      "raven shroud",
+      "ravenwing shroud",
+      "ravenwing dark"
+    ],
+    "Ravenwing Talonmaster [Legends]": [
+      "ravenwing talon master",
+      "ravenwing talonmastr",
+      "rwtm",
+      "talon master",
+      "raven talon",
+      "ravenwing talon",
+      "ravenwing talonmaster"
+    ],
+    "Deathwing Strikemaster [Legends]": [
+      "deathwing strikemasters",
+      "deathwing strike master",
+      "dws",
+      "strike master",
+      "death strike",
+      "deathwing strikemstr",
+      "deathwing strikemaster"
+    ]
+  }
+}

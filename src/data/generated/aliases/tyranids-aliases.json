@@ -1,0 +1,387 @@
+{
+  "factionId": "tyranids",
+  "factionName": "Tyranids",
+  "generatedAt": "2026-01-19T10:37:59.105Z",
+  "aliases": {
+    "Tyranid Warriors with Ranged Bio-Weapons": [
+      "tyranid warriers",
+      "twrbw",
+      "ranged warriors",
+      "tyranid warriors",
+      "tyranid guns",
+      "tyranid shootas",
+      "tiranid warrios",
+      "tiranid warriers"
+    ],
+    "Tyranid Warriors with Melee Bio-Weapons": [
+      "tyranid warriers",
+      "twmbw",
+      "melee warriors",
+      "tyranid close combat",
+      "tyranid choppas",
+      "tiranid warrios",
+      "tiranid warriers"
+    ],
+    "Termagants": [
+      "terma",
+      "tg",
+      "termies",
+      "terma gants"
+    ],
+    "Hormagaunts": [
+      "hormies",
+      "hg",
+      "hormas",
+      "hormagants"
+    ],
+    "Tyrant Guard": [
+      "tyrant gard",
+      "tg",
+      "tyrant gurd",
+      "tyrant guards",
+      "tyranid guards",
+      "tyrants",
+      "tyrant gards"
+    ],
+    "Pyrovores": [
+      "pyrovors",
+      "pyro",
+      "pv",
+      "fire bugs"
+    ],
+    "Venomthropes": [
+      "venom throbes",
+      "vt",
+      "venoms",
+      "venomthroops"
+    ],
+    "Neurogaunts": [
+      "neuro gants",
+      "ng"
+    ],
+    "Zoanthropes": [
+      "zoanthroops",
+      "zt",
+      "zoans"
+    ],
+    "Mucolid Spores": [
+      "mucolid spore",
+      "mucolids",
+      "ms"
+    ],
+    "Spore Mines": [
+      "spore mine",
+      "spore min",
+      "sm"
+    ],
+    "Biovores": [
+      "biovors",
+      "bio vores",
+      "bv"
+    ],
+    "Carnifexes": [
+      "carnifex",
+      "carnis",
+      "cf"
+    ],
+    "Hive Guard": [
+      "hive gard",
+      "hg",
+      "hive gurd",
+      "hive guards",
+      "hive gards"
+    ],
+    "Barbgaunts": [
+      "barb gants",
+      "bg",
+      "barbs"
+    ],
+    "Genestealers": [
+      "genesteelers",
+      "genestelers",
+      "gs",
+      "stealers",
+      "genies"
+    ],
+    "Sky-slasher Swarms [Legends]": [
+      "sky slasher swarms",
+      "skyslasher swarms",
+      "sss",
+      "sky swarm",
+      "sky slashers",
+      "sky slasher"
+    ],
+    "Winged Hive Tyrant": [
+      "winged hieve tyrant",
+      "winged hive tyrent",
+      "wht",
+      "wing tyrant",
+      "winged tyrant",
+      "wing tyr"
+    ],
+    "Hive Tyrant": [
+      "hive tyrent",
+      "hive tyrants",
+      "ht",
+      "tyrant",
+      "hive t",
+      "hive"
+    ],
+    "Tervigon": [
+      "terv",
+      "t-gon",
+      "tervy"
+    ],
+    "The Swarmlord": [
+      "swarmlord",
+      "swarm lord",
+      "tsl",
+      "swarms"
+    ],
+    "Broodlord": [
+      "brood lord",
+      "broodlore",
+      "broodlords",
+      "bl",
+      "brood",
+      "broodly"
+    ],
+    "Old One Eye": [
+      "old onee eye",
+      "old onei",
+      "ooe",
+      "old eye",
+      "old one"
+    ],
+    "Gargoyles": [
+      "gargoyls",
+      "gargoyl",
+      "gargs",
+      "garg",
+      "gargies"
+    ],
+    "Toxicrene": [
+      "toxicreen",
+      "toxikrene",
+      "toxi",
+      "tox",
+      "toxic",
+      "toxi-cream"
+    ],
+    "Winged Tyranid Prime": [
+      "winged tyranid prim",
+      "winged tyranid",
+      "wtp",
+      "winged prime",
+      "winged t-prime",
+      "winged t-pr"
+    ],
+    "Deathleaper": [
+      "death leaper",
+      "dl",
+      "death leap",
+      "death leeps"
+    ],
+    "Maleceptor": [
+      "maleceptar",
+      "malecepto",
+      "m",
+      "male",
+      "malee"
+    ],
+    "Neurotyrant": [
+      "neuro tyrant",
+      "neurotyr",
+      "nt",
+      "neuro",
+      "neuroty"
+    ],
+    "Haruspex": [
+      "haruspeks",
+      "haruspexes",
+      "haru",
+      "hary",
+      "harruspex",
+      "haru specks",
+      "harruspecks"
+    ],
+    "Von Ryan's Leapers": [
+      "von ryans leapers",
+      "von ryans leap",
+      "vr leapers",
+      "vrl",
+      "von ryan leeps",
+      "vr leap"
+    ],
+    "Ripper Swarms": [
+      "riper swarms",
+      "ripper swarmz",
+      "rippers",
+      "rips",
+      "ripperz",
+      "rip swarm"
+    ],
+    "Parasite of Mortrex": [
+      "parasite of mortrexes",
+      "parasite mortrex",
+      "pomm",
+      "parasit",
+      "para of mortrex",
+      "parasit of mortrex"
+    ],
+    "Mawloc": [
+      "mawlocs",
+      "maw lock",
+      "maw loc",
+      "mawlok"
+    ],
+    "Trygon": [
+      "trygons",
+      "trigon",
+      "tryg",
+      "trigons",
+      "trig on",
+      "trigun"
+    ],
+    "Exocrine": [
+      "exocrines",
+      "exocrin",
+      "exo",
+      "exocrinies",
+      "exocryne"
+    ],
+    "Screamer-killer": [
+      "screamer killer",
+      "screamerkillers",
+      "screamer kill",
+      "scream killer",
+      "scream killerz",
+      "screamer-kill"
+    ],
+    "Tyrannofex": [
+      "tyrannofexes",
+      "tyranno",
+      "tyrannofexx"
+    ],
+    "Tyrannocyte": [
+      "tyrannocytes",
+      "tyrannocite",
+      "tyranno site",
+      "tyranocyte"
+    ],
+    "Harpy": [
+      "harpies",
+      "harpyes",
+      "harpyy",
+      "harpyz",
+      "harpe"
+    ],
+    "Hive Crone": [
+      "hive crones",
+      "hive cronez",
+      "hive croan"
+    ],
+    "Sporocyst": [
+      "sporocysts",
+      "sporecyst",
+      "sporo cyst",
+      "sporo cist",
+      "sporo cysts"
+    ],
+    "Psychophage": [
+      "psychophages",
+      "psychophagez",
+      "psycho phage",
+      "psychofage",
+      "psycho phages"
+    ],
+    "Barbed Hierodule [Legends]": [
+      "barbed hierodules",
+      "barb hierodule",
+      "barb hierodules",
+      "barbed hierodul",
+      "barb hierodul"
+    ],
+    "Scythed Hierodule [Legends]": [
+      "sighted hierodule",
+      "scythe hierodule",
+      "scythed hierodule",
+      "scythed hirodle",
+      "sh",
+      "scy hiero",
+      "scythey",
+      "scythe dude"
+    ],
+    "Harridan": [
+      "haridan",
+      "h",
+      "harry",
+      "harrid",
+      "harridun"
+    ],
+    "Hierophant": [
+      "hierofant",
+      "hirophant",
+      "hiero",
+      "h"
+    ],
+    "Raveners": [
+      "raverners",
+      "ravners",
+      "raveeners",
+      "r",
+      "ravs",
+      "rave",
+      "ravy"
+    ],
+    "Dimachaeron [Legends]": [
+      "dimacharon",
+      "dimachyron",
+      "dimachaeron",
+      "d",
+      "dimmy",
+      "dimmy chay"
+    ],
+    "Malanthrope [Legends]": [
+      "malanthrope",
+      "malanthrop",
+      "malanthroop",
+      "m",
+      "malan",
+      "mala",
+      "mal"
+    ],
+    "Neurolictor": [
+      "neurolicter",
+      "n",
+      "neuro",
+      "neuro lictor"
+    ],
+    "Norn Emissary": [
+      "norn emmisary",
+      "norn emesary",
+      "n",
+      "norn em"
+    ],
+    "Norn Assimilator": [
+      "norn assimulator",
+      "norn assimilater",
+      "norn asimilator",
+      "norn assim",
+      "n",
+      "norn as",
+      "norn ass",
+      "norn assy"
+    ],
+    "Hyperadapted Raveners": [
+      "hyperadapted raverners",
+      "hyperadapated raveners",
+      "hyper adapted raveners",
+      "hyperadapated ravners",
+      "hr",
+      "hyper ravens",
+      "hyper ravy",
+      "hyper raves"
+    ]
+  }
+}

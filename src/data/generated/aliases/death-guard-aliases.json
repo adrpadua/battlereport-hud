@@ -1,0 +1,576 @@
+{
+  "factionId": "death-guard",
+  "factionName": "Death Guard",
+  "generatedAt": "2026-01-19T10:31:51.713Z",
+  "aliases": {
+    "Plague Marines": [
+      "plague marins",
+      "pm",
+      "plague boys",
+      "plague bros",
+      "plaguey marines",
+      "plaguey",
+      "plague men",
+      "play marines"
+    ],
+    "Death Guard Cultists [Legends]": [
+      "death guard cultist",
+      "dgc",
+      "cultists",
+      "death cultists",
+      "dg cultists",
+      "death guardies",
+      "death guards",
+      "death guard colts"
+    ],
+    "Poxwalkers": [
+      "pox walkrs",
+      "pw",
+      "poxies",
+      "pox walkers",
+      "pox wakers",
+      "poxy",
+      "pockwalkers"
+    ],
+    "Deathshroud Terminators": [
+      "death shroud termies",
+      "dst",
+      "death shrouds",
+      "shroud terminators",
+      "death shrouded",
+      "deathshroud",
+      "death shroud t",
+      "death shroud terminators"
+    ],
+    "Blightlord Terminators": [
+      "blight lord termies",
+      "blt",
+      "blightlords",
+      "blight lord",
+      "blight lords",
+      "blighty",
+      "blight termies",
+      "blightlord t"
+    ],
+    "Chaos Spawn": [
+      "chaos spwan",
+      "cs",
+      "spawns",
+      "chaos spawns",
+      "chaos spawnz"
+    ],
+    "Myphitic Blight-hauler": [
+      "myphitic blight hauler",
+      "mbh",
+      "blight hauler",
+      "myphitic",
+      "myphitic hauler",
+      "myphitic blight",
+      "myphitic blight h",
+      "mythic blight hauler"
+    ],
+    "Gellerpox Infected [Legends]": [
+      "geller pox infected",
+      "gpi",
+      "gellerpox",
+      "geller pox",
+      "gellerpox inf",
+      "geller poxies",
+      "geller poxed",
+      "geller pox infecteds"
+    ],
+    "Mutoid Vermin [Legends]": [
+      "mutoid vermin",
+      "mv",
+      "mutoids",
+      "mutant vermin",
+      "mutoid vermins"
+    ],
+    "Death Guard Possessed [Legends]": [
+      "death guard possesed",
+      "dgp",
+      "possessed",
+      "death possessed",
+      "dg possessed",
+      "death guard pos",
+      "death guard poss",
+      "death guard posessed"
+    ],
+    "Plaguebearers": [
+      "plague bearers",
+      "pb",
+      "plague bears",
+      "plague bear",
+      "plaguey bears",
+      "plaguey"
+    ],
+    "Plague Drones": [
+      "plague drons",
+      "pd",
+      "plaguey drones",
+      "plague drone",
+      "plague dron"
+    ],
+    "Beasts of Nurgle": [
+      "beasts of nurgel",
+      "bon",
+      "nurgle beasts",
+      "beasts",
+      "nurgle beasties",
+      "beasts of nurgles"
+    ],
+    "Nurglings": [
+      "nurgling",
+      "nurgles",
+      "nurglingz",
+      "nurgle babies"
+    ],
+    "Daemon Prince of Nurgle": [
+      "daemon prince of nurgel",
+      "dpn",
+      "nurgle prince",
+      "daemon prince",
+      "nurgle daemon",
+      "daemon prince nurgle",
+      "daemon prince of nurgles"
+    ],
+    "Daemon Prince of Nurgle with wings": [
+      "demon prince nurgle wings",
+      "demon prince of nurgle",
+      "dp of nurgle wings",
+      "nurgle prince",
+      "winged nurgle prince",
+      "nurgle daemon prince",
+      "winged demon prince",
+      "demon prince with wings"
+    ],
+    "Typhus": [
+      "typhus the traveler",
+      "typhus the plague lord",
+      "typhus the death guard",
+      "typh",
+      "ty",
+      "typhus the reaper",
+      "typhus the nurgle",
+      "typhus the pestilent"
+    ],
+    "Death Guard Chaos Lord [Legends]": [
+      "dg chaos lord",
+      "chaos lord",
+      "death guard lord",
+      "dg lord",
+      "chaos lord legends",
+      "death guard chaos",
+      "chaos lord of death guard"
+    ],
+    "Death Guard Chaos Lord in Terminator Armour [Legends]": [
+      "dg chaos lord termi",
+      "chaos lord termi",
+      "death guard lord termi",
+      "dg termi lord",
+      "chaos lord in termi",
+      "terminator chaos lord",
+      "death guard termi lord"
+    ],
+    "Lord of Virulence": [
+      "virulence lord",
+      "lord virulence",
+      "virulent lord",
+      "lord of plague",
+      "virulence",
+      "lord of decay",
+      "virulent champion"
+    ],
+    "Lord of Contagion": [
+      "contagion lord",
+      "lord contagion",
+      "contagion",
+      "lord of disease",
+      "disease lord",
+      "lord of infection",
+      "contagion champion"
+    ],
+    "Death Guard Sorcerer in Terminator Armour [Legends]": [
+      "dg sorcerer termi",
+      "sorcerer termi",
+      "death guard termi sorcerer",
+      "sorcerer in termi",
+      "chaos sorcerer termi",
+      "termie sorcerer",
+      "sorcerer of death guard"
+    ],
+    "Malignant Plaguecaster": [
+      "plaguecaster",
+      "malignant caster",
+      "plague caster",
+      "malignant plague",
+      "caster of plague",
+      "malignant",
+      "plague wizard"
+    ],
+    "Noxious Blightbringer": [
+      "blightbringer",
+      "noxious bringer",
+      "noxious blight",
+      "blight bringer",
+      "noxious",
+      "blight herald",
+      "noxious herald"
+    ],
+    "Foul Blightspawn": [
+      "blightspawn",
+      "foul spawn",
+      "foul blight",
+      "blight spawn",
+      "foul",
+      "spawn of blight",
+      "foul creature"
+    ],
+    "Biologus Putrifier": [
+      "biologus",
+      "putrifier",
+      "bio putrifier",
+      "biologus putrify",
+      "putrifier of decay",
+      "biologus the foul",
+      "putrifier of nurgle"
+    ],
+    "Tallyman": [
+      "tally man",
+      "tally",
+      "tally keeper",
+      "tally dude",
+      "tally master",
+      "tally counter"
+    ],
+    "Plague Surgeon": [
+      "surgeon",
+      "plague doc",
+      "plague doctor",
+      "plague medic",
+      "surgeon of nurgle",
+      "nurgle surgeon",
+      "plague healer"
+    ],
+    "Helbrute": [
+      "hell brute",
+      "hel brute",
+      "helbrut",
+      "brute",
+      "helbrute unit",
+      "chaos brute",
+      "brute of chaos"
+    ],
+    "Foetid Bloat-drone": [
+      "bloat drone",
+      "foetid drone",
+      "bloatdrone",
+      "foetid bloat",
+      "drone of decay",
+      "bloat flyer",
+      "foetid flyer"
+    ],
+    "Plagueburst Crawler": [
+      "plague burst crawler",
+      "plague burst",
+      "pbc",
+      "plague crawler",
+      "plague buggy",
+      "playburst crawler",
+      "playgurst crawler",
+      "plague burst carler"
+    ],
+    "Chaos Land Raider": [
+      "clr",
+      "chaos raider",
+      "chaos lander",
+      "chaos lander raider"
+    ],
+    "Chaos Predator Annihilator": [
+      "cpa",
+      "chaos pred",
+      "predator annihilator",
+      "chaos pred annihilator",
+      "chaos pred anhilator",
+      "chaos predator anhilator"
+    ],
+    "Chaos Predator Destructor": [
+      "cpd",
+      "chaos pred",
+      "predator destructor",
+      "chaos pred destructor",
+      "chaos pred destructer",
+      "chaos predator destructer",
+      "chaos predator destractor"
+    ],
+    "Defiler": [
+      "deffiler"
+    ],
+    "Chaos Rhino": [
+      "chaos rino",
+      "chaos rh",
+      "chaos ride"
+    ],
+    "Icon Bearer": [
+      "icon bear",
+      "ib",
+      "icon beater"
+    ],
+    "Kratos [Legends]": [
+      "kratos"
+    ],
+    "Cerberus [Legends]": [
+      "cerberus"
+    ],
+    "Relic Contemptor Dreadnought [Legends]": [
+      "relic contemptor dreadnought",
+      "rcd",
+      "relic dreadnought",
+      "contemptor dread",
+      "relic contemptor",
+      "relic contemptor dread"
+    ],
+    "Deredeo Dreadnought [Legends]": [
+      "deredeo dreadnought",
+      "dd",
+      "deredeo dread"
+    ],
+    "Leviathan Dreadnought [Legends]": [
+      "leviathan dreadnought",
+      "ld",
+      "leviathan dread"
+    ],
+    "Land Raider Proteus [Legends]": [
+      "land raider proteus",
+      "lrp",
+      "land raider",
+      "proteus",
+      "land raider pro"
+    ],
+    "Land Raider Achilles [Legends]": [
+      "land raider achillies",
+      "lra",
+      "raider",
+      "land raiders",
+      "land raider",
+      "land raider ach",
+      "land raider a",
+      "land reader"
+    ],
+    "Sicaran Battle Tank [Legends]": [
+      "sicaran battel tank",
+      "sbt",
+      "sicarans",
+      "sicarans battle",
+      "sicarans tank",
+      "sick tank",
+      "sickran battle"
+    ],
+    "Sicaran Punisher [Legends]": [
+      "sicaran punshier",
+      "sp",
+      "punisher",
+      "sicarans punisher",
+      "sicarans p",
+      "sick punisher",
+      "sickran punisher",
+      "sickran"
+    ],
+    "Sicaran Venator [Legends]": [
+      "sicaran venetor",
+      "sv",
+      "venator",
+      "sicarans venator",
+      "sick venator",
+      "sickran venator",
+      "sickran v",
+      "sickran"
+    ],
+    "Rapier Carrier [Legends]": [
+      "rapier carier",
+      "rc",
+      "rapier",
+      "rappers",
+      "rapier carriers",
+      "rapier car",
+      "rapier care",
+      "rapier carry"
+    ],
+    "Whirlwind Scorpius [Legends]": [
+      "whirlwind scorpious",
+      "ws",
+      "whirlwind",
+      "whirlwinds",
+      "whirlwind scorps",
+      "whirlwind scorp",
+      "whirlwind score"
+    ],
+    "Terrax-pattern Termite [Legends]": [
+      "terra-pattern termit",
+      "tp termite",
+      "terra termite",
+      "terrax termite",
+      "terrax",
+      "terrax pattern",
+      "terrax-pattern"
+    ],
+    "Xiphon Interceptor [Legends]": [
+      "xiphon intercepter",
+      "xi",
+      "xiphon",
+      "xiphons",
+      "xiphon intercept",
+      "xiphon inter",
+      "ziphon interceptor",
+      "ziphon"
+    ],
+    "Storm Eagle Gunship [Legends]": [
+      "storm eagle gunsip",
+      "seg",
+      "storm eagle",
+      "storm eagles",
+      "storm eagle gun",
+      "storm eagle g",
+      "storm eagle gunship"
+    ],
+    "Fire Raptor Gunship [Legends]": [
+      "fire raptor gunsip",
+      "frg",
+      "fire raptor",
+      "fire raptors",
+      "fire raptor gun",
+      "fire raptor g",
+      "fire raptor gunship"
+    ],
+    "Typhon [Legends]": [
+      "tyfon",
+      "ty",
+      "typhons",
+      "typhon",
+      "typhon tank",
+      "typhon t"
+    ],
+    "Spartan [Legends]": [
+      "spartin",
+      "sp",
+      "spartans",
+      "spartan",
+      "spartan tank",
+      "spartan t"
+    ],
+    "Fellblade [Legends]": [
+      "fellblayde",
+      "fb",
+      "fellblades",
+      "fellblade",
+      "fellblade tank",
+      "fellblade t"
+    ],
+    "Falchion [Legends]": [
+      "falchion",
+      "falchions",
+      "falchion tank",
+      "falchion t"
+    ],
+    "Mastodon [Legends]": [
+      "mastadon",
+      "mastodons",
+      "masto",
+      "mastodon",
+      "mastodon tank",
+      "mastodon t"
+    ],
+    "Sokar-pattern Stormbird [Legends]": [
+      "sokar stormbird",
+      "stormbird",
+      "sokar",
+      "sokar bird",
+      "sokar-pattern",
+      "sokar-patterned",
+      "so-car stormbird",
+      "so car stormbird"
+    ],
+    "Greater Blight Drone [Legends]": [
+      "greater blightdrone",
+      "blight drone",
+      "gbd",
+      "greater drone",
+      "blightdrone",
+      "grate blight drone",
+      "greater blight",
+      "greater blight drawn"
+    ],
+    "Chaos Thunderhawk [Legends]": [
+      "chaos thunder hawk",
+      "thunderhawk",
+      "cth",
+      "chaos hawk",
+      "chaos thunder",
+      "chaos thundercat",
+      "chaos thundra hawk",
+      "chaos thunder hock"
+    ],
+    "Chaos Lord on Palanquin of Nurgle [Legends]": [
+      "chaos lord nurgle",
+      "lord on palanquin",
+      "clopn",
+      "nurgle lord",
+      "chaos palanquin",
+      "chaos lord on nurg",
+      "chaos lord on palanquin",
+      "chaos lord on palanquin of nurgl"
+    ],
+    "Hellblade [Legends]": [
+      "hell blade",
+      "helblade",
+      "hellblades",
+      "hell-bade",
+      "hell-blade",
+      "hell bled",
+      "hell bladez"
+    ],
+    "Hell Talon [Legends]": [
+      "hell talon",
+      "hel talon",
+      "helltalon",
+      "hell tallen",
+      "hell talons",
+      "hell talin"
+    ],
+    "Sorcerer on Palanquin of Nurgle [Legends]": [
+      "sorcerer nurgle",
+      "sorcerer on palanquin",
+      "sorcerer palanquin",
+      "sorcerer on nurgle",
+      "sorcerer on palanquin of nurg",
+      "sorcerer on palanquin of nurgel",
+      "sorceror on palanquin of nurgle"
+    ],
+    "Lord of Poxes": [
+      "lord of pox",
+      "pox lord",
+      "lord poxes",
+      "lord of poxx",
+      "lorde of poxes"
+    ],
+    "Great Unclean One": [
+      "great unclean",
+      "unclean one",
+      "great uncleaned one",
+      "great uncleaned",
+      "great unclean 1"
+    ],
+    "Rotigus": [
+      "rotiguss",
+      "rotigous"
+    ],
+    "Foetid Bloat-drone with heavy blight launcher": [
+      "foetid bloat drone",
+      "bloat drone",
+      "foetid bloatdrone",
+      "foetid bloat-drone",
+      "foetid bloat drone with heavy blight",
+      "foetid bloat drone with heavy blight launcher"
+    ]
+  }
+}

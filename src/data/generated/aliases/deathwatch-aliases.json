@@ -1,0 +1,76 @@
+{
+  "factionId": "deathwatch",
+  "factionName": "Deathwatch",
+  "generatedAt": "2026-01-19T10:31:59.989Z",
+  "aliases": {
+    "Fortis Kill Team": [
+      "fortis kt",
+      "fortis k-team",
+      "fortis k-t",
+      "fortis team",
+      "fortis k-tm"
+    ],
+    "Indomitor Kill Team": [
+      "indomitor kt",
+      "indomitor k-team",
+      "indomitor k-t",
+      "indo kill team",
+      "indomitor k-tm"
+    ],
+    "Spectrus Kill Team": [
+      "spectrus kt",
+      "spectrus k-team",
+      "spectrus k-t",
+      "spec kill team",
+      "spectrus k-tm"
+    ],
+    "Deathwatch Veterans": [
+      "deathwatch veterns",
+      "dwatch vets",
+      "dwt veterans",
+      "deathwatch v",
+      "deathwatch v-team"
+    ],
+    "Talonstrike Kill Team": [
+      "talonstrike kt",
+      "talon strike team",
+      "talon strike kt",
+      "talon k-team",
+      "talonstrike k-tm"
+    ],
+    "Decimus Kill Team": [
+      "decimus kt",
+      "decimus k-team",
+      "decimus k-t",
+      "decimous kill team",
+      "decimus k-tm"
+    ],
+    "Watch Master": [
+      "watch mastar",
+      "watch mstr",
+      "w-mstr",
+      "watch m",
+      "watch mast"
+    ],
+    "Watch Captain Artemis": [
+      "watch cap artemis",
+      "watch cap'n artemis",
+      "watch captain artimus",
+      "wca",
+      "watch captain a"
+    ],
+    "Corvus Blackstar": [
+      "corvus black star",
+      "corvus b-star",
+      "corvus black",
+      "corvus b"
+    ],
+    "Kill Team Cassius [Legends]": [
+      "kill team cassius",
+      "kt cassius",
+      "kill team c",
+      "kt c",
+      "kill team c-assius"
+    ]
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "factionId": "adepta-sororitas",
+  "factionName": "Adepta Sororitas",
+  "generatedAt": "2026-01-19T10:26:59.565Z",
+  "aliases": {
+    "Arco-Flagellants": [
+      "arco flagelants",
+      "arco flagellants",
+      "af",
+      "flagellants",
+      "arcos",
+      "arco flails",
+      "flagelants",
+      "arco-flags"
+    ],
+    "Celestian Sacresants": [
+      "celestian sacrosants",
+      "cs",
+      "sacresants",
+      "celestians",
+      "sacred sisters",
+      "celestian s"
+    ],
+    "Daemonifuge": [
+      "daemoni-fuge",
+      "demonifuge",
+      "daemo-fuge"
+    ],
+    "Mortifiers": [
+      "mortifier",
+      "morts",
+      "morties",
+      "mortifires"
+    ],
+    "Paragon Warsuits": [
+      "paragon war suits",
+      "paragon suits",
+      "pws",
+      "paragons",
+      "paragon warsuit",
+      "paragon w"
+    ],
+    "Penitent Engines": [
+      "penitent engins",
+      "penitent e",
+      "penitent",
+      "penitent eng"
+    ],
+    "Saint Celestine": [
+      "st celestine",
+      "saint c",
+      "celestine",
+      "saint celes",
+      "celestine saint"
+    ],
+    "Death Cult Assassins [Legends]": [
+      "death cult assasins",
+      "dca",
+      "death assassins",
+      "cult assassins",
+      "death cults",
+      "death call assassins",
+      "death cults assasins"
+    ],
+    "Crusaders [Legends]": [
+      "crusaders",
+      "crusaderz",
+      "crusadrs",
+      "c",
+      "crus",
+      "crusader squad",
+      "crusadaz"
+    ],
+    "Sanctifiers": [
+      "sanctifires",
+      "s",
+      "sanctifyers",
+      "sanctifier squad"
+    ],
+    "Celestian Insidiants": [
+      "celestian insidients",
+      "ci",
+      "celestian insidants",
+      "celestian insiders",
+      "celestian incedents",
+      "celestian insidens"
+    ],
+    "Canoness": [
+      "canones",
+      "c",
+      "canonesse",
+      "canonesss"
+    ],
+    "Castigator": [
+      "castigater",
+      "c",
+      "castigators"
+    ],
+    "Dogmata": [
+      "dogmota",
+      "d",
+      "dogmatta"
+    ],
+    "Dialogus": [
+      "dialouges",
+      "d",
+      "dialogous"
+    ],
+    "Exorcist": [
+      "exorcistt",
+      "e",
+      "exorcists"
+    ],
+    "Hospitaller": [
+      "hospitallers",
+      "h"
+    ],
+    "Imagifier": [
+      "imagifire",
+      "i",
+      "imagifiers"
+    ],
+    "Immolator": [
+      "immolater",
+      "i",
+      "immolators"
+    ],
+    "Junith Eruita": [
+      "junith eruitta",
+      "j"
+    ],
+    "Morvenn Vahl": [
+      "morven vahl",
+      "m"
+    ],
+    "Palatine": [
+      "palatin",
+      "p",
+      "palatins"
+    ],
+    "Ministorum Priest": [
+      "ministerium priest",
+      "ministorum preist",
+      "minis priest",
+      "mp",
+      "minny priest",
+      "minny",
+      "minister priest",
+      "minis"
+    ],
+    "Sororitas Rhino": [
+      "sororitas rino",
+      "sororitas rinoh",
+      "sr",
+      "soro rhino",
+      "soror rhino",
+      "soro",
+      "soror"
+    ],
+    "Triumph of Saint Katherine": [
+      "triumph of saint cathrine",
+      "triumph saint katherine",
+      "tosk",
+      "triumph",
+      "saint katherine",
+      "triumph of saint",
+      "triumph of katherine"
+    ],
+    "Repressor [Legends]": [
+      "repressur",
+      "repressar",
+      "rep",
+      "reppy",
+      "repress",
+      "repressa",
+      "repressors"
+    ],
+    "Canoness with Jump Pack": [
+      "canoness jump pack",
+      "canoness wjp",
+      "cwjp",
+      "canoness jump",
+      "jump pack canoness",
+      "canoness",
+      "jump pack"
+    ],
+    "Battle Sanctum [Legends]": [
+      "battle sanctum",
+      "battle sanctum legends",
+      "batt sanctum",
+      "bs",
+      "battlesanctum",
+      "sanctum",
+      "battle"
+    ],
+    "Celestian Sacresant Aveline [Legends]": [
+      "celestian sacrosanct aveline",
+      "celestial sacresant aveline",
+      "celestian aveline",
+      "csa",
+      "sacresant aveline",
+      "celestian",
+      "sacresant"
+    ]
+  }
+}

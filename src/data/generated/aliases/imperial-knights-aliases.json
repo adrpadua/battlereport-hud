@@ -1,0 +1,55 @@
+{
+  "factionId": "imperial-knights",
+  "factionName": "Imperial Knights",
+  "generatedAt": "2026-01-19T10:33:37.861Z",
+  "aliases": {
+    "Tech-Priest Manipulus": [
+      "tech priest manipulas",
+      "techpriest manipulus",
+      "tpm",
+      "manipulus",
+      "manipulist",
+      "tech priest manny",
+      "tech priest manny-pants",
+      "tech priest man"
+    ],
+    "Skitarii Marshal": [
+      "skitarii marshel",
+      "skitarii marshall",
+      "sm",
+      "marshal",
+      "skit marshal",
+      "skitarii mar",
+      "skitarii marsh",
+      "squitar marshal"
+    ],
+    "Skitarii Rangers": [
+      "skitarii rangerss",
+      "sr",
+      "skit rangers",
+      "skitarii rang",
+      "skitarii rangers squad",
+      "squitar rangers",
+      "squitar rangerses"
+    ],
+    "Skitarii Vanguard": [
+      "skitarii vanguardd",
+      "sv",
+      "skit vanguard",
+      "skitarii vang",
+      "squitar vanguard",
+      "squitar vanguards",
+      "skit vanguards"
+    ],
+    "Tech-Priest Dominus": [
+      "tech priest dominus",
+      "techpriest dominus",
+      "tpd",
+      "dominus",
+      "tech priest dom",
+      "tech priest domi",
+      "tech priest dominous",
+      "tech priest don"
+    ]
+  }
+}

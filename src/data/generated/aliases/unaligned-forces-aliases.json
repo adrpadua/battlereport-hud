@@ -1,0 +1,195 @@
+{
+  "factionId": "unaligned-forces",
+  "factionName": "Unaligned Forces",
+  "generatedAt": "2026-01-19T10:38:35.277Z",
+  "aliases": {
+    "Spindle Drones [Legends]": [
+      "spindel drones",
+      "spindle drons",
+      "sd",
+      "spinny drones",
+      "spindle",
+      "spindle drone",
+      "spindle droans",
+      "spindle drawn"
+    ],
+    "Aegis Defence Line with Weapon Emplacement [Legends]": [
+      "aegis def line",
+      "adlwe",
+      "aegis line",
+      "defense line",
+      "aegis defense",
+      "aegis emplacement",
+      "aegis def",
+      "aegis defense lean"
+    ],
+    "Ambull [Legends]": [
+      "ambule",
+      "ambullz",
+      "ambull",
+      "a",
+      "ambl",
+      "ambull creature",
+      "am bull"
+    ],
+    "Bastion [Legends]": [
+      "bastion",
+      "bastionz",
+      "b",
+      "basty",
+      "bast",
+      "bastion fort",
+      "bastion stronghold"
+    ],
+    "Firestorm Redoubt [Legends]": [
+      "firestorm redout",
+      "firestorm",
+      "fsr",
+      "firestorm redoubt"
+    ],
+    "Fortress of Redemption [Legends]": [
+      "fortress of redemtion",
+      "fortress",
+      "fortress redempt",
+      "fordress of redemption",
+      "fortress of red",
+      "fortress of redem",
+      "fortress of redempt",
+      "fortress of redemption"
+    ],
+    "Guardian Drone [Legends]": [
+      "guardian dron",
+      "gdrone",
+      "guard drone",
+      "guard dron",
+      "guardian",
+      "guardian drones",
+      "guardians",
+      "guardian drawn"
+    ],
+    "Macro-cannon Aquila Strongpoint [Legends]": [
+      "macro cannon aquila strongpoint",
+      "macro aquila",
+      "mcas",
+      "macro cannon",
+      "macro strongpoint",
+      "macro point",
+      "macro cannon aquila",
+      "macro cannon aquila strong point"
+    ],
+    "Plasma Obliterator [Legends]": [
+      "plasma obliterater",
+      "plasma oblit",
+      "plasma obliterator",
+      "plasma obliter"
+    ],
+    "Primaris Redoubt [Legends]": [
+      "primaris redout",
+      "primaris",
+      "pr",
+      "prim redoubt",
+      "primaris redoubt"
+    ],
+    "Skyshield Landing Pad [Legends]": [
+      "skyshield landin pad",
+      "skyshield pad",
+      "sslpad",
+      "skyshield",
+      "skyshield landing",
+      "skyshield landing pad"
+    ],
+    "The Archivist [Legends]": [
+      "the archvist",
+      "archivist",
+      "the archivist",
+      "the archive",
+      "the archvst"
+    ],
+    "Vengeance Weapon Battery [Legends]": [
+      "vengeance weapon batery",
+      "vengeance battery",
+      "vwb",
+      "vengeance",
+      "vengeance weapon",
+      "vengeance weapon battery"
+    ],
+    "Void Shield Generator [Legends]": [
+      "void shield generater",
+      "vsg",
+      "void shield",
+      "void shield gen",
+      "void shield generator"
+    ],
+    "Vortex Missile Strongpoint [Legends]": [
+      "vortex missile strongpoin",
+      "vortex strongpoint",
+      "vortex missile",
+      "vortex point",
+      "vortex missile strongpoint"
+    ],
+    "Wall of Martyrs Bunker [Legends]": [
+      "wall of martyrs bunker",
+      "wom bunker",
+      "martyrs bunker",
+      "wall bunker",
+      "wall of martyrs bank",
+      "wall of martyrs bonker"
+    ],
+    "Wall of Martyrs Defence Emplacement [Legends]": [
+      "wall of martyrs defence emplacement",
+      "wom defence emplacement",
+      "martyrs emplacement",
+      "wall emplacement",
+      "wall of martyrs defense",
+      "wall of martyrs def emplace",
+      "wall of martyrs defense implant"
+    ],
+    "Wall of Martyrs Defence Line [Legends]": [
+      "wall of martyrs defence line",
+      "wom defence line",
+      "martyrs line",
+      "wall line",
+      "wall of martyrs def line",
+      "wall of martyrs def lean",
+      "wall of martyrs defense line"
+    ],
+    "Imperial Fortress Walls [Legends]": [
+      "imperial fortress walls",
+      "if walls",
+      "fortress walls",
+      "imperial walls",
+      "imperial fort walls",
+      "imperial fortress whirls",
+      "imperial fortress calls"
+    ],
+    "Castellum Stronghold [Legends]": [
+      "castellum stronghold",
+      "castellum strong hold",
+      "c stronghold",
+      "cast stronghold",
+      "castle stronghold"
+    ],
+    "Sentry Gun": [
+      "sentry gunn",
+      "sg",
+      "sentry",
+      "sentry fun",
+      "century gun"
+    ],
+    "Searchlight": [
+      "search lite",
+      "search light",
+      "search ligh",
+      "searchlite",
+      "serchlight"
+    ],
+    "Breaching Robot": [
+      "breach robot",
+      "breaching robit",
+      "breaching robat",
+      "b robot",
+      "breaching rob",
+      "breachin robot"
+    ]
+  }
+}

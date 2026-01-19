@@ -1,0 +1,152 @@
+{
+  "factionId": "adeptus-mechanicus",
+  "factionName": "Adeptus Mechanicus",
+  "generatedAt": "2026-01-19T10:27:30.104Z",
+  "aliases": {
+    "Sydonian Skatros": [
+      "syd skatros",
+      "syd skats",
+      "sydonian skats",
+      "syd skaters",
+      "syd skatroos",
+      "sydon skatroos"
+    ],
+    "Servitors [Legends]": [
+      "servs",
+      "servs battleclade",
+      "servitor",
+      "servi",
+      "serve-tors",
+      "servie"
+    ],
+    "Servitor Battleclade": [
+      "serv battleclade",
+      "servi battleclade",
+      "serv clade",
+      "servitor clade",
+      "serve battleclade",
+      "servi battlers"
+    ],
+    "Archaeopter Fusilave": [
+      "arch fusilave",
+      "arch fus",
+      "archaeop fusilave",
+      "arch fusil",
+      "archaeo fusilave"
+    ],
+    "Archaeopter Stratoraptor": [
+      "arch stratoraptor",
+      "arch strato",
+      "archaeop stratoraptor",
+      "arch strato-raptor",
+      "arch stratorap"
+    ],
+    "Archaeopter Transvector": [
+      "arch transvector",
+      "arch trans",
+      "archaeop transvector",
+      "arch transvec",
+      "arch transvect"
+    ],
+    "Belisarius Cawl": [
+      "bel cawl",
+      "belis cawl",
+      "beli cawl",
+      "belisarius call",
+      "belis caw"
+    ],
+    "Cybernetica Datasmith": [
+      "cyber datasmith",
+      "cyber data",
+      "cybernet datasmith",
+      "cyber data smith"
+    ],
+    "Onager Dunecrawler": [
+      "onager dune",
+      "onager crawler",
+      "onager duners",
+      "onager dune-crawler",
+      "onager dunecrawl"
+    ],
+    "Skitarii Marshal": [
+      "skit marshal",
+      "skit mar",
+      "skitarii mar",
+      "skit marshall",
+      "skitarii marsh"
+    ],
+    "Skorpius Disintegrator": [
+      "skor disintegrator",
+      "skor disint",
+      "skorpius dis",
+      "skor dis",
+      "skorpius disintegrate"
+    ],
+    "Skorpius Dunerider": [
+      "skor dunerider",
+      "skor dune",
+      "skorpius dune",
+      "skor duners",
+      "skorpius rider"
+    ],
+    "Tech-Priest Dominus": [
+      "tech priest dominus",
+      "tp dominus",
+      "dominus",
+      "techie",
+      "tech-priest dom",
+      "tech-priest dumbass",
+      "tech-priest d"
+    ],
+    "Tech-Priest Enginseer": [
+      "tech priest enginseer",
+      "tp enginseer",
+      "enginseer",
+      "engineer",
+      "techie engi",
+      "tech-priest engi",
+      "tech-priest e",
+      "tech-priest engine"
+    ],
+    "Tech-Priest Manipulus": [
+      "tech priest manipulus",
+      "tp manipulus",
+      "manipulus",
+      "manipulator",
+      "tech-priest manny",
+      "tech-priest m",
+      "tech-priest man",
+      "tech-priest manip"
+    ],
+    "Technoarcheologist": [
+      "techno archeologist",
+      "technoarcheologyst",
+      "technoarch",
+      "technoarchaeologist",
+      "technoarchi",
+      "technoarcheo",
+      "techno archo",
+      "techno archeo"
+    ],
+    "Terrax-Pattern Termite [Legends]": [
+      "terrax pattern termite",
+      "terrax termite",
+      "terrax",
+      "t-pattern termite",
+      "termy",
+      "terrax bug",
+      "terrax-pattern",
+      "terrax term"
+    ],
+    "X-101 [Legends]": [
+      "x one oh one",
+      "x101",
+      "x one hundred one",
+      "x-1-0-1",
+      "x one-oh-one",
+      "x-101 unit",
+      "x-101 model",
+      "x-101 bot"
+    ]
+  }
+}

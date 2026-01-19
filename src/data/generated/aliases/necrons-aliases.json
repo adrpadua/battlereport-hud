@@ -1,0 +1,473 @@
+{
+  "factionId": "necrons",
+  "factionName": "Necrons",
+  "generatedAt": "2026-01-19T10:34:38.494Z",
+  "aliases": {
+    "Necron Warriors": [
+      "necron warriers",
+      "necron warios",
+      "nw",
+      "necron foots",
+      "necron grunts",
+      "necron infantry",
+      "necron troops"
+    ],
+    "Immortals": [
+      "immotalz",
+      "imortals",
+      "imms",
+      "necron imms",
+      "necron immortals",
+      "immortalz"
+    ],
+    "Lychguard": [
+      "lichguard",
+      "lychgard",
+      "lych gurd",
+      "lg",
+      "necron bodyguards",
+      "lych guards"
+    ],
+    "Deathmarks": [
+      "death morks",
+      "deatmarks",
+      "dm",
+      "necron snipers",
+      "death markz"
+    ],
+    "Flayed Ones": [
+      "flayed 1s",
+      "flayed oens",
+      "fo",
+      "necron flayers"
+    ],
+    "Cryptothralls": [
+      "cryptothrals",
+      "crypt thralls",
+      "crypt thrals",
+      "ct",
+      "necron thralls"
+    ],
+    "Skorpekh Destroyers": [
+      "skorpekh destroiers",
+      "skorpekh",
+      "sd",
+      "necron skorpekh",
+      "skorpekh d's"
+    ],
+    "Canoptek Spyders": [
+      "canoptek spies",
+      "cs",
+      "necron spyders"
+    ],
+    "Canoptek Scarab Swarms": [
+      "canoptek scarabs",
+      "scarab swarms",
+      "css",
+      "necron scarabs",
+      "canoptek swarms"
+    ],
+    "Ophydian Destroyers": [
+      "ophydian destroiers",
+      "ophydian",
+      "od",
+      "necron ophydians",
+      "ophydian d's"
+    ],
+    "Tomb Blades": [
+      "tomb blads",
+      "tomb blaydz",
+      "tb",
+      "necron tombs",
+      "tombers"
+    ],
+    "Triarch Praetorians": [
+      "triarch pratorians",
+      "triarch p's",
+      "tp",
+      "necron praetorians",
+      "triarchs"
+    ],
+    "Canoptek Wraiths": [
+      "wraiths",
+      "cw",
+      "necron wraiths"
+    ],
+    "Lokhust Destroyers": [
+      "lokhust destroiers",
+      "lokhust",
+      "ld",
+      "necron lokhust",
+      "lokhust d's"
+    ],
+    "Lokhust Heavy Destroyers": [
+      "lokhust heavy destroiers",
+      "lokhust heavies",
+      "lhd",
+      "necron lokhust heavies",
+      "lokhust heavy d's"
+    ],
+    "Convergence of Dominion": [
+      "convergance of dominion",
+      "convergence of dom",
+      "cod",
+      "converge of dom",
+      "convergence of d",
+      "converge of dominion"
+    ],
+    "Canoptek Acanthrites [Legends]": [
+      "canoptek acanthrites",
+      "ca",
+      "canoptek a",
+      "canoptek ants",
+      "canoptek acantrites"
+    ],
+    "Canoptek Macrocytes": [
+      "cm",
+      "canoptek m",
+      "macrocytes",
+      "canoptek macrocites",
+      "canoptek macro"
+    ],
+    "Canoptek Tomb Crawlers": [
+      "ctc",
+      "canoptek tombs",
+      "tomb crawlers",
+      "canoptek tomb cralers"
+    ],
+    "Imotekh the Stormlord": [
+      "imotek the stormlord",
+      "imotekh stormlord",
+      "its",
+      "imotekh",
+      "imotekh the storm lard",
+      "imotekh the storm lord",
+      "imoteck the stormlord"
+    ],
+    "Orikan the Diviner": [
+      "orikan diviner",
+      "otd",
+      "orikan the divner",
+      "orikan the divine"
+    ],
+    "Anrakyr the Traveller [Legends]": [
+      "anrakyr the travler",
+      "anrakyr traveller",
+      "at",
+      "anrakyr the travelor",
+      "anrakir the traveller"
+    ],
+    "Illuminor Szeras": [
+      "illuminor szers",
+      "illuminor seras",
+      "is",
+      "illuminor s",
+      "illuminor zeras",
+      "illuminor sierra",
+      "illuminor szaras"
+    ],
+    "Varguard Obyron [Legends]": [
+      "varguard obiron",
+      "varguard obryon",
+      "vo",
+      "varguard o"
+    ],
+    "Nemesor Zahndrekh [Legends]": [
+      "nemesor zahndrek",
+      "nemesor zahndrekh",
+      "nz",
+      "nemesor z",
+      "nemesor zandrekh"
+    ],
+    "Trazyn the Infinite": [
+      "trazyn the infinte",
+      "trazyn infinite",
+      "ti",
+      "trazyn the infinant",
+      "trazyn the infinety"
+    ],
+    "Royal Warden": [
+      "royal wardon",
+      "rw",
+      "royal w",
+      "royal wardan"
+    ],
+    "Skorpekh Lord": [
+      "skorpeck lord",
+      "sl",
+      "skorpekh l",
+      "skorpekh lorde"
+    ],
+    "Lokhust Lord": [
+      "lokust lord",
+      "ll",
+      "lokhust l",
+      "lokhust lorde"
+    ],
+    "Lord [Legends]": [
+      "lourd",
+      "ld",
+      "necron lord",
+      "the big guy",
+      "necron leader",
+      "lordy",
+      "lore",
+      "lard"
+    ],
+    "Catacomb Command Barge": [
+      "ccb",
+      "cat barge",
+      "catacomb barge",
+      "command barge",
+      "catacomb",
+      "cata barge",
+      "catacomb command"
+    ],
+    "Overlord": [
+      "over lord",
+      "ol",
+      "necron overlord",
+      "overlard",
+      "big boss",
+      "overloard",
+      "overlordy",
+      "overlore",
+      "ovrlord",
+      "ovl",
+      "overl",
+      "overlord with trans shroud",
+      "overlord with transloc shroud"
+    ],
+    "Technomancer": [
+      "techno mancer",
+      "tm",
+      "techmancer",
+      "techno",
+      "techie",
+      "technomansur",
+      "techno mage"
+    ],
+    "Psychomancer": [
+      "psycho mancer",
+      "pm",
+      "psychomansur",
+      "psychomansor",
+      "psyche",
+      "psychic mancer",
+      "psycho"
+    ],
+    "Chronomancer": [
+      "chrono mancer",
+      "cm",
+      "chronomansur",
+      "chronomansor",
+      "time mancer",
+      "chrono",
+      "chrono mage"
+    ],
+    "Plasmancer": [
+      "plasma mancer",
+      "pm",
+      "plasmansur",
+      "plasmansor",
+      "plasma mage",
+      "plasma dude",
+      "plasmatic"
+    ],
+    "Canoptek Reanimator": [
+      "cr",
+      "canoptek",
+      "reanimator",
+      "canoptek reanimater",
+      "canoptek robot",
+      "reanimator bot",
+      "canoptek dude"
+    ],
+    "Hexmark Destroyer": [
+      "hex mark destroyer",
+      "hmd",
+      "hexmark",
+      "hex destroyer",
+      "hexy",
+      "hexman",
+      "hexmark destryor",
+      "hex destroy"
+    ],
+    "Triarch Stalker": [
+      "ts",
+      "triarch",
+      "triarch storker",
+      "triarch walker",
+      "tri-stalker",
+      "triarch stalk"
+    ],
+    "C'tan Shard of the Deceiver": [
+      "csd",
+      "deceiver",
+      "ctan deceiver",
+      "c'tan deceiver",
+      "c'tan shard deceiver",
+      "ctan shard deceiver",
+      "ctan deceivor"
+    ],
+    "C'tan Shard of the Nightbringer": [
+      "csnb",
+      "nightbringer",
+      "ctan nightbringer",
+      "c'tan nightbringer",
+      "c'tan shard nightbringer",
+      "ctan shard nightbringer",
+      "ctan nightbringor"
+    ],
+    "C'tan Shard of the Void Dragon": [
+      "csvd",
+      "void dragon",
+      "ctan void dragon",
+      "c'tan void dragon",
+      "c'tan shard void dragon",
+      "ctan shard void dragon",
+      "ctan void draggon"
+    ],
+    "Transcendent C'tan": [
+      "tct",
+      "transcendent",
+      "transcend",
+      "transcendent ctan",
+      "transcend c'tan",
+      "transcendint ctan"
+    ],
+    "Annihilation Barge": [
+      "ab",
+      "annihilator barge",
+      "annihilating barge",
+      "annihilation",
+      "annihilation bardge",
+      "annihilation car",
+      "annihilation vehicle"
+    ],
+    "Doomsday Ark": [
+      "doomsday arc",
+      "doomsday arck",
+      "doom ark",
+      "dda",
+      "doomsday",
+      "doomsday art",
+      "doomsday arq"
+    ],
+    "Canoptek Doomstalker": [
+      "canoptek doom stalker",
+      "cds",
+      "canoptek dooms",
+      "canoptek dooms talker",
+      "canop tech doomstalker"
+    ],
+    "Ghost Ark": [
+      "ghost arc",
+      "goast ark",
+      "g-ark",
+      "ghost arck",
+      "ghostarck",
+      "ghost ar",
+      "ghost arq"
+    ],
+    "Night Scythe": [
+      "nite scythe",
+      "nsc",
+      "night scyth",
+      "night site",
+      "night sight"
+    ],
+    "Doom Scythe": [
+      "dooms scythe",
+      "ds",
+      "doom scyth",
+      "doom site",
+      "dooms scyth",
+      "doom sight"
+    ],
+    "Obelisk": [
+      "oblesik",
+      "ob",
+      "oblesque",
+      "oblesk",
+      "obolisk"
+    ],
+    "Tesseract Vault": [
+      "tesseract volt",
+      "tv",
+      "tess vault",
+      "tess rack vault",
+      "tess rack"
+    ],
+    "Monolith": [
+      "monolyth",
+      "mono",
+      "monolif"
+    ],
+    "Canoptek Tomb Stalker [Legends]": [
+      "canoptek tomb stalker",
+      "canoptek tomb staker",
+      "ctst",
+      "canoptek tom stalker",
+      "canoptek tomb stalkar"
+    ],
+    "Canoptek Tomb Sentinel [Legends]": [
+      "canoptek tomb sentinel",
+      "canoptek tomb sentinal",
+      "ctsent",
+      "canoptek tomb centinel",
+      "canoptek tom sentinel",
+      "canoptek tomb sentinl"
+    ],
+    "Tesseract Ark [Legends]": [
+      "tesseract ark",
+      "tesseract arck",
+      "ta",
+      "tess ark",
+      "tess rack ark",
+      "tesseract arq"
+    ],
+    "Seraptek Heavy Construct": [
+      "seraptek heavy construkt",
+      "shc",
+      "seraptek heavy",
+      "seraptek",
+      "seraptek heavy constuct"
+    ],
+    "Gauss Pylon [Legends]": [
+      "gauss pylon",
+      "gaus pylon",
+      "gp",
+      "gauss pilon"
+    ],
+    "Sentry Pylon [Legends]": [
+      "sentry pylon",
+      "sentry pilon",
+      "sp",
+      "sentry pylun"
+    ],
+    "Night Shroud [Legends]": [
+      "night shroud",
+      "nite shroud",
+      "ns"
+    ],
+    "Geomancer": [
+      "geomanser",
+      "geomansir",
+      "geo mancer",
+      "gm",
+      "geo",
+      "geoman",
+      "geomancer with rocks"
+    ],
+    "Nekrosor Ammentar": [
+      "nekrosor ammenter",
+      "nekrosor ammenta",
+      "na",
+      "nekrosor",
+      "necro ammentar",
+      "nekrosor amment",
+      "necro sor ammentar"
+    ]
+  }
+}

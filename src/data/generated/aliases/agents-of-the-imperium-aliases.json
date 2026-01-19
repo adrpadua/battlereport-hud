@@ -1,0 +1,339 @@
+{
+  "factionId": "agents-of-the-imperium",
+  "factionName": "Agents of the Imperium",
+  "generatedAt": "2026-01-19T10:27:46.622Z",
+  "aliases": {
+    "Rogue Trader Entourage": [
+      "rogue trader",
+      "rogue trade entourage",
+      "rt entourage",
+      "rogue team",
+      "rogue trader crew",
+      "rogue traders"
+    ],
+    "Voidsmen-at-Arms": [
+      "voidsmen",
+      "voidsmen at arms",
+      "vma",
+      "voidsmen squad",
+      "voidsmen crew",
+      "voidsmen team"
+    ],
+    "Imperial Navy Breachers": [
+      "imperial navy",
+      "navy breachers",
+      "inb",
+      "imperial breachers",
+      "navy breach team",
+      "imperial navy team"
+    ],
+    "Subductor Squad": [
+      "subductor",
+      "subductors",
+      "sub squad",
+      "sub team",
+      "subduct squad",
+      "subductors squad"
+    ],
+    "Exaction Squad": [
+      "exaction",
+      "exaction team",
+      "exactioners",
+      "exaction crew",
+      "exaction squadron",
+      "exactioners squad"
+    ],
+    "Vigilant Squad": [
+      "vigilants",
+      "vigilant team",
+      "vigilant squadron",
+      "vigilant crew",
+      "vigil squad",
+      "vigilant force"
+    ],
+    "Damned Legionnaires [Legends]": [
+      "damned legion",
+      "damned legions",
+      "damned team",
+      "damned squad",
+      "damned legionnaires squad",
+      "damned legionnaires team"
+    ],
+    "Inquisitorial Agents": [
+      "inquisitorial",
+      "inquisitors",
+      "inquisitorial team",
+      "inquisitorial agents squad",
+      "inquisitorial crew",
+      "inquisitorial agents team"
+    ],
+    "Grey Knights Terminator Squad": [
+      "grey knights",
+      "gk terminators",
+      "gk squad",
+      "grey knights squad",
+      "grey knight team",
+      "grey knights terminator team"
+    ],
+    "Sisters of Battle Squad": [
+      "sisters",
+      "sisters of battle",
+      "sob squad",
+      "sisters squad",
+      "sisters team",
+      "sisters of battle team"
+    ],
+    "Daemonhost [Legends]": [
+      "daemon host",
+      "daemon hosts",
+      "daemon host legends",
+      "daemonhost legends",
+      "daemon host squad",
+      "daemon host team"
+    ],
+    "Deathwatch Kill Team": [
+      "deathwatch",
+      "dw kill team",
+      "deathwatch team",
+      "deathwatch squad",
+      "deathwatchers",
+      "deathwatch kill squad"
+    ],
+    "Deathwatch Terminator Squad [Legends]": [
+      "deathwatch terminators",
+      "dw terminators",
+      "deathwatch t squad",
+      "deathwatch terminator team",
+      "deathwatch t team"
+    ],
+    "Fortis Kill Team [Legends]": [
+      "fortis",
+      "fortis kill team",
+      "fortis squad",
+      "fortis team",
+      "fortis t squad",
+      "fortis t team"
+    ],
+    "Indomitor Kill Team [Legends]": [
+      "indomitor",
+      "indomitor kill team",
+      "indomitor squad",
+      "indomitor team",
+      "indomitor t squad",
+      "indomitor t team"
+    ],
+    "Kill Team Cassius [Legends]": [
+      "kill team casius",
+      "kt cassius",
+      "cassius team",
+      "cassy",
+      "kill team c",
+      "kill team k",
+      "kill team k.c."
+    ],
+    "Proteus Kill Team [Legends]": [
+      "proteus kt",
+      "pt kill team",
+      "proteus team",
+      "pro team",
+      "pro kill",
+      "p-k-t"
+    ],
+    "Spectrus Kill Team [Legends]": [
+      "spectrus kt",
+      "spec team",
+      "specter kill team",
+      "s-k-t",
+      "spectrum team",
+      "spec kill"
+    ],
+    "Veteran Bike Squad [Legends]": [
+      "vet bike squad",
+      "vbs",
+      "vet bikes",
+      "bike vets",
+      "veteran bikers",
+      "v-b-s"
+    ],
+    "Sanctifiers": [
+      "sanctifires",
+      "sanct team",
+      "sanct squad",
+      "sancti",
+      "sancs"
+    ],
+    "Inquisitor Ostromandeus [Legends]": [
+      "inquisitor ostromandeos",
+      "ostro",
+      "inquisitor o",
+      "inquisitor ostro",
+      "inquisitor os",
+      "inquisitor ost"
+    ],
+    "Aquila Kill Team": [
+      "aquila kt",
+      "aqua team",
+      "a-k-t",
+      "aqua kill",
+      "aquila squad",
+      "a-team"
+    ],
+    "Vindicare Assassin": [
+      "vindie",
+      "v-assassin",
+      "vindi assassin",
+      "vind assassin",
+      "vindicare"
+    ],
+    "Culexus Assassin": [
+      "culexus assasin",
+      "cully",
+      "c-assassin",
+      "culex assassin",
+      "culexus",
+      "cul-ex"
+    ],
+    "Eversor Assassin": [
+      "eversor assasin",
+      "ever assassin",
+      "e-assassin",
+      "ever-sor",
+      "eversor",
+      "ever"
+    ],
+    "Callidus Assassin": [
+      "callidus assasin",
+      "calli",
+      "c-assassin",
+      "calli assassin",
+      "callidus",
+      "call"
+    ],
+    "Inquisitor Draxus": [
+      "inquisitor drakus",
+      "draxus",
+      "inquisitor d",
+      "inquisitor drax",
+      "inquisitor d-r",
+      "drax"
+    ],
+    "Inquisitor Coteaz": [
+      "inquisitor coteas",
+      "coteaz",
+      "inquisitor c",
+      "inquisitor co",
+      "cote"
+    ],
+    "Inquisitor Greyfax": [
+      "inquisitor grayfax",
+      "greyfax",
+      "inquisitor g",
+      "inquisitor grey",
+      "g-fax",
+      "grey"
+    ],
+    "Inquisitor Karamazov [Legends]": [
+      "inquisitor karamazov",
+      "karamazov",
+      "inquisitor k",
+      "inquisitor kara",
+      "k-mazov",
+      "karam"
+    ],
+    "UR-025 [Legends]": [
+      "ur zero two five",
+      "ur025",
+      "ur 025",
+      "u r two five",
+      "your two five"
+    ],
+    "Inquisitor Eisenhorn [Legends]": [
+      "inquisitor eisenhorn",
+      "inquisitor eizenhorn",
+      "inquisitor eisonhorn",
+      "inquisitor eizen",
+      "inquisitor e-horn"
+    ],
+    "Inquisitor": [
+      "inquis",
+      "inq",
+      "inquisit",
+      "inquisitorius"
+    ],
+    "Neyam Shai Murad [Legends]": [
+      "neyam shai murad",
+      "neham shai murad",
+      "neyam shay murad",
+      "neyam shai",
+      "shai murad"
+    ],
+    "Janus Draik [Legends]": [
+      "janus draik",
+      "janus drake",
+      "j draik"
+    ],
+    "Inquisitor in Terminator Armour [Legends]": [
+      "inquisitor terminator",
+      "inquisitor in termie",
+      "inquisitor termie",
+      "inquisitor in t armor",
+      "inquisitor t-armor"
+    ],
+    "Navigator": [
+      "nav",
+      "navi",
+      "navig",
+      "navy"
+    ],
+    "Ministorum Priest": [
+      "ministorum",
+      "minis priest",
+      "ministorum p",
+      "ministorum preist"
+    ],
+    "Inquisitorial Chimera": [
+      "inquis chimera",
+      "inquisitorial chimer",
+      "inquisitor chimera",
+      "inquisitorial chim"
+    ],
+    "Imperial Rhino": [
+      "imperial rino",
+      "impy rhino",
+      "imperial r",
+      "imperial rh"
+    ],
+    "Sisters of Battle Immolator": [
+      "sisters immolator",
+      "sisters of battle immol",
+      "sisters immol",
+      "sisters of battle immo",
+      "sisters immo"
+    ],
+    "Corvus Blackstar": [
+      "corvus black star",
+      "corvus",
+      "c blackstar",
+      "corvus black"
+    ],
+    "Watch Master": [
+      "watchmasta",
+      "wm",
+      "watch masta",
+      "watch mast"
+    ],
+    "Watch Captain Artemis": [
+      "watch cap artemis",
+      "watch cap",
+      "w captain artemis",
+      "w cap artemis"
+    ],
+    "Jokaero Weaponsmith [Legends]": [
+      "jokaero weaponsmith",
+      "jokaero smith",
+      "jokaero weapon",
+      "jokaero weap",
+      "jokaero weap smith"
+    ]
+  }
+}

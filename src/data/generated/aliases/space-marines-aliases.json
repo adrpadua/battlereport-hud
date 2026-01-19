@@ -1,0 +1,925 @@
+{
+  "factionId": "space-marines",
+  "factionName": "Space Marines",
+  "generatedAt": "2026-01-19T10:36:21.643Z",
+  "aliases": {
+    "Astartes Servitors [Legends]": [
+      "astartes servitor",
+      "astartes servs",
+      "a-servs",
+      "a-starts",
+      "a-start servitors"
+    ],
+    "Company Heroes": [
+      "comp hero",
+      "c-heroes",
+      "company heros",
+      "c-hero",
+      "comp heros"
+    ],
+    "Ancient": [
+      "ancient terminator",
+      "ancient in term armor",
+      "a-term",
+      "ancient t-armor",
+      "ancient in t-armor",
+      "ancent",
+      "anctient",
+      "ancient one",
+      "ancient model",
+      "ancient guy",
+      "anc",
+      "ancient marine"
+    ],
+    "Apothecary": [
+      "apothecary biologis",
+      "apothecary bio",
+      "apo bio",
+      "apo",
+      "apoth bio",
+      "apoth",
+      "apothe",
+      "apothacary",
+      "apo thecary",
+      "apothary"
+    ],
+    "Brutalis Dreadnought": [
+      "brutal dread",
+      "b-dread",
+      "brutal",
+      "brutalis d"
+    ],
+    "Captain in Gravis Armour": [
+      "captain gravis",
+      "cig",
+      "gravy",
+      "captain g",
+      "captain in gravis",
+      "captain grav",
+      "captain in gravis armor",
+      "captain in graves armor"
+    ],
+    "Captain in Phobos Armour": [
+      "captain phobos",
+      "cip",
+      "phoby",
+      "captain p",
+      "captain in phobos",
+      "captain in phobos armor",
+      "captain in phobes armor",
+      "captain in phobos armory"
+    ],
+    "Captain in Terminator Armour": [
+      "captain terminator",
+      "cit",
+      "terminator cap",
+      "captain t",
+      "captain in termie",
+      "captain in terminator armor",
+      "captain in term armor",
+      "captain in terminator armory"
+    ],
+    "Captain on Bike [Legends]": [
+      "bike captain",
+      "cob",
+      "captain on bike",
+      "captain biker",
+      "captain on cycle",
+      "captain on bick",
+      "captain on byke"
+    ],
+    "Captain with Jump Pack": [
+      "jump pack captain",
+      "cwj",
+      "captain jump",
+      "captain with jp",
+      "captain with jump",
+      "captain with jampack"
+    ],
+    "Chaplain in Terminator Armour": [
+      "chaplain terminator",
+      "cit",
+      "termie chaplain",
+      "chaplain t",
+      "chaplain in termie",
+      "chaplain in terminator armor",
+      "chaplain in term armor",
+      "chaplain in termy armor"
+    ],
+    "Chaplain on Bike": [
+      "bike chaplain",
+      "cob",
+      "chaplain biker",
+      "chaplain on cycle",
+      "chaplain on bick",
+      "chaplain on byke"
+    ],
+    "Chaplain with Jump Pack": [
+      "jump pack chaplain",
+      "cwj",
+      "chaplain jump",
+      "chaplain with jp",
+      "chaplain with jump",
+      "chaplain with jampack"
+    ],
+    "Dreadnought": [
+      "dread",
+      "dreadnaught",
+      "dreadnoughts",
+      "drednaught"
+    ],
+    "Drop Pod": [
+      "dp",
+      "droppod",
+      "drop pods",
+      "drop pot",
+      "drop podz",
+      "drop poad"
+    ],
+    "Gladiator Lancer": [
+      "gladiator lance",
+      "glad lance",
+      "glad l",
+      "gladiator l",
+      "gladiator lancers",
+      "gladiator lanser",
+      "gladiator lencer"
+    ],
+    "Gladiator Reaper": [
+      "gladiator reap",
+      "glad reaper",
+      "glad r",
+      "gladiator r",
+      "gladiator reapers",
+      "gladiator reaperz"
+    ],
+    "Gladiator Valiant": [
+      "gladiator val",
+      "glad valiant",
+      "glad v",
+      "gladiator v",
+      "gladiator valiantz",
+      "gladiator valyant"
+    ],
+    "Hammerfall Bunker": [
+      "hammerfall",
+      "hf bunker",
+      "hammerfall bunk",
+      "hammerfall b",
+      "hammerfall buncer",
+      "hammerfall bunkers"
+    ],
+    "Hunter [Legends]": [
+      "hunter",
+      "hunters",
+      "h",
+      "hunter legends",
+      "hunter leg",
+      "hunter on bike",
+      "hunterz"
+    ],
+    "Impulsor": [
+      "impulser",
+      "imp",
+      "impulso",
+      "inpulser",
+      "in pulser"
+    ],
+    "Invictor Tactical Warsuit": [
+      "invictor",
+      "invictor tac",
+      "inv warsuit",
+      "invictor warsuit",
+      "inv tac",
+      "in victor",
+      "in vick tor"
+    ],
+    "Invader ATV": [
+      "invader",
+      "inv atv",
+      "in vader",
+      "in vater",
+      "in vador"
+    ],
+    "Ironclad Dreadnought [Legends]": [
+      "iron clad",
+      "ironclad dread",
+      "iron dread",
+      "ironclad",
+      "ironclad dreadnought",
+      "iron clad dreadnaught"
+    ],
+    "Land Speeder Tornado [Legends]": [
+      "land speeder tornado",
+      "land tornado",
+      "land speeder",
+      "tornado speeder",
+      "land speeder t",
+      "land speeder torn"
+    ],
+    "Judiciar": [
+      "judi",
+      "judy",
+      "judicier",
+      "judi car"
+    ],
+    "Land Raider Crusader": [
+      "land crusader",
+      "land raider c",
+      "land raider cr",
+      "land raider crus"
+    ],
+    "Land Raider Redeemer": [
+      "land redeemer",
+      "land raider r",
+      "land raider re",
+      "land raider rede"
+    ],
+    "Land Speeder [Legends]": [
+      "land speeder"
+    ],
+    "Land Speeder Typhoon [Legends]": [
+      "land speeder typhoon",
+      "land typhoon",
+      "land speeder t",
+      "land speeder ty",
+      "land speeder typh"
+    ],
+    "Land Speeder Storm [Legends]": [
+      "land speeder storm",
+      "land storm",
+      "land speeder s",
+      "land speeder sto"
+    ],
+    "Librarian in Phobos Armour": [
+      "librarian phobos",
+      "lib phobos",
+      "phobos librarian",
+      "librarian in phobos",
+      "lib in phobos",
+      "lib phob"
+    ],
+    "Librarian with Jump Pack [Legends]": [
+      "librarian jump",
+      "lib jump",
+      "jump librarian",
+      "librarian with jump",
+      "lib with jump",
+      "lib jump pack"
+    ],
+    "Librarian in Terminator Armour": [
+      "librarian terminator",
+      "lib terminator",
+      "terminator librarian",
+      "librarian in term",
+      "lib in term",
+      "lib term"
+    ],
+    "Lieutenant in Phobos Armour": [
+      "lieut in phobos",
+      "phobos lieut",
+      "lieut phobos",
+      "lieutenant phobos",
+      "lieut in phobes",
+      "lieut in phobas",
+      "lieut in phobos armor",
+      "lieutenant in phobas"
+    ],
+    "Lieutenant in Reiver Armour": [
+      "lieut in reiver",
+      "reiver lieut",
+      "lieut reiver",
+      "lieutenant reiver",
+      "lieut in reavers",
+      "lieut in reever armor",
+      "lieut in reaver armor"
+    ],
+    "Lieutenant with Combi-weapon": [
+      "lieut combi",
+      "combi lieut",
+      "lieut with combi",
+      "lieut combi weapon",
+      "lieut with combi wep",
+      "lieut with combi weap"
+    ],
+    "Rhino": [
+      "rino",
+      "rhinoo",
+      "rhino tank",
+      "rhinno",
+      "rhinno tank",
+      "rhino vehicle",
+      "rhinno veh"
+    ],
+    "Predator Annihilator": [
+      "pred annihilator",
+      "predator anihilator",
+      "predator annihilater",
+      "pred annihil",
+      "pred annih",
+      "predator annhilator",
+      "predator a"
+    ],
+    "Repulsor Executioner": [
+      "repulsor exec",
+      "repulsor ex",
+      "repulsor execu",
+      "repulsor exectioner",
+      "repulsor exection",
+      "repulsor exectionar",
+      "repulsor execution"
+    ],
+    "Lieutenant": [
+      "lieut",
+      "lt",
+      "lieutn",
+      "lieutnate",
+      "lieutent",
+      "lieutentant"
+    ],
+    "Predator Destructor": [
+      "pred destructor",
+      "predator destruktor",
+      "predator destroctor",
+      "pred destruc",
+      "pred destrucor",
+      "predator destro",
+      "predator des"
+    ],
+    "Redemptor Dreadnought": [
+      "redempt dread",
+      "redemptor dread",
+      "redemptor dready",
+      "redemptor dreadynought",
+      "redemptor d",
+      "redemptor d-nought"
+    ],
+    "Primaris Company Champion [Legends]": [
+      "primaris champ",
+      "primaris co champ",
+      "primaris company champ",
+      "primaris comp champ",
+      "primaris company"
+    ],
+    "Razorback": [
+      "razor bak",
+      "razor back",
+      "razor bakk",
+      "razorbak",
+      "razor back tank"
+    ],
+    "Librarian": [
+      "libarian",
+      "libraian",
+      "librairian",
+      "lib",
+      "librarion",
+      "libra"
+    ],
+    "Chaplain": [
+      "chaplin",
+      "chaplainn",
+      "chaplian"
+    ],
+    "Captain": [
+      "captn",
+      "cpt",
+      "cap",
+      "skipper",
+      "chief",
+      "capn",
+      "captain america",
+      "captain crunch"
+    ],
+    "Techmarine": [
+      "tech marine",
+      "techie",
+      "tm",
+      "mechanic",
+      "forge master",
+      "techy",
+      "techie boy",
+      "tech priest"
+    ],
+    "Repulsor": [
+      "repulser",
+      "rep",
+      "rpl",
+      "pulsar",
+      "repulsor tank",
+      "repulsor vehicle",
+      "repulsor craft",
+      "replusor"
+    ],
+    "Whirlwind": [
+      "whirl wind",
+      "whirly",
+      "ww",
+      "whirl",
+      "whirlwind artillery",
+      "whirlwind tank",
+      "whirlybird",
+      "whirlwind missile"
+    ],
+    "Stormtalon Gunship": [
+      "storm talon",
+      "stg",
+      "stormy",
+      "talon",
+      "stormhawk",
+      "stormbird",
+      "stormtallion",
+      "stormtalon"
+    ],
+    "Stormraven Gunship": [
+      "storm raven",
+      "sr",
+      "stormy",
+      "raven",
+      "stormhawk",
+      "stormraven",
+      "stormraven flyer"
+    ],
+    "Storm Speeder Hailstrike": [
+      "storm speeder",
+      "hailstrike",
+      "ssh",
+      "speedy",
+      "hailstriker",
+      "storm speed",
+      "storm hail",
+      "storm speed hail"
+    ],
+    "Stalker [Legends]": [
+      "stalkr",
+      "stalk",
+      "stalker tank",
+      "stalker vehicle",
+      "stalker dread",
+      "stalky",
+      "stalkin",
+      "stalker gun"
+    ],
+    "Storm Speeder Hammerstrike": [
+      "hammerstrike",
+      "ssh",
+      "storm speeder",
+      "hammer",
+      "storm hammer",
+      "storm speed hammer",
+      "storm hammerstrike"
+    ],
+    "Storm Speeder Thunderstrike": [
+      "thunderstrike",
+      "sst",
+      "storm speeder",
+      "thunder",
+      "storm thunder",
+      "storm speed thunder",
+      "storm thunderstrike"
+    ],
+    "Stormhawk Interceptor": [
+      "storm hawk",
+      "shi",
+      "stormhawk",
+      "hawk",
+      "storm interceptor",
+      "stormy",
+      "stormhawk flyer",
+      "stormhawk gunship"
+    ],
+    "Vindicator": [
+      "vindcator",
+      "vindi",
+      "vindicator tank",
+      "vindicator vehicle",
+      "vindy",
+      "vindicator artillery",
+      "vindicator dread",
+      "vind"
+    ],
+    "Kratos [Legends]": [
+      "kratos",
+      "kratos the great",
+      "kratos dread",
+      "k",
+      "kratos tank",
+      "kratos vehicle",
+      "kratos the warrior",
+      "kratos the god"
+    ],
+    "Deredeo Dreadnought [Legends]": [
+      "deredeo",
+      "dreadnought",
+      "dedeo",
+      "dread",
+      "dede",
+      "dered",
+      "dered dread",
+      "deredeo dread"
+    ],
+    "Relic Contemptor Dreadnought [Legends]": [
+      "relic contemptor",
+      "rcd",
+      "relic dread",
+      "relic",
+      "contemptor",
+      "relic contempt",
+      "relic dreadnought"
+    ],
+    "Land Raider Proteus [Legends]": [
+      "land raider pro",
+      "lrp",
+      "proteus",
+      "land raider",
+      "land raider proteus",
+      "land raider pro-tus"
+    ],
+    "Land Raider Achilles [Legends]": [
+      "land raider achil",
+      "lra",
+      "achilles",
+      "land raider",
+      "land raider achilles",
+      "land raider achilies"
+    ],
+    "Sicaran Battle Tank [Legends]": [
+      "sicaran",
+      "sbt",
+      "sicarin",
+      "sicarian tank",
+      "battle tank",
+      "sicaran battle",
+      "sicarian battle tank"
+    ],
+    "Sicaran Punisher [Legends]": [
+      "punisher",
+      "sp",
+      "sicaran",
+      "sicaran pun",
+      "sicaran punisher tank",
+      "sicaran punisher",
+      "punisher tank"
+    ],
+    "Sicaran Arcus [Legends]": [
+      "arcus",
+      "sicarin arcus",
+      "sa",
+      "sicaran",
+      "sicaran arc",
+      "sicaran arcus tank",
+      "arcus tank"
+    ],
+    "Sicaran Omega [Legends]": [
+      "omega",
+      "sicarin omega",
+      "so",
+      "sicaran",
+      "sicaran omegas",
+      "sicaran omega tank",
+      "omega tank"
+    ],
+    "Sicaran Venator [Legends]": [
+      "venator",
+      "sicarin venator",
+      "sv",
+      "sicaran",
+      "sicaran ven",
+      "venator tank",
+      "venator sicaran"
+    ],
+    "Rapier Carrier [Legends]": [
+      "rapier",
+      "rc",
+      "rapier car",
+      "rapier tank",
+      "rapier carrier",
+      "rapier carier",
+      "rapier carry"
+    ],
+    "Whirlwind Scorpius [Legends]": [
+      "whirlwind",
+      "ws",
+      "whirlwind scorp",
+      "whirlwind scor",
+      "scorpius",
+      "whirlwind scorpius",
+      "whirlwind scorpios"
+    ],
+    "Vindicator Laser Destroyer [Legends]": [
+      "vindicator",
+      "vld",
+      "vindicator laser",
+      "vindicator destroyer",
+      "vindicator laser destroy",
+      "vindicator laser destroyer",
+      "vindicator laser distroyer"
+    ],
+    "Dreadnought Drop Pod [Legends]": [
+      "dread pod",
+      "dreadnought drop",
+      "ddp",
+      "dread drop",
+      "dreadnought drop pod",
+      "dreadnought dropd pod",
+      "dread drop pod"
+    ],
+    "Terrax-pattern Termite [Legends]": [
+      "terrax",
+      "tp",
+      "terrax termite",
+      "terrax-pattern",
+      "terrax-pattern term",
+      "terrax-pattern termit"
+    ],
+    "Typhon [Legends]": [
+      "tyfon",
+      "typhon dreadnought",
+      "ty",
+      "typh",
+      "tyfonn",
+      "typhon unit",
+      "typhon dread",
+      "typhon tank"
+    ],
+    "Cerberus [Legends]": [
+      "cerberus",
+      "cerberous",
+      "cerb",
+      "cerebus",
+      "cerb unit",
+      "cerberus tank",
+      "cerb gunship",
+      "cerberus dread"
+    ],
+    "Spartan [Legends]": [
+      "spartin",
+      "spartan tank",
+      "sp",
+      "spart",
+      "sparty",
+      "spartin unit",
+      "spartan raider",
+      "spartan vehicle"
+    ],
+    "Fellblade [Legends]": [
+      "felblade",
+      "fell blaid",
+      "fellblade tank",
+      "fb",
+      "fell",
+      "fell blade",
+      "fellblade unit",
+      "fellblade dread"
+    ],
+    "Falchion [Legends]": [
+      "falchion",
+      "falchion gunship",
+      "falch",
+      "falchion tank",
+      "fal",
+      "falchion unit",
+      "falchion flyer",
+      "falchion dread"
+    ],
+    "Mastodon [Legends]": [
+      "mastadon",
+      "mastodon tank",
+      "mast",
+      "masto",
+      "mastodon unit",
+      "mastodon vehicle",
+      "mastodon dread",
+      "mastodon gunship"
+    ],
+    "Sokar-pattern Stormbird [Legends]": [
+      "sokar stormbird",
+      "sokar",
+      "sokar-pattern",
+      "sokar pattern",
+      "sokar bird",
+      "stormbird",
+      "sokar storm",
+      "sokar-pattern bird"
+    ],
+    "Tarantula Sentry Battery [Legends]": [
+      "tarantula sentry batery",
+      "tarantula",
+      "tsb",
+      "tarantula battery",
+      "tarantula unit",
+      "tarantula sentry",
+      "tarantula gun",
+      "tarantula sentry gun"
+    ],
+    "Astraeus": [
+      "astraus",
+      "astraeus tank",
+      "as",
+      "astra",
+      "astraeus unit",
+      "astraeus dread",
+      "astraeus gunship",
+      "astraeus flyer"
+    ],
+    "Land Raider Helios [Legends]": [
+      "land raider helio",
+      "land raider helios tank",
+      "lrh",
+      "land raider",
+      "helios",
+      "land raider unit",
+      "helios tank",
+      "land raider helios dread"
+    ],
+    "Mortis Dreadnought [Legends]": [
+      "mortis dreadnought",
+      "mortis",
+      "morti",
+      "md",
+      "mortis dread",
+      "mortis unit",
+      "mortis dreadnought unit",
+      "mortis dreadnought tank"
+    ],
+    "Deimos Predator [Legends]": [
+      "deimos predater",
+      "dp",
+      "deimos",
+      "deimos preds",
+      "demos predator",
+      "daymos predator",
+      "deimos preddy",
+      "deimos preditor"
+    ],
+    "Chaplain Venerable Dreadnought [Legends]": [
+      "chaplin venerable dreadnaught",
+      "cvd",
+      "chaplain dread",
+      "chap dread",
+      "chap venerable",
+      "chaplain ven",
+      "chaplain v",
+      "chaplain venerable"
+    ],
+    "Land Speeder Tempest [Legends]": [
+      "land speeder tempist",
+      "lst",
+      "tempest speeder",
+      "land temp",
+      "land speeder",
+      "land speeda",
+      "land speeder t",
+      "land speeder temp"
+    ],
+    "Carab Culln the Risen [Legends]": [
+      "carab culln",
+      "carab culln the risen",
+      "carab cullen",
+      "carab cull",
+      "carab risen"
+    ],
+    "Caestus Assault Ram [Legends]": [
+      "caestus assult ram",
+      "car ram",
+      "caestus ram",
+      "caestus ass ram",
+      "caestus assault",
+      "caestus",
+      "caestus ar",
+      "caestus ass"
+    ],
+    "Land Raider Prometheus [Legends]": [
+      "land raider prometheous",
+      "lrp",
+      "land raider prom",
+      "land raider",
+      "land raider p",
+      "land raider prommy",
+      "land raider promet",
+      "land raider prometheus"
+    ],
+    "Imperial Space Marine [Legends]": [
+      "imperial spase marine",
+      "ism",
+      "imp space marine",
+      "imperial marine",
+      "imperial sm",
+      "imperial spacemarine",
+      "imp marine",
+      "imperial space"
+    ],
+    "Terminus Ultra [Legends]": [
+      "terminus ultra",
+      "tu",
+      "terminus",
+      "terminus ulta",
+      "terminus u",
+      "term ultra"
+    ],
+    "Relic Razorback [Legends]": [
+      "relic razorbak",
+      "rrb",
+      "relic razor",
+      "relic back",
+      "razorback",
+      "relic raz"
+    ],
+    "Company Champion on Bike [Legends]": [
+      "company champian on bike",
+      "ccob",
+      "company champ",
+      "champ on bike",
+      "company champion",
+      "company champ bike",
+      "comp champ",
+      "champ bike"
+    ],
+    "Ancient on Bike [Legends]": [
+      "ancient on byke",
+      "aob",
+      "ancient bike",
+      "ancient",
+      "ancient on",
+      "ancient on b",
+      "ancient on bike"
+    ],
+    "Apothecary on Bike [Legends]": [
+      "apothecary on byke",
+      "aob",
+      "apo bike",
+      "apothecary bike",
+      "apo on bike",
+      "apothecary",
+      "apothecary b",
+      "apo on b"
+    ],
+    "Techmarine on Bike [Legends]": [
+      "techmarine on byke",
+      "tob",
+      "techmarine bike",
+      "tech on bike",
+      "techmarine",
+      "techmarine b",
+      "tech on b",
+      "tech marine"
+    ],
+    "Librarian on Bike [Legends]": [
+      "librarian on byke",
+      "lob",
+      "lib on bike",
+      "librarian bike",
+      "librian on bike",
+      "lib on b",
+      "librarian"
+    ],
+    "Thunderhawk Transporter [Legends]": [
+      "thunderhawk transportor",
+      "tht",
+      "thunderhawk",
+      "thunder transport",
+      "thunderhawk trans",
+      "thunderhawk t",
+      "thunderhawk transport"
+    ],
+    "Venerable Dreadnought [Legends]": [
+      "ven dread",
+      "ven dreadnought",
+      "venerable dread",
+      "v-dread",
+      "v-dreadnaught",
+      "venerdread",
+      "ven-dread",
+      "venerable dreadnought"
+    ],
+    "Rhino Primaris [Legends]": [
+      "rhino",
+      "rhinop",
+      "r-prime",
+      "r-pri",
+      "rhino prime",
+      "rhinoprime",
+      "rhinno",
+      "rhino prim"
+    ],
+    "Land Raider Excelsior [Legends]": [
+      "land raider",
+      "l-r-excelsior",
+      "l-re",
+      "land raider excelsior",
+      "land raider exc",
+      "land raider x",
+      "land raider ex",
+      "land raider excel"
+    ],
+    "Ferren Areios [Legends]": [
+      "ferrin areios",
+      "faren areios",
+      "ferrin",
+      "ferrin arios",
+      "faren",
+      "ferrin aereos",
+      "ferrin areos"
+    ]
+  }
+}

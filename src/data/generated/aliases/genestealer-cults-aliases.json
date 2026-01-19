@@ -1,0 +1,982 @@
+{
+  "factionId": "genestealer-cults",
+  "factionName": "Genestealer Cults",
+  "generatedAt": "2026-01-19T10:33:09.649Z",
+  "aliases": {
+    "Aberrants": [
+      "aberrant",
+      "aberrents"
+    ],
+    "Achilles Ridgerunners": [
+      "achilles",
+      "arunners",
+      "ridgerunners",
+      "achillies",
+      "achillies runners"
+    ],
+    "Acolyte Hybrids with Hand Flamers": [
+      "acolyte hand flamers",
+      "ahhf",
+      "acolyte hybrids",
+      "hand flamers",
+      "acolyte flamers"
+    ],
+    "Atalan Jackals": [
+      "atalan",
+      "jackals",
+      "atalan jacks",
+      "atalan jackal"
+    ],
+    "Hybrid Metamorphs": [
+      "metamorphs",
+      "hybrid morphs",
+      "hybrid meta",
+      "hybrid metamorph"
+    ],
+    "Neophyte Hybrids": [
+      "neophyte",
+      "neophytes",
+      "neophyte hbs",
+      "neophyte hypes"
+    ],
+    "Purestrain Genestealers": [
+      "purestrain",
+      "genestealers",
+      "purestrains",
+      "pure genestealers",
+      "purestrain gs"
+    ],
+    "Acolyte Hybrids with Autopistols": [
+      "acolyte autopistols",
+      "ahap",
+      "acolyte hybrids",
+      "acolyte pistols"
+    ],
+    "Abominant": [
+      "abominants",
+      "abominate",
+      "abomant"
+    ],
+    "Acolyte Iconward": [
+      "iconward",
+      "acolyte icon",
+      "iconwards"
+    ],
+    "Biophagus": [
+      "biophagous",
+      "bio"
+    ],
+    "Clamavus": [
+      "clamavous"
+    ],
+    "Goliath Rockgrinder": [
+      "rockgrinder",
+      "goliath",
+      "goliath rock",
+      "goliath grinder"
+    ],
+    "Goliath Truck": [
+      "goliath",
+      "goliath trucks",
+      "goliath truk"
+    ],
+    "Jackal Alphus": [
+      "jackal",
+      "alphus",
+      "jackal alpha",
+      "jackal alphas"
+    ],
+    "Kelermorph": [
+      "kelermorf",
+      "kelermorff",
+      "keler",
+      "k-morph",
+      "k-morf",
+      "kelly",
+      "k-morpher",
+      "killer morph"
+    ],
+    "Locus": [
+      "locust",
+      "lokis",
+      "locas",
+      "loci",
+      "loco"
+    ],
+    "Magus": [
+      "magos",
+      "maggus",
+      "maguus",
+      "mags",
+      "maggie",
+      "mage",
+      "magg"
+    ],
+    "Nexos": [
+      "nexxos",
+      "nexxus",
+      "nex"
+    ],
+    "Patriarch": [
+      "patriark",
+      "patriarchs",
+      "pat",
+      "patty",
+      "patri",
+      "pater"
+    ],
+    "Primus": [
+      "primas",
+      "primo",
+      "prim",
+      "p1",
+      "prims",
+      "primmy"
+    ],
+    "Reductus Saboteur": [
+      "reductus",
+      "red sab",
+      "red sabs",
+      "red saboteur",
+      "red"
+    ],
+    "Sanctus": [
+      "sanctos",
+      "sanct",
+      "sancty"
+    ],
+    "Aegis Defence Line": [
+      "aegis line",
+      "aegis",
+      "adl",
+      "aegis def line",
+      "aegis def"
+    ],
+    "Armoured Sentinels": [
+      "armoured sent",
+      "a-sentinels",
+      "arm sent",
+      "arm sentinels",
+      "armoureds"
+    ],
+    "Attilan Rough Riders": [
+      "attilan riders",
+      "rough riders",
+      "att riders",
+      "attilan",
+      "att roughs",
+      "attilan rough",
+      "roughs"
+    ],
+    "Baneblade": [
+      "bane blade",
+      "bane",
+      "b-blade"
+    ],
+    "Banehammer": [
+      "bane hammer",
+      "banehamer",
+      "b-hammer",
+      "baneham"
+    ],
+    "Banesword": [
+      "bane sword",
+      "bane swrd",
+      "b-sword",
+      "bane swd",
+      "bane"
+    ],
+    "Basilisk": [
+      "basiliks",
+      "basil",
+      "basi",
+      "basilisks"
+    ],
+    "Cadian Castellan": [
+      "cadium castellan",
+      "cadian castalan",
+      "cc",
+      "cad cast",
+      "cadian castle",
+      "cadian castleman"
+    ],
+    "Cadian Command Squad": [
+      "cadian command squd",
+      "cadian com squad",
+      "ccs",
+      "cadian command",
+      "cadian comm squad",
+      "cadian command squadron"
+    ],
+    "Cadian Shock Troops": [
+      "cadian shok troopers",
+      "cadian shockers",
+      "cst",
+      "cadian shock troop"
+    ],
+    "Chimera": [
+      "chimeraa",
+      "chimeara",
+      "chm",
+      "chimmy",
+      "chimerra",
+      "chimer",
+      "chimeera"
+    ],
+    "Death Korps of Krieg": [
+      "death corps of krieg",
+      "death korps of creek",
+      "dkok",
+      "death korps",
+      "death corps"
+    ],
+    "Deathstrike": [
+      "death strik",
+      "death strike",
+      "ds",
+      "death stryke",
+      "death strike missile"
+    ],
+    "Doomhammer": [
+      "doom hammer",
+      "doomhamer",
+      "dhammer",
+      "doomhammr"
+    ],
+    "Field Ordnance Battery": [
+      "field ordnance batery",
+      "field ordnance bat",
+      "fob",
+      "field ordnance"
+    ],
+    "Cadian Heavy Weapons Squad": [
+      "cadian heavy wepons squad",
+      "cadian hw squad",
+      "chws",
+      "cadian heavy weapons",
+      "cadian heavy weapon squad"
+    ],
+    "Hellhammer": [
+      "hellhamer",
+      "hell hammer",
+      "hh"
+    ],
+    "Hellhound": [
+      "hellhond",
+      "hell hound",
+      "hh"
+    ],
+    "Hydra": [
+      "hidra",
+      "hider",
+      "hiydra"
+    ],
+    "Kasrkin": [
+      "casrkin"
+    ],
+    "Leman Russ Battle Tank": [
+      "leman rus battle tank",
+      "lrb",
+      "leman russ",
+      "leman russ battle",
+      "leman russ tank"
+    ],
+    "Leman Russ Eradicator": [
+      "leman rus eradicator",
+      "leman russ eradicater",
+      "lre"
+    ],
+    "Leman Russ Demolisher": [
+      "leman rus demolisher",
+      "lr demolisher",
+      "demolisher tank",
+      "demolisher",
+      "lemon rust demolisher",
+      "leman rust demolisher",
+      "leman rus demo",
+      "leman rus demlisher"
+    ],
+    "Leman Russ Exterminator": [
+      "leman rus exterminator",
+      "lr exterminator",
+      "exterminator tank",
+      "exterminator",
+      "lemon rust exterminator",
+      "leman rust exterminator",
+      "leman rus exterm",
+      "leman rus extermanator"
+    ],
+    "Leman Russ Vanquisher": [
+      "leman rus vanquisher",
+      "lr vanquisher",
+      "vanquisher tank",
+      "vanquisher",
+      "lemon rust vanquisher",
+      "leman rust vanquisher",
+      "leman rus vanq",
+      "leman rus vanquish"
+    ],
+    "Leman Russ Punisher": [
+      "leman rus punisher",
+      "lr punisher",
+      "punisher tank",
+      "punisher",
+      "lemon rust punisher",
+      "leman rust punisher",
+      "leman rus punshier",
+      "leman rus punisher tank"
+    ],
+    "Manticore": [
+      "manticoor",
+      "manty",
+      "manti",
+      "manticor",
+      "manticore rocket",
+      "manty tank",
+      "manicure",
+      "mantic",
+      "mancore",
+      "manti-c",
+      "manicore"
+    ],
+    "Primaris Psyker": [
+      "psyker",
+      "primaris psker",
+      "prim psyker",
+      "primaris psychor",
+      "prymeris psyker"
+    ],
+    "Regimental Attachés [Legends]": [
+      "regimental attaches",
+      "reg attache",
+      "reg attachees",
+      "reg att",
+      "regimental ataches",
+      "regimental atachies",
+      "reg attashays"
+    ],
+    "Rogal Dorn Battle Tank": [
+      "rogal dorn",
+      "rd battle tank",
+      "rogal dorn tank",
+      "rogal dorn battle",
+      "rogal dorn battel tank",
+      "rogue dorn tank"
+    ],
+    "Scout Sentinels": [
+      "scout sentinal"
+    ],
+    "Shadowsword": [
+      "shadow sword",
+      "shadwosword",
+      "shadowsword tank",
+      "shadow sword tank"
+    ],
+    "Stormlord": [
+      "storm lord",
+      "stormlore",
+      "stormlord tank"
+    ],
+    "Leman Russ Commander": [
+      "leman rus commander",
+      "lr commander",
+      "commander tank",
+      "commander",
+      "lemon rust commander",
+      "leman rust commander",
+      "leman rus comander",
+      "leman rus comandor"
+    ],
+    "Taurox": [
+      "taurox tank"
+    ],
+    "Taurox Prime": [
+      "taurox p",
+      "taurox prime tank"
+    ],
+    "Wyvern": [
+      "wyverne",
+      "wyver",
+      "wyvern tank"
+    ],
+    "Medusa Carriage Battery [Legends]": [
+      "medusa carriage batery",
+      "mcb",
+      "medusa",
+      "med bat",
+      "medusa battery",
+      "medusa car",
+      "medusa carriage",
+      "medusa carry"
+    ],
+    "Tarantula Battery [Legends]": [
+      "tarantula batery",
+      "tb",
+      "t-bat",
+      "taran",
+      "tarantula",
+      "t-battery",
+      "t-bug",
+      "tarantula bat"
+    ],
+    "Trojan Support Vehicle [Legends]": [
+      "trojan suport vehical",
+      "tsv",
+      "trojan",
+      "trojan support",
+      "trojan truck",
+      "trojan vechile",
+      "trojan sv",
+      "trojan support v"
+    ],
+    "Rapier Laser Destroyer Battery [Legends]": [
+      "rapier lazer destroyer batery",
+      "rldb",
+      "rapier",
+      "rapier battery",
+      "rapier laser",
+      "rapier destroyer",
+      "rapier bat",
+      "rapier ldb"
+    ],
+    "Hades Breaching Drill [Legends]": [
+      "hades breaching dril",
+      "hbd",
+      "hades drill",
+      "hades breacher",
+      "hades b-drill",
+      "hades breach",
+      "hades b-d"
+    ],
+    "Death Riders": [
+      "deaf riders",
+      "dr",
+      "death ride",
+      "death ridders",
+      "death raiders",
+      "death rides",
+      "death r"
+    ],
+    "Carnodon [Legends]": [
+      "carnadon",
+      "carnodun",
+      "carn",
+      "carnodon",
+      "carny",
+      "carnod",
+      "carnodon vehicle",
+      "carnodon tank"
+    ],
+    "Cyclops Demolition Vehicle": [
+      "cyclops demolishon vehical",
+      "cdv",
+      "cyclops",
+      "cyclops demo",
+      "cyclops vehicle",
+      "cyclops demov",
+      "cyclops demolisher",
+      "cyclops d-veh"
+    ],
+    "Malcador [Legends]": [
+      "malcadore",
+      "malcador",
+      "mal",
+      "malcador vehicle",
+      "malc",
+      "malcador tank",
+      "malcador v"
+    ],
+    "Malcador Annihilator [Legends]": [
+      "malcador anihilator",
+      "ma",
+      "mal annihilator",
+      "malcador annih",
+      "malcador a",
+      "mal annih",
+      "malc annihilator",
+      "malcador a-nil"
+    ],
+    "Malcador Defender [Legends]": [
+      "malcador defendor",
+      "md",
+      "mal defender",
+      "malcador def",
+      "malcador d",
+      "malcador defend",
+      "malcador d-fend"
+    ],
+    "Malcador Infernus [Legends]": [
+      "malcador infernus",
+      "mi",
+      "mal infernus",
+      "malcador in",
+      "malcador infern",
+      "mal infern",
+      "malcador i",
+      "malcador infer"
+    ],
+    "Earthshaker Carriage Battery [Legends]": [
+      "earthshaker carage batery",
+      "ecb",
+      "earthshaker",
+      "earthshaker battery",
+      "earthshaker car",
+      "earth shaker",
+      "earthshaker bat",
+      "earthshaker c-bat"
+    ],
+    "Stormblade [Legends]": [
+      "stormblayde",
+      "sb",
+      "storm blade",
+      "stormb",
+      "stormy",
+      "stormblades",
+      "storm b",
+      "stormblade vehicle"
+    ],
+    "Macharius [Legends]": [
+      "macharius",
+      "macharious",
+      "mach",
+      "macharius tank",
+      "macharius v",
+      "macharius vehical",
+      "macharius t"
+    ],
+    "Macharius Vanquisher [Legends]": [
+      "macharius vanquiser",
+      "mv",
+      "vanquisher",
+      "macharius v",
+      "machi van",
+      "mach van",
+      "macharius van",
+      "macharius vankisher"
+    ],
+    "Macharius Vulcan [Legends]": [
+      "macharius vulkan",
+      "mv",
+      "vulcan",
+      "macharius v",
+      "machi vul",
+      "mach vulcan",
+      "macharius vulk",
+      "macharius vulcanus"
+    ],
+    "Praetor [Legends]": [
+      "prator",
+      "p",
+      "praet",
+      "prateor",
+      "prae",
+      "prey-tor",
+      "praytor"
+    ],
+    "Crassus [Legends]": [
+      "crassus",
+      "c",
+      "crass",
+      "crassus tank",
+      "crassus transport",
+      "crassus vehicle",
+      "crassus unit",
+      "crassus bus"
+    ],
+    "Colossus [Legends]": [
+      "colossus",
+      "c",
+      "colosus",
+      "colosus tank",
+      "colossus vehicle",
+      "colosus transport",
+      "colosus unit",
+      "colossus gun"
+    ],
+    "Valdor [Legends]": [
+      "valdore",
+      "v",
+      "valdor tank",
+      "valdo",
+      "valdor",
+      "val-dor",
+      "val-dore",
+      "valdor vehicle"
+    ],
+    "Gorgon Heavy Transport [Legends]": [
+      "gorgon heavy trans",
+      "gorgon",
+      "gorgon transport",
+      "gorgon heavy",
+      "gorgon h.t.",
+      "gorgon truck",
+      "gorgon bus"
+    ],
+    "Arkurian Stormhammer [Legends]": [
+      "arkurian storm hammer",
+      "as",
+      "stormhammer",
+      "ark hammer",
+      "arkurian hammer",
+      "arkurian storm",
+      "ark storm",
+      "arcurian storm"
+    ],
+    "Dominus Armoured Siege Bombard [Legends]": [
+      "dominus armoured bomb",
+      "d.a.s.b.",
+      "dominus bomb",
+      "dominus siege",
+      "dom bomb",
+      "dominus bombard",
+      "dominus arm",
+      "dominus siege bomb"
+    ],
+    "Death Korps Grenadier Squad [Legends]": [
+      "death corps grenadier",
+      "dkgs",
+      "death korps",
+      "death grenadiers",
+      "dk squad",
+      "death korps squad",
+      "death corps unit",
+      "death korps g"
+    ],
+    "Heavy Mortar Team [Legends]": [
+      "heavy mortar teem",
+      "hmt",
+      "heavy mortars",
+      "heavy mortar",
+      "heavy mortar unit",
+      "heavy mort team",
+      "heavy mortar crew",
+      "heavy mortar team"
+    ],
+    "Heavy Quad Launcher Team [Legends]": [
+      "heavy quad launch team",
+      "hqlt",
+      "heavy quad launchers",
+      "heavy quad team",
+      "heavy quad unit",
+      "heavy quad launch",
+      "heavy quad crew",
+      "heavy quad launcher"
+    ],
+    "Atlas Recovery Vehicle [Legends]": [
+      "atlas recovery vehical",
+      "arv",
+      "atlas recovery",
+      "atlas vehicle",
+      "atlas recov",
+      "atlas truck",
+      "atlas recovery unit",
+      "atlas recovery car"
+    ],
+    "Elysian Drop Sentinel [Legends]": [
+      "elysian drop sentinal",
+      "eds",
+      "elysian sentinel",
+      "elysian drop",
+      "elysian drop unit",
+      "elysian drop robot",
+      "elysian drop mech",
+      "elysian drop sent"
+    ],
+    "Earthshaker Platform [Legends]": [
+      "earthshaker platfrom",
+      "esp",
+      "earthshaker",
+      "earthshaker gun",
+      "earthshaker unit",
+      "earthshaker platform",
+      "earthshaker artillery"
+    ],
+    "Salamander Scout Vehicle [Legends]": [
+      "salamander scout",
+      "salamander",
+      "ssv",
+      "sala scout",
+      "salamandah",
+      "salamander scouter",
+      "salamander scout veh",
+      "salamander scout veekle"
+    ],
+    "Tauros Venator [Legends]": [
+      "tauros venator",
+      "tauros",
+      "tv",
+      "tau ven",
+      "tauros ven",
+      "tauros v",
+      "tawros venator"
+    ],
+    "Tauros Assault Vehicle [Legends]": [
+      "tauros assault",
+      "tauros av",
+      "tau av",
+      "tauros ass",
+      "tauros assaulter",
+      "tauros assault veh",
+      "tauros assault veekle",
+      "tawros assault vehicle"
+    ],
+    "Salamander Command Vehicle [Legends]": [
+      "salamander command",
+      "salamander cv",
+      "sala command",
+      "salamander com",
+      "salamander command veh",
+      "salamander command veekle",
+      "salamander com veh",
+      "salamandah command vehicle"
+    ],
+    "Storm Chimera [Legends]": [
+      "storm chim",
+      "storm chimer",
+      "sc",
+      "storm chime",
+      "storm chimera",
+      "stom chimera",
+      "stom chimer"
+    ],
+    "Centaur Light Carrier [Legends]": [
+      "centaur carrier",
+      "centaur light",
+      "clc",
+      "cent light",
+      "centaur lite carrier",
+      "centaur light carier",
+      "centaur light carry",
+      "centaur light car"
+    ],
+    "Macharius Omega [Legends]": [
+      "macharius",
+      "mach omega",
+      "mo",
+      "macharius omaga",
+      "macharius omege",
+      "macharius o",
+      "macharius om",
+      "macharius ome"
+    ],
+    "Stygies Destroyer Tank Hunter [Legends]": [
+      "stygies destroyer",
+      "stygies tank hunter",
+      "stygies dt",
+      "stygies destroyer tank",
+      "stygies destro",
+      "stygies destroyer tank hunter",
+      "stygees destroyer"
+    ],
+    "Leman Russ Executioner": [
+      "leman russ exec",
+      "leman exec",
+      "lre",
+      "leman russ ex",
+      "leman rus executioner",
+      "leman russ exectioner",
+      "leman russ excutioner"
+    ],
+    "Armageddon-pattern Medusa [Legends]": [
+      "armageddon medusa",
+      "armageddon pattern",
+      "ap medusa",
+      "armageddon patter medusa",
+      "armageddon patter",
+      "armageddon-pattern medusa"
+    ],
+    "Elysian Sniper Squad [Legends]": [
+      "elysian sniper",
+      "elysian ss",
+      "esq",
+      "elysian snipers",
+      "elysian snip squad",
+      "elysian snip",
+      "elysian sniper squd",
+      "elysian snipar squad"
+    ],
+    "Griffon Mortar Carrier [Legends]": [
+      "griffon mortar",
+      "griffon mc",
+      "gmc",
+      "griffon mort",
+      "griffon mortar carier",
+      "griffon mortar carry",
+      "griffon mortor carrier",
+      "griffon mortar car"
+    ],
+    "Tectonic Fragdrill [Legends]": [
+      "tectonic frag",
+      "tectonic drill",
+      "tf",
+      "tect fragdrill",
+      "tectonic fragdril",
+      "tectonic frag drill",
+      "tect frag",
+      "tectonic fragdrill"
+    ],
+    "Hydra Platform [Legends]": [
+      "hydra plat",
+      "hydra",
+      "hp",
+      "hydra platfrom",
+      "hydra platfom",
+      "hydra platform",
+      "hydra plattform"
+    ],
+    "Minotaur [Legends]": [
+      "minotore",
+      "minotaor",
+      "mino",
+      "miny",
+      "minotaurus",
+      "mino-t",
+      "minotaurz",
+      "minotaur"
+    ],
+    "Sabre Weapons Battery [Legends]": [
+      "saber battery",
+      "sabre bat",
+      "sabre weaps",
+      "sabre weap",
+      "sabre b",
+      "sabre w",
+      "sabre",
+      "sabre weapons"
+    ],
+    "Sentinel Powerlifter [Legends]": [
+      "sentinel power lifter",
+      "sentinel lift",
+      "powerlifter",
+      "sent power",
+      "senti-lifter",
+      "senti-p",
+      "sent-lift",
+      "sentinel"
+    ],
+    "Catachan Jungle Fighters": [
+      "catachan fighters",
+      "catachans",
+      "jungle fighters",
+      "cata-fighters",
+      "catachan jungles",
+      "cata-jungle",
+      "cata-fight",
+      "catachan"
+    ],
+    "Stormsword": [
+      "storm sword",
+      "storm-sword",
+      "stormy",
+      "swordstorm",
+      "storm-s",
+      "storm swordy",
+      "stormswrd",
+      "storm"
+    ],
+    "Benefictus": [
+      "benedictus",
+      "benefictis",
+      "benedict",
+      "ben",
+      "benefitcus"
+    ],
+    "Von Ryan's Leapers": [
+      "von ryans leapers",
+      "von ryan leapers",
+      "ryan leapers",
+      "vr leapers",
+      "von ryan",
+      "vrl",
+      "ryan's leapers",
+      "von leapers"
+    ],
+    "Winged Tyranid Prime": [
+      "winged tyranid",
+      "winged prime",
+      "tyranid prime",
+      "winged t-prime",
+      "winged t",
+      "tyranid p",
+      "wing tyranid"
+    ],
+    "Gargoyles": [
+      "gargoyls",
+      "gargoyl",
+      "gargoils",
+      "garg",
+      "gargy"
+    ],
+    "Deathleaper": [
+      "death leaper",
+      "deatleaper",
+      "death leap",
+      "deathleap"
+    ],
+    "Mawloc": [
+      "mawlok",
+      "mawlocs",
+      "maw-lok",
+      "maw-loc"
+    ],
+    "Parasite of Mortrex": [
+      "parasite mortrex",
+      "mortrex",
+      "parasite of mort",
+      "parasite",
+      "p of mortrex",
+      "p of mort",
+      "mortrex parasite"
+    ],
+    "Tyrannocyte": [
+      "tyranocyte",
+      "tyranasite",
+      "tyranoside",
+      "tyranocite",
+      "tyranny site"
+    ],
+    "Trygon": [
+      "trigon",
+      "trigun",
+      "tri-gon",
+      "try-gone"
+    ],
+    "Raveners": [
+      "raverners",
+      "ravners",
+      "ravenerz",
+      "ravin' ers"
+    ],
+    "Neurolictor": [
+      "neurolicter",
+      "neuro lictor"
+    ],
+    "Artillery Team": [
+      "art team",
+      "arty team",
+      "artillery",
+      "arty"
+    ],
+    "Krieg Combat Engineers": [
+      "kce",
+      "krieg eng",
+      "krieg combat",
+      "krieg engineers",
+      "krieg combat eng"
+    ],
+    "Winged Hive Tyrant": [
+      "wht",
+      "winged tyrant",
+      "winged hive",
+      "hive tyrant",
+      "winged hyt"
+    ],
+    "Hyperadapted Raveners": [
+      "hyper raveners",
+      "hyperadapted rav",
+      "hyper rav",
+      "hyper raven",
+      "hyperadapted"
+    ]
+  }
+}

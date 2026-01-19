@@ -1,0 +1,156 @@
+{
+  "factionId": "black-templars",
+  "factionName": "Black Templars",
+  "generatedAt": "2026-01-19T10:28:46.741Z",
+  "aliases": {
+    "Chaplain Grimaldus": [
+      "chaplain grimoldus",
+      "grimmy",
+      "cg",
+      "chap grimaldus",
+      "chaplain g",
+      "grim"
+    ],
+    "Crusader Squad": [
+      "crusader squd",
+      "crusader sqd",
+      "cs",
+      "crus squad",
+      "crusaders",
+      "crusaderz",
+      "crusader team"
+    ],
+    "Sword Brethren Squad": [
+      "sword bretheren",
+      "sword brethren",
+      "sword bros",
+      "sbs",
+      "sword squad",
+      "brethren squad",
+      "swordies"
+    ],
+    "Crusader Squad [Legends]": [
+      "crusader legends",
+      "crusader squd legends",
+      "cs legends",
+      "crus legend",
+      "crusader squad leg",
+      "crusaderz legends"
+    ],
+    "Sternguard Veteran Squad": [
+      "stern guard",
+      "stern guard vet",
+      "sgvs",
+      "sternvets",
+      "sternguard squad",
+      "sternies"
+    ],
+    "Terminator Squad": [
+      "terminator squd",
+      "term squad",
+      "ts",
+      "terminators",
+      "termi squad",
+      "termies"
+    ],
+    "High Marshal Helbrecht": [
+      "high marshal helbrekt",
+      "high marshal helbrect",
+      "hmh",
+      "helbrecht",
+      "high marshal h",
+      "helb"
+    ],
+    "Emperor's Champion": [
+      "emperor champion",
+      "emperors champ",
+      "emperor champ",
+      "ec",
+      "emperor's champ",
+      "emperor's champion (anointed)",
+      "emperor's champion anointed"
+    ],
+    "Gladiator Lancer": [
+      "gladiator lancers",
+      "glad lancer",
+      "gladiator lance",
+      "glad l",
+      "gladiator l",
+      "glad"
+    ],
+    "Gladiator Reaper": [
+      "gladiator reapers",
+      "glad reaper",
+      "gladiator reap",
+      "glad r",
+      "gladiator r",
+      "glad reaps"
+    ],
+    "Gladiator Valiant": [
+      "glad valiant",
+      "gladiator val",
+      "glad v",
+      "gladiator v",
+      "glad val"
+    ],
+    "Impulsor": [
+      "impulsors",
+      "imp",
+      "impulsor tank",
+      "impulser",
+      "impulsor vehicle"
+    ],
+    "Repulsor": [
+      "repulsors",
+      "rep",
+      "repulsor tank",
+      "repulser",
+      "repulser vehicle"
+    ],
+    "Repulsor Executioner": [
+      "repulsor exec",
+      "repulsor execution",
+      "rep exec",
+      "repulsor ex",
+      "repulsor exectioner"
+    ],
+    "Marshal": [
+      "marshl",
+      "marshel",
+      "m",
+      "marsh",
+      "marshy"
+    ],
+    "Castellan": [
+      "castlen",
+      "castelain",
+      "castelean",
+      "cst",
+      "cast",
+      "castle",
+      "castellan knight"
+    ],
+    "Execrator": [
+      "excrator",
+      "excrator tank",
+      "ex",
+      "exe",
+      "excrator cannon"
+    ],
+    "Crusade Ancient": [
+      "crusade ancint",
+      "crusade anciant",
+      "crusade anc",
+      "ca",
+      "crusader ancient",
+      "crusade ancients"
+    ],
+    "Land Raider Crusader": [
+      "land raider cruser",
+      "land raider",
+      "lrc",
+      "land raider cr",
+      "land raider crus"
+    ]
+  }
+}

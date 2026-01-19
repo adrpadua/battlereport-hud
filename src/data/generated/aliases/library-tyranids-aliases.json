@@ -1,0 +1,51 @@
+{
+  "factionId": "library-tyranids",
+  "factionName": "Tyranids Library",
+  "generatedAt": "2026-01-19T10:34:04.220Z",
+  "aliases": {
+    "Gargoyles": [
+      "gargoils",
+      "gargoyls",
+      "gargs",
+      "gargies",
+      "garbs",
+      "gargle",
+      "garry",
+      "garrygoils"
+    ],
+    "Hyperadapted Raveners": [
+      "hyper raves",
+      "hyper ravs",
+      "hyperadap ravs",
+      "hyper raveners",
+      "hype ravs",
+      "hype raves"
+    ],
+    "Raveners": [
+      "ravs",
+      "raviners",
+      "ravners",
+      "raveeners",
+      "rave",
+      "raveens"
+    ],
+    "Von Ryan's Leapers": [
+      "von ryan leapers",
+      "vr leapers",
+      "vrl",
+      "ryan leapers",
+      "vons",
+      "ryan's leapers",
+      "vryan leapers"
+    ],
+    "Ripper Swarms": [
+      "ripper sworms",
+      "rippers",
+      "rip swarms",
+      "rippas",
+      "rippin swarms",
+      "rip swarm",
+      "rips"
+    ]
+  }
+}

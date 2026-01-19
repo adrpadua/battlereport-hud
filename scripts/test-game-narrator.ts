@@ -16,8 +16,9 @@
 import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
-import { preprocessTranscript } from '../src/background/transcript-preprocessor';
+import { preprocessTranscriptWithGeneratedAliases } from '../src/background/transcript-preprocessor';
 import { getFactionContextForPrompt } from '../src/background/report-processor';
+import { findFactionByName } from '../src/data/generated';
 import {
   GAME_NARRATOR_SYSTEM_PROMPT,
   buildNarratorUserPrompt,
@@ -137,10 +138,22 @@ async function main(): Promise<void> {
     }
   }
 
-  // Preprocess transcript
+  // Preprocess transcript with generated aliases
   console.log('\nPreprocessing transcript...');
   const allUnitNames = [...factionUnitNames.values()].flat();
-  const preprocessed = preprocessTranscript(captions.segments, allUnitNames);
+
+  // Get faction IDs for loading generated aliases
+  const factionIds = detectedFactions
+    .map((name) => findFactionByName(name)?.id)
+    .filter((id): id is string => id !== undefined);
+
+  console.log(`Loading generated aliases for: ${factionIds.join(', ') || 'none'}`);
+
+  const preprocessed = await preprocessTranscriptWithGeneratedAliases(
+    captions.segments,
+    allUnitNames,
+    factionIds
+  );
 
   console.log(`Factions detected: ${preprocessed.factionMentions.size}`);
   console.log(`Detachments detected: ${preprocessed.detachmentMentions.size}`);

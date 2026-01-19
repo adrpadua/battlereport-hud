@@ -1,0 +1,25 @@
+{
+  "factionId": "salamanders",
+  "factionName": "Salamanders",
+  "generatedAt": "2026-01-19T10:35:15.581Z",
+  "aliases": {
+    "Adrax Agatone": [
+      "adraks agatone",
+      "aagaton",
+      "a. agatone",
+      "adrak",
+      "adrak agaton",
+      "adrak the flame",
+      "adraks"
+    ],
+    "Vulkan He'stan": [
+      "vulkan heestan",
+      "vulcan he'stan",
+      "vulkan hastan",
+      "v. he'stan",
+      "vulkan the flame",
+      "vulcan",
+      "vulc"
+    ]
+  }
+}

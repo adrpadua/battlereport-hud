@@ -1,0 +1,191 @@
+{
+  "factionId": "grey-knights",
+  "factionName": "Grey Knights",
+  "generatedAt": "2026-01-19T10:33:26.837Z",
+  "aliases": {
+    "Servitors [Legends]": [
+      "servitor",
+      "servitors legends",
+      "servitorsz",
+      "servitorz",
+      "servitorss",
+      "servitrs",
+      "servitours",
+      "servitours legends"
+    ],
+    "Brother-Captain": [
+      "brother captain",
+      "brother cap",
+      "brother captn",
+      "brother captains",
+      "bro capt",
+      "brothercaptain",
+      "brothercaptains"
+    ],
+    "Brother-Captain Stern [Legends]": [
+      "brother captain stern",
+      "brother cap stern",
+      "brother captn stern",
+      "bro capt stern",
+      "brothercaptain stern",
+      "brothercaptain sterns"
+    ],
+    "Brotherhood Champion": [
+      "brother champ",
+      "brotherhood champ",
+      "bro champ",
+      "brotherhood champions",
+      "brother champin",
+      "brotherhood champz",
+      "brotherhood champeen"
+    ],
+    "Brotherhood Chaplain": [
+      "brother chaplain",
+      "brotherhood chaplains",
+      "bro chap",
+      "brother chaplains",
+      "brotherhood chaplin"
+    ],
+    "Brotherhood Librarian": [
+      "brother lib",
+      "brotherhood libs",
+      "bro lib",
+      "brotherhood librarins",
+      "brotherhood lib"
+    ],
+    "Brotherhood Techmarine": [
+      "brother techmarine",
+      "brotherhood tech",
+      "bro tech",
+      "brotherhood techmarines",
+      "brother techmarines",
+      "brotherhood techmarn",
+      "brotherhood techmarins"
+    ],
+    "Castellan Crowe": [
+      "castellan crow",
+      "castellan crowz",
+      "castelan crow"
+    ],
+    "Grand Master": [
+      "grand mast",
+      "grand masters",
+      "grand masterz",
+      "grand mastar",
+      "grand mastors"
+    ],
+    "Grand Master in Nemesis Dreadknight": [
+      "grand master nemesis dreadknight",
+      "gm in nemesis",
+      "gm dreadknight",
+      "grandmaster in dreadknight",
+      "grand master n.d.",
+      "grand maester in nemesis",
+      "grandmaster in nemesis",
+      "grand master in nemesis dread knight"
+    ],
+    "Grand Master Voldus": [
+      "gm voldus",
+      "grandmaster voldus",
+      "grand maester voldus",
+      "voldus",
+      "grand master volus",
+      "grandmaster volus",
+      "grandmaster baldus"
+    ],
+    "Land Raider": [
+      "lr",
+      "land raiders",
+      "land raider tank",
+      "land raider transport",
+      "land raiderer"
+    ],
+    "Land Raider Crusader": [
+      "lrc",
+      "land raider cr",
+      "crusader raider",
+      "land raider crusader tank",
+      "land raider crusaderer"
+    ],
+    "Land Raider Redeemer": [
+      "lrr",
+      "land raider red",
+      "redeemer raider",
+      "land raider redeemer tank",
+      "land raider redeemerer"
+    ],
+    "Razorback": [
+      "razor back",
+      "rb",
+      "razor bakk",
+      "razorback tank",
+      "razorbacker"
+    ],
+    "Rhino": [
+      "rino",
+      "rhino tank",
+      "rhinno",
+      "rhinoo",
+      "rhinos"
+    ],
+    "Stormhawk Interceptor": [
+      "shi",
+      "stormhawk",
+      "storm hawk",
+      "stormhawk intercepter",
+      "stormhawk interceptorer",
+      "storm hawk intercepter"
+    ],
+    "Stormraven Gunship": [
+      "sr",
+      "storm raven",
+      "stormraven",
+      "stormraven gun",
+      "storm raven gunship",
+      "storm raven gun"
+    ],
+    "Stormtalon Gunship": [
+      "stg",
+      "storm talon",
+      "stormtalon",
+      "stormtalon gun",
+      "storm talon gunship",
+      "storm talon gun"
+    ],
+    "Venerable Dreadnought": [
+      "vd",
+      "venerable dread",
+      "venerable dreadnoughts",
+      "venerable dready",
+      "venerable dreadnoughtter"
+    ],
+    "Kaldor Draigo [Legends]": [
+      "kaldor draigo",
+      "kaldor drago",
+      "kaldor draggo",
+      "kal dor draigo"
+    ],
+    "Land Raider Banisher": [
+      "lrb",
+      "banisher raider",
+      "land raider banish",
+      "land raider banisher tank",
+      "land raider banisherer"
+    ],
+    "Nemesis Dreadknight": [
+      "ndk",
+      "nemesis dread",
+      "nemesis dreadknights",
+      "nemesis dread knight",
+      "nemesis dreadknighter"
+    ],
+    "Grey Knights Thunderhawk Gunship": [
+      "gk thunderhawk",
+      "thunderhawk",
+      "grey knights thunder hawk",
+      "grey knights thunderhawk",
+      "grey knights thunderhawk gun",
+      "grey knight thunderhawk"
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "factionId": "imperial-fists",
+  "factionName": "Imperial Fists",
+  "generatedAt": "2026-01-19T10:33:31.201Z",
+  "aliases": {
+    "Darnath Lysander": [
+      "darnath lynder",
+      "darnath lissander",
+      "darn lysander",
+      "dl",
+      "d-lis",
+      "darny",
+      "lys",
+      "lysy"
+    ],
+    "Tor Garadon": [
+      "tg",
+      "tor g",
+      "tor gary",
+      "garr",
+      "gar"
+    ],
+    "Pedro Kantor": [
+      "pedro cantor",
+      "peter kantor",
+      "pk",
+      "ped",
+      "kant",
+      "pedro k",
+      "p-kant"
+    ]
+  }
+}

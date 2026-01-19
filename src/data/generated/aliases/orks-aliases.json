@@ -1,0 +1,716 @@
+{
+  "factionId": "orks",
+  "factionName": "Orks",
+  "generatedAt": "2026-01-19T10:35:10.379Z",
+  "aliases": {
+    "Beast Snagga Boyz": [
+      "beast snagga boys",
+      "beast snaga boys",
+      "bsb",
+      "snagga boys",
+      "beasties",
+      "beast boys",
+      "beast snaggers",
+      "beast snuggas"
+    ],
+    "Boyz": [
+      "boiz",
+      "boys",
+      "bz",
+      "ork boys",
+      "da boyz",
+      "da boys",
+      "bawz",
+      "boyzies"
+    ],
+    "Burna Boyz": [
+      "burna boys",
+      "burner boyz",
+      "bb",
+      "burna bz",
+      "burnas",
+      "burny boys",
+      "burna boiz"
+    ],
+    "Deffkoptas": [
+      "deff copters",
+      "deff koptas",
+      "dk",
+      "deffkops",
+      "deff copta"
+    ],
+    "Flash Gitz": [
+      "flash gits",
+      "flasht gitz",
+      "fg",
+      "flash git",
+      "flash gitzes",
+      "flasht gits",
+      "flashy gitz"
+    ],
+    "Ghazghkull Thraka": [
+      "ghazghull thraka",
+      "ghazgull thraka",
+      "gt",
+      "ghaz",
+      "gth",
+      "gazzgull",
+      "ghazzy"
+    ],
+    "Gretchin": [
+      "gretchens",
+      "grechins",
+      "gretchen",
+      "gretch",
+      "gretchies"
+    ],
+    "Killa Kans": [
+      "killa cans",
+      "killa kaws",
+      "kk",
+      "killakans",
+      "killa kanz"
+    ],
+    "Kommandos": [
+      "kommandoes",
+      "kmd"
+    ],
+    "Meganobz": [
+      "meganobs",
+      "mega nobz",
+      "mn",
+      "mega boys"
+    ],
+    "Mek Gunz": [
+      "mek guns",
+      "mg"
+    ],
+    "Nobz": [
+      "nobs",
+      "nobbs",
+      "nb",
+      "nobzies"
+    ],
+    "Squighog Boyz": [
+      "squighog boys",
+      "squighog bz",
+      "squig hog boyz",
+      "squighogs",
+      "squig boys",
+      "squig hogs"
+    ],
+    "Stormboyz": [
+      "storm boys",
+      "stormboiz",
+      "sb",
+      "storm boyz",
+      "stormy boys",
+      "stormy boiz"
+    ],
+    "Tankbustas": [
+      "tank busters",
+      "tank bustas",
+      "tb",
+      "bustas",
+      "tank b",
+      "tanks",
+      "tanky boys",
+      "tang busters"
+    ],
+    "Warbikers": [
+      "war bikers",
+      "wb",
+      "bikers",
+      "warbikes",
+      "war bikez",
+      "biker boys",
+      "warbikaz",
+      "war bickers"
+    ],
+    "Grot Tanks [Legends]": [
+      "grot tanks",
+      "grotz",
+      "gt",
+      "grot t",
+      "grotz tanks",
+      "grotz on wheels",
+      "grot tinks",
+      "grotanks"
+    ],
+    "Nobz on Warbikes [Legends]": [
+      "nobz",
+      "nobs on bikes",
+      "nob bikers",
+      "nobz wb",
+      "nobz on wbs",
+      "nobz on war bikes",
+      "nobz on warbikes",
+      "nobz on war bickers"
+    ],
+    "Skorchas [Legends]": [
+      "skorchas",
+      "skorchers",
+      "scorchas",
+      "skorcha",
+      "s",
+      "skorcha boys",
+      "scorchers",
+      "squorchas"
+    ],
+    "Wartrakks [Legends]": [
+      "wartrakks",
+      "war track",
+      "wt",
+      "war traks",
+      "wartraks",
+      "war trakkers",
+      "war trackz",
+      "war tacks"
+    ],
+    "Warbuggies [Legends]": [
+      "warbuggies",
+      "buggies",
+      "wb",
+      "war buggies",
+      "war buggaz",
+      "war buggyz",
+      "war buggers"
+    ],
+    "Big Gunz [Legends]": [
+      "big guns",
+      "big gunz",
+      "bg",
+      "big g",
+      "big gunners",
+      "big gun boys",
+      "big gonz"
+    ],
+    "Deffkoptas with Big Shootas [Legends]": [
+      "deffkoptas",
+      "deff koptas",
+      "dk",
+      "deffkoptas with big shootas",
+      "deffkoptas w big shootas",
+      "deff koptas with big shootas",
+      "deff copters",
+      "defkoptas"
+    ],
+    "Breaka Boyz": [
+      "breaka boys",
+      "bb",
+      "breaka b",
+      "breaka boiz"
+    ],
+    "Big Mek in Mega Armour": [
+      "big mek",
+      "big mek mega",
+      "big mek in mega",
+      "big m",
+      "big mek in mega armor",
+      "big mek in mega arm",
+      "big m in mega"
+    ],
+    "Big Mek with Kustom Force Field [Legends]": [
+      "big mek kff",
+      "big mek with kff",
+      "big mek kustom",
+      "big mek with kustom",
+      "big mek w kff",
+      "big mek with kustom force",
+      "big mek with kustom field"
+    ],
+    "Big Mek with Shokk Attack Gun": [
+      "big mek shokk",
+      "big mek with shokk",
+      "big mek w shokk",
+      "big mek with shokk attack",
+      "big mek shokk attack",
+      "big mek with shokk gun",
+      "big m with shokk"
+    ],
+    "Big'ed Bossbunka": [
+      "big ed bossbunka",
+      "big ed",
+      "bossbunka",
+      "big ed boss",
+      "big bossbunka",
+      "big ed bunka",
+      "big ed boss bunka"
+    ],
+    "Blitza-bommer": [
+      "blitza bomber",
+      "blitza-bomber",
+      "blitza b",
+      "blitz bomber",
+      "blitzabommer",
+      "blitza-bomma",
+      "blitzabomma",
+      "blitz a bomber"
+    ],
+    "Boomdakka Snazzwagon": [
+      "boondakka snazwagon",
+      "boomdakka snazzy",
+      "bdsw",
+      "boom wagon",
+      "snazz wagon",
+      "boomdakka",
+      "snazzwagon"
+    ],
+    "Boss Snikrot": [
+      "snikrot",
+      "bs",
+      "snik",
+      "boss sneek",
+      "boss snick",
+      "snikrot boss",
+      "snikrot the sneaky"
+    ],
+    "Boss Zagstruk [Legends]": [
+      "boss zagstruck",
+      "zagstruk",
+      "bz",
+      "zag",
+      "boss zags",
+      "zagstruck",
+      "boss zaggie",
+      "zagstruck the mighty"
+    ],
+    "Burna-bommer": [
+      "burna bomber",
+      "burna bommer",
+      "bb",
+      "burna-bom",
+      "b-bom",
+      "burna-bomma",
+      "burna-bomber",
+      "burna bummer"
+    ],
+    "Dakkajet": [
+      "dakka jet",
+      "dj",
+      "dakka",
+      "dakkajetty",
+      "dakka-jet",
+      "dakka flyer",
+      "dakka plane"
+    ],
+    "Deff Dread": [
+      "deaf dread",
+      "dd",
+      "deff dred",
+      "deff dreadnought",
+      "deaf dreads",
+      "deff dreads",
+      "deff dreadnaught"
+    ],
+    "Deffkilla Wartrike": [
+      "deafkilla wartrike",
+      "deffkilla",
+      "dk wartrike",
+      "deffkilla warbike",
+      "deffkilla bike",
+      "deff killer"
+    ],
+    "Gorkanaut": [
+      "gorkanaught",
+      "gorky",
+      "gorkanauts",
+      "gorkanot",
+      "gork-a-naut",
+      "orkanaut"
+    ],
+    "Hunta Rig": [
+      "hunta",
+      "hr",
+      "hunta rigg",
+      "hunta-rig",
+      "hunta truck"
+    ],
+    "Kaptin Badrukk [Legends]": [
+      "captain badrukk",
+      "kaptin badruk",
+      "kb",
+      "kaptin baddie",
+      "kaptain badrukk",
+      "kaptin bad",
+      "kaptin badd"
+    ],
+    "Kill Rig": [
+      "killrig",
+      "kr",
+      "killy rig",
+      "kill-rig",
+      "kill rigg"
+    ],
+    "Kustom Boosta-blasta": [
+      "custom boosta blasta",
+      "kustom boosta",
+      "kb-b",
+      "kustom blasta",
+      "kustom boosta-blast",
+      "kustom boosta blast"
+    ],
+    "Mad Dok Grotsnik [Legends]": [
+      "mad doc grotsnik",
+      "mad dok grotsnic",
+      "mdg",
+      "mad dok g",
+      "mad doc g",
+      "mad dok grots",
+      "mad dok grotsnik",
+      "mad dog grotsnik"
+    ],
+    "Megatrakk Scrapjet": [
+      "megatrack scrapjet",
+      "megatrakk",
+      "msj",
+      "megatrakk jet",
+      "megatrakk scrap",
+      "mega jet",
+      "mega scrapjet"
+    ],
+    "Mek": [
+      "mech",
+      "m",
+      "mekboy",
+      "mekanika",
+      "mekanics",
+      "mek boy"
+    ],
+    "Morkanaut": [
+      "morkanaught",
+      "morkanot",
+      "mork",
+      "morky",
+      "morkenaut"
+    ],
+    "Mozrog Skragbad": [
+      "mozrog",
+      "mozrog skraggbad",
+      "mozgrog",
+      "mozzrog",
+      "mozrog scragbad",
+      "mozzrog skragbad"
+    ],
+    "Nob with Waaagh! Banner [Legends]": [
+      "nob",
+      "nob with banner",
+      "waaagh nob",
+      "nob banner",
+      "nob w banner",
+      "nob w waagh",
+      "nob w waaagh"
+    ],
+    "Painboss": [
+      "pain boss",
+      "painbaws",
+      "painbawz",
+      "painsaw",
+      "pb"
+    ],
+    "Painboy": [
+      "pain boi",
+      "painbaw",
+      "painbawz",
+      "pb",
+      "painsaw",
+      "painboye"
+    ],
+    "Rukkatrukk Squigbuggy": [
+      "rukkatrukk",
+      "squigbuggy",
+      "rukkatruk",
+      "rukka truk",
+      "squig buggy",
+      "rukkabuggy",
+      "rukkatruk squig"
+    ],
+    "Shokkjump Dragsta": [
+      "shokkjump",
+      "dragsta",
+      "shokk jump",
+      "shok jump",
+      "shokkjump dragster",
+      "shok dragsta",
+      "sj dragsta"
+    ],
+    "Stompa": [
+      "stomper",
+      "stompaah",
+      "stompah",
+      "stomp",
+      "stompy"
+    ],
+    "Trukk": [
+      "truck",
+      "truk",
+      "trukker",
+      "trukky"
+    ],
+    "Warboss": [
+      "war baws",
+      "warbawz",
+      "wb",
+      "warbaw",
+      "warbossy"
+    ],
+    "Warboss in Mega Armour": [
+      "warboss mega",
+      "mega warboss",
+      "wb mega",
+      "warboss in mega",
+      "warboss mega armor",
+      "warboss mega arm"
+    ],
+    "Wazbom Blastajet": [
+      "wazbom",
+      "blastajet",
+      "waz bomb",
+      "wazbom blastajett",
+      "waz jet",
+      "wazbaw"
+    ],
+    "Weirdboy": [
+      "weird boi",
+      "weird baw",
+      "weirdbaw",
+      "weird boye",
+      "weirdboi",
+      "wb"
+    ],
+    "Wurrboy": [
+      "wurr boi",
+      "wurrbaw",
+      "wurrbawz",
+      "wurrboye",
+      "wb"
+    ],
+    "Zodgrod Wortsnagga": [
+      "zodgrod",
+      "zodgrod wortsnag",
+      "zodgrod wortsnagah",
+      "zodgrod wort",
+      "zodgrod snagga"
+    ],
+    "Mekboy Workshop [Legends]": [
+      "mekboy workshopp",
+      "mbw",
+      "mek shop",
+      "mek workshop",
+      "mekboy work",
+      "make boy workshop",
+      "mek boy work"
+    ],
+    "Grot Mega-Tank [Legends]": [
+      "grot mega tank",
+      "gmt",
+      "grot tank",
+      "grot megatank",
+      "grot mega",
+      "grot mega-tank",
+      "grot meka tank"
+    ],
+    "Squiggoth [Legends]": [
+      "squigoth",
+      "squig",
+      "squiggoth"
+    ],
+    "Gargantuan Squiggoth": [
+      "gargantuan squigoth",
+      "garg squig",
+      "garg squiggoth",
+      "garg squigoth",
+      "gargantuan squigg"
+    ],
+    "Kill Tank [Legends]": [
+      "kill tank",
+      "kt",
+      "killtank",
+      "killtanks",
+      "killin tank",
+      "killin' tank"
+    ],
+    "Mega Dread [Legends]": [
+      "mega dread",
+      "md",
+      "mega-dread",
+      "megadread",
+      "mega dreads",
+      "mega dreadnought"
+    ],
+    "Meka-Dread [Legends]": [
+      "meka dread",
+      "md",
+      "meka-dread",
+      "mekadread",
+      "meka dreads",
+      "meka dreadnought"
+    ],
+    "Big Trakk [Legends]": [
+      "big trakk",
+      "bt",
+      "big trak",
+      "big track",
+      "big traks"
+    ],
+    "Warboss on Warbike [Legends]": [
+      "warboss warbike",
+      "wbw",
+      "warboss on bike",
+      "warboss war bike",
+      "warboss on war bike",
+      "warboss on warbik"
+    ],
+    "Kannonwagon [Legends]": [
+      "kannon wagon",
+      "kw",
+      "kannon wag",
+      "kannonwag",
+      "cannon wagon",
+      "cannonwag"
+    ],
+    "Da Red Gobbo [Legends]": [
+      "da red gobbo",
+      "drg",
+      "red gobbo",
+      "da red gobo",
+      "da red gob"
+    ],
+    "Painboy on Warbike [Legends]": [
+      "painboy warbike",
+      "pbw",
+      "painboy on bike",
+      "painboy war bike",
+      "painboy on war bike",
+      "painboy on warbik"
+    ],
+    "Beastboss on Squigosaur": [
+      "beastboss squigosaur",
+      "bobs",
+      "beastboss on squig",
+      "beastboss on squiggy",
+      "beast boss squigosaur"
+    ],
+    "Kill Krusha [Legends]": [
+      "kill krusha",
+      "kk",
+      "killkrusha",
+      "kill krush",
+      "kill krushas",
+      "kill crush"
+    ],
+    "Deff Rolla Battle Fortress [Legends]": [
+      "deff rolla battle fortress",
+      "drbf",
+      "deff rolla fort",
+      "deff rolla battle fort",
+      "deff rolla battle",
+      "deff rolla fortress",
+      "deaf rolla battle fortress"
+    ],
+    "Fighta-Bommer [Legends]": [
+      "fighta bomber",
+      "fighta bommer",
+      "fighta bummer",
+      "fb",
+      "f-bom",
+      "fighta-bom",
+      "fighta b"
+    ],
+    "Attack Fighta [Legends]": [
+      "attack fighter",
+      "attack fighta",
+      "attack fighte",
+      "af",
+      "a-fighta",
+      "atack fighta",
+      "attack f"
+    ],
+    "Lifta Wagon [Legends]": [
+      "lifta waggon",
+      "lifta wagun",
+      "lifta wagon",
+      "lw",
+      "lifta",
+      "liftawagon",
+      "lifta w"
+    ],
+    "Grot Bomm Launcha [Legends]": [
+      "grot bomb launcher",
+      "grot bomb launcha",
+      "grot bomb launchar",
+      "grot bomb",
+      "gbl",
+      "grot bomm",
+      "grot launcha"
+    ],
+    "Big Mek on Warbike [Legends]": [
+      "big mek",
+      "big mek warbike",
+      "big mek on bike",
+      "bmw",
+      "big mek on w",
+      "bigmec",
+      "big mek w"
+    ],
+    "Grotmas Gitz [Legends]": [
+      "grotmas gits",
+      "grotmas git",
+      "grotmas",
+      "g-gitz",
+      "grot gitz",
+      "grotmas g",
+      "grot g"
+    ],
+    "Ufthak Blackhawk [Legends]": [
+      "ufthak black hawk",
+      "ufthak",
+      "ufthack",
+      "ub",
+      "ufthak b",
+      "ufthak black"
+    ],
+    "Big Mek": [
+      "bigmec",
+      "bm",
+      "big m",
+      "big mick",
+      "big mek on",
+      "big mek w"
+    ],
+    "Battlewagon": [
+      "battle wagon",
+      "battle waggon",
+      "battlwagon",
+      "bw",
+      "battlewaggon",
+      "b-wagon"
+    ],
+    "Beastboss": [
+      "beast boss",
+      "beast bos",
+      "beastbaws",
+      "bb",
+      "beastbaw",
+      "beast b"
+    ],
+    "Da Red Gobbo's A-bomb-inable Snowman [Legends]": [
+      "da red gobbo a bomb inable snowman",
+      "da red gobbo's a bomb inable snowman",
+      "da red gobbo snowman",
+      "drg a-bomb",
+      "da red gobbo",
+      "da red gobbo's snowman",
+      "da red gobbo's a-bomb"
+    ],
+    "Da Red Gobbo's Tinboy [Legends]": [
+      "da red gobbo tinboy",
+      "da red gobbo's tin boy",
+      "da red gobbo tin",
+      "drg tinboy",
+      "da red gobbo's tin",
+      "da red gobbo tin b",
+      "da red gobbo's t"
+    ]
+  }
+}

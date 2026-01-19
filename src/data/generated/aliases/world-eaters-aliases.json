@@ -1,0 +1,471 @@
+{
+  "factionId": "world-eaters",
+  "factionName": "World Eaters",
+  "generatedAt": "2026-01-19T10:39:04.140Z",
+  "aliases": {
+    "Khorne Berzerkers": [
+      "khorne berserkers",
+      "khorne bzerkers",
+      "kb",
+      "k-berserkers",
+      "k-berserks",
+      "k-bers",
+      "khorne zerkers",
+      "corn berserkers"
+    ],
+    "Chaos Terminators": [
+      "chaos termies",
+      "chaos t-men",
+      "ct",
+      "chaos t-ers",
+      "chaos t's",
+      "chaos t-terminators",
+      "chaos t-forms"
+    ],
+    "Jakhals": [
+      "jackals",
+      "jaks",
+      "j-kals",
+      "j-hals"
+    ],
+    "Eightbound": [
+      "8bound",
+      "eight bound",
+      "eb",
+      "eight b",
+      "eight boun"
+    ],
+    "Exalted Eightbound": [
+      "exalted 8bound",
+      "exalted eight bound",
+      "exalted eb",
+      "exalted e-b",
+      "e-eb",
+      "exalted eight b",
+      "exalted 8b"
+    ],
+    "Chaos Spawn": [
+      "chaos spawns",
+      "chaos spwn",
+      "cs",
+      "chaos sp",
+      "chaos spn"
+    ],
+    "Goremongers": [
+      "gore mongers",
+      "gore mongs",
+      "goremngers",
+      "goremngrs",
+      "gore mngrs",
+      "gore mong"
+    ],
+    "Bloodletters": [
+      "blood letters",
+      "blood lettrs",
+      "bl",
+      "b-letters",
+      "blood ltrs",
+      "bloodltrs"
+    ],
+    "Bloodcrushers": [
+      "blood crushers",
+      "bloodcrushrs",
+      "bc",
+      "blood crush",
+      "blood crshrs",
+      "bloodcrshers",
+      "bloodcrsh"
+    ],
+    "Flesh Hounds": [
+      "flesh hnds",
+      "fh",
+      "flesh hnd"
+    ],
+    "Angron": [
+      "angronn"
+    ],
+    "Khârn the Betrayer": [
+      "karn the betrayer",
+      "kharne the betrayer",
+      "k-harn the betrayer",
+      "kharn the betr",
+      "karn the betr",
+      "kharn the betrayer"
+    ],
+    "Lord Invocatus": [
+      "l-invocatus",
+      "li",
+      "lord inv",
+      "lord invoc"
+    ],
+    "Daemon Prince of Khorne": [
+      "daemon prince of corn",
+      "daemon prince of khorn",
+      "dpok",
+      "daemon prince k",
+      "daemon prince of k",
+      "daemon prince of kh"
+    ],
+    "Daemon Prince of Khorne with wings": [
+      "daemon prince of khorne w wings",
+      "dpok w wings",
+      "daemon prince k w wings",
+      "daemon prince of k w wings",
+      "daemon prince of khorne w/wings"
+    ],
+    "Lord on Juggernaut": [
+      "lord on juggernot",
+      "loj",
+      "juggerlord",
+      "jugger",
+      "lord jugger",
+      "lord on jugger",
+      "lord on jugg"
+    ],
+    "Master of Executions": [
+      "master of execusions",
+      "moe",
+      "exec master",
+      "master exec",
+      "executioner",
+      "master of ex",
+      "master of exes"
+    ],
+    "Chaos Land Raider": [
+      "clr",
+      "chaos raider",
+      "land raider",
+      "chaos lander",
+      "chaos raiders",
+      "chaos land"
+    ],
+    "Chaos Predator Annihilator": [
+      "cpa",
+      "predator annihilator",
+      "chaos pred annihilator",
+      "pred annihilator",
+      "chaos pred",
+      "chaos pred anihilator",
+      "chaos pred anih"
+    ],
+    "Chaos Predator Destructor": [
+      "chaos predator destructer",
+      "cpd",
+      "predator destructor",
+      "chaos pred destructor",
+      "pred destructor",
+      "chaos pred",
+      "chaos pred destruct",
+      "chaos pred dest"
+    ],
+    "Defiler": [
+      "def",
+      "defy",
+      "defyler"
+    ],
+    "Forgefiend": [
+      "forge fiend",
+      "ff",
+      "forgy"
+    ],
+    "Helbrute": [
+      "hel brute",
+      "hb",
+      "helb",
+      "helbrut",
+      "helbroot"
+    ],
+    "Heldrake": [
+      "held rake",
+      "hd",
+      "held drake"
+    ],
+    "Maulerfiend": [
+      "mauler fiend",
+      "mf",
+      "mauler",
+      "maul fiend"
+    ],
+    "Chaos Rhino": [
+      "cr",
+      "chaos rino",
+      "chaos rhinos"
+    ],
+    "Khorne Lord of Skulls": [
+      "klos",
+      "khorne lord",
+      "khorne skull lord",
+      "khorne skull",
+      "khorne lord of skull"
+    ],
+    "Blessings of Khorne Reference": [
+      "blessings of khorne referance",
+      "bokr",
+      "khorne blessings",
+      "blessings of khorne",
+      "blessings of khorne ref",
+      "khorne ref"
+    ],
+    "Cerberus [Legends]": [
+      "cerberus",
+      "cerberus legends",
+      "cerb"
+    ],
+    "Chaos Thunderhawk [Legends]": [
+      "chaos thunderhawk",
+      "cth",
+      "chaos thunder hawk",
+      "chaos thawk",
+      "chaos thunder"
+    ],
+    "Deredeo Dreadnought [Legends]": [
+      "derido dreadnought",
+      "dreadnought dedeo",
+      "dd",
+      "dread",
+      "dede",
+      "deredeo",
+      "deredoe",
+      "dereddo"
+    ],
+    "Relic Contemptor Dreadnought [Legends]": [
+      "relic contemptor",
+      "relic dread",
+      "rcd",
+      "contemp dread",
+      "relic",
+      "contemtor",
+      "relic cont"
+    ],
+    "Sicaran Battle Tank [Legends]": [
+      "sikaran battle tank",
+      "sikaran",
+      "sbt",
+      "battle tank",
+      "sicarin",
+      "sicarin battle",
+      "sikaran battletank",
+      "sikaran tank"
+    ],
+    "Sicaran Punisher [Legends]": [
+      "sikaran punisher",
+      "sikaran pun",
+      "sp",
+      "punisher",
+      "sik pun",
+      "sikaran punsh",
+      "sikaran punshur",
+      "sikaran punisher tank"
+    ],
+    "Sicaran Venator [Legends]": [
+      "sikaran venator",
+      "venator",
+      "sv",
+      "sik ven",
+      "sikaran ven",
+      "sikaran v",
+      "sikaran venerator",
+      "sikaran venator tank"
+    ],
+    "Rapier Carrier [Legends]": [
+      "rapier carier",
+      "rapier",
+      "rc",
+      "rapier carry",
+      "rapier carr",
+      "rapier carrier tank",
+      "rapier carryer",
+      "rapier car"
+    ],
+    "Whirlwind Scorpius [Legends]": [
+      "whirlwind scorpious",
+      "whirlwind",
+      "ws",
+      "scorpius",
+      "whirlwind scorp",
+      "whirlwind scor"
+    ],
+    "Xiphon Interceptor [Legends]": [
+      "xiphon intercepter",
+      "xiphon",
+      "xi",
+      "xiphon intercept",
+      "xiphon inter",
+      "xiphon interceptar",
+      "xiphon interceptorr",
+      "xiphon int"
+    ],
+    "Terrax-pattern Termite [Legends]": [
+      "terrax pattern termite",
+      "terrax termite",
+      "tp termite",
+      "terrax",
+      "terrax pattern",
+      "terrax patter",
+      "terrax pat",
+      "terrax term"
+    ],
+    "Storm Eagle Gunship [Legends]": [
+      "storm eagle gun",
+      "storm eagle",
+      "seg",
+      "storm eagle ship",
+      "storm eagle g",
+      "storm eagle gunship",
+      "storm eagle gship"
+    ],
+    "Fire Raptor Gunship [Legends]": [
+      "fire raptor gun",
+      "fire raptor",
+      "frg",
+      "fire raptor ship",
+      "fire raptor g",
+      "fire raptor gunship",
+      "fire raptor gship",
+      "fire rap"
+    ],
+    "Typhon [Legends]": [
+      "tyfon",
+      "typhun",
+      "ty",
+      "typhon tank",
+      "typhon gun",
+      "typhon dread",
+      "typhon g",
+      "typhon"
+    ],
+    "Spartan [Legends]": [
+      "spartin",
+      "spartan tank",
+      "sp",
+      "spart",
+      "spartan g",
+      "spartan gun",
+      "spartan dread"
+    ],
+    "Fellblade [Legends]": [
+      "fellblade",
+      "felblade",
+      "fb",
+      "fell",
+      "fellblade tank",
+      "fellblade g",
+      "fellblade dread",
+      "fellblayde"
+    ],
+    "Falchion [Legends]": [
+      "falchion",
+      "falchion tank",
+      "f",
+      "falchion g",
+      "falchion dread",
+      "falchion gun",
+      "falshion"
+    ],
+    "Mastodon [Legends]": [
+      "mastadon",
+      "mastodoon",
+      "masto",
+      "masdodon",
+      "masto-don",
+      "madodon"
+    ],
+    "Sokar-pattern Stormbird [Legends]": [
+      "sokar stormbird",
+      "sokar",
+      "storm bird",
+      "sokar pattern",
+      "sokar-pattern",
+      "sokar-bird",
+      "so-car"
+    ],
+    "Greater Brass Scorpion [Legends]": [
+      "brass scorpion",
+      "greater brass",
+      "brass scorp",
+      "gbs",
+      "greater scorp",
+      "greater brass scorp"
+    ],
+    "Blood Slaughterer [Legends]": [
+      "blood slaughter",
+      "slaughterer",
+      "blood slaugher",
+      "blood slaugh",
+      "bs",
+      "bloody slaugher"
+    ],
+    "Kytan Ravager [Legends]": [
+      "kytan",
+      "ravager",
+      "kytan rav",
+      "kytan rava",
+      "k-ravager",
+      "kytan-ravager",
+      "kitan"
+    ],
+    "Hell Talon [Legends]": [
+      "hell talon",
+      "hell tal",
+      "helltalon",
+      "ht",
+      "hell-talon"
+    ],
+    "Hellblade [Legends]": [
+      "hell blade",
+      "hellblayde",
+      "hell-blade",
+      "hb",
+      "helblade",
+      "hellbade"
+    ],
+    "Land Raider Achilles [Legends]": [
+      "land raider achilles",
+      "raider achilles",
+      "lra",
+      "land raider a",
+      "land achilles",
+      "land raider ach"
+    ],
+    "Land Raider Proteus [Legends]": [
+      "land raider proteus",
+      "raider proteus",
+      "lra",
+      "land raider p",
+      "land proteus",
+      "land raider pro"
+    ],
+    "Leviathan Dreadnought [Legends]": [
+      "leviathan dread",
+      "levi dread",
+      "leviathan",
+      "ld",
+      "levi dreadnought",
+      "levi-dread"
+    ],
+    "Kratos [Legends]": [
+      "kratos",
+      "k-ratos"
+    ],
+    "Slaughterbound": [
+      "slaughter bound",
+      "slaughterboun",
+      "slaughter-b",
+      "sb",
+      "slaughter-boun"
+    ],
+    "Skarbrand": [
+      "scarbrand",
+      "skar-bran",
+      "skarb",
+      "scar-bran"
+    ],
+    "Bloodthirster": [
+      "blood thirster",
+      "bloodthirst",
+      "blood-thirster",
+      "bt",
+      "blood-thirst"
+    ]
+  }
+}

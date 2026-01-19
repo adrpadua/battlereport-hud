@@ -1,0 +1,502 @@
+{
+  "factionId": "thousand-sons",
+  "factionName": "Thousand Sons",
+  "generatedAt": "2026-01-19T10:37:33.228Z",
+  "aliases": {
+    "Chaos Spawn": [
+      "chaos spwan",
+      "c spawn",
+      "chaos spawns",
+      "chaos bone",
+      "chaos clone",
+      "chaos spawnz",
+      "chaos spawn (flesh change)"
+    ],
+    "Rubric Marines": [
+      "rubric marins",
+      "rubric marinez",
+      "rm",
+      "rubrics",
+      "rubricz",
+      "rubber marines"
+    ],
+    "Scarab Occult Terminators": [
+      "scarab occult termanators",
+      "scarab occul terminators",
+      "sot",
+      "scarab terminators",
+      "scarab occults",
+      "scarab ocults"
+    ],
+    "Tzaangor Enlightened": [
+      "tzaangor enlited",
+      "tzaangor enligtened",
+      "te",
+      "tzaangor enlightens",
+      "tzaangors enlightened",
+      "tzaangor elightened"
+    ],
+    "Tzaangors": [
+      "tzaangor",
+      "tzaangorzz",
+      "tz",
+      "tzaangorz",
+      "tzaangorses"
+    ],
+    "Sekhetar Robots": [
+      "sekhetar robos",
+      "sekhetar roberts",
+      "sr",
+      "sekhetar bots",
+      "sekhetar droids"
+    ],
+    "Tzaangor Enlightened with Fatecaster greatbows": [
+      "tzaangor enlightened fatecaster",
+      "tzaangor fatecaster",
+      "tzaangor greatbows",
+      "tzaangor enlgithened with bows",
+      "tzaangor fatecasters"
+    ],
+    "Flamers": [
+      "flamerz",
+      "flamerss",
+      "flameers",
+      "flamez",
+      "flamers of tzeentch"
+    ],
+    "Screamers": [
+      "screemers",
+      "screamerz",
+      "screamers of tzeentch",
+      "screemrs",
+      "screamerss"
+    ],
+    "Pink Horrors": [
+      "pink horros",
+      "pinks",
+      "pinkies",
+      "pink horrorz"
+    ],
+    "Blue Horrors": [
+      "blue horros",
+      "blues",
+      "blue horrorz",
+      "blue horrorss"
+    ],
+    "Chaos Spawn (Flesh Change)": [
+      "chaos spwan flesh change",
+      "chaos spwan (flesh chnge)",
+      "c spawn (flesh change)",
+      "chaos flesh change",
+      "chaos spawns (flesh change)"
+    ],
+    "Ahriman": [
+      "ahrimann"
+    ],
+    "Chaos Land Raider": [
+      "chaos land raiders",
+      "clr",
+      "chaos raider",
+      "chaos landr"
+    ],
+    "Chaos Predator Annihilator": [
+      "chaos predator anhilator",
+      "chaos pred annihilator",
+      "c predator",
+      "chaos pred",
+      "chaos predator annihilators"
+    ],
+    "Chaos Predator Destructor": [
+      "chaos pred destructor",
+      "chaos pred",
+      "predator des",
+      "chaos pd",
+      "chaos predator",
+      "chaos predicter",
+      "chaos predator destro",
+      "chaos preddy"
+    ],
+    "Chaos Rhino": [
+      "chaos rh",
+      "chaos ride",
+      "chaos rino",
+      "chaos rin",
+      "chaos rhyn",
+      "chaos rinoh",
+      "chaos rhynoo"
+    ],
+    "Chaos Vindicator": [
+      "chaos vind",
+      "chaos vindy",
+      "chaos vindycat",
+      "chaos vindi",
+      "chaos vindyator",
+      "chaos vindycatta",
+      "chaos vin",
+      "chaos vinny"
+    ],
+    "Defiler": [
+      "defil",
+      "defyler",
+      "defilerer",
+      "defilr",
+      "defilerz"
+    ],
+    "Exalted Sorcerer": [
+      "exalted sorc",
+      "exalted sor",
+      "exalted sorcer",
+      "exalted sorcere",
+      "exalted sorcereer",
+      "exalted sorceror",
+      "exalted sorecer"
+    ],
+    "Exalted Sorcerer on Disc of Tzeentch": [
+      "exalted sorc disc",
+      "exalted disc",
+      "sorc on disc",
+      "exalted sorc on disc",
+      "exalted tzeentch",
+      "exalted sorc on tzeentch",
+      "exalted sorc on disc of t",
+      "exalted disc of t"
+    ],
+    "Forgefiend": [
+      "forge fiend",
+      "forged fiend",
+      "forgfiend",
+      "forgefined"
+    ],
+    "Helbrute": [
+      "helbrut",
+      "helbroot",
+      "helbrutee"
+    ],
+    "Heldrake": [
+      "heldrak"
+    ],
+    "Infernal Master": [
+      "infernal mast",
+      "infernal mastr",
+      "infernal mastor",
+      "infernal mastar",
+      "infernal mas"
+    ],
+    "Magnus the Red": [
+      "magnus red",
+      "magnus the read"
+    ],
+    "Maulerfiend": [
+      "mauler fiend",
+      "maulerfined"
+    ],
+    "Mutalith Vortex Beast": [
+      "mutalith vortex",
+      "mutalith beast"
+    ],
+    "Sorcerer": [
+      "sorc",
+      "sorcer",
+      "sorceror"
+    ],
+    "Sorcerer in Terminator Armour": [
+      "sorcerer term",
+      "sorcerer in term",
+      "sorcerer term armor",
+      "sorcerer in armor",
+      "sorcerer in terminator",
+      "sorcerer in term armor"
+    ],
+    "Daemon Prince of Tzeentch": [
+      "demon prince of tzeentch",
+      "dp of tzeentch",
+      "tzeentch prince",
+      "tzeentch demon",
+      "demon prince",
+      "demon tzeentch",
+      "daemon prince",
+      "daymon prince"
+    ],
+    "Daemon Prince of Tzeentch with wings": [
+      "demon prince with wings",
+      "dp with wings",
+      "winged tzeentch prince",
+      "winged daemon prince",
+      "winged demon",
+      "demon prince wings",
+      "daymon prince with wings"
+    ],
+    "Tzaangor Shaman": [
+      "tzaangor sham",
+      "tzaangor",
+      "shaman",
+      "tzaan shaman",
+      "tzaan gor shaman"
+    ],
+    "Chaos Thunderhawk [Legends]": [
+      "chaos thunder hawk",
+      "thunderhawk",
+      "cth",
+      "chaos hawk",
+      "thunder hawk",
+      "chaos thunder",
+      "thunderhawk legends"
+    ],
+    "Kratos [Legends]": [
+      "kratos",
+      "kratos legends",
+      "kreatos",
+      "katos",
+      "krato",
+      "kratos tank",
+      "kratos dread"
+    ],
+    "Cerberus [Legends]": [
+      "cerberus",
+      "cerberus legends",
+      "cerb",
+      "cerberus tank",
+      "cerberus dread",
+      "serberus",
+      "serberus legends"
+    ],
+    "Deredeo Dreadnought [Legends]": [
+      "deredeo dread",
+      "deredeo",
+      "dreadnought",
+      "dreadnought deredeo",
+      "dedeo dread",
+      "dedeo",
+      "dered dread"
+    ],
+    "Relic Contemptor Dreadnought [Legends]": [
+      "relic contemptor",
+      "relic dread",
+      "contemptor dread",
+      "relic contemptor dread",
+      "relic dreadnought",
+      "relic con",
+      "contemptor"
+    ],
+    "Leviathan Dreadnought [Legends]": [
+      "leviathan dread",
+      "leviathan",
+      "levi dread",
+      "leviathan dreadnought",
+      "levi dreadnought",
+      "levi"
+    ],
+    "Land Raider Proteus [Legends]": [
+      "land raider pro",
+      "proteus",
+      "land raider",
+      "raider proteus",
+      "land raider legends",
+      "land pro",
+      "land proteus"
+    ],
+    "Land Raider Achilles [Legends]": [
+      "land raider ach",
+      "achilles",
+      "land raider",
+      "raider achilles",
+      "land raider legends",
+      "land achilles",
+      "land raider achilles"
+    ],
+    "Sicaran Battle Tank [Legends]": [
+      "sicaran tank",
+      "battle tank",
+      "sicaran",
+      "sicarian battle",
+      "sicar tank",
+      "sicaran legends"
+    ],
+    "Sicaran Punisher [Legends]": [
+      "sicaran pun",
+      "punisher",
+      "sicaran",
+      "punisher tank",
+      "sicar punisher",
+      "sicaran legends",
+      "sicar pun"
+    ],
+    "Sicaran Venator [Legends]": [
+      "sicaran ven",
+      "venator",
+      "sicaran",
+      "venator tank",
+      "sicar venator",
+      "sicaran legends",
+      "sicar ven"
+    ],
+    "Rapier Carrier [Legends]": [
+      "rapier",
+      "rapier carry",
+      "rapier carrier",
+      "carrier",
+      "rapier legends",
+      "rapier car"
+    ],
+    "Whirlwind Scorpius [Legends]": [
+      "whirlwind scorpios",
+      "whirlwind scorp",
+      "ws",
+      "whirlwind",
+      "whirly",
+      "whirlwind score"
+    ],
+    "Xiphon Interceptor [Legends]": [
+      "xiphon intercepter",
+      "xiphon",
+      "xi",
+      "xiphon intercept",
+      "xiphon inter",
+      "xiphon inceptor",
+      "xiphon intercepto",
+      "siphon interceptor"
+    ],
+    "Storm Eagle Gunship [Legends]": [
+      "storm eagle gunship",
+      "storm eagle",
+      "seg",
+      "storm eagle g",
+      "storm eagle gun",
+      "stormy eagle",
+      "storm eagle gship"
+    ],
+    "Fire Raptor Gunship [Legends]": [
+      "fire raptor gunship",
+      "fire raptor",
+      "frg",
+      "fire raptor g",
+      "fire raptor gship",
+      "fire raptor gun",
+      "fire raptor gunchip"
+    ],
+    "Typhon [Legends]": [
+      "typhon",
+      "tyfonn",
+      "ty",
+      "typhon gun",
+      "typhon tank",
+      "typhon artillery",
+      "typhon the great",
+      "typhon the beast"
+    ],
+    "Spartan [Legends]": [
+      "spartan",
+      "spartin",
+      "sp",
+      "spart",
+      "spartan tank",
+      "spartan g",
+      "spartans"
+    ],
+    "Fellblade [Legends]": [
+      "fellblade",
+      "fell blaid",
+      "fell blade",
+      "fb",
+      "fellblades",
+      "fellblade gun",
+      "fellblade tank",
+      "fellblade g"
+    ],
+    "Falchion [Legends]": [
+      "falchion",
+      "falchion gun",
+      "falchion blade",
+      "f",
+      "falch",
+      "falchions",
+      "falcion",
+      "falchion g"
+    ],
+    "Mastodon [Legends]": [
+      "mastadon",
+      "m",
+      "mastodons",
+      "mastodon gun",
+      "mastodon tank",
+      "mastodon g",
+      "mast"
+    ],
+    "Sokar-pattern Stormbird [Legends]": [
+      "sokar pattern stormbird",
+      "sokar stormbird",
+      "sokar",
+      "sokar bird",
+      "sokar pattern",
+      "sokar storm",
+      "sokar-pattern",
+      "sokar-pattern g"
+    ],
+    "Terrax-pattern Termite [Legends]": [
+      "terrax pattern termite",
+      "terrax termite",
+      "terrax",
+      "terrax-pattern",
+      "terrax-pattern t",
+      "terrax-pattern term",
+      "terrax-pattern termie"
+    ],
+    "Hell Talon [Legends]": [
+      "hell talon",
+      "ht",
+      "hell talons",
+      "hell talon gun",
+      "hell talon g",
+      "hell talon ship",
+      "hell talon gship"
+    ],
+    "Hellblade [Legends]": [
+      "hellblade",
+      "hell blade",
+      "hb",
+      "hellblades",
+      "hellblade gun",
+      "hellblade g",
+      "hellblade ship",
+      "hellblade gship"
+    ],
+    "Sorcerer on Disc of Tzeentch [Legends]": [
+      "sorcerer on disk of tzeentch",
+      "sorcerer tzeentch",
+      "sorcerer",
+      "sorcerer disc",
+      "sorcerer on disc",
+      "sorcerer on d",
+      "sorcerer on tzeentch",
+      "sorcerer on d of t"
+    ],
+    "Chaos Lord on Disc of Tzeentch [Legends]": [
+      "chaos lord on disk of tzeentch",
+      "chaos lord tzeentch",
+      "chaos lord",
+      "chaos lord disc",
+      "chaos lord on disc",
+      "chaos lord on d",
+      "chaos lord on tzeentch",
+      "chaos lord on d of t"
+    ],
+    "Lord of Change": [
+      "lord of chance",
+      "lore of change",
+      "loc",
+      "locs",
+      "big bird",
+      "chicken lord",
+      "lord of chainge",
+      "lord of chage"
+    ],
+    "Kairos Fateweaver": [
+      "kf",
+      "kfw",
+      "kairo",
+      "kairos",
+      "kairo fateweaver",
+      "kairo's fate weaver"
+    ]
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "factionId": "space-wolves",
+  "factionName": "Space Wolves",
+  "generatedAt": "2026-01-19T10:36:34.938Z",
+  "aliases": {
+    "Blood Claws": [
+      "blood clows",
+      "blud claws",
+      "bc",
+      "bloodies",
+      "claw boys",
+      "bloody claws",
+      "blood kaws",
+      "blood clowz"
+    ],
+    "Grey Hunters": [
+      "gray hunters",
+      "guy hunters",
+      "gh",
+      "grey huns",
+      "hunters",
+      "grey hounders",
+      "grays",
+      "grey huntaz"
+    ],
+    "Wolf Guard [Legends]": [
+      "wolf gurd",
+      "wg",
+      "wolfies",
+      "wolf guards",
+      "wolf gards",
+      "wolfy boys",
+      "wolf gurdz"
+    ],
+    "Wolf Guard Terminators": [
+      "wolf gurd terminators",
+      "wgt",
+      "wolf terns",
+      "wolf guard terns",
+      "wolf t-gards",
+      "wolf terminators",
+      "wolf gurd terns"
+    ],
+    "Hounds of Morkai [Legends]": [
+      "hounds of morky",
+      "hounds of mork",
+      "hounds",
+      "morkai hounds",
+      "hounds of morcai",
+      "morkai dogs",
+      "mork hounds"
+    ],
+    "Wulfen": [
+      "wolfen",
+      "wulfens",
+      "wulf",
+      "wulfyn",
+      "wulfs",
+      "wulfins"
+    ],
+    "Thunderwolf Cavalry": [
+      "thunderwolf cav",
+      "twc",
+      "thunderwolv",
+      "thunder wolves",
+      "thunder wolfes",
+      "thunderwolf calvary",
+      "thunderwolfes"
+    ],
+    "Fenrisian Wolves": [
+      "fenrisian wolfs",
+      "fenris wolves",
+      "fenris wulfs",
+      "fenrisian wulfs",
+      "fenris wolvez",
+      "fen wolves",
+      "fenrisian wolv"
+    ],
+    "Skyclaws [Legends]": [
+      "skyclaws",
+      "sky clows",
+      "sky clauz",
+      "sky boys",
+      "skyclawz",
+      "sky clowz"
+    ],
+    "Long Fangs [Legends]": [
+      "long fangs",
+      "long fangz",
+      "lf",
+      "long fangsies"
+    ],
+    "Wolf Scouts [Legends]": [
+      "wolf scouts",
+      "wolf scowts",
+      "wolf scouters",
+      "wolf scoutz",
+      "wolf skouts",
+      "wolfie scouts"
+    ],
+    "Wolf Guard Headtakers": [
+      "wolf gurd headtakers",
+      "wgh",
+      "headtakers",
+      "wolf headtakers",
+      "wolf gurd head takers",
+      "wolf guard head takers"
+    ],
+    "Wulfen with Storm Shields": [
+      "wulfen with storm shilds",
+      "wulfen storm shields",
+      "wulfen with shields",
+      "wulfen storms",
+      "wulfen with shieldz"
+    ],
+    "Logan Grimnar": [
+      "logun grimnar",
+      "lg",
+      "grimnar",
+      "logie",
+      "big wolf",
+      "logan",
+      "lowgan",
+      "logan grimnar on stormrider"
+    ],
+    "Njal Stormcaller": [
+      "njall stormcaller",
+      "nj",
+      "stormcaller",
+      "njal",
+      "njal the storm",
+      "njal the caller"
+    ],
+    "Bjorn the Fell-Handed": [
+      "bjorn the fell handid",
+      "bjorn",
+      "fell-handed",
+      "bjorne",
+      "bear",
+      "bjorn the bear",
+      "bjorn the fell",
+      "bjorn the hand"
+    ],
+    "Arjac Rockfist": [
+      "arjack rockfist",
+      "arjac",
+      "rockfist",
+      "rocky",
+      "arj",
+      "arjac the rock"
+    ],
+    "Ulrik the Slayer": [
+      "ulrik",
+      "slayer",
+      "ulrik the slayor",
+      "ul",
+      "ulrik the wolf",
+      "ulrik the killer"
+    ],
+    "Ragnar Blackmane": [
+      "ragnar black main",
+      "ragnar",
+      "blackmane",
+      "rag",
+      "rags",
+      "ragnar the black",
+      "ragnar the wolf"
+    ],
+    "Krom Dragongaze [Legends]": [
+      "krom dragongaze",
+      "krom",
+      "dragongaze",
+      "krom the dragon",
+      "krom the gazer"
+    ],
+    "Harald Deathwolf [Legends]": [
+      "harald death wolf",
+      "harald",
+      "deathwolf",
+      "harry",
+      "harald the wolf",
+      "harald the death",
+      "harald deathwolf"
+    ],
+    "Canis Wolfborn [Legends]": [
+      "canis wolf born",
+      "canis",
+      "wolfborn",
+      "canis the wolf",
+      "canis the born",
+      "canis wolf",
+      "canis wolfborn"
+    ],
+    "Wolf Guard Battle Leader in Terminator Armour [Legends]": [
+      "wolf guard battle leader",
+      "wgbl",
+      "wolf guard",
+      "battle leader",
+      "wolf leader",
+      "wolf guard terminator",
+      "wolf guard battle leader in terminator"
+    ],
+    "Wolf Lord on Thunderwolf [Legends]": [
+      "wolf lord on thunder wolf",
+      "wolf lord",
+      "thunderwolf",
+      "wolf lord thunder",
+      "wolf lord on thunder",
+      "wolf lord on tw",
+      "wolf lord on thunderwolf"
+    ],
+    "Wolf Guard Battle Leader on Thunderwolf [Legends]": [
+      "wolf guard battle leader on thunder wolf",
+      "wgbl tw",
+      "wolf guard battle leader",
+      "wolf guard thunder",
+      "wolf leader on tw",
+      "wolf guard leader",
+      "wolf guard battle leader on thunderwolf"
+    ],
+    "Lukas the Trickster [Legends]": [
+      "lukas the trickster",
+      "lukas",
+      "trickster",
+      "luke",
+      "lukas the sly",
+      "lukas the joker",
+      "lukas trickster"
+    ],
+    "Wulfen Dreadnought": [
+      "wulfen dreadnaught",
+      "wulfen",
+      "dreadnought",
+      "wolf dread",
+      "wulfen dread"
+    ],
+    "Murderfang": [
+      "murder fang",
+      "murder",
+      "fang",
+      "murder fangs",
+      "murder fanger",
+      "murderfang the beast"
+    ],
+    "Stormwolf [Legends]": [
+      "storm wolf",
+      "stormwolf gunship",
+      "sw",
+      "stormy wolf",
+      "stormwolves"
+    ],
+    "Wolf Guard Pack Leader [Legends]": [
+      "wolf guard pack leeder",
+      "wolf guard pack ldr",
+      "wgpl",
+      "wolfy",
+      "wolf guard leaders",
+      "wolf guard pack lead"
+    ],
+    "Wolf Guard Pack Leader with Jump Pack [Legends]": [
+      "wolf guard pack leeder with jump pack",
+      "wgpljp",
+      "wolf jump leader",
+      "jump pack leader",
+      "wolf guard jump leader",
+      "wolf guard pack leeder w jp"
+    ],
+    "Wolf Guard Pack Leader in Terminator Armour [Legends]": [
+      "wolf guard pack leeder in terminator armor",
+      "wgplta",
+      "terminator leader",
+      "wolf guard terminator",
+      "wolf guard pack leeder in termi armor",
+      "wolf guard pack leader in termi"
+    ],
+    "Iron Priest": [
+      "iron preist",
+      "ip",
+      "iron priestess",
+      "iron priests"
+    ],
+    "Cyberwolf [Legends]": [
+      "cyber wolf",
+      "cyberwulf",
+      "cw",
+      "cyber wolves",
+      "cyberwolf"
+    ],
+    "Venerable Dreadnought": [
+      "venerable dreadnoughts",
+      "vd",
+      "venerable dread",
+      "venerable dreadnaught"
+    ],
+    "Wolf Guard Battle Leader": [
+      "wolf guard battle leeder",
+      "wgb",
+      "wolfy leader",
+      "wolf guard battle lead",
+      "wolf guard battle leaders"
+    ],
+    "Wolf Priest": [
+      "wolf preist",
+      "wp",
+      "wolfy priest",
+      "wolf priests",
+      "wolfy"
+    ]
+  }
+}

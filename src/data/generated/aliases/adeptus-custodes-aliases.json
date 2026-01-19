@@ -1,0 +1,256 @@
+{
+  "factionId": "adeptus-custodes",
+  "factionName": "Adeptus Custodes",
+  "generatedAt": "2026-01-19T10:27:16.699Z",
+  "aliases": {
+    "Custodian Guard": [
+      "custodians",
+      "custodian guards",
+      "custodian",
+      "c guard",
+      "c-guard",
+      "custodial guard"
+    ],
+    "Custodian Wardens": [
+      "custodians warden",
+      "c wardens",
+      "c-wardens",
+      "custodial wardens"
+    ],
+    "Prosecutors": [
+      "prosec",
+      "prosecute",
+      "prosecutor",
+      "prosec squad",
+      "prosec team",
+      "prosectors"
+    ],
+    "Vertus Praetors": [
+      "vertus",
+      "vp",
+      "praetors",
+      "vertus preators",
+      "vertus praetor",
+      "vertus pretor"
+    ],
+    "Vigilators": [
+      "vigs",
+      "vigilater",
+      "vigilator",
+      "vigilators squad",
+      "vigilator team",
+      "vigilants"
+    ],
+    "Witchseekers": [
+      "witch seekers",
+      "witch seeker",
+      "witchseeker",
+      "witchseekers squad",
+      "witch seek",
+      "witchs"
+    ],
+    "Custodian Guard with Adrasite and Pyrithite spears": [
+      "custodian spears",
+      "c guard spears",
+      "custodian with spears",
+      "c guard adrasite",
+      "c guard pyrithite"
+    ],
+    "Sagittarum Custodians": [
+      "sagittarum",
+      "sag guards",
+      "sagittarum custodes",
+      "sagittarums",
+      "sagittarums custodians"
+    ],
+    "Aquilon Custodians": [
+      "aquilon",
+      "aquis",
+      "aqualon",
+      "aquilon custodes",
+      "aqualons"
+    ],
+    "Agamatus Custodians": [
+      "agamatus",
+      "agamatuses",
+      "agamatus custodes",
+      "agamatuses custodians"
+    ],
+    "Venatari Custodians": [
+      "venatari",
+      "venatari custodes",
+      "venatari guards"
+    ],
+    "Aleya": [
+      "aleyah",
+      "aleia",
+      "aleya custodian",
+      "aleia custodian"
+    ],
+    "Anathema Psykana Rhino": [
+      "anathema rhino",
+      "psykanarhino",
+      "anathema psykana"
+    ],
+    "Blade Champion": [
+      "blade champ",
+      "blade champs",
+      "blade champeon",
+      "blade champian"
+    ],
+    "Knight-Centura": [
+      "knight centura",
+      "knight centurae",
+      "kight centura",
+      "kight centurae",
+      "kc",
+      "knight c",
+      "centura",
+      "centura knight",
+      "night centura"
+    ],
+    "Shield-Captain": [
+      "shield captain",
+      "shild captain",
+      "shild captn",
+      "sc",
+      "captain shield",
+      "shield c",
+      "captain",
+      "capt"
+    ],
+    "Shield-Captain in Allarus Terminator Armour": [
+      "shield captain allarus",
+      "shild captain allarus",
+      "sc in allarus",
+      "shield c in allarus",
+      "allarus captain",
+      "allarus shield",
+      "captain in allarus",
+      "captain allarus"
+    ],
+    "Shield-Captain on Dawneagle Jetbike": [
+      "shield captain dawneagle",
+      "shild captain jetbike",
+      "sc on jetbike",
+      "dawneagle captain",
+      "jetbike captain",
+      "dawneagle c",
+      "captain on jetbike",
+      "captain dawneagle"
+    ],
+    "Trajann Valoris": [
+      "trajann valouris",
+      "trajan valoris",
+      "trajan valouris",
+      "tv",
+      "valoris",
+      "traj",
+      "val"
+    ],
+    "Valerian": [
+      "valerion",
+      "valerianus",
+      "val",
+      "v",
+      "valer"
+    ],
+    "Venerable Contemptor Dreadnought": [
+      "venerable contemptor",
+      "venerable dreadnought",
+      "ven contemptor",
+      "vcd",
+      "venerable c",
+      "contemptor dread",
+      "ven dreadnought",
+      "venerable"
+    ],
+    "Venerable Land Raider": [
+      "venerable landraider",
+      "ven land raider",
+      "vland raider",
+      "vlr",
+      "venerable lr",
+      "land raider",
+      "land raider v",
+      "venerable land"
+    ],
+    "Contemptor-Galatus Dreadnought": [
+      "contemptor galatus",
+      "contemptor g",
+      "cg dreadnought",
+      "galatus dread",
+      "galatus",
+      "contemptor-gal",
+      "gal dreadnought"
+    ],
+    "Contemptor-Achillus Dreadnought": [
+      "contemptor achillus",
+      "contemptor a",
+      "ca dreadnought",
+      "achillus dread",
+      "achillus",
+      "contemptor-ach",
+      "ach dreadnought"
+    ],
+    "Pallas Grav-attack": [
+      "pallas grav attack",
+      "pallas grav",
+      "pallas",
+      "pg",
+      "pallas g",
+      "grav-attack",
+      "pallas gravatack",
+      "grav attack"
+    ],
+    "Caladius Grav-tank": [
+      "caladius grav tank",
+      "caladius",
+      "cal tank",
+      "cg",
+      "caladius g",
+      "grav-tank",
+      "cal grav",
+      "caladus"
+    ],
+    "Telemon Heavy Dreadnought": [
+      "telemon dreadnought",
+      "telemon heavy",
+      "tele dreadnought",
+      "thd",
+      "telemon",
+      "heavy dread",
+      "telemon h",
+      "tele dread"
+    ],
+    "Coronus Grav-carrier": [
+      "coronus grav carrier",
+      "coronus",
+      "cg carrier",
+      "cor grav",
+      "cor grav-carrier",
+      "cor carrier",
+      "coronus g",
+      "grav-carrier"
+    ],
+    "Ares Gunship": [
+      "ares gun ship",
+      "ares",
+      "ares g",
+      "ag",
+      "ares gun",
+      "gunship",
+      "ares g ship"
+    ],
+    "Orion Assault Dropship": [
+      "orion assult dropship",
+      "orion drop ship",
+      "oad",
+      "orion dropship",
+      "oryon assault dropship",
+      "orion ass dropship",
+      "orion drop",
+      "orion assault drop"
+    ]
+  }
+}

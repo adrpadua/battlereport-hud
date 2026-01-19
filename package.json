@@ -8,7 +8,8 @@
     "build": "npm run generate:factions && tsc --noEmit && vite build",
     "preview": "vite preview",
     "generate:factions": "tsx scripts/generate-faction-data.ts",
-    "generate:stratagems": "tsx scripts/generate-stratagem-data.ts"
+    "generate:stratagems": "tsx scripts/generate-stratagem-data.ts",
+    "generate:aliases": "tsx scripts/generate-unit-aliases.ts"
   },
   "dependencies": {
     "fuse.js": "^7.1.0",

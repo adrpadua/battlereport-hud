@@ -1,0 +1,722 @@
+{
+  "factionId": "craftworlds",
+  "factionName": "Craftworld Aeldari",
+  "generatedAt": "2026-01-19T10:31:04.305Z",
+  "aliases": {
+    "Wraithguard": [
+      "wraith guard",
+      "wraithgurd",
+      "wraithgarde",
+      "wg",
+      "wraiths",
+      "wraiths guard"
+    ],
+    "Windriders": [
+      "wind riders",
+      "windriderss",
+      "wr",
+      "windies",
+      "winds",
+      "windriders squad"
+    ],
+    "Asurmen": [
+      "asurman",
+      "asurmin",
+      "asur",
+      "asu",
+      "asurman the wise"
+    ],
+    "Autarch": [
+      "autarchs",
+      "a",
+      "aut",
+      "a.t.a.r.c.h",
+      "auto"
+    ],
+    "Autarch Skyrunner [Legends]": [
+      "autarch skyrunner",
+      "autarch skyrunnner",
+      "autarch sky",
+      "as",
+      "sky autarch",
+      "sky runner"
+    ],
+    "Autarch Wayleaper": [
+      "autarch wayleap",
+      "wayleaper",
+      "aw",
+      "way leap",
+      "wayleap"
+    ],
+    "Avatar of Khaine": [
+      "avatar of khain",
+      "avatar of khane",
+      "aok",
+      "khaine avatar",
+      "avatar k",
+      "khaine"
+    ],
+    "Baharroth": [
+      "baharoth",
+      "baharrot",
+      "b",
+      "bahar",
+      "baharoth the winged"
+    ],
+    "Corsair Voidreavers": [
+      "corsair void reavers",
+      "cvr",
+      "voidreavers",
+      "void raiders",
+      "corsair voids"
+    ],
+    "Corsair Voidscarred": [
+      "corsair void scarred",
+      "cvs",
+      "voidscarred",
+      "void scars",
+      "corsair voids"
+    ],
+    "Crimson Hunter": [
+      "crimsonhunters",
+      "crimson hunt",
+      "ch",
+      "crimson h",
+      "crim hunter"
+    ],
+    "Dark Reapers": [
+      "dark reaper",
+      "dr",
+      "dark reap",
+      "dark rippers",
+      "dark reaps"
+    ],
+    "Death Jester": [
+      "death jestor",
+      "dj",
+      "death jest",
+      "death j",
+      "jester of death"
+    ],
+    "Dire Avengers": [
+      "dire avenger",
+      "da",
+      "dire avengerss",
+      "dire a",
+      "avengers"
+    ],
+    "Eldrad Ulthran": [
+      "eldrad",
+      "eu",
+      "eldra",
+      "eldrad the wise"
+    ],
+    "Falcon": [
+      "falconne",
+      "falconn",
+      "falc",
+      "fal",
+      "falcone",
+      "falconer",
+      "falconing"
+    ],
+    "Farseer": [
+      "farsir",
+      "farsear",
+      "fs",
+      "far",
+      "fars",
+      "farse"
+    ],
+    "Farseer Skyrunner": [
+      "farsir skyrunner",
+      "farseer skyrun",
+      "fsr",
+      "far sky",
+      "farsky",
+      "farsir sky"
+    ],
+    "Fire Dragons": [
+      "fire draguns",
+      "fire dragoons",
+      "fd",
+      "fire drags",
+      "fire dregons"
+    ],
+    "Fire Prism": [
+      "fire prisim",
+      "fire pris",
+      "fp",
+      "fire prizm",
+      "fire prisma",
+      "fire priss"
+    ],
+    "Fuegan": [
+      "fuegann",
+      "fuegahn",
+      "fueg",
+      "fue",
+      "fuegarn"
+    ],
+    "Guardian Defenders": [
+      "guardian defnders",
+      "guardians",
+      "gd",
+      "guard def",
+      "guardians deffenders",
+      "guard defends"
+    ],
+    "Hemlock Wraithfighter": [
+      "hemlock wraithfiter",
+      "hemlock wraith",
+      "hw",
+      "hemlok wraith",
+      "hem wraith",
+      "hemloq wraith"
+    ],
+    "Howling Banshees": [
+      "howlin banshees",
+      "howling banshee",
+      "hb",
+      "howlers",
+      "howling banshies",
+      "howling bansh"
+    ],
+    "Illic Nightspear [Legends]": [
+      "illic night spear",
+      "illic nightspere",
+      "illic night",
+      "illic",
+      "illic nightspear"
+    ],
+    "Jain Zar": [
+      "jain zarr",
+      "jain zaar",
+      "jz",
+      "jainzaar",
+      "jainzar"
+    ],
+    "Karandras [Legends]": [
+      "karandras",
+      "karandrasz",
+      "karan",
+      "kar",
+      "karand"
+    ],
+    "Maugan Ra": [
+      "maugan",
+      "mauganrah",
+      "maugan raa",
+      "mra",
+      "mauganra"
+    ],
+    "Night Spinner": [
+      "night spiner",
+      "night spinnr",
+      "ns",
+      "night spin",
+      "night spinn",
+      "night spinnner"
+    ],
+    "Prince Yriel [Legends]": [
+      "prince yriel",
+      "prince yreel",
+      "py"
+    ],
+    "Rangers": [
+      "rangrs",
+      "rngrs",
+      "rangerss",
+      "rangerz",
+      "rangeers",
+      "ranger squad",
+      "ranger team",
+      "ranger boys"
+    ],
+    "Shadowseer": [
+      "shadow seer",
+      "shado seer",
+      "shadoseer",
+      "shadower",
+      "shadower seer"
+    ],
+    "Shining Spears": [
+      "shining speer",
+      "shineing spears",
+      "shining speres",
+      "shining spearz",
+      "shiny spears",
+      "shiny speer",
+      "shining squad"
+    ],
+    "Shroud Runners": [
+      "shroud runers",
+      "shroud runnerss",
+      "shroud runer",
+      "shroud runnrs",
+      "shroud squad",
+      "shroud team"
+    ],
+    "Skyweavers": [
+      "sky weavers",
+      "skyweaverz",
+      "skyweaver",
+      "skyweaverss",
+      "skyweaver squad",
+      "skyweaver team",
+      "sky weaverz"
+    ],
+    "Solitaire": [
+      "solitair",
+      "solitare",
+      "solitairre",
+      "solitairee",
+      "solitair squad",
+      "solo",
+      "soli"
+    ],
+    "Spiritseer": [
+      "spirit seer",
+      "spiritsir",
+      "spiritseer squad"
+    ],
+    "Starweaver": [
+      "star weaver",
+      "starweavers",
+      "starweaverz",
+      "starweaver squad",
+      "starweaver team",
+      "star weaverz"
+    ],
+    "Storm Guardians": [
+      "storm guardins",
+      "storm guardian",
+      "storm guards",
+      "storm gards",
+      "storm gurdins"
+    ],
+    "D-Cannon Platform": [
+      "d cannon platform",
+      "dcannon platform",
+      "d cannon plattform",
+      "d-cannon platfrom",
+      "d-cannon platfom",
+      "d-cannon",
+      "d-cannon team"
+    ],
+    "Swooping Hawks": [
+      "swooping hawk",
+      "swoop hawks",
+      "swooping hawks squad",
+      "swooping hawks team"
+    ],
+    "The Visarch": [
+      "the visarchh",
+      "the visarchs",
+      "the visarch squad",
+      "the visarch team",
+      "the visarh"
+    ],
+    "The Yncarne": [
+      "the yncarneee",
+      "the yncarne squad",
+      "the yncarne team"
+    ],
+    "Troupe": [
+      "troop",
+      "troopz",
+      "troup",
+      "troupee",
+      "troops",
+      "troop squad",
+      "troop team"
+    ],
+    "Troupe Master": [
+      "troup master",
+      "troop master",
+      "troup mastar",
+      "troop mastar",
+      "troupe mastar"
+    ],
+    "Voidweaver": [
+      "void weaver",
+      "voidwevver",
+      "vw",
+      "voidy",
+      "vweaver",
+      "v-w"
+    ],
+    "Vypers": [
+      "vyperss",
+      "vy",
+      "vyps",
+      "viper",
+      "vyp",
+      "vips"
+    ],
+    "War Walkers": [
+      "warwokers",
+      "ww",
+      "war walkr",
+      "warwalkers",
+      "warwalk",
+      "walkers"
+    ],
+    "Warlock": [
+      "warlok",
+      "warloc",
+      "wl",
+      "warloq"
+    ],
+    "Warlock Conclave": [
+      "warlock conclav",
+      "wl conclave",
+      "wlc",
+      "warlock con"
+    ],
+    "Warlock Skyrunners": [
+      "warlock skyrunnrs",
+      "wl skyrunners",
+      "wls",
+      "warlock sky",
+      "warlock skyrun",
+      "wsk"
+    ],
+    "Warp Spiders": [
+      "warp spyders",
+      "warpspiders",
+      "ws",
+      "warp spidrs",
+      "warp spidaz",
+      "warpspid"
+    ],
+    "Wave Serpent": [
+      "wave serpeant",
+      "wave serpant",
+      "ws",
+      "wave serp",
+      "wserpent",
+      "wave ser",
+      "w serpent"
+    ],
+    "Webway Gate [Legends]": [
+      "webwaygait",
+      "wg",
+      "webway gate",
+      "webwayg8",
+      "webwayg"
+    ],
+    "Wraithblades": [
+      "wraithblayds",
+      "wb",
+      "wraith bladez"
+    ],
+    "Wraithknight": [
+      "wraithknite",
+      "wk",
+      "wraithk",
+      "wraithkn"
+    ],
+    "Wraithlord": [
+      "wraithlorde",
+      "wlord",
+      "wraith lord",
+      "wraithl",
+      "wraithlrd"
+    ],
+    "Yvraine": [
+      "yvraen",
+      "yv",
+      "yvrain"
+    ],
+    "Striking Scorpions": [
+      "striking scorpins",
+      "ss",
+      "striking scorp"
+    ],
+    "Cobra [Legends]": [
+      "cobrah",
+      "cobra",
+      "cob",
+      "cobras"
+    ],
+    "Hornet [Legends]": [
+      "hornet drone",
+      "hornet jet",
+      "hornet flyer",
+      "harnet",
+      "horrent",
+      "horrent jet",
+      "harnet drone",
+      "youtube misheard: hornet"
+    ],
+    "Irillyth [Legends]": [
+      "irilyth",
+      "irilyth the seer",
+      "irilyth the wise",
+      "irillyth the seer",
+      "youtube misheard: really th"
+    ],
+    "Lynx [Legends]": [
+      "lynx tank",
+      "lynx flyer",
+      "lynx jet",
+      "lynxie",
+      "lynxie tank",
+      "youtube misheard: links"
+    ],
+    "Nightwing [Legends]": [
+      "night wing",
+      "nightwing flyer",
+      "nightwing jet",
+      "nightwing drone",
+      "nightwing ship",
+      "youtube misheard: night wing"
+    ],
+    "Scorpion [Legends]": [
+      "scorp",
+      "scorp tank",
+      "scorp jet",
+      "scorp flyer",
+      "scorp drone",
+      "youtube misheard: scorpian"
+    ],
+    "Skathach Wraithknight [Legends]": [
+      "skathach",
+      "skathach knight",
+      "skathach wraith",
+      "skathach wraith knight",
+      "youtube misheard: skathatch"
+    ],
+    "Shadow Spectres [Legends]": [
+      "shadow spectre",
+      "shad spectres",
+      "shad spectre",
+      "shadow s",
+      "shadow spec",
+      "youtube misheard: shadow sectors"
+    ],
+    "Phantom Titan": [
+      "phantom",
+      "phantom titans",
+      "phantom big guy",
+      "youtube misheard: phantom tight end"
+    ],
+    "Revenant Titan": [
+      "revenant",
+      "revenant titans",
+      "revenant big guy",
+      "youtube misheard: revenant tight end"
+    ],
+    "Warp Hunter [Legends]": [
+      "warp hunter jet",
+      "warp hunter tank",
+      "warp h",
+      "warp hnt",
+      "warp hunter drone",
+      "youtube misheard: warp hunter"
+    ],
+    "Wraithseer [Legends]": [
+      "wraith seer",
+      "wraithseer",
+      "wraith s",
+      "youtube misheard: wraith seer"
+    ],
+    "Amallyn Shadowguide [Legends]": [
+      "amallyn",
+      "amallyn guide",
+      "amallyn shadow",
+      "amalyne shadowguide",
+      "youtube misheard: amalan shadow guide"
+    ],
+    "Bonesinger [Legends]": [
+      "bone singer",
+      "bone s",
+      "bone sing",
+      "bonesing",
+      "youtube misheard: bone singer"
+    ],
+    "Corsair Cloud Dancer Band [Legends]": [
+      "cloud dancer",
+      "corsair dancers",
+      "corsair cloud",
+      "corsair band",
+      "youtube misheard: corsair cloud dancer"
+    ],
+    "Corsair Reaver Band [Legends]": [
+      "reaver band",
+      "corsair reavers",
+      "corsair reaver",
+      "corsair r band",
+      "youtube misheard: corsair river band"
+    ],
+    "Corsair Skyreaver Band [Legends]": [
+      "corsair skyraver band",
+      "csk band",
+      "skyraiders",
+      "corsairs",
+      "c-squad",
+      "corsair squad",
+      "corsair sky band",
+      "core skyreaver"
+    ],
+    "Phoenix [Legends]": [
+      "phenix",
+      "phoenex",
+      "phee",
+      "p-ix",
+      "firebird",
+      "phoenix bird",
+      "fenix",
+      "phoenix unit"
+    ],
+    "Firestorm [Legends]": [
+      "firestom",
+      "firestorme",
+      "f-storm",
+      "firestorm squad",
+      "firestorm unit",
+      "firestormers",
+      "firestorm team"
+    ],
+    "Vampire Hunter [Legends]": [
+      "vampire huntr",
+      "vampire hnt",
+      "vamp hunter",
+      "vamp hunters",
+      "v-hunter",
+      "vampire hunt",
+      "vampire huntress",
+      "vampire h"
+    ],
+    "Vampire Raider [Legends]": [
+      "vampire raidr",
+      "vamp raider",
+      "v-raider",
+      "vampire raid",
+      "vampire raiders",
+      "vamp raiders",
+      "vamp raider squad",
+      "vampire r"
+    ],
+    "Wasp Assault Walker [Legends]": [
+      "wasp assult walker",
+      "wasp aw",
+      "wasp walker",
+      "wasp assault",
+      "wasp a-walker",
+      "wasp ass walker",
+      "wasp assault unit",
+      "wasp a-w"
+    ],
+    "Ynnari Archon": [
+      "ynnari arkon",
+      "y-archon",
+      "ynnari arch",
+      "ynnari a",
+      "ynnari arcon",
+      "ynnari a-archon",
+      "ynnari ar"
+    ],
+    "Ynnari Incubi": [
+      "ynnari incuba",
+      "y-incubi",
+      "ynnari inq",
+      "ynnari inqbi",
+      "ynnari i",
+      "ynnari inc"
+    ],
+    "Ynnari Kabalite Warriors": [
+      "ynnari kabalite warrios",
+      "ynnari kabalites",
+      "y-kabalite",
+      "ynnari k-warriors",
+      "ynnari k-war",
+      "ynnari kabal",
+      "ynnari k"
+    ],
+    "Ynnari Raider": [
+      "ynnari raidr",
+      "ynnari raid",
+      "y-raider",
+      "ynnari r",
+      "ynnari raiders",
+      "ynnari rader",
+      "ynnari raide"
+    ],
+    "Ynnari Reavers": [
+      "ynnari reaver",
+      "y-reavers",
+      "ynnari revrs",
+      "ynnari reav",
+      "ynnari rev",
+      "ynnari r"
+    ],
+    "Ynnari Succubus": [
+      "y-succubus",
+      "ynnari succ",
+      "ynnari sucubus",
+      "ynnari s",
+      "ynnari s-cubus",
+      "ynnari suc"
+    ],
+    "Ynnari Venom": [
+      "ynnari venem",
+      "ynnari venon",
+      "y-venom",
+      "ynnari v",
+      "ynnari ven",
+      "ynnari v-nom"
+    ],
+    "Ynnari Wyches": [
+      "ynnari wiches",
+      "ynnari wyche",
+      "y-wyches",
+      "ynnari w",
+      "ynnari wych"
+    ],
+    "Shadow Weaver Platform": [
+      "shadow weaver platfrm",
+      "shadow weaver",
+      "s-weaver",
+      "shadow plat",
+      "shadow weaver pl",
+      "shadow weaver p",
+      "shadow weaver unit"
+    ],
+    "Vibro Cannon Platform": [
+      "vibro canan plattform",
+      "vibro cannon platfrm",
+      "vcp",
+      "vibro",
+      "vibro gun",
+      "vibro cannon",
+      "vibro cannon pod",
+      "vibro cannon setup"
+    ],
+    "Lhykhis": [
+      "lhykis",
+      "lhykhis the seer"
+    ],
+    "Battle Focus - Agile Manoeuvres": [
+      "battle focus agile manuevers",
+      "bfam",
+      "battle focus",
+      "agile manuevers",
+      "agile focus",
+      "battle agile",
+      "bf",
+      "battle focus agile"
+    ],
+    "Wraithknight with Ghostglaive": [
+      "wraithknight ghost glaive",
+      "wraith knight with ghost glaive",
+      "wraithknight w/ ghostglaive",
+      "wraithknight",
+      "wraith knight",
+      "wraithknight ghostblade",
+      "wraithknight glaive",
+      "wraithknight with ghost blade"
+    ]
+  }
+}
