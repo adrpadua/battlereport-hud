@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { FirecrawlClient } from './firecrawl-client.js';
 import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
-import { parseFactionIndex, parseFactionPage, parseDetachments, parseStratagems, parseEnhancements } from './parsers/faction-parser.js';
+import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
@@ -15,22 +15,32 @@ async function main() {
   const targetIndex = args.indexOf('--target');
   const target: ScrapeTarget = (targetIndex >= 0 ? args[targetIndex + 1] : 'all') as ScrapeTarget;
 
-  console.log(`Starting Wahapedia scraper with target: ${target}`);
+  // Optional: scrape only a specific faction
+  const factionIndex = args.indexOf('--faction');
+  const singleFaction = factionIndex >= 0 ? args[factionIndex + 1] : null;
+
+  if (singleFaction) {
+    console.log(`Starting Wahapedia scraper for faction: ${singleFaction}`);
+  } else {
+    console.log(`Starting Wahapedia scraper with target: ${target}`);
+  }
 
   const client = new FirecrawlClient();
   const db = getDb();
 
   try {
-    if (target === 'core' || target === 'all') {
+    // Skip core rules when scraping a single faction
+    if ((target === 'core' || target === 'all') && !singleFaction) {
       await scrapeCoreRules(client, db);
     }
 
-    if (target === 'factions' || target === 'all') {
-      await scrapeFactions(client, db);
+    // Scrape faction page (skip if --target units with --faction)
+    if (target === 'factions' || target === 'all' || (singleFaction && target !== 'units')) {
+      await scrapeFactions(client, db, singleFaction);
     }
 
     if (target === 'units' || target === 'all') {
-      await scrapeUnits(client, db);
+      await scrapeUnits(client, db, singleFaction);
     }
 
     console.log('\nScraping completed!');
@@ -46,7 +56,7 @@ async function main() {
 async function scrapeCoreRules(client: FirecrawlClient, db: ReturnType<typeof getDb>) {
   console.log('\n=== Scraping Core Rules ===');
 
-  const result = await client.scrape(WAHAPEDIA_URLS.coreRules);
+  const result = await client.scrape(WAHAPEDIA_URLS.rules.core);
   const rules = parseCoreRules(result.markdown, result.url);
 
   console.log(`Parsed ${rules.length} core rule sections`);
@@ -80,25 +90,13 @@ async function scrapeCoreRules(client: FirecrawlClient, db: ReturnType<typeof ge
   console.log(`Saved ${rules.length} core rules to database`);
 }
 
-async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof getDb>) {
+async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null) {
   console.log('\n=== Scraping Factions ===');
 
-  // First, scrape the faction index
-  const indexResult = await client.scrape(WAHAPEDIA_URLS.factionIndex);
-  const factionList = parseFactionIndex(indexResult.markdown, indexResult.url);
+  // Process single faction or all known factions from FACTION_SLUGS
+  const factionsToProcess = singleFaction ? [singleFaction] : FACTION_SLUGS;
 
-  console.log(`Found ${factionList.length} factions in index`);
-
-  // Log index scrape
-  await db.insert(schema.scrapeLog).values({
-    url: indexResult.url,
-    scrapeType: 'faction_index',
-    status: 'success',
-    contentHash: indexResult.contentHash,
-  });
-
-  // Process each known faction
-  for (const factionSlug of FACTION_SLUGS) {
+  for (const factionSlug of factionsToProcess) {
     console.log(`\n--- Processing faction: ${factionSlug} ---`);
 
     try {
@@ -106,9 +104,8 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       const factionUrl = WAHAPEDIA_URLS.factionBase(factionSlug);
       const factionResult = await client.scrape(factionUrl);
 
-      // Find faction name from our list or markdown
-      const knownFaction = factionList.find((f) => f.slug === factionSlug);
-      const factionName = knownFaction?.name || extractFactionName(factionResult.markdown) || factionSlug;
+      // Extract faction name from markdown
+      const factionName = extractFactionName(factionResult.markdown) || factionSlug;
 
       const faction = parseFactionPage(factionResult.markdown, factionSlug, factionName, factionResult.url);
 
@@ -139,11 +136,49 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
         contentHash: factionResult.contentHash,
       });
 
-      // Scrape detachments
-      await scrapeDetachmentsForFaction(client, db, factionSlug, factionId);
+      // Parse detachments and stratagems from main faction page (no separate URLs)
+      const detachments = parseDetachments(factionResult.markdown, factionResult.url);
+      console.log(`  Found ${detachments.length} detachments`);
 
-      // Scrape stratagems
-      await scrapeStratagemsForFaction(client, db, factionSlug, factionId);
+      for (const detachment of detachments) {
+        const [insertedDetachment] = await db
+          .insert(schema.detachments)
+          .values({ ...detachment, factionId })
+          .onConflictDoUpdate({
+            target: [schema.detachments.slug, schema.detachments.factionId],
+            set: {
+              name: detachment.name,
+              detachmentRule: detachment.detachmentRule,
+              detachmentRuleName: detachment.detachmentRuleName,
+              lore: detachment.lore,
+              sourceUrl: detachment.sourceUrl,
+              updatedAt: new Date(),
+            },
+          })
+          .returning();
+
+        const detachmentId = insertedDetachment!.id;
+
+        // Parse enhancements for this detachment
+        const enhancements = parseEnhancements(factionResult.markdown, factionResult.url);
+        for (const enhancement of enhancements) {
+          await db
+            .insert(schema.enhancements)
+            .values({ ...enhancement, detachmentId })
+            .onConflictDoNothing();
+        }
+      }
+
+      // Parse stratagems from main page
+      const stratagems = parseStratagems(factionResult.markdown, factionResult.url);
+      console.log(`  Found ${stratagems.length} stratagems`);
+
+      for (const stratagem of stratagems) {
+        await db
+          .insert(schema.stratagems)
+          .values({ ...stratagem, factionId })
+          .onConflictDoNothing();
+      }
     } catch (error) {
       console.error(`Failed to scrape faction ${factionSlug}:`, error);
 
@@ -158,181 +193,130 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
   }
 }
 
-async function scrapeDetachmentsForFaction(
-  client: FirecrawlClient,
-  db: ReturnType<typeof getDb>,
-  factionSlug: string,
-  factionId: number
-) {
-  try {
-    const url = WAHAPEDIA_URLS.detachments(factionSlug);
-    const result = await client.scrape(url);
-
-    const detachments = parseDetachments(result.markdown, result.url);
-    console.log(`  Found ${detachments.length} detachments`);
-
-    for (const detachment of detachments) {
-      const [insertedDetachment] = await db
-        .insert(schema.detachments)
-        .values({ ...detachment, factionId })
-        .onConflictDoUpdate({
-          target: [schema.detachments.slug, schema.detachments.factionId],
-          set: {
-            name: detachment.name,
-            detachmentRule: detachment.detachmentRule,
-            detachmentRuleName: detachment.detachmentRuleName,
-            lore: detachment.lore,
-            sourceUrl: detachment.sourceUrl,
-            updatedAt: new Date(),
-          },
-        })
-        .returning();
-
-      const detachmentId = insertedDetachment!.id;
-
-      // Parse enhancements from the same content
-      const enhancements = parseEnhancements(result.markdown, result.url);
-      for (const enhancement of enhancements) {
-        await db
-          .insert(schema.enhancements)
-          .values({ ...enhancement, detachmentId })
-          .onConflictDoNothing();
-      }
-    }
-
-    // Log scrape
-    await db.insert(schema.scrapeLog).values({
-      url,
-      scrapeType: 'detachments',
-      status: 'success',
-      contentHash: result.contentHash,
-    });
-  } catch (error) {
-    console.error(`  Failed to scrape detachments for ${factionSlug}:`, error);
-  }
-}
-
-async function scrapeStratagemsForFaction(
-  client: FirecrawlClient,
-  db: ReturnType<typeof getDb>,
-  factionSlug: string,
-  factionId: number
-) {
-  try {
-    const url = WAHAPEDIA_URLS.stratagems(factionSlug);
-    const result = await client.scrape(url);
-
-    const stratagems = parseStratagems(result.markdown, result.url);
-    console.log(`  Found ${stratagems.length} stratagems`);
-
-    for (const stratagem of stratagems) {
-      await db
-        .insert(schema.stratagems)
-        .values({ ...stratagem, factionId })
-        .onConflictDoNothing();
-    }
-
-    // Log scrape
-    await db.insert(schema.scrapeLog).values({
-      url,
-      scrapeType: 'stratagems',
-      status: 'success',
-      contentHash: result.contentHash,
-    });
-  } catch (error) {
-    console.error(`  Failed to scrape stratagems for ${factionSlug}:`, error);
-  }
-}
-
-async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>) {
+async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null) {
   console.log('\n=== Scraping Units ===');
 
-  // Get all factions from database
-  const factions = await db.select().from(schema.factions);
+  // Get factions from database (filtered if single faction specified)
+  let factions;
+  if (singleFaction) {
+    factions = await db.select().from(schema.factions).where(eq(schema.factions.slug, singleFaction));
+    if (factions.length === 0) {
+      console.error(`Faction "${singleFaction}" not found in database. Run faction scrape first.`);
+      return;
+    }
+  } else {
+    factions = await db.select().from(schema.factions);
+  }
 
   for (const faction of factions) {
     console.log(`\n--- Scraping units for: ${faction.name} ---`);
 
     try {
-      const url = WAHAPEDIA_URLS.datasheets(faction.slug);
-      const result = await client.scrape(url);
+      // First, get the datasheets index to extract unit slugs
+      const indexUrl = WAHAPEDIA_URLS.datasheets(faction.slug);
+      const indexResult = await client.scrape(indexUrl);
 
-      const units = parseDatasheets(result.markdown, result.url);
-      console.log(`  Found ${units.length} units`);
+      // Extract unit slugs from TOC links
+      const unitLinks = extractUnitLinksFromTOC(indexResult.markdown, faction.slug);
+      console.log(`  Found ${unitLinks.length} unit links in TOC`);
 
-      for (const { unit, weapons, abilities } of units) {
-        // Insert unit
-        const [insertedUnit] = await db
-          .insert(schema.units)
-          .values({ ...unit, factionId: faction.id })
-          .onConflictDoUpdate({
-            target: [schema.units.slug, schema.units.factionId],
-            set: {
-              name: unit.name,
-              movement: unit.movement,
-              toughness: unit.toughness,
-              save: unit.save,
-              invulnerableSave: unit.invulnerableSave,
-              wounds: unit.wounds,
-              leadership: unit.leadership,
-              objectiveControl: unit.objectiveControl,
-              pointsCost: unit.pointsCost,
-              unitComposition: unit.unitComposition,
-              wargearOptions: unit.wargearOptions,
-              leaderInfo: unit.leaderInfo,
-              ledBy: unit.ledBy,
-              transportCapacity: unit.transportCapacity,
-              isEpicHero: unit.isEpicHero,
-              isBattleline: unit.isBattleline,
-              isDedicatedTransport: unit.isDedicatedTransport,
-              legends: unit.legends,
-              sourceUrl: unit.sourceUrl,
-              updatedAt: new Date(),
-            },
-          })
-          .returning();
+      let successCount = 0;
 
-        const unitId = insertedUnit!.id;
+      // Scrape each individual unit page
+      for (const { name, slug } of unitLinks) {
+        try {
+          const unitUrl = WAHAPEDIA_URLS.unitDatasheet(faction.slug, slug);
+          console.log(`    Scraping: ${name}`);
+          const unitResult = await client.scrape(unitUrl);
 
-        // Insert weapons
-        for (const weapon of weapons) {
-          const [insertedWeapon] = await db
-            .insert(schema.weapons)
-            .values(weapon)
-            .onConflictDoNothing()
+          const units = parseDatasheets(unitResult.markdown, unitResult.url);
+          if (units.length === 0) {
+            console.log(`      No unit data parsed, skipping`);
+            continue;
+          }
+
+          // Use the first parsed unit (should only be one per page)
+          const { unit, weapons, abilities } = units[0]!;
+
+          // Insert unit
+          const [insertedUnit] = await db
+            .insert(schema.units)
+            .values({ ...unit, factionId: faction.id })
+            .onConflictDoUpdate({
+              target: [schema.units.slug, schema.units.factionId],
+              set: {
+                name: unit.name,
+                movement: unit.movement,
+                toughness: unit.toughness,
+                save: unit.save,
+                invulnerableSave: unit.invulnerableSave,
+                wounds: unit.wounds,
+                leadership: unit.leadership,
+                objectiveControl: unit.objectiveControl,
+                pointsCost: unit.pointsCost,
+                unitComposition: unit.unitComposition,
+                wargearOptions: unit.wargearOptions,
+                leaderInfo: unit.leaderInfo,
+                ledBy: unit.ledBy,
+                transportCapacity: unit.transportCapacity,
+                isEpicHero: unit.isEpicHero,
+                isBattleline: unit.isBattleline,
+                isDedicatedTransport: unit.isDedicatedTransport,
+                legends: unit.legends,
+                sourceUrl: unit.sourceUrl,
+                updatedAt: new Date(),
+              },
+            })
             .returning();
 
-          if (insertedWeapon) {
-            await db
-              .insert(schema.unitWeapons)
-              .values({ unitId, weaponId: insertedWeapon.id })
-              .onConflictDoNothing();
-          }
-        }
+          const unitId = insertedUnit!.id;
 
-        // Insert abilities
-        for (const ability of abilities) {
-          const [insertedAbility] = await db
-            .insert(schema.abilities)
-            .values({ ...ability, factionId: faction.id })
-            .onConflictDoNothing()
-            .returning();
+          // Insert weapons
+          for (const weapon of weapons) {
+            const [insertedWeapon] = await db
+              .insert(schema.weapons)
+              .values(weapon)
+              .onConflictDoNothing()
+              .returning();
 
-          if (insertedAbility) {
-            await db
-              .insert(schema.unitAbilities)
-              .values({ unitId, abilityId: insertedAbility.id })
-              .onConflictDoNothing();
+            if (insertedWeapon) {
+              await db
+                .insert(schema.unitWeapons)
+                .values({ unitId, weaponId: insertedWeapon.id })
+                .onConflictDoNothing();
+            }
           }
+
+          // Insert abilities
+          for (const ability of abilities) {
+            const [insertedAbility] = await db
+              .insert(schema.abilities)
+              .values({ ...ability, factionId: faction.id })
+              .onConflictDoNothing()
+              .returning();
+
+            if (insertedAbility) {
+              await db
+                .insert(schema.unitAbilities)
+                .values({ unitId, abilityId: insertedAbility.id })
+                .onConflictDoNothing();
+            }
+          }
+
+          successCount++;
+        } catch (unitError) {
+          console.error(`      Failed to scrape unit ${name}:`, unitError instanceof Error ? unitError.message : unitError);
         }
       }
 
+      console.log(`  Successfully scraped ${successCount}/${unitLinks.length} units`);
+
       // Log scrape
       await db.insert(schema.scrapeLog).values({
-        url,
+        url: indexUrl,
         scrapeType: 'units',
         status: 'success',
-        contentHash: result.contentHash,
+        contentHash: indexResult.contentHash,
       });
     } catch (error) {
       console.error(`  Failed to scrape units for ${faction.slug}:`, error);
@@ -345,6 +329,35 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
       });
     }
   }
+}
+
+/**
+ * Extract unit links from the datasheets TOC
+ * Format: [Unit Name](https://wahapedia.ru/wh40k10ed/factions/faction-slug/datasheets#Unit-Slug)
+ */
+function extractUnitLinksFromTOC(markdown: string, factionSlug: string): { name: string; slug: string }[] {
+  const units: { name: string; slug: string }[] = [];
+  const seen = new Set<string>();
+
+  // Match links to datasheets with anchor: [Name](/wh40k10ed/factions/slug/datasheets#Unit-Slug)
+  const linkRegex = /\[([^\]]+)\]\([^)]*\/factions\/[^/]+\/datasheets#([^)]+)\)/g;
+  let match;
+
+  while ((match = linkRegex.exec(markdown)) !== null) {
+    const name = match[1]?.trim();
+    // Convert URL-encoded slug to lowercase kebab-case for the individual page URL
+    const anchorSlug = match[2]?.trim();
+
+    if (!name || !anchorSlug || seen.has(anchorSlug)) continue;
+    seen.add(anchorSlug);
+
+    // Keep original casing from anchor (wahapedia requires capitalized slugs)
+    const slug = decodeURIComponent(anchorSlug).replace(/\s+/g, '-');
+
+    units.push({ name, slug });
+  }
+
+  return units;
 }
 
 function extractFactionName(markdown: string): string | null {

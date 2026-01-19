@@ -3,75 +3,68 @@
 export const WAHAPEDIA_BASE_URL = 'https://wahapedia.ru/wh40k10ed';
 
 export const WAHAPEDIA_URLS = {
-  // Core rules
-  coreRules: `${WAHAPEDIA_BASE_URL}/the-rules/core-rules/`,
-
-  // Rule categories
+  // Rule categories (include these)
   rules: {
+    quickStart: `${WAHAPEDIA_BASE_URL}/the-rules/quick-start-guide/`,
     core: `${WAHAPEDIA_BASE_URL}/the-rules/core-rules/`,
-    missions: `${WAHAPEDIA_BASE_URL}/the-rules/matched-play/`,
     crusade: `${WAHAPEDIA_BASE_URL}/the-rules/crusade-rules/`,
-    terrain: `${WAHAPEDIA_BASE_URL}/the-rules/terrain/`,
+    commentary: `${WAHAPEDIA_BASE_URL}/the-rules/rules-commentary/`,
+    faqs: `${WAHAPEDIA_BASE_URL}/the-rules/faqs/`,
   },
 
-  // Faction index
-  factionIndex: `${WAHAPEDIA_BASE_URL}/factions/`,
+  // Matched Mission Packs (include these)
+  missionPacks: {
+    leviathan: `${WAHAPEDIA_BASE_URL}/the-rules/leviathan/`,
+    pariahNexus: `${WAHAPEDIA_BASE_URL}/the-rules/pariah-nexus-battles/`,
+    chapterApproved: `${WAHAPEDIA_BASE_URL}/the-rules/chapter-approved-2025-26/`,
+  },
 
-  // Dynamic faction URLs - pattern: /wh40k10ed/factions/{faction-slug}/
+  // IGNORE: Crusade Mission Packs, Boarding Actions, Others
+
+  // Faction main page - contains all content (army rules, detachments, stratagems, enhancements)
   factionBase: (slug: string) => `${WAHAPEDIA_BASE_URL}/factions/${slug}/`,
 
-  // Datasheets (units) - pattern: /wh40k10ed/factions/{faction-slug}/datasheets
+  // Datasheets listing page for a faction
   datasheets: (factionSlug: string) => `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/datasheets`,
 
-  // Detachments - pattern: /wh40k10ed/factions/{faction-slug}/detachments
-  detachments: (factionSlug: string) => `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/detachments`,
-
-  // Army rules
-  armyRules: (factionSlug: string) => `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/army-rules`,
-
-  // Stratagems
-  stratagems: (factionSlug: string) => `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/stratagems`,
-
-  // FAQ/Errata
-  faq: `${WAHAPEDIA_BASE_URL}/faq/`,
+  // Individual unit datasheets - pattern: /wh40k10ed/factions/{faction-slug}/{unit-name}
+  unitDatasheet: (factionSlug: string, unitSlug: string) =>
+    `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/${unitSlug}`,
 };
 
-// Known factions with their Wahapedia slugs
+// Known factions with their Wahapedia slugs (updated Jan 2026)
 export const FACTION_SLUGS = [
   // Imperium
-  'adeptus-astartes',
-  'blood-angels',
-  'dark-angels',
-  'deathwatch',
-  'space-wolves',
-  'black-templars',
-  'grey-knights',
-  'adeptus-custodes',
   'adepta-sororitas',
+  'adeptus-custodes',
   'adeptus-mechanicus',
   'astra-militarum',
-  'imperial-knights',
+  'grey-knights',
   'imperial-agents',
+  'imperial-knights',
+  'space-marines',
 
   // Chaos
-  'chaos-space-marines',
-  'death-guard',
-  'thousand-sons',
-  'world-eaters',
   'chaos-daemons',
   'chaos-knights',
+  'chaos-space-marines',
+  'death-guard',
+  'emperors-children',
+  'thousand-sons',
+  'world-eaters',
 
   // Xenos
   'aeldari',
   'drukhari',
-  'harlequins',
-  'ynnari',
+  'genestealer-cults',
+  'leagues-of-votann',
   'necrons',
   'orks',
   'tau-empire',
   'tyranids',
-  'genestealer-cults',
-  'leagues-of-votann',
+
+  // Unaligned
+  'unaligned-forces',
 ] as const;
 
 export type FactionSlug = typeof FACTION_SLUGS[number];
@@ -102,15 +95,20 @@ export function getScraperConfig(): ScraperConfig {
 
 // Content type detection based on URL patterns
 export function detectContentType(url: string): string {
+  // Rules
+  if (url.includes('/quick-start-guide')) return 'quick_start';
   if (url.includes('/core-rules')) return 'core_rules';
-  if (url.includes('/matched-play')) return 'missions';
-  if (url.includes('/crusade')) return 'crusade';
-  if (url.includes('/terrain')) return 'terrain';
-  if (url.includes('/datasheets')) return 'units';
-  if (url.includes('/detachments')) return 'detachments';
-  if (url.includes('/army-rules')) return 'army_rules';
-  if (url.includes('/stratagems')) return 'stratagems';
-  if (url.includes('/faq')) return 'faq';
+  if (url.includes('/crusade-rules')) return 'crusade_rules';
+  if (url.includes('/rules-commentary')) return 'commentary';
+  if (url.includes('/faqs')) return 'faqs';
+
+  // Mission Packs
+  if (url.includes('/leviathan')) return 'mission_pack';
+  if (url.includes('/pariah-nexus-battles')) return 'mission_pack';
+  if (url.includes('/chapter-approved')) return 'mission_pack';
+
+  // Faction content (all on main faction page)
   if (url.includes('/factions/')) return 'faction';
+
   return 'unknown';
 }
