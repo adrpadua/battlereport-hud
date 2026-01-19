@@ -1,7 +1,7 @@
 import { select, confirm, checkbox } from '@inquirer/prompts';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
-import { sql, eq } from 'drizzle-orm';
+import { sql, eq, inArray } from 'drizzle-orm';
 import { FACTION_SLUGS } from '../scraper/config.js';
 
 // Import action functions from command modules
@@ -217,7 +217,7 @@ async function buildUnitIndex(factionSlugs: string[], force: boolean): Promise<v
   const factions = await db.select()
     .from(schema.factions)
     .where(factionSlugs.length > 0
-      ? sql`${schema.factions.slug} = ANY(${factionSlugs})`
+      ? inArray(schema.factions.slug, factionSlugs)
       : sql`1=1`);
 
   for (const faction of factions) {
@@ -279,7 +279,7 @@ async function scrapeUnits(factionSlugs: string[]): Promise<void> {
   const factions = await db.select()
     .from(schema.factions)
     .where(factionSlugs.length > 0
-      ? sql`${schema.factions.slug} = ANY(${factionSlugs})`
+      ? inArray(schema.factions.slug, factionSlugs)
       : sql`1=1`);
 
   for (const faction of factions) {
