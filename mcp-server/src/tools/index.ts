@@ -2,9 +2,17 @@ import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { Database } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { eq, ilike, or, and, sql } from 'drizzle-orm';
+import {
+  createValidationTools,
+  handleValidationToolCall,
+  VALIDATION_TOOL_NAMES,
+} from './validation-tools.js';
 
 export function createTools(): Tool[] {
   return [
+    // Validation tools for LLM terminology validation
+    ...createValidationTools(),
+
     // Core Rules
     {
       name: 'get_core_rules',
@@ -271,6 +279,11 @@ export async function handleToolCall(
   name: string,
   args: Record<string, unknown>
 ): Promise<{ content: Array<{ type: 'text'; text: string }> }> {
+  // Check if this is a validation tool
+  if (VALIDATION_TOOL_NAMES.includes(name)) {
+    return handleValidationToolCall(db, name, args);
+  }
+
   try {
     let result: unknown;
 

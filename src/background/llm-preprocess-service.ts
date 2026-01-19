@@ -8,6 +8,8 @@ const OVERLAP_SEGMENTS = 2; // Number of segments to overlap between chunks
 const MAX_CONCURRENT_REQUESTS = 3;
 const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY_MS = 1000;
+const MCP_SERVER_URL = 'http://localhost:40401';
+const MCP_VALIDATION_TIMEOUT_MS = 5000;
 
 interface PreprocessResponse {
   mappings: Record<string, string>;
@@ -255,6 +257,90 @@ async function processChunksWithConcurrency(
 }
 
 /**
+ * Validate term mappings against the MCP server.
+ * Returns corrected mappings where available, falling back to original LLM mappings.
+ * This is optional - if the MCP server is unavailable, it returns the original mappings.
+ */
+async function validateTermsWithMcp(
+  termMappings: Record<string, string>,
+  factions: string[]
+): Promise<Record<string, string>> {
+  const terms = Object.values(termMappings);
+  if (terms.length === 0) return termMappings;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), MCP_VALIDATION_TIMEOUT_MS);
+
+    const response = await fetch(`${MCP_SERVER_URL}/api/validate-terms`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        terms,
+        factions,
+        minConfidence: 0.7,
+        categories: ['units', 'stratagems', 'abilities', 'factions', 'enhancements'],
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      console.warn(`MCP validation failed with status ${response.status}, using LLM mappings`);
+      return termMappings;
+    }
+
+    const data = await response.json();
+
+    // Validate response structure
+    if (!data || typeof data !== 'object' || !Array.isArray(data.results)) {
+      console.warn('MCP validation returned invalid response structure, using LLM mappings');
+      return termMappings;
+    }
+
+    // Build a map of LLM official names to MCP validated names
+    const mcpValidated: Record<string, string> = {};
+    for (const result of data.results) {
+      if (
+        result &&
+        typeof result === 'object' &&
+        typeof result.input === 'string' &&
+        typeof result.match === 'string' &&
+        typeof result.confidence === 'number' &&
+        result.confidence >= 0.7
+      ) {
+        mcpValidated[result.input.toLowerCase()] = result.match;
+      }
+    }
+
+    // Apply MCP corrections to the mappings
+    const correctedMappings: Record<string, string> = {};
+    for (const [colloquial, llmOfficial] of Object.entries(termMappings)) {
+      const mcpMatch = mcpValidated[llmOfficial.toLowerCase()];
+      // Use MCP match if found, otherwise keep LLM mapping
+      correctedMappings[colloquial] = mcpMatch || llmOfficial;
+    }
+
+    const corrections = Object.entries(correctedMappings).filter(
+      ([k, v]) => termMappings[k] !== v
+    ).length;
+    if (corrections > 0) {
+      console.log(`MCP validation corrected ${corrections} term mappings`);
+    }
+
+    return correctedMappings;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.warn('MCP validation timed out, using LLM mappings');
+    } else {
+      console.warn('MCP validation unavailable, using LLM mappings:', error);
+    }
+    return termMappings;
+  }
+}
+
+/**
  * Merge multiple chunk responses into a single result.
  */
 function mergeChunkResponses(
@@ -329,18 +415,48 @@ export async function preprocessWithLlm(
   // Process all chunks with concurrency limit
   const responses = await processChunksWithConcurrency(openai, chunks, factions);
 
-  // Merge results
-  const { normalizedSegments, termMappings } = mergeChunkResponses(transcript, responses);
+  // Merge results from all chunks
+  const { termMappings: rawTermMappings } = mergeChunkResponses(transcript, responses);
+
+  // Optionally validate LLM mappings against MCP server (non-blocking if unavailable)
+  const validatedMappings = await validateTermsWithMcp(rawTermMappings, factions);
+
+  // Apply validated mappings to create final normalized segments
+  const normalizedSegments: NormalizedSegment[] = transcript.map((seg) => {
+    let normalizedText = seg.text;
+    let taggedText = seg.text;
+
+    for (const [colloquial, official] of Object.entries(validatedMappings)) {
+      const escapedColloquial = colloquial.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escapedColloquial}\\b`, 'gi');
+
+      normalizedText = normalizedText.replace(regex, (match) => {
+        const firstChar = match[0] ?? '';
+        const isUpperCase = firstChar === firstChar.toUpperCase() && firstChar !== '';
+        return isUpperCase
+          ? official.charAt(0).toUpperCase() + official.slice(1)
+          : official.toLowerCase();
+      });
+
+      taggedText = taggedText.replace(regex, `[TERM:${official}]`);
+    }
+
+    return {
+      ...seg,
+      normalizedText,
+      taggedText,
+    };
+  });
 
   // Calculate confidence based on how many chunks had mappings
   const chunksWithMappings = responses.filter(r => Object.keys(r.mappings).length > 0).length;
   const confidence = chunks.length > 0 ? chunksWithMappings / chunks.length : 1;
 
-  console.log(`LLM preprocessing complete: ${Object.keys(termMappings).length} term mappings found`);
+  console.log(`LLM preprocessing complete: ${Object.keys(validatedMappings).length} term mappings found`);
 
   return {
     normalizedSegments,
-    termMappings,
+    termMappings: validatedMappings,
     confidence,
     modelUsed: 'gpt-4o-mini',
     processedAt: Date.now(),

@@ -5,6 +5,7 @@ import { registerHealthRoutes } from './routes/health.js';
 import { registerUnitRoutes } from './routes/units.js';
 import { registerStratagemRoutes } from './routes/stratagems.js';
 import { registerEnhancementRoutes } from './routes/enhancements.js';
+import { registerValidationRoutes } from './routes/validation.js';
 
 const HTTP_PORT = 40401;
 
@@ -15,14 +16,14 @@ export async function createHttpServer(db: Database) {
     },
   });
 
-  // Register CORS for browser extension access
+  // Register CORS for browser extension and local service access
   await fastify.register(cors, {
     origin: [
       /^chrome-extension:\/\//,
       /^moz-extension:\/\//,
       /^http:\/\/localhost/,
     ],
-    methods: ['GET'],
+    methods: ['GET', 'POST'],
   });
 
   // Register routes
@@ -30,6 +31,7 @@ export async function createHttpServer(db: Database) {
   registerUnitRoutes(fastify, db);
   registerStratagemRoutes(fastify, db);
   registerEnhancementRoutes(fastify, db);
+  registerValidationRoutes(fastify, db);
 
   return fastify;
 }
