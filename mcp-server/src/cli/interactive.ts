@@ -70,13 +70,26 @@ async function selectFactions(): Promise<string[]> {
     return FACTION_SLUGS as unknown as string[];
   }
 
+  // Clean faction names (remove junk after the actual name)
+  const cleanName = (name: string) => {
+    // Remove everything after common patterns like "[ No filter" or "\["
+    return name.replace(/\s*\[.*$/, '').replace(/\s*\\.*$/, '').trim();
+  };
+
   const selected = await checkbox({
-    message: 'Select factions (space to toggle, enter to confirm):',
+    message: 'Select factions (↑↓ navigate, SPACE to select, ENTER to confirm):',
     choices: [
-      { name: 'All factions', value: '__all__' },
-      ...dbFactions.map(f => ({ name: f.name, value: f.slug })),
+      { name: '★ All factions', value: '__all__' },
+      ...dbFactions.map(f => ({ name: cleanName(f.name), value: f.slug })),
     ],
     pageSize: 15,
+    required: true,
+    validate: (items) => {
+      if (items.length === 0) {
+        return 'Please select at least one faction (press SPACE to select)';
+      }
+      return true;
+    },
   });
 
   if (selected.includes('__all__')) {
