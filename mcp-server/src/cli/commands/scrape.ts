@@ -37,7 +37,13 @@ function extractUnitLinksFromTOC(markdown: string): { name: string; slug: string
 function extractFactionName(markdown: string): string | null {
   const h1Match = markdown.match(/^#\s+(.+)$/m);
   if (h1Match?.[1]) {
-    return h1Match[1].trim();
+    // Clean the name - remove filter UI junk like "\[ Chapter: No filter..."
+    const rawName = h1Match[1].trim();
+    const cleanName = rawName
+      .replace(/\s*\\?\[.*$/, '')  // Remove everything after [ or \[
+      .replace(/\s{2,}.*$/, '')     // Remove everything after multiple spaces
+      .trim();
+    return cleanName || rawName.substring(0, 100); // Fallback to truncated if cleaning fails
   }
   return null;
 }

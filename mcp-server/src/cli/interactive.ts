@@ -145,7 +145,12 @@ async function scrapeFactions(factionSlugs: string[]): Promise<void> {
       const factionResult = await client.scrape(factionUrl);
 
       const h1Match = factionResult.markdown.match(/^#\s+(.+)$/m);
-      const factionName = h1Match?.[1]?.trim() || factionSlug;
+      const rawName = h1Match?.[1]?.trim() || factionSlug;
+      // Clean the name - remove filter UI junk like "\[ Chapter: No filter..."
+      const factionName = rawName
+        .replace(/\s*\\?\[.*$/, '')
+        .replace(/\s{2,}.*$/, '')
+        .trim() || rawName.substring(0, 100);
       const faction = parseFactionPage(factionResult.markdown, factionSlug, factionName, factionResult.url);
 
       const [insertedFaction] = await db
