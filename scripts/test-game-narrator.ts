@@ -101,6 +101,7 @@ function detectFactionsFromTitle(title: string): string[] {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const callAi = args.includes('--call-ai');
+  const dumpTranscript = args.includes('--dump-transcript');
   const videoId = args.find((a) => !a.startsWith('--')) ?? DEFAULT_VIDEO_ID;
 
   console.log('='.repeat(80));
@@ -136,8 +137,23 @@ async function main(): Promise<void> {
   const preprocessed = preprocessTranscript(captions.segments, allUnitNames);
 
   console.log(`Stratagems detected: ${preprocessed.stratagemMentions.size}`);
+  console.log(`Objectives detected: ${preprocessed.objectiveMentions.size}`);
   console.log(`Units detected: ${preprocessed.unitMentions.size}`);
   console.log(`Term corrections: ${preprocessed.colloquialToOfficial.size}`);
+
+  // Dump preprocessed transcript if requested
+  if (dumpTranscript) {
+    const transcriptLines = preprocessed.normalizedSegments
+      .map((s) => {
+        const mins = Math.floor(s.startTime / 60);
+        const secs = String(Math.floor(s.startTime % 60)).padStart(2, '0');
+        return `[${mins}:${secs}] ${s.taggedText}`;
+      })
+      .join('\n');
+    const outputPath = path.join(process.cwd(), 'test-data', `transcript-${videoId}.txt`);
+    fs.writeFileSync(outputPath, transcriptLines);
+    console.log(`\nPreprocessed transcript saved to: ${outputPath}`);
+  }
 
   // Build faction data for prompt
   let factionData: { faction1?: FactionData; faction2?: FactionData } | undefined;

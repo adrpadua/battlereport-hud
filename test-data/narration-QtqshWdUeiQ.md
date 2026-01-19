@@ -1,59 +1,83 @@
 # Game Setup
-- Players: Drukhari (Cartel Detachment) vs. Genestealer Cults (Muscle Beach Detachment) [0:05]
-- Mission: Hidden Supplies on layout number seven [3:10]
-- Deployment: The Drukhari deploy with a focus on midboard control using Mandrakes, and the Genestealer Cults set up with a mix of units aiming for a strategic approach [4:30]
 
-## Drukhari Army Overview
-- Key units: [UNIT:Archon] Sepsis, Scourge with Dark Lances, [UNIT:Ravager] with Disintegrator Cannons, [UNIT:cronos] units for support, and [UNIT:Venom] transports [0:49, 1:30, 1:43]
-- Strategy: Versatile approach focusing on tactical flexibility and control [0:33]
-
-## Genestealer Cults Army Overview
-- Key units: [UNIT:Abominant] with [UNIT:Aberrants], [UNIT:goliath rockgrinder], [UNIT:Patriarch] with [UNIT:purestrain genestealers], and support units like [UNIT:kelermorph] and [UNIT:reductus saboteur] [2:02, 2:33, 2:46]
-- Strategy: Aggressive infiltrative tactics with a focus on overwhelming enemy positions [2:40]
+- **Players and Factions**: The game features the Drukhari, led by Player 1, and the Genestealer Cults, commanded by Player 2 [0:02].
+- **Mission and Deployment**: The mission being played is "Mission F" with the "Hidden Supplies" objective on layout number seven [3:10]. The Drukhari have a strategic deployment with infiltrated units like [UNIT:mandrakes] taking up mid-board space, while the Genestealer Cults deploy to maximize their infiltration and ambush capabilities [4:30].
+- **Army Lists Overview**:
+  - **Drukhari**: The army includes multiple [UNIT:Archon]s, [UNIT:kabalite warriors], [UNIT:mandrakes], [UNIT:Ravager]s, [UNIT:cronos], [UNIT:reavers], and [UNIT:Venom]s, among other units [0:30-1:51].
+  - **Genestealer Cults**: Features units like [UNIT:Abominant], [UNIT:aberrants], [UNIT:goliath rockgrinder], [UNIT:kelermorph], [UNIT:Patriarch], and multiple units of [UNIT:purestrain genestealers] among others [2:02-2:56].
 
 # Turn 1
 
 ## Drukhari Turn 1
-- **Movement**: [UNIT:Venom] advances to strategically position for shooting and potentially bait out [STRAT:fire overwatch] [9:51]
-- **Shooting**: [UNIT:Ravager] targets [UNIT:purestrain genestealers], dealing significant damage but leaving one alive, which is then finished by splinter cannon fire [12:00]
-- **Results**: [UNIT:goliath rockgrinder] is reduced to 2 wounds by dark lance shots [12:40]
-- **Scoring**: Secures 3 points for Recover Assets [13:27]
+
+- **Movement**: The Drukhari make strategic advances. [UNIT:Ravager] moves up to target [UNIT:purestrain genestealers] [9:18]. [UNIT:Venom]s advance to position for shooting and objective control [10:00].
+- **Shooting**: 
+  - **[UNIT:Ravager]** [11:01]: Targets the [UNIT:purestrain genestealers], using [STRATAGEM:command re-roll] for full rerolls, manages to inflict eight invulnerable saves, leaving one Genestealer alive [12:00].
+  - **[UNIT:cronos] and [UNIT:Venom]** [10:16]: Engage in covering fire to secure objectives, contributing to the elimination of remaining Genestealers.
+- **Objectives**: Secures [OBJECTIVE:recover assets] for three points, but decides to discard [OBJECTIVE:bring it down] for a CP [12:45].
 
 ## Genestealer Cults Turn 1
-- **Movement**: Units position for strategic advantage, planning for potential charges and objective control [15:05]
-- **Shooting**: [UNIT:kelermorph] and [UNIT:reductus saboteur] contribute to targeting key Drukhari units; however, the shooting phase results in minimal damage to the Drukhari forces [16:11]
-- **Results**: Genestealer Cults secure 8 points on secondaries due to effective strategic positioning and area denial [17:00]
+
+- **Movement**: The Cults reposition for defense, opting to hide vulnerable units like [UNIT:purestrain genestealers] after a failed advance roll [15:13].
+- **Shooting**:
+  - **[UNIT:Ravager]** is targeted by lascannons, but survives due to successful saves [16:14].
+  - **Mortar** attempts to target [UNIT:scourge] but fails to cause significant damage [16:45].
+- **Objectives**: Scores three points for [OBJECTIVE:overwhelming force] and five points for [OBJECTIVE:area denial] [16:58].
 
 # Turn 2
 
 ## Drukhari Turn 2
-- **Movement**: Strategic repositioning with [UNIT:Venom] and [UNIT:Ravager] to maintain pressure and control over objectives [18:26]
-- **Shooting**: [UNIT:Ravager] and dark lance scourge focus fire on [UNIT:goliath rockgrinder] and other targets, achieving lethal hits and clearing key units [20:08]
-- **Scoring**: Gains 5 points for cleanse actions and continues to pressure Genestealer positions [21:26]
+
+- **Movement**: Drukhari continue their aggressive positioning, sacrificing a [UNIT:Venom] to pull strategic reserves and taking control of objectives [18:26].
+- **Shooting**:
+  - **[UNIT:Ravager]** [20:05]: Executes lethal hits, destroying a [UNIT:goliath rockgrinder] and [UNIT:kelermorph].
+  - **[UNIT:cronos]** and [UNIT:Venom] [20:22]: Conducts efficient shooting, clearing objectives of enemy presence.
+- **Objectives**: Completes [OBJECTIVE:cleanse] for five points, deciding to hold onto [OBJECTIVE:storm hostile objective] for future scoring [21:26].
 
 ## Genestealer Cults Turn 2
-- **Movement**: [UNIT:Aberrants] and [UNIT:flamers] set up for charges while maintaining control over critical areas [22:12]
-- **Shooting**: [UNIT:flamers] deliver a strong attack against [UNIT:scourge], but the Drukhari saves minimize the impact [23:33]
-- **Charges**: [UNIT:goliath rockgrinder] attempts a charge on [UNIT:Venom] but fails, affecting their strategic position [24:07]
-- **Results**: Gain points for bring it down but struggle to maintain objective control [25:36]
+
+- **Movement**: Cults prepare for a counter-offensive, moving [UNIT:Aberrants] and [UNIT:flamers] into position [22:12].
+- **Shooting**:
+  - **[UNIT:flamers]** [23:13]: Inflict 14 wounds on [UNIT:scourge], but only three models are lost due to strong saves [23:36].
+- **Charges**:
+  - **[UNIT:goliath rockgrinder]** [24:00]: Successfully charges, contesting objectives and eliminating [UNIT:kabalite warriors] [25:06].
+- **Objectives**: Earns four points for [OBJECTIVE:bring it down] [25:34].
 
 # Turn 3
 
 ## Drukhari Turn 3
-- **Movement**: Drukhari units continue to reposition aggressively, utilizing [STRAT:rapid ingress] to maintain control and pressure [28:06]
-- **Shooting**: Focused fire on [UNIT:purestrain genestealers] and [UNIT:Aberrants] leads to significant damage to Genestealer forces [30:01]
-- **Combat**: [UNIT:Archon] and [UNIT:lady malys] engage in melee, effectively removing high-threat units [31:20]
-- **Scoring**: Secures storm hostile objective with effective board control and killing priority targets [32:18]
+
+- **Movement**: Drukhari utilize [STRATAGEM:rapid ingress] to reposition and apply pressure, particularly focusing on [UNIT:purestrain genestealers] [28:06].
+- **Shooting**:
+  - **[UNIT:Ravager]** [30:08]: Deals significant damage, wiping out a [UNIT:Patriarch] and several [UNIT:Aberrants].
+- **Charges**:
+  - **Malice** [31:20]: Charges into combat, successfully eliminating an [UNIT:Abominant].
+- **Objectives**: Secures [OBJECTIVE:storm hostile objective] and [OBJECTIVE:defend stronghold] [32:16].
 
 ## Genestealer Cults Turn 3
-- **Movement**: Attempt to reposition and bring in reserves to counter Drukhari pressure [33:25]
-- **Shooting and Combat**: Limited success in combat as Drukhari defenses hold strong, minimizing Genestealer impact [34:05]
-- **Results**: Struggle to capitalize on objectives and secondaries due to effective Drukhari tactics [35:50]
+
+- **Movement**: The Cults reinforce with deep-striking [UNIT:Aberrants] and reposition for a strategic push [33:25].
+- **Shooting**:
+  - **[UNIT:flamers]** [34:08]: Attempt to eliminate [UNIT:Archon] but fail to do so.
+- **Objectives**: Scores [OBJECTIVE:no prisoners] and partially achieves [OBJECTIVE:marked for death] [34:47].
+
+# Turn 4
+
+## Drukhari Turn 4
+
+- **Movement**: Drukhari prepare for a final push, strategically positioning units like [UNIT:cronos] to deny objectives [36:16].
+- **Shooting**:
+  - **[UNIT:Ravager]** [37:02]: Continues to deliver high damage output, clearing enemy models from key positions.
+- **Objectives**: Focus remains on maintaining control and denying the opponent scoring opportunities.
+
+## Genestealer Cults Turn 4
+
+- **Movement and Shooting**: The Cults continue their strategy to reclaim objectives and execute critical eliminations, though specifics are less clear in the transcript.
 
 # Final Results
-- Final Score: Drukhari 23, Genestealer Cults 19 [35:57]
-- Survivors: Drukhari maintain several key units, including [UNIT:lady malys] and [UNIT:Venom], while Genestealer Cults are left with few forces [35:57]
-- Key Moments: Drukhari's effective use of [STRAT:rapid ingress] and lethal hits with [UNIT:Ravager] were pivotal in maintaining board control and eliminating threats [30:01]
-- Turning Point: The failure of key charges and inability to reclaim objectives significantly hindered the Genestealer Cults' ability to compete effectively against the Drukhari's tactical play [24:07]
 
-Overall, the Drukhari's flexible tactics and effective use of stratagems secured them a narrow but decisive victory against the Genestealer Cults.
+- **Final Score**: The Drukhari maintain a lead in primary objectives, while the Genestealer Cults excel in secondary objectives. Exact final scores at the end of the game are not provided.
+- **Surviving Units**: Key Drukhari units such as [UNIT:ravager] and [UNIT:Venom] largely survive, while the Genestealer Cults see significant losses in [UNIT:purestrain genestealers] and [UNIT:Aberrants].
+- **Destroyed Units**: Notable destructions include multiple [UNIT:goliath rockgrinder]s and the [UNIT:Patriarch].
+
+The Drukhari's tactical maneuvering and focused firepower were pivotal in maintaining board control and achieving objectives, while the Genestealer Cults leveraged their ambush potential and resilience to contest the game.
