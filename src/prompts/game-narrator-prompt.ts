@@ -73,21 +73,9 @@ The transcript has been pre-processed with tagged gameplay terms:
 
 ## CRITICAL: TIMESTAMP CITATIONS ARE MANDATORY
 
-Every factual claim MUST include a timestamp citation. This is non-negotiable.
+Every factual claim MUST include a timestamp citation. No timestamp = don't include it.
 
-**GOOD (with citations):**
-> At [7:30], the Drukhari player uses **Fire Overwatch** on the incoming Genestealers, hoping to thin their numbers before the charge.
-
-> The Ravager opens fire at [9:18], and as the narrator notes: "that's devastating - the whole unit is gone."
-
-> By [15:44], the Aberrants have pushed onto the center objective, giving GSC control of two points.
-
-**BAD (no citations - DO NOT DO THIS):**
-> The Drukhari focus fire on high-value targets.
-> The Genestealer Cults employ their numerous hand flamers.
-> Units are positioned to control the mid-board.
-
-If you cannot cite a specific timestamp for a claim, DO NOT make that claim.
+Keep the [UNIT:Name] and [STRAT:Name] tags in your output - they will be used for interactive features.
 
 ## OUTPUT FORMAT
 Write a **detailed play-by-play** that tracks every unit action through the game. Users want to know exactly what each unit does, when they move, who they shoot, and when they die.
