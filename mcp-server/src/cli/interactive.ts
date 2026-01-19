@@ -1,8 +1,10 @@
-import { select, confirm, checkbox } from '@inquirer/prompts';
+import { select, confirm, checkbox, input } from '@inquirer/prompts';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { sql, eq, inArray } from 'drizzle-orm';
 import { FACTION_SLUGS } from '../scraper/config.js';
+import { findBestMatches, BUILTIN_ALIASES, type Category } from '../tools/fuzzy-matcher.js';
+import { loadCandidates, fetchNamesForCategory } from '../tools/validation-tools.js';
 
 // Import action functions from command modules
 import { FirecrawlClient } from '../scraper/firecrawl-client.js';
@@ -462,12 +464,200 @@ async function databaseMenu(): Promise<void> {
   }
 }
 
+async function validateTermsInteractive(): Promise<void> {
+  const db = getDb();
+
+  const termsInput = await input({
+    message: 'Enter terms to validate (comma-separated):',
+    validate: (value) => value.trim().length > 0 || 'Please enter at least one term',
+  });
+
+  const terms = termsInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+  const factionsInput = await input({
+    message: 'Enter faction hints (comma-separated, or leave empty):',
+  });
+
+  const factions = factionsInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+  console.log('\n=== Validating Terms ===\n');
+
+  const categories: Category[] = ['units', 'stratagems', 'abilities', 'factions', 'enhancements', 'keywords'];
+  const candidates = await loadCandidates(db, categories, factions);
+
+  for (const term of terms) {
+    const matches = findBestMatches(term, candidates, {
+      minConfidence: 0.5,
+      limit: 3,
+      checkAliases: true,
+    });
+
+    const best = matches[0];
+    if (best) {
+      console.log(`  "${term}" → ${best.name} (${best.category}, ${Math.round(best.confidence * 100)}%)`);
+      if (matches.length > 1) {
+        console.log(`      alternates: ${matches.slice(1).map(m => `${m.name} (${Math.round(m.confidence * 100)}%)`).join(', ')}`);
+      }
+    } else {
+      console.log(`  "${term}" → no match found`);
+    }
+  }
+  console.log('');
+}
+
+async function fuzzySearchInteractive(): Promise<void> {
+  const db = getDb();
+
+  const query = await input({
+    message: 'Enter search query:',
+    validate: (value) => value.trim().length >= 2 || 'Query must be at least 2 characters',
+  });
+
+  const categoryChoices = await checkbox({
+    message: 'Select categories to search:',
+    choices: [
+      { name: 'Units', value: 'units', checked: true },
+      { name: 'Stratagems', value: 'stratagems', checked: true },
+      { name: 'Abilities', value: 'abilities', checked: true },
+      { name: 'Factions', value: 'factions', checked: true },
+      { name: 'Detachments', value: 'detachments', checked: true },
+      { name: 'Enhancements', value: 'enhancements', checked: true },
+      { name: 'Keywords', value: 'keywords', checked: true },
+    ],
+  });
+
+  const categories = categoryChoices as Category[];
+
+  console.log('\n=== Search Results ===\n');
+
+  const candidates = await loadCandidates(db, categories, []);
+  const matches = findBestMatches(query, candidates, {
+    minConfidence: 0.3,
+    limit: 10,
+    checkAliases: true,
+  });
+
+  if (matches.length === 0) {
+    console.log('  No matches found.\n');
+    return;
+  }
+
+  for (const match of matches) {
+    const factionStr = match.faction ? ` (${match.faction})` : '';
+    console.log(`  ${Math.round(match.confidence * 100).toString().padStart(3)}%  ${match.name}${factionStr} [${match.category}]`);
+  }
+  console.log('');
+}
+
+async function listValidNamesInteractive(): Promise<void> {
+  const db = getDb();
+
+  const category = await select({
+    message: 'Select category:',
+    choices: [
+      { name: 'Units', value: 'units' },
+      { name: 'Stratagems', value: 'stratagems' },
+      { name: 'Abilities', value: 'abilities' },
+      { name: 'Factions', value: 'factions' },
+      { name: 'Detachments', value: 'detachments' },
+      { name: 'Enhancements', value: 'enhancements' },
+      { name: 'Keywords', value: 'keywords' },
+    ],
+  });
+
+  const factionInput = await input({
+    message: 'Filter by faction (leave empty for all):',
+  });
+
+  const faction = factionInput.trim() || undefined;
+
+  console.log(`\n=== Valid ${category} Names ===\n`);
+
+  const names = await fetchNamesForCategory(db, category, faction);
+
+  if (names.length === 0) {
+    console.log('  No names found.\n');
+    return;
+  }
+
+  // Display in columns
+  const maxLen = Math.max(...names.map(n => n.length));
+  const cols = Math.floor(80 / (maxLen + 4)) || 1;
+
+  for (let i = 0; i < names.length; i += cols) {
+    const row = names.slice(i, i + cols);
+    console.log('  ' + row.map(n => n.padEnd(maxLen + 2)).join(''));
+  }
+
+  console.log(`\n  Total: ${names.length} names\n`);
+}
+
+async function showAliasesInteractive(): Promise<void> {
+  console.log('\n=== Built-in Aliases ===\n');
+
+  const categories = {
+    'Units': [] as [string, string][],
+    'Factions': [] as [string, string][],
+    'Stratagems': [] as [string, string][],
+    'Detachments': [] as [string, string][],
+  };
+
+  for (const [alias, target] of Object.entries(BUILTIN_ALIASES)) {
+    if (target.includes('Squad') || target.includes('Veteran') || target.includes('Warriors') ||
+        target.includes('Terminators') || target.includes('Predator') || target.includes('Reavers')) {
+      categories['Units'].push([alias, target]);
+    } else if (target.includes('Overwatch') || target.includes('Re-roll')) {
+      categories['Stratagems'].push([alias, target]);
+    } else if (target.includes('Cartel') || target.includes('Task Force') || target.includes("Mont'ka")) {
+      categories['Detachments'].push([alias, target]);
+    } else {
+      categories['Factions'].push([alias, target]);
+    }
+  }
+
+  for (const [cat, aliases] of Object.entries(categories)) {
+    if (aliases.length > 0) {
+      console.log(`  ${cat}:`);
+      for (const [alias, target] of aliases) {
+        console.log(`    "${alias}" → ${target}`);
+      }
+      console.log('');
+    }
+  }
+}
+
+async function validationMenu(): Promise<void> {
+  const action = await select({
+    message: 'Validation tools:',
+    choices: [
+      { name: '✓ Validate Terms', value: 'validate' },
+      { name: '🔍 Fuzzy Search', value: 'search' },
+      { name: '📋 List Valid Names', value: 'list' },
+      { name: '📝 Show Built-in Aliases', value: 'aliases' },
+      { name: '← Back', value: 'back' },
+    ],
+  });
+
+  if (action === 'back') return;
+
+  if (action === 'validate') {
+    await validateTermsInteractive();
+  } else if (action === 'search') {
+    await fuzzySearchInteractive();
+  } else if (action === 'list') {
+    await listValidNamesInteractive();
+  } else if (action === 'aliases') {
+    await showAliasesInteractive();
+  }
+}
+
 async function mainMenu(): Promise<boolean> {
   console.log('\n');
   const action = await select({
     message: 'WH40K MCP Server - What would you like to do?',
     choices: [
       { name: '📊 Show Status', value: 'status' },
+      { name: '✓ Validate Terms', value: 'validate' },
       { name: '🔍 Scrape Data', value: 'scrape' },
       { name: '🗄️  Database', value: 'database' },
       { name: '❌ Exit', value: 'exit' },
@@ -480,6 +670,8 @@ async function mainMenu(): Promise<boolean> {
 
   if (action === 'status') {
     await showStatus();
+  } else if (action === 'validate') {
+    await validationMenu();
   } else if (action === 'scrape') {
     await scrapeMenu();
   } else if (action === 'database') {
