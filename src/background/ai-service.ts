@@ -2,14 +2,18 @@ import OpenAI from 'openai';
 import { BattleReportExtractionSchema } from '@/types/ai-response';
 import type { BattleReport } from '@/types/battle-report';
 import type { VideoData, Chapter, TranscriptSegment } from '@/types/youtube';
+import type { LlmPreprocessResult } from '@/types/llm-preprocess';
 import { getFactionContextForPrompt, processBattleReport } from './report-processor';
 import {
   preprocessTranscript,
+  preprocessTranscriptWithLlmMappings,
   enrichStratagemTimestamps,
   enrichUnitTimestamps,
   type PreprocessedTranscript,
   type NormalizedSegment,
 } from './transcript-preprocessor';
+import { getCachedPreprocess, setCachedPreprocess } from './cache-manager';
+import { preprocessWithLlm } from './llm-preprocess-service';
 
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
@@ -392,10 +396,34 @@ export async function extractBattleReport(
 
   // Detect factions and get unit names for prompt enhancement
   const factionUnitNames = await detectFactionsFromVideo(videoData);
-
-  // Pre-process transcript to detect stratagems and units with timestamps
   const allUnitNames = [...factionUnitNames.values()].flat();
-  const preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
+  const factionNames = [...factionUnitNames.keys()];
+
+  // Try LLM preprocessing with caching
+  let preprocessed: PreprocessedTranscript;
+  try {
+    const cachedLlm = await getCachedPreprocess(videoData.videoId);
+    let llmResult: LlmPreprocessResult | null = cachedLlm;
+
+    if (!llmResult) {
+      console.log('Running LLM preprocessing for video:', videoData.videoId);
+      llmResult = await preprocessWithLlm(videoData.transcript, factionNames, apiKey);
+      await setCachedPreprocess(videoData.videoId, llmResult);
+      console.log('LLM preprocessing cached for video:', videoData.videoId);
+    } else {
+      console.log('Using cached LLM preprocess for video:', videoData.videoId);
+    }
+
+    // Use LLM mappings with pattern-based preprocessing
+    preprocessed = preprocessTranscriptWithLlmMappings(
+      videoData.transcript,
+      allUnitNames,
+      llmResult.termMappings
+    );
+  } catch (error) {
+    console.warn('LLM preprocessing failed, falling back to pattern matching:', error);
+    preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
+  }
 
   // Build faction-aware system prompt
   const systemPrompt = buildSystemPrompt(factionUnitNames);
@@ -478,9 +506,33 @@ export async function extractWithFactions(
     }
   }
 
-  // Pre-process transcript to detect stratagems and units with timestamps
   const allUnitNames = [...factionUnitNames.values()].flat();
-  const preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
+
+  // Try LLM preprocessing with caching
+  let preprocessed: PreprocessedTranscript;
+  try {
+    const cachedLlm = await getCachedPreprocess(videoData.videoId);
+    let llmResult: LlmPreprocessResult | null = cachedLlm;
+
+    if (!llmResult) {
+      console.log('Running LLM preprocessing for video:', videoData.videoId);
+      llmResult = await preprocessWithLlm(videoData.transcript, factions, apiKey);
+      await setCachedPreprocess(videoData.videoId, llmResult);
+      console.log('LLM preprocessing cached for video:', videoData.videoId);
+    } else {
+      console.log('Using cached LLM preprocess for video:', videoData.videoId);
+    }
+
+    // Use LLM mappings with pattern-based preprocessing
+    preprocessed = preprocessTranscriptWithLlmMappings(
+      videoData.transcript,
+      allUnitNames,
+      llmResult.termMappings
+    );
+  } catch (error) {
+    console.warn('LLM preprocessing failed, falling back to pattern matching:', error);
+    preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
+  }
 
   // Build faction-aware system prompt
   const systemPrompt = buildSystemPrompt(factionUnitNames);

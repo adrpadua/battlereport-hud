@@ -9,10 +9,17 @@ export interface TermMatch {
   segmentText: string; // original text for context
 }
 
+export interface NormalizedSegment extends TranscriptSegment {
+  normalizedText: string; // Text with colloquial terms replaced by official names
+  taggedText: string; // Text with gameplay terms tagged: [UNIT:Name] or [STRAT:Name]
+}
+
 export interface PreprocessedTranscript {
   matches: TermMatch[];
   stratagemMentions: Map<string, number[]>; // normalized name -> timestamps
   unitMentions: Map<string, number[]>;
+  normalizedSegments: NormalizedSegment[]; // Segments with corrected/tagged terms
+  colloquialToOfficial: Map<string, string>; // Mapping of corrections made
 }
 
 // Core stratagems available to all armies (10th edition)
@@ -147,7 +154,163 @@ const UNIT_ALIASES = new Map<string, string>([
   // Common abbreviations
   ['las preds', 'predator destructor'],
   ['las pred', 'predator destructor'],
+  // Drukhari common misspellings
+  ['cabalite warriors', 'kabalite warriors'],
+  ['cabalite', 'kabalite warriors'],
+  ['mandrekes', 'mandrakes'],
+  ['cronos', 'cronos'],
+  ['kronos', 'cronos'],
+  ['lady malice', 'lady malys'],
+  ['reaver jet bikes', 'reavers'],
+  ['reaver jetbikes', 'reavers'],
+  // GSC common misspellings
+  ['genestealers', 'purestrain genestealers'],
+  ['genesteelers', 'purestrain genestealers'],
+  ['genest steelers', 'purestrain genestealers'],
+  ['ridgerunners', 'achilles ridgerunners'],
+  ['ridge runners', 'achilles ridgerunners'],
+  ['rockgrinder', 'goliath rockgrinder'],
+  ['rock grinder', 'goliath rockgrinder'],
+  ['kelermorph', 'kelermorph'],
+  ['kellerorph', 'kelermorph'],
+  ['calamorph', 'kelermorph'],
+  ['sabotur', 'reductus saboteur'],
+  ['saboteur', 'reductus saboteur'],
+  ['reducted sabotur', 'reductus saboteur'],
+  ['hand flamer acolytes', 'acolyte hybrids with hand flamers'],
+  ['rocksaw acolytes', 'hybrid metamorphs'],
+  // Common unit shorthand
+  ['flamers', 'flamers'],
+  ['aberrants', 'aberrants'],
+  ['aber', 'aberrants'],
 ]);
+
+/**
+ * Calculate similarity score between two strings (0-1).
+ * Uses a combination of character overlap and word matching.
+ */
+function calculateSimilarity(a: string, b: string): number {
+  const aLower = a.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const bLower = b.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  if (aLower === bLower) return 1;
+  if (aLower.length === 0 || bLower.length === 0) return 0;
+
+  // Check if one contains the other
+  if (aLower.includes(bLower) || bLower.includes(aLower)) {
+    const minLen = Math.min(aLower.length, bLower.length);
+    const maxLen = Math.max(aLower.length, bLower.length);
+    return minLen / maxLen;
+  }
+
+  // Character-based similarity (Sørensen–Dice coefficient on bigrams)
+  const aBigrams = new Set<string>();
+  const bBigrams = new Set<string>();
+
+  for (let i = 0; i < aLower.length - 1; i++) {
+    aBigrams.add(aLower.slice(i, i + 2));
+  }
+  for (let i = 0; i < bLower.length - 1; i++) {
+    bBigrams.add(bLower.slice(i, i + 2));
+  }
+
+  let intersection = 0;
+  for (const bigram of aBigrams) {
+    if (bBigrams.has(bigram)) intersection++;
+  }
+
+  return (2 * intersection) / (aBigrams.size + bBigrams.size);
+}
+
+// Words that are too generic to use as unit aliases
+const GENERIC_WORDS = new Set([
+  'the', 'with', 'and', 'unit', 'squad', 'team', 'band', 'pack',
+  'hand', 'heavy', 'light', 'support', 'assault', 'battle', 'war',
+  'command', 'strike', 'storm', 'fire', 'death', 'blood', 'iron',
+  'dark', 'chaos', 'imperial', 'space', 'scout', 'veteran', 'elite',
+]);
+
+/**
+ * Build fuzzy aliases from official unit names.
+ * Creates mappings for common variations and misspellings.
+ */
+export function buildFuzzyUnitAliases(officialNames: string[]): Map<string, string> {
+  const aliases = new Map<string, string>(UNIT_ALIASES);
+
+  for (const name of officialNames) {
+    const lower = name.toLowerCase();
+
+    // Add the name itself (for case normalization)
+    aliases.set(lower, name);
+
+    // Add singular/plural variations (only for longer names to avoid false positives)
+    if (lower.endsWith('s') && lower.length > 6) {
+      aliases.set(lower.slice(0, -1), name); // Remove 's'
+    } else if (!lower.endsWith('s') && lower.length > 5) {
+      aliases.set(lower + 's', name); // Add 's'
+    }
+
+    // Add without common suffixes like "squad", "unit", etc.
+    // Only if the remaining part is distinctive enough
+    const withoutSuffix = lower
+      .replace(/\s*(squad|unit|team|band|pack|\[legends\])$/i, '')
+      .trim();
+    if (withoutSuffix !== lower && withoutSuffix.length > 5 && !GENERIC_WORDS.has(withoutSuffix)) {
+      aliases.set(withoutSuffix, name);
+    }
+
+    // Don't add first word as alias - too many false positives
+    // The explicit UNIT_ALIASES map handles specific cases
+  }
+
+  return aliases;
+}
+
+/**
+ * Find the best matching official name for a colloquial term.
+ * Returns null if no good match found.
+ */
+export function findBestMatch(
+  term: string,
+  officialNames: string[],
+  aliases: Map<string, string>,
+  minSimilarity: number = 0.7
+): string | null {
+  const lower = term.toLowerCase().trim();
+
+  // Check direct alias match first
+  if (aliases.has(lower)) {
+    return aliases.get(lower)!;
+  }
+
+  // Check for exact match in official names (case-insensitive)
+  const exactMatch = officialNames.find(
+    (n) => n.toLowerCase() === lower
+  );
+  if (exactMatch) return exactMatch;
+
+  // Check for contains match
+  const containsMatch = officialNames.find(
+    (n) => n.toLowerCase().includes(lower) || lower.includes(n.toLowerCase())
+  );
+  if (containsMatch && calculateSimilarity(term, containsMatch) >= minSimilarity) {
+    return containsMatch;
+  }
+
+  // Fuzzy match using similarity score
+  let bestMatch: string | null = null;
+  let bestScore = minSimilarity;
+
+  for (const name of officialNames) {
+    const score = calculateSimilarity(term, name);
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = name;
+    }
+  }
+
+  return bestMatch;
+}
 
 /**
  * Escape special regex characters in a string.
@@ -252,7 +415,204 @@ function findUnitTimestamp(
 }
 
 /**
+ * Pre-process transcript using LLM-provided term mappings combined with pattern matching.
+ * LLM mappings take priority, then pattern matching fills in gaps.
+ */
+export function preprocessTranscriptWithLlmMappings(
+  transcript: TranscriptSegment[],
+  unitNames: string[] = [],
+  llmMappings: Record<string, string> = {}
+): PreprocessedTranscript {
+  const matches: TermMatch[] = [];
+  const stratagemMentions = new Map<string, number[]>();
+  const unitMentions = new Map<string, number[]>();
+  const normalizedSegments: NormalizedSegment[] = [];
+  const colloquialToOfficial = new Map<string, string>();
+
+  // Merge LLM mappings into colloquialToOfficial
+  for (const [colloquial, official] of Object.entries(llmMappings)) {
+    colloquialToOfficial.set(colloquial.toLowerCase(), official);
+  }
+
+  // Build fuzzy aliases from official unit names
+  const unitAliases = buildFuzzyUnitAliases(unitNames);
+
+  // Merge LLM mappings into aliases (LLM takes priority)
+  for (const [colloquial, official] of Object.entries(llmMappings)) {
+    unitAliases.set(colloquial.toLowerCase(), official);
+  }
+
+  // Build patterns (include LLM mappings, aliases for stratagems and units)
+  const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
+  const allSearchTerms = [...unitNames, ...Object.keys(llmMappings)];
+  const unitPattern = allSearchTerms.length > 0 ? buildTermPattern(allSearchTerms, unitAliases) : null;
+
+  for (const seg of transcript) {
+    const timestamp = Math.floor(seg.startTime);
+    let text = seg.text;
+    let normalizedText = text;
+    let taggedText = text;
+
+    // Track replacements for this segment to avoid double-processing
+    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' }> = [];
+
+    // First, apply LLM mappings directly
+    for (const [colloquial, official] of Object.entries(llmMappings)) {
+      const escapedColloquial = colloquial.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escapedColloquial}\\b`, 'gi');
+
+      for (const match of text.matchAll(regex)) {
+        const term = match[0];
+        if (!term) continue;
+
+        // Determine if this is a stratagem or unit based on the official name
+        const isStratagem = ALL_STRATAGEMS.some(s => s.toLowerCase() === official.toLowerCase());
+        const type: 'unit' | 'stratagem' = isStratagem ? 'stratagem' : 'unit';
+
+        const mentionMap = isStratagem ? stratagemMentions : unitMentions;
+        const canonical = official.toLowerCase();
+
+        if (!mentionMap.has(canonical)) {
+          mentionMap.set(canonical, []);
+        }
+        const timestamps = mentionMap.get(canonical)!;
+        if (!timestamps.includes(timestamp)) {
+          timestamps.push(timestamp);
+        }
+
+        matches.push({
+          term,
+          normalizedTerm: official,
+          type,
+          timestamp,
+          segmentText: text,
+        });
+
+        replacements.push({ original: term, official, type });
+      }
+    }
+
+    // Find stratagem mentions (pattern-based)
+    for (const match of text.matchAll(stratagemPattern)) {
+      const term = match[1];
+      if (!term) continue;
+
+      const normalized = normalizeTerm(term);
+
+      // Skip if already processed by LLM mappings
+      if (replacements.some(r => r.original.toLowerCase() === term.toLowerCase())) {
+        continue;
+      }
+
+      // Skip generic context terms unless they're near "stratagem" keywords
+      if (STRATAGEM_CONTEXT_KEYWORDS.map(normalizeTerm).includes(normalized)) {
+        if (!text.toLowerCase().includes('stratagem')) {
+          continue;
+        }
+      }
+
+      const canonical = toCanonicalName(term, STRATAGEM_ALIASES);
+
+      if (term.toLowerCase() !== canonical.toLowerCase()) {
+        colloquialToOfficial.set(term.toLowerCase(), canonical);
+      }
+
+      if (!stratagemMentions.has(canonical)) {
+        stratagemMentions.set(canonical, []);
+      }
+
+      const timestamps = stratagemMentions.get(canonical)!;
+      if (!timestamps.includes(timestamp)) {
+        timestamps.push(timestamp);
+      }
+
+      matches.push({
+        term,
+        normalizedTerm: canonical,
+        type: 'stratagem',
+        timestamp,
+        segmentText: text,
+      });
+
+      replacements.push({ original: term, official: canonical, type: 'stratagem' });
+    }
+
+    // Find unit mentions (pattern-based)
+    if (unitPattern) {
+      for (const match of text.matchAll(unitPattern)) {
+        const term = match[1];
+        if (!term) continue;
+
+        // Skip if already processed by LLM mappings
+        if (replacements.some(r => r.original.toLowerCase() === term.toLowerCase())) {
+          continue;
+        }
+
+        let canonical = toCanonicalName(term, unitAliases);
+
+        if (canonical === normalizeTerm(term)) {
+          const fuzzyMatch = findBestMatch(term, unitNames, unitAliases, 0.75);
+          if (fuzzyMatch) {
+            canonical = fuzzyMatch.toLowerCase();
+          }
+        }
+
+        if (term.toLowerCase() !== canonical) {
+          colloquialToOfficial.set(term.toLowerCase(), canonical);
+        }
+
+        if (!unitMentions.has(canonical)) {
+          unitMentions.set(canonical, []);
+        }
+
+        const timestamps = unitMentions.get(canonical)!;
+        if (!timestamps.includes(timestamp)) {
+          timestamps.push(timestamp);
+        }
+
+        matches.push({
+          term,
+          normalizedTerm: canonical,
+          type: 'unit',
+          timestamp,
+          segmentText: text,
+        });
+
+        replacements.push({ original: term, official: canonical, type: 'unit' });
+      }
+    }
+
+    // Apply replacements to create normalized and tagged text
+    replacements.sort((a, b) => b.original.length - a.original.length);
+
+    for (const { original, official, type } of replacements) {
+      const regex = new RegExp(`\\b${escapeRegex(original)}\\b`, 'gi');
+
+      normalizedText = normalizedText.replace(regex, (match) => {
+        const firstChar = match[0];
+        const isUpperCase = firstChar ? firstChar === firstChar.toUpperCase() : false;
+        return isUpperCase
+          ? official.charAt(0).toUpperCase() + official.slice(1)
+          : official.toLowerCase();
+      });
+
+      const tag = type === 'unit' ? 'UNIT' : 'STRAT';
+      taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
+    }
+
+    normalizedSegments.push({
+      ...seg,
+      normalizedText,
+      taggedText,
+    });
+  }
+
+  return { matches, stratagemMentions, unitMentions, normalizedSegments, colloquialToOfficial };
+}
+
+/**
  * Pre-process transcript to find mentions of stratagems and units.
+ * Also normalizes and tags the transcript text with official names.
  */
 export function preprocessTranscript(
   transcript: TranscriptSegment[],
@@ -261,14 +621,24 @@ export function preprocessTranscript(
   const matches: TermMatch[] = [];
   const stratagemMentions = new Map<string, number[]>();
   const unitMentions = new Map<string, number[]>();
+  const normalizedSegments: NormalizedSegment[] = [];
+  const colloquialToOfficial = new Map<string, string>();
+
+  // Build fuzzy aliases from official unit names
+  const unitAliases = buildFuzzyUnitAliases(unitNames);
 
   // Build patterns (include aliases for stratagems and units)
   const stratagemPattern = buildTermPattern(ALL_STRATAGEMS, STRATAGEM_ALIASES);
-  const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames, UNIT_ALIASES) : null;
+  const unitPattern = unitNames.length > 0 ? buildTermPattern(unitNames, unitAliases) : null;
 
   for (const seg of transcript) {
     const timestamp = Math.floor(seg.startTime);
-    const text = seg.text;
+    let text = seg.text;
+    let normalizedText = text;
+    let taggedText = text;
+
+    // Track replacements for this segment to avoid double-processing
+    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' }> = [];
 
     // Find stratagem mentions
     for (const match of text.matchAll(stratagemPattern)) {
@@ -288,6 +658,11 @@ export function preprocessTranscript(
       // Resolve alias to canonical name for storage
       const canonical = toCanonicalName(term, STRATAGEM_ALIASES);
 
+      // Track colloquial -> official mapping
+      if (term.toLowerCase() !== canonical.toLowerCase()) {
+        colloquialToOfficial.set(term.toLowerCase(), canonical);
+      }
+
       if (!stratagemMentions.has(canonical)) {
         stratagemMentions.set(canonical, []);
       }
@@ -305,6 +680,8 @@ export function preprocessTranscript(
         timestamp,
         segmentText: text,
       });
+
+      replacements.push({ original: term, official: canonical, type: 'stratagem' });
     }
 
     // Find unit mentions
@@ -313,8 +690,21 @@ export function preprocessTranscript(
         const term = match[1];
         if (!term) continue; // Skip if no capture group
 
-        // Resolve alias to canonical name for storage
-        const canonical = toCanonicalName(term, UNIT_ALIASES);
+        // Try to find the best official match
+        let canonical = toCanonicalName(term, unitAliases);
+
+        // If no alias match, try fuzzy matching against official names
+        if (canonical === normalizeTerm(term)) {
+          const fuzzyMatch = findBestMatch(term, unitNames, unitAliases, 0.75);
+          if (fuzzyMatch) {
+            canonical = fuzzyMatch.toLowerCase();
+          }
+        }
+
+        // Track colloquial -> official mapping
+        if (term.toLowerCase() !== canonical) {
+          colloquialToOfficial.set(term.toLowerCase(), canonical);
+        }
 
         if (!unitMentions.has(canonical)) {
           unitMentions.set(canonical, []);
@@ -333,11 +723,41 @@ export function preprocessTranscript(
           timestamp,
           segmentText: text,
         });
+
+        replacements.push({ original: term, official: canonical, type: 'unit' });
       }
     }
+
+    // Apply replacements to create normalized and tagged text
+    // Sort by length (longest first) to avoid partial replacements
+    replacements.sort((a, b) => b.original.length - a.original.length);
+
+    for (const { original, official, type } of replacements) {
+      // Create case-insensitive regex for replacement
+      const regex = new RegExp(`\\b${escapeRegex(original)}\\b`, 'gi');
+
+      // Normalize: replace colloquial with official (preserve first letter case)
+      normalizedText = normalizedText.replace(regex, (match) => {
+        const firstChar = match[0];
+        const isUpperCase = firstChar ? firstChar === firstChar.toUpperCase() : false;
+        return isUpperCase
+          ? official.charAt(0).toUpperCase() + official.slice(1)
+          : official.toLowerCase();
+      });
+
+      // Tag: wrap with type marker
+      const tag = type === 'unit' ? 'UNIT' : 'STRAT';
+      taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
+    }
+
+    normalizedSegments.push({
+      ...seg,
+      normalizedText,
+      taggedText,
+    });
   }
 
-  return { matches, stratagemMentions, unitMentions };
+  return { matches, stratagemMentions, unitMentions, normalizedSegments, colloquialToOfficial };
 }
 
 /**
