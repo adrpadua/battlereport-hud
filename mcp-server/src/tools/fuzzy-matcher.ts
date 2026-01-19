@@ -94,10 +94,37 @@ export const BUILTIN_ALIASES: Record<string, string> = {
   'cabalite cartel': 'Kabalite Cartel',
   'gladius': 'Gladius Task Force',
   'montka': "Mont'ka",
+
+  // Common misspellings / phonetic variations
+  'kalidus': 'Callidus Assassin',
+  'kalidus assassin': 'Callidus Assassin',
+  'calidus': 'Callidus Assassin',
+  'calidus assassin': 'Callidus Assassin',
+  'castellan crow': 'Castellan Crowe',
+  'castellan crowe': 'Castellan Crowe',
+  'crowe': 'Castellan Crowe',
+  'interceptor squad': 'Interceptor Squad',  // Not a misspelling, but common confusion
+  'inceptor squad': 'Inceptor Squad',  // Space Marines - different unit
+  'reaver jetbike': 'Reavers',
+  'reaver jet bike': 'Reavers',
+  'scourge with dark lances': 'Scourges',
+  'scourges with dark lances': 'Scourges',
+  'scourge with splinter cannons': 'Scourges',
+  'scourges with splinter cannons': 'Scourges',
+  'wyches': 'Wyches',
+  'wych': 'Wyches',
+  'wytches': 'Wyches',
+  'witches': 'Wyches',
+
+  // Agents of the Imperium
+  'vindicare': 'Vindicare Assassin',
+  'culexus': 'Culexus Assassin',
+  'eversor': 'Eversor Assassin',
+  'callidus': 'Callidus Assassin',
 };
 
 // Categories supported by the validation tools
-export type Category = 'units' | 'stratagems' | 'abilities' | 'factions' | 'detachments' | 'enhancements' | 'keywords';
+export type Category = 'units' | 'stratagems' | 'abilities' | 'factions' | 'detachments' | 'enhancements' | 'keywords' | 'weapons';
 
 /**
  * Normalize a string for comparison.

@@ -4,7 +4,7 @@ import { join } from 'path';
 import { XMLParser } from 'fast-xml-parser';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 const BSDATA_REPO = 'BSData/wh40k-10e';
 const BSDATA_CACHE_DIR = './.bsdata-cache';
@@ -54,6 +54,16 @@ interface BSDataCost {
 interface BSDataCategoryLink {
   '@_targetId': string;
   '@_name': string;
+}
+
+interface UnitStats {
+  movement?: string | null;
+  toughness?: number | null;
+  save?: string | null;
+  invulnerableSave?: string | null;
+  wounds?: number | null;
+  leadership?: number | null;
+  objectiveControl?: number | null;
 }
 
 async function main() {
@@ -216,7 +226,7 @@ async function processUnit(
 
   // Find unit profile
   const unitProfile = profiles.find((p) => p['@_typeName'] === 'Unit');
-  const stats = unitProfile ? extractUnitStats(unitProfile) : {};
+  const stats: UnitStats = unitProfile ? extractUnitStats(unitProfile) : {};
 
   // Extract points cost
   const costs = normalizeArray(entry.costs?.cost);
@@ -365,9 +375,9 @@ async function processKeyword(
     .onConflictDoNothing();
 }
 
-function extractUnitStats(profile: BSDataProfile): Record<string, unknown> {
+function extractUnitStats(profile: BSDataProfile): UnitStats {
   const characteristics = normalizeArray(profile.characteristics?.characteristic);
-  const stats: Record<string, unknown> = {};
+  const stats: UnitStats = {};
 
   for (const char of characteristics) {
     const name = char['@_name'];

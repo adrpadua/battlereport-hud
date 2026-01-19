@@ -198,11 +198,12 @@ export function parseStratagems(
     const target = targetMatch?.[1]?.trim() || null;
     const effect = effectMatch?.[1]?.trim() || '';
 
-    // Determine stratagem type from typeInfo
-    let stratagemType = 'other';
-    if (typeInfo.includes('Battle Tactic')) stratagemType = 'battle_tactic';
-    else if (typeInfo.includes('Strategic Ploy')) stratagemType = 'strategic_ploy';
-    else if (typeInfo.includes('Wargear')) stratagemType = 'wargear';
+    // Determine stratagem type from typeInfo (reserved for future use)
+    let _stratagemType = 'other';
+    if (typeInfo.includes('Battle Tactic')) _stratagemType = 'battle_tactic';
+    else if (typeInfo.includes('Strategic Ploy')) _stratagemType = 'strategic_ploy';
+    else if (typeInfo.includes('Wargear')) _stratagemType = 'wargear';
+    void _stratagemType; // Suppress unused variable warning
 
     stratagems.push({
       slug: slugify(name),
@@ -219,30 +220,6 @@ export function parseStratagems(
   }
 
   return stratagems;
-}
-
-function parseStratagemRow(
-  cells: string[],
-  sourceUrl: string
-): Omit<NewStratagem, 'factionId' | 'detachmentId'> {
-  const name = cells[0] || 'Unknown';
-  const cpCost = cells[1] || '1';
-  const phase = cells[2] || '';
-  const effect = cells[3] || '';
-
-  return {
-    slug: slugify(name),
-    name,
-    cpCost,
-    phase: detectPhase(phase),
-    effect,
-    sourceUrl,
-    dataSource: 'wahapedia' as const,
-    isCore: false,
-    when: null,
-    target: null,
-    restrictions: null,
-  };
 }
 
 /**

@@ -51,12 +51,14 @@ async function main() {
       (SELECT COUNT(*) FROM unit_weapons) as unit_weapons,
       (SELECT COUNT(*) FROM unit_abilities) as unit_abilities
   `);
-  const row = (counts.rows || counts)[0];
-  console.log(`   Units: ${row.units}`);
-  console.log(`   Weapons: ${row.weapons}`);
-  console.log(`   Abilities: ${row.abilities}`);
-  console.log(`   Unit-Weapon links: ${row.unit_weapons}`);
-  console.log(`   Unit-Ability links: ${row.unit_abilities}`);
+  const row = (counts.rows || counts)[0] as Record<string, number> | undefined;
+  if (row) {
+    console.log(`   Units: ${row.units}`);
+    console.log(`   Weapons: ${row.weapons}`);
+    console.log(`   Abilities: ${row.abilities}`);
+    console.log(`   Unit-Weapon links: ${row.unit_weapons}`);
+    console.log(`   Unit-Ability links: ${row.unit_abilities}`);
+  }
 
   await closeConnection();
 }

@@ -64,7 +64,7 @@ export function createValidationTools(): Tool[] {
             type: 'array',
             items: {
               type: 'string',
-              enum: ['units', 'stratagems', 'abilities', 'factions', 'enhancements', 'keywords'],
+              enum: ['units', 'stratagems', 'abilities', 'factions', 'enhancements', 'keywords', 'weapons'],
             },
             description: 'Limit validation to specific categories',
           },
@@ -87,7 +87,7 @@ export function createValidationTools(): Tool[] {
         properties: {
           category: {
             type: 'string',
-            enum: ['units', 'stratagems', 'abilities', 'factions', 'detachments', 'enhancements', 'keywords'],
+            enum: ['units', 'stratagems', 'abilities', 'factions', 'detachments', 'enhancements', 'keywords', 'weapons'],
             description: 'Category to list names for',
           },
           faction: {
@@ -117,7 +117,7 @@ export function createValidationTools(): Tool[] {
             type: 'array',
             items: {
               type: 'string',
-              enum: ['units', 'stratagems', 'abilities', 'factions', 'detachments', 'enhancements', 'keywords'],
+              enum: ['units', 'stratagems', 'abilities', 'factions', 'detachments', 'enhancements', 'keywords', 'weapons'],
             },
             description: 'Limit search to specific categories',
           },
@@ -698,6 +698,18 @@ async function loadCandidates(
     candidates.push(...keywords.map((k) => ({ name: k.name, category: 'keywords' as const })));
   }
 
+  if (categories.includes('weapons')) {
+    const cacheKey = 'weapons:all';
+    let weapons = getCached<Array<{ name: string }>>(cacheKey);
+
+    if (!weapons) {
+      weapons = await db.select({ name: schema.weapons.name }).from(schema.weapons);
+      setCache(cacheKey, weapons);
+    }
+
+    candidates.push(...weapons.map((w) => ({ name: w.name, category: 'weapons' as const })));
+  }
+
   return candidates;
 }
 
@@ -784,6 +796,14 @@ async function fetchNamesForCategory(
         .select({ name: schema.keywords.name })
         .from(schema.keywords)
         .orderBy(schema.keywords.name);
+      return results.map((r) => r.name);
+    }
+
+    case 'weapons': {
+      const results = await db
+        .select({ name: schema.weapons.name })
+        .from(schema.weapons)
+        .orderBy(schema.weapons.name);
       return results.map((r) => r.name);
     }
 

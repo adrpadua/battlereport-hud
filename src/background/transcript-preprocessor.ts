@@ -208,6 +208,112 @@ const STRATAGEM_CONTEXT_KEYWORDS = ['activates', 'pops', 'CP', 'command points']
 
 const ALL_STRATAGEMS = [...CORE_STRATAGEMS, ...FACTION_STRATAGEMS];
 
+// Game mechanics that should NEVER be tagged as units/abilities
+// These are core rules concepts, not taggable game entities
+const GAME_MECHANICS_BLOCKLIST = new Set([
+  // Weapon abilities
+  'devastating wounds', 'sustained hits', 'lethal hits', 'anti-infantry',
+  'anti-vehicle', 'anti-monster', 'hazardous', 'torrent', 'blast', 'melta',
+  'precision', 'ignores cover', 'indirect fire', 'twin-linked', 'rapid fire',
+  'assault', 'heavy', 'pistol', 'lance',
+  // Core mechanics
+  'battleshock', 'battle-shock', 'command point', 'command points', 'cp',
+  'feel no pain', 'fnp', 'invulnerable save', 'invuln', 'invulnerable',
+  'mortal wounds', 'mortal wound', 'mortals', 'deadly demise',
+  'lone operative', 'deep strike', 'deep striking', 'reserves',
+  'fall back', 'falling back', 'pile in', 'pile-in', 'consolidate',
+  'advance', 'advancing', 'charge', 'charging', 'fight first', 'fights first',
+  'fight last', 'fights last', 'objective control', 'oc',
+  // Faction rules / army-wide abilities
+  'power from pain', 'pain tokens', 'pain token', 'wraithlike retreat',
+  'sustained assault', 'strands of fate', 'oath of moment',
+  // Common weapon names (not units)
+  'dark lance', 'dark lances', 'splinter rifle', 'splinter cannon',
+  'shuriken catapult', 'shuriken cannon', 'meltagun', 'melta gun',
+  'bolt rifle', 'bolter', 'boltgun', 'plasma gun', 'plasma rifle',
+  'lascannon', 'las cannon', 'heavy bolter', 'autocannon', 'missile launcher',
+  'power sword', 'power fist', 'thunder hammer', 'lightning claw',
+  'chainsword', 'chain sword', 'huskblade', 'agoniser', 'agonizer',
+  'splinter pistol', 'blast pistol', 'shredder', 'blaster', 'heat lance',
+  'disintegrator cannon', 'phantasm grenade launcher',
+]);
+
+// Patterns for stripping player names from character unit types
+// e.g., "Archon Skari" → "Archon", "Captain Bob" → "Captain"
+const CHARACTER_TYPE_PATTERNS = [
+  /^(archon)\s+\w+$/i,
+  /^(succubus)\s+\w+$/i,
+  /^(haemonculus)\s+\w+$/i,
+  /^(librarian)\s+\w+$/i,
+  /^(captain)\s+\w+$/i,
+  /^(chaplain)\s+\w+$/i,
+  /^(techmarine)\s+\w+$/i,
+  /^(lieutenant)\s+\w+$/i,
+  /^(apothecary)\s+\w+$/i,
+  /^(magos)\s+\w+$/i,
+  /^(primus)\s+\w+$/i,
+  /^(patriarch)\s+\w+$/i,
+  /^(overlord)\s+\w+$/i,
+  /^(cryptek)\s+\w+$/i,
+  /^(farseer)\s+\w+$/i,
+  /^(autarch)\s+\w+$/i,
+  /^(warlock)\s+\w+$/i,
+];
+
+// Pattern for units with weapon loadouts: "Scourge with Dark Lances" → "Scourges"
+const UNIT_WITH_WEAPON_PATTERN = /^(\w+(?:\s+\w+)?)\s+with\s+.+$/i;
+
+/**
+ * Normalize a unit name by:
+ * 1. Stripping player names from character types (e.g., "Archon Skari" → "Archon")
+ * 2. Removing weapon loadout descriptions (e.g., "Scourge with Dark Lances" → "Scourges")
+ * 3. Matching against known unit names
+ *
+ * @param term The raw term from the transcript
+ * @param unitNames List of canonical unit names from BSData
+ * @returns Normalized unit name or null if no match found
+ */
+export function normalizeUnitName(term: string, unitNames: string[]): string | null {
+  const normalized = term.toLowerCase().trim();
+
+  // Check if it matches a character type with a player name
+  for (const pattern of CHARACTER_TYPE_PATTERNS) {
+    const match = normalized.match(pattern);
+    if (match && match[1]) {
+      const characterType = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+      // Find the canonical unit name for this character type
+      const canonical = unitNames.find(
+        (u) => u.toLowerCase() === characterType.toLowerCase() ||
+               u.toLowerCase().startsWith(characterType.toLowerCase())
+      );
+      return canonical || characterType;
+    }
+  }
+
+  // Check if it's a "unit with weapon" pattern
+  const weaponMatch = normalized.match(UNIT_WITH_WEAPON_PATTERN);
+  if (weaponMatch && weaponMatch[1]) {
+    const baseUnit = weaponMatch[1];
+    // Try to find the unit with/without plural 's'
+    const variations = [
+      baseUnit,
+      baseUnit + 's',
+      baseUnit.replace(/s$/, ''),
+    ];
+
+    for (const variant of variations) {
+      const canonical = unitNames.find(
+        (u) => u.toLowerCase() === variant.toLowerCase()
+      );
+      if (canonical) {
+        return canonical;
+      }
+    }
+  }
+
+  return null;
+}
+
 // Map colloquial/shortened names to canonical names
 // Use proper capitalization matching official naming
 const STRATAGEM_ALIASES = new Map<string, string>([
@@ -273,6 +379,11 @@ const FALLBACK_OBJECTIVE_ALIASES = new Map<string, string>([
   ['no mans land', 'Secure No Man\'s Land'],
   ['teleport homers', 'Deploy Teleport Homers'],
   ['extend lines', 'Extend Battle Lines'],
+  // Terraform variants
+  ['terraforming points', 'Terraform'],
+  ['terraforming', 'Terraform'],
+  ['terraform points', 'Terraform'],
+  ['terra forming', 'Terraform'],
 ]);
 
 /**
@@ -473,6 +584,14 @@ const DETACHMENT_ALIASES = new Map<string, string>([
   ['gladius', 'Gladius Task Force'],
   ['kauyon', 'Kauyon'],
   ['montka', 'Mont\'ka'],
+  // Drukhari
+  ['sky-splinter', 'Skysplinter Assault'],
+  ['sky splinter', 'Skysplinter Assault'],
+  ['sky-splinter assault', 'Skysplinter Assault'],
+  ['sky splinter assault', 'Skysplinter Assault'],
+  // Grey Knights
+  ['warp bane', 'Teleport Strike Force'],
+  ['warp bane task force', 'Teleport Strike Force'],
 ]);
 
 // Map colloquial/shortened unit names to canonical names
@@ -512,9 +631,14 @@ const UNIT_ALIASES = new Map<string, string>([
   ['cronos', 'Cronos'],
   ['kronos', 'Cronos'],
   ['lady malice', 'Lady Malys'],
+  ['malice', 'Lady Malys'],
+  ['malys', 'Lady Malys'],
   ['reaver jet bikes', 'Reavers'],
   ['reaver jetbikes', 'Reavers'],
   ['lilith hesperax', 'Lelith Hesperax'],
+  ['witch cults', 'Wyches'],
+  ['witches', 'Wyches'],
+  ['wych cult', 'Wyches'],
   ['lilith', 'Lelith Hesperax'],
   ['lelith', 'Lelith Hesperax'],
   // GSC common misspellings
@@ -770,6 +894,107 @@ const FACTION_ALIASES_WITH_CASE = buildCasePreservingAliases(FACTIONS, FACTION_A
 const DETACHMENT_ALIASES_WITH_CASE = buildCasePreservingAliases(DETACHMENTS, DETACHMENT_ALIASES);
 
 /**
+ * Term types for categorization
+ */
+export type TermType = 'faction' | 'detachment' | 'stratagem' | 'objective' | 'unit' | 'unknown';
+
+/**
+ * Categorize a term by checking against known lists.
+ * Order of checking: blocklist > faction > detachment > stratagem > objective > unit (fallback)
+ * Returns the canonical name and type.
+ */
+export function categorizeTermType(
+  term: string,
+  unitNames: string[] = []
+): { type: TermType; canonical: string } {
+  const normalized = term.toLowerCase();
+
+  // Check blocklist first - these are game mechanics, not taggable entities
+  if (GAME_MECHANICS_BLOCKLIST.has(normalized)) {
+    return { type: 'unknown', canonical: term };
+  }
+
+  // Check factions first
+  const factionMatch = FACTIONS.find(f => f.toLowerCase() === normalized);
+  if (factionMatch) {
+    return { type: 'faction', canonical: factionMatch };
+  }
+  // Check faction aliases
+  const factionAlias = FACTION_ALIASES.get(normalized);
+  if (factionAlias) {
+    return { type: 'faction', canonical: factionAlias };
+  }
+
+  // Check detachments
+  const detachmentMatch = DETACHMENTS.find(d => d.toLowerCase() === normalized);
+  if (detachmentMatch) {
+    return { type: 'detachment', canonical: detachmentMatch };
+  }
+  // Check detachment aliases
+  const detachmentAlias = DETACHMENT_ALIASES.get(normalized);
+  if (detachmentAlias) {
+    return { type: 'detachment', canonical: detachmentAlias };
+  }
+
+  // Check stratagems
+  const stratagemMatch = ALL_STRATAGEMS.find(s => s.toLowerCase() === normalized);
+  if (stratagemMatch) {
+    return { type: 'stratagem', canonical: stratagemMatch };
+  }
+  // Check stratagem aliases
+  const stratagemAlias = STRATAGEM_ALIASES.get(normalized);
+  if (stratagemAlias) {
+    return { type: 'stratagem', canonical: stratagemAlias };
+  }
+
+  // Check objectives
+  const allObjectives = getAllObjectives();
+  const objectiveMatch = allObjectives.find(o => o.toLowerCase() === normalized);
+  if (objectiveMatch) {
+    return { type: 'objective', canonical: objectiveMatch };
+  }
+  // Check objective aliases
+  const objectiveAliases = getObjectiveAliases();
+  const objectiveAlias = objectiveAliases.get(normalized);
+  if (objectiveAlias) {
+    return { type: 'objective', canonical: objectiveAlias };
+  }
+
+  // Check unit aliases first (e.g., "witches" → "Wyches")
+  const unitAlias = UNIT_ALIASES.get(normalized);
+  if (unitAlias) {
+    // Verify the alias target exists in unitNames or is a known unit
+    const aliasInBsData = unitNames.find(u => u.toLowerCase() === unitAlias.toLowerCase());
+    if (aliasInBsData) {
+      return { type: 'unit', canonical: aliasInBsData };
+    }
+    // Trust the alias even if not in current unitNames (might be cross-faction)
+    return { type: 'unit', canonical: unitAlias };
+  }
+
+  // Check against provided unit names (from BSData) - exact match
+  const unitMatch = unitNames.find(u => u.toLowerCase() === normalized);
+  if (unitMatch) {
+    return { type: 'unit', canonical: unitMatch };
+  }
+
+  // Try fuzzy matching against unit names with a high threshold
+  const fuzzyUnitMatch = findBestMatch(term, unitNames, UNIT_ALIASES, 0.8);
+  if (fuzzyUnitMatch) {
+    return { type: 'unit', canonical: fuzzyUnitMatch };
+  }
+
+  // Try normalizing the unit name (strips player names, weapon loadouts)
+  const normalizedUnit = normalizeUnitName(term, unitNames);
+  if (normalizedUnit) {
+    return { type: 'unit', canonical: normalizedUnit };
+  }
+
+  // No match found - return as unknown (won't be tagged)
+  return { type: 'unknown', canonical: term };
+}
+
+/**
  * Generic function to find the best matching timestamp for a name in mentions.
  * Used for both stratagems and units.
  */
@@ -841,6 +1066,16 @@ export function preprocessTranscriptWithLlmMappings(
   const normalizedSegments: NormalizedSegment[] = [];
   const colloquialToOfficial = new Map<string, string>();
 
+  // Deduplicate consecutive identical lines (YouTube auto-captions repeat lines)
+  const dedupedTranscript: TranscriptSegment[] = [];
+  let lastText = '';
+  for (const seg of transcript) {
+    if (seg.text.trim() !== lastText) {
+      dedupedTranscript.push(seg);
+      lastText = seg.text.trim();
+    }
+  }
+
   // Merge LLM mappings into colloquialToOfficial
   for (const [colloquial, official] of Object.entries(llmMappings)) {
     colloquialToOfficial.set(colloquial.toLowerCase(), official);
@@ -859,16 +1094,16 @@ export function preprocessTranscriptWithLlmMappings(
   const allSearchTerms = [...unitNames, ...Object.keys(llmMappings)];
   const unitPattern = allSearchTerms.length > 0 ? buildTermPattern(allSearchTerms, unitAliases) : null;
 
-  for (const seg of transcript) {
+  for (const seg of dedupedTranscript) {
     const timestamp = Math.floor(seg.startTime);
     let text = seg.text;
     let normalizedText = text;
     let taggedText = text;
 
     // Track replacements for this segment to avoid double-processing
-    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' }> = [];
+    const replacements: Array<{ original: string; official: string; type: TermType }> = [];
 
-    // First, apply LLM mappings directly
+    // First, apply LLM mappings directly - but categorize them properly
     for (const [colloquial, official] of Object.entries(llmMappings)) {
       const escapedColloquial = colloquial.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`\\b${escapedColloquial}\\b`, 'gi');
@@ -877,30 +1112,47 @@ export function preprocessTranscriptWithLlmMappings(
         const term = match[0];
         if (!term) continue;
 
-        // Determine if this is a stratagem or unit based on the official name
-        const isStratagem = ALL_STRATAGEMS.some(s => s.toLowerCase() === official.toLowerCase());
-        const type: 'unit' | 'stratagem' = isStratagem ? 'stratagem' : 'unit';
+        // Categorize the term by checking against known lists
+        const { type, canonical } = categorizeTermType(official, unitNames);
 
-        const mentionMap = isStratagem ? stratagemMentions : unitMentions;
-        const canonical = official.toLowerCase();
-
-        if (!mentionMap.has(canonical)) {
-          mentionMap.set(canonical, []);
+        // Skip unknown terms - don't tag them
+        if (type === 'unknown') {
+          continue;
         }
-        const timestamps = mentionMap.get(canonical)!;
+
+        // Get the appropriate mention map based on type
+        let mentionMap: Map<string, number[]>;
+        switch (type) {
+          case 'stratagem':
+            mentionMap = stratagemMentions;
+            break;
+          case 'unit':
+            mentionMap = unitMentions;
+            break;
+          default:
+            // For factions, detachments, objectives - still track but don't have dedicated maps in this function
+            // These will be tagged but not tracked in mention maps here
+            mentionMap = unitMentions; // Fallback, but type will be correct for tagging
+        }
+
+        const canonicalKey = canonical.toLowerCase();
+        if (!mentionMap.has(canonicalKey)) {
+          mentionMap.set(canonicalKey, []);
+        }
+        const timestamps = mentionMap.get(canonicalKey)!;
         if (!timestamps.includes(timestamp)) {
           timestamps.push(timestamp);
         }
 
         matches.push({
           term,
-          normalizedTerm: official,
-          type,
+          normalizedTerm: canonical,
+          type: type === 'faction' || type === 'detachment' ? 'unit' : type, // TermMatch type is limited
           timestamp,
           segmentText: text,
         });
 
-        replacements.push({ original: term, official, type });
+        replacements.push({ original: term, official: canonical, type });
       }
     }
 
@@ -1019,8 +1271,32 @@ export function preprocessTranscriptWithLlmMappings(
           : official.toLowerCase();
       });
 
-      const tag = type === 'unit' ? 'UNIT' : type === 'stratagem' ? 'STRATAGEM' : 'OBJECTIVE';
-      taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
+      // Map type to tag name
+      const tagMap: Record<TermType, string> = {
+        'faction': 'FACTION',
+        'detachment': 'DETACHMENT',
+        'stratagem': 'STRATAGEM',
+        'objective': 'OBJECTIVE',
+        'unit': 'UNIT',
+        'unknown': 'UNIT', // Fallback (shouldn't happen)
+      };
+      const tag = tagMap[type] || 'UNIT';
+
+      // Replace only if not already inside a tag (avoid nested tags)
+      // Match the term only if NOT preceded by "[TYPE:" pattern
+      taggedText = taggedText.replace(regex, (match, offset) => {
+        // Check if this match is inside an existing tag by looking for unclosed '['
+        const before = taggedText.substring(0, offset);
+        const lastOpenBracket = before.lastIndexOf('[');
+        const lastCloseBracket = before.lastIndexOf(']');
+
+        // If there's an unclosed bracket before this match, we're inside a tag - skip
+        if (lastOpenBracket > lastCloseBracket) {
+          return match; // Keep original, don't tag
+        }
+
+        return `[${tag}:${official}]`;
+      });
     }
 
     normalizedSegments.push({
@@ -1053,6 +1329,16 @@ export async function preprocessTranscriptWithGeneratedAliases(
   const normalizedSegments: NormalizedSegment[] = [];
   const colloquialToOfficial = new Map<string, string>();
 
+  // Deduplicate consecutive identical lines (YouTube auto-captions repeat lines)
+  const dedupedTranscript: TranscriptSegment[] = [];
+  let lastText = '';
+  for (const seg of transcript) {
+    if (seg.text.trim() !== lastText) {
+      dedupedTranscript.push(seg);
+      lastText = seg.text.trim();
+    }
+  }
+
   // Merge LLM mappings into colloquialToOfficial
   for (const [colloquial, official] of Object.entries(llmMappings)) {
     colloquialToOfficial.set(colloquial.toLowerCase(), official);
@@ -1071,16 +1357,16 @@ export async function preprocessTranscriptWithGeneratedAliases(
   const allSearchTerms = [...unitNames, ...Object.keys(llmMappings)];
   const unitPattern = allSearchTerms.length > 0 ? buildTermPattern(allSearchTerms, unitAliases) : null;
 
-  for (const seg of transcript) {
+  for (const seg of dedupedTranscript) {
     const timestamp = Math.floor(seg.startTime);
     let text = seg.text;
     let normalizedText = text;
     let taggedText = text;
 
     // Track replacements for this segment to avoid double-processing
-    const replacements: Array<{ original: string; official: string; type: 'unit' | 'stratagem' | 'objective' }> = [];
+    const replacements: Array<{ original: string; official: string; type: TermType }> = [];
 
-    // First, apply LLM mappings directly
+    // First, apply LLM mappings directly - but categorize them properly
     for (const [colloquial, official] of Object.entries(llmMappings)) {
       const escapedColloquial = colloquial.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`\\b${escapedColloquial}\\b`, 'gi');
@@ -1089,29 +1375,46 @@ export async function preprocessTranscriptWithGeneratedAliases(
         const term = match[0];
         if (!term) continue;
 
-        const isStratagem = ALL_STRATAGEMS.some(s => s.toLowerCase() === official.toLowerCase());
-        const type: 'unit' | 'stratagem' = isStratagem ? 'stratagem' : 'unit';
+        // Categorize the term by checking against known lists
+        const { type, canonical } = categorizeTermType(official, unitNames);
 
-        const mentionMap = isStratagem ? stratagemMentions : unitMentions;
-        const canonical = official.toLowerCase();
-
-        if (!mentionMap.has(canonical)) {
-          mentionMap.set(canonical, []);
+        // Skip unknown terms - don't tag them
+        if (type === 'unknown') {
+          continue;
         }
-        const timestamps = mentionMap.get(canonical)!;
+
+        // Get the appropriate mention map based on type
+        let mentionMap: Map<string, number[]>;
+        switch (type) {
+          case 'stratagem':
+            mentionMap = stratagemMentions;
+            break;
+          case 'unit':
+            mentionMap = unitMentions;
+            break;
+          default:
+            mentionMap = unitMentions; // Fallback for factions, detachments, objectives
+        }
+
+        const canonicalKey = canonical.toLowerCase();
+
+        if (!mentionMap.has(canonicalKey)) {
+          mentionMap.set(canonicalKey, []);
+        }
+        const timestamps = mentionMap.get(canonicalKey)!;
         if (!timestamps.includes(timestamp)) {
           timestamps.push(timestamp);
         }
 
         matches.push({
           term,
-          normalizedTerm: official,
-          type,
+          normalizedTerm: canonical,
+          type: type === 'faction' || type === 'detachment' ? 'unit' : type, // TermMatch type is limited
           timestamp,
           segmentText: text,
         });
 
-        replacements.push({ original: term, official, type });
+        replacements.push({ original: term, official: canonical, type });
       }
     }
 
@@ -1226,8 +1529,32 @@ export async function preprocessTranscriptWithGeneratedAliases(
           : official.toLowerCase();
       });
 
-      const tag = type === 'unit' ? 'UNIT' : type === 'stratagem' ? 'STRATAGEM' : 'OBJECTIVE';
-      taggedText = taggedText.replace(regex, `[${tag}:${official}]`);
+      // Map type to tag name
+      const tagMap: Record<TermType, string> = {
+        'faction': 'FACTION',
+        'detachment': 'DETACHMENT',
+        'stratagem': 'STRATAGEM',
+        'objective': 'OBJECTIVE',
+        'unit': 'UNIT',
+        'unknown': 'UNIT', // Fallback (shouldn't happen)
+      };
+      const tag = tagMap[type] || 'UNIT';
+
+      // Replace only if not already inside a tag (avoid nested tags)
+      // Match the term only if NOT preceded by "[TYPE:" pattern
+      taggedText = taggedText.replace(regex, (match, offset) => {
+        // Check if this match is inside an existing tag by looking for unclosed '['
+        const before = taggedText.substring(0, offset);
+        const lastOpenBracket = before.lastIndexOf('[');
+        const lastCloseBracket = before.lastIndexOf(']');
+
+        // If there's an unclosed bracket before this match, we're inside a tag - skip
+        if (lastOpenBracket > lastCloseBracket) {
+          return match; // Keep original, don't tag
+        }
+
+        return `[${tag}:${official}]`;
+      });
     }
 
     normalizedSegments.push({

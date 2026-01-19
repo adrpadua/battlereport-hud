@@ -1,14 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
+import type { ObjectivesResponse } from '../../api-types.js';
 import * as schema from '../../db/schema.js';
 import { eq, ilike } from 'drizzle-orm';
-
-export interface ObjectivesResponse {
-  primaryMissions: string[];
-  secondaryObjectives: string[];
-  gambits: string[];
-  aliases: Record<string, string>;
-}
 
 export function registerObjectivesRoutes(fastify: FastifyInstance, db: Database): void {
   // Get all objectives for preprocessor use

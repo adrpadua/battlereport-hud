@@ -10,6 +10,7 @@ import {
   uniqueIndex,
   index,
   pgEnum,
+  type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 
 // ============================================================================
@@ -58,7 +59,7 @@ export const factions = pgTable('factions', {
   slug: varchar('slug', { length: 100 }).notNull().unique(),
   name: varchar('name', { length: 255 }).notNull(),
   shortName: varchar('short_name', { length: 50 }),
-  parentFactionId: integer('parent_faction_id').references(() => factions.id),
+  parentFactionId: integer('parent_faction_id').references((): AnyPgColumn => factions.id),
   isSubfaction: boolean('is_subfaction').default(false),
   armyRules: text('army_rules'), // Markdown content
   armyRulesRaw: text('army_rules_raw'), // Raw HTML

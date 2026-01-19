@@ -5,6 +5,10 @@
 
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
+import type {
+  ValidateTermResult,
+  ListValidNamesResponse,
+} from '../../api-types.js';
 import {
   findBestMatches,
   normalizeString,
@@ -46,23 +50,6 @@ interface ValidNamesParams {
 interface ValidNamesQuery {
   faction?: string;
   includeAliases?: string;
-}
-
-interface ValidateTermResult {
-  input: string;
-  match: string | null;
-  category: Category | null;
-  faction: string | null;
-  confidence: number;
-  alternates: Array<{ name: string; confidence: number }>;
-}
-
-interface ListValidNamesResult {
-  category: string;
-  faction: string | null;
-  names: string[];
-  count: number;
-  aliases?: Record<string, string>;
 }
 
 export function registerValidationRoutes(fastify: FastifyInstance, db: Database): void {
@@ -174,7 +161,7 @@ export function registerValidationRoutes(fastify: FastifyInstance, db: Database)
         setCache(cacheKey, names);
       }
 
-      const result: ListValidNamesResult = {
+      const result: ListValidNamesResponse = {
         category,
         faction: faction || null,
         names,

@@ -99,7 +99,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       const factionName = extractFactionName(factionResult.markdown) || factionSlug;
       const faction = parseFactionPage(factionResult.markdown, factionSlug, factionName, factionResult.url);
 
-      const [insertedFaction] = await db
+      const insertResult = await db
         .insert(schema.factions)
         .values(faction)
         .onConflictDoUpdate({
@@ -115,6 +115,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
         })
         .returning();
 
+      const insertedFaction = Array.isArray(insertResult) ? insertResult[0] : null;
       const factionId = insertedFaction!.id;
 
       await db.insert(schema.scrapeLog).values({

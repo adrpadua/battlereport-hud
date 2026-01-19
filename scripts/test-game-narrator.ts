@@ -16,7 +16,12 @@
 import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
-import { preprocessTranscriptWithGeneratedAliases } from '../src/background/transcript-preprocessor';
+import {
+  preprocessTranscript,
+  preprocessTranscriptWithLlmMappings,
+  type PreprocessedTranscript,
+} from '../src/background/transcript-preprocessor';
+import { preprocessWithLlm } from '../src/background/llm-preprocess-service';
 import { getFactionContextForPrompt } from '../src/background/report-processor';
 import { findFactionByName } from '../src/data/generated';
 import {
@@ -138,22 +143,55 @@ async function main(): Promise<void> {
     }
   }
 
-  // Preprocess transcript with generated aliases
+  // Preprocess transcript with LLM + pattern matching
   console.log('\nPreprocessing transcript...');
   const allUnitNames = [...factionUnitNames.values()].flat();
 
-  // Get faction IDs for loading generated aliases
-  const factionIds = detectedFactions
-    .map((name) => findFactionByName(name)?.id)
-    .filter((id): id is string => id !== undefined);
+  const apiKey = process.env.OPENAI_API_KEY;
+  let preprocessed: PreprocessedTranscript;
 
-  console.log(`Loading generated aliases for: ${factionIds.join(', ') || 'none'}`);
+  if (apiKey) {
+    // Run LLM preprocessing for better term normalization
+    console.log('Running LLM preprocessing (GPT-4o-mini)...');
+    const llmStart = Date.now();
 
-  const preprocessed = await preprocessTranscriptWithGeneratedAliases(
-    captions.segments,
-    allUnitNames,
-    factionIds
-  );
+    try {
+      const llmResult = await preprocessWithLlm(captions.segments, detectedFactions, apiKey);
+      const llmElapsed = Date.now() - llmStart;
+      console.log(`LLM preprocessing completed in ${(llmElapsed / 1000).toFixed(1)}s`);
+      console.log(`Found ${Object.keys(llmResult.termMappings).length} term mappings`);
+
+      // Use LLM mappings with pattern-based preprocessing for units/stratagems
+      const llmPreprocessed = preprocessTranscriptWithLlmMappings(
+        captions.segments,
+        allUnitNames,
+        llmResult.termMappings
+      );
+
+      // Also run pattern-only preprocessing to get objectives/factions/detachments
+      // (preprocessTranscriptWithLlmMappings doesn't detect these yet)
+      const patternPreprocessed = preprocessTranscript(captions.segments, allUnitNames);
+
+      // Merge: use LLM-enhanced units/stratagems, pattern-based objectives/factions/detachments
+      preprocessed = {
+        ...llmPreprocessed,
+        objectiveMentions: patternPreprocessed.objectiveMentions,
+        factionMentions: patternPreprocessed.factionMentions,
+        detachmentMentions: patternPreprocessed.detachmentMentions,
+        // Merge colloquial mappings from both
+        colloquialToOfficial: new Map([
+          ...patternPreprocessed.colloquialToOfficial,
+          ...llmPreprocessed.colloquialToOfficial,
+        ]),
+      };
+    } catch (error) {
+      console.warn('LLM preprocessing failed, falling back to pattern-only:', error);
+      preprocessed = preprocessTranscript(captions.segments, allUnitNames);
+    }
+  } else {
+    console.log('No OPENAI_API_KEY found, using pattern-only preprocessing');
+    preprocessed = preprocessTranscript(captions.segments, allUnitNames);
+  }
 
   console.log(`Factions detected: ${preprocessed.factionMentions.size}`);
   console.log(`Detachments detected: ${preprocessed.detachmentMentions.size}`);
@@ -262,13 +300,12 @@ async function main(): Promise<void> {
     const { default: OpenAI } = await import('openai');
     const openai = new OpenAI({ apiKey });
 
-    console.log('Sending request to GPT-4o...');
+    console.log('Sending request to GPT-5-mini...');
     const startTime = Date.now();
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      temperature: 0.7,
-      max_tokens: 16000,
+      model: 'gpt-5-mini',
+      max_completion_tokens: 32000,
       messages: [
         { role: 'system', content: GAME_NARRATOR_SYSTEM_PROMPT },
         { role: 'user', content: userPrompt },

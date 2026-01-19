@@ -15,29 +15,50 @@ interface PreprocessResponse {
   mappings: Record<string, string>;
 }
 
-const PREPROCESS_SYSTEM_PROMPT = `You are a Warhammer 40,000 terminology expert. Extract colloquial terms, abbreviations, and nicknames from battle report transcripts and map them to their official game names.
+const PREPROCESS_SYSTEM_PROMPT = `You are a Warhammer 40,000 terminology expert. Extract colloquial terms, abbreviations, and nicknames from battle report transcripts and map them to their official UNIT, FACTION, DETACHMENT, or STRATAGEM names ONLY.
 
 GUIDELINES:
 - Only map terms that are clearly Warhammer 40k related
 - Map unit nicknames to official unit names (e.g., "las preds" → "Predator Destructor")
 - Map stratagem nicknames to official names (e.g., "popped smoke" → "Smokescreen")
-- Map misspellings to correct names (e.g., "Drukari" → "Drukhari")
+- Map misspellings to correct names (e.g., "Drukari" → "Drukhari", "Kalidus" → "Callidus Assassin")
 - Map abbreviated names to full names (e.g., "termies" → "Terminators")
-- DO NOT map general English words that aren't game-specific
-- If no mappings are found, return an empty mappings object
+
+DO NOT MAP THE FOLLOWING - THEY ARE NOT TAGGABLE ENTITIES:
+- WEAPONS: Dark Lance, Meltagun, Huskblade, Splinter Rifle, Shuriken Catapult, etc.
+- WEAPON ABILITIES: Devastating Wounds, Sustained Hits, Lethal Hits, Anti-Infantry, etc.
+- GAME MECHANICS: Battleshock, Command Points, Feel No Pain, Mortal Wounds, Deep Strike, etc.
+- ARMY RULES: Power from Pain, Strands of Fate, Oath of Moment, etc.
+- OBJECTIVE/MISSION NAMES: Terraform, Hidden Supplies, Assassination, etc.
+- General English words that aren't unit/faction/stratagem names
+
+PLAYER NAME HANDLING:
+When a player name is combined with a unit type, map to JUST the unit type:
+- "Archon Skari" → "Archon" (Skari is the player)
+- "Librarian Zarek" → "Librarian" (Zarek is the player)
+- "Captain John" → "Captain"
+
+WEAPON LOADOUT HANDLING:
+When a unit is mentioned with weapons, map to JUST the unit:
+- "Scourge with Dark Lances" → "Scourges"
+- "Terminators with Thunder Hammers" → "Terminator Squad"
+
+If no valid mappings are found, return an empty mappings object.
 
 Respond with a JSON object containing only "mappings" - an object mapping each colloquial term to its official name.
 
 Example:
-Input: "...las preds moving up, he popped smoke on the warriors..."
+Input: "...las preds moving up, the kalidus got devastating wounds, archon skari charges..."
 Output JSON:
 {
   "mappings": {
     "las preds": "Predator Destructor",
-    "popped smoke": "Smokescreen",
-    "warriors": "Necron Warriors"
+    "kalidus": "Callidus Assassin",
+    "archon skari": "Archon"
   }
-}`;
+}
+
+NOTE: "devastating wounds" is NOT mapped because it's a weapon ability, not a unit.`;
 
 interface ChunkInfo {
   segments: TranscriptSegment[];
@@ -256,9 +277,13 @@ async function processChunksWithConcurrency(
   return results;
 }
 
+// Categories that should NOT be tagged as units - these are not taggable entities
+const EXCLUDED_MCP_CATEGORIES = new Set(['weapons', 'abilities', 'keywords']);
+
 /**
  * Validate term mappings against the MCP server.
  * Returns corrected mappings where available, falling back to original LLM mappings.
+ * Filters out terms that match weapons, abilities, or keywords categories.
  * This is optional - if the MCP server is unavailable, it returns the original mappings.
  */
 async function validateTermsWithMcp(
@@ -279,7 +304,8 @@ async function validateTermsWithMcp(
         terms,
         factions,
         minConfidence: 0.7,
-        categories: ['units', 'stratagems', 'abilities', 'factions', 'enhancements'],
+        // Include weapons category so we can filter them out
+        categories: ['units', 'stratagems', 'abilities', 'factions', 'enhancements', 'weapons', 'keywords'],
       }),
       signal: controller.signal,
     });
@@ -300,7 +326,10 @@ async function validateTermsWithMcp(
     }
 
     // Build a map of LLM official names to MCP validated names
+    // Also track which terms matched excluded categories (weapons, abilities, keywords)
     const mcpValidated: Record<string, string> = {};
+    const excludedTerms = new Set<string>();
+
     for (const result of data.results) {
       if (
         result &&
@@ -310,14 +339,32 @@ async function validateTermsWithMcp(
         typeof result.confidence === 'number' &&
         result.confidence >= 0.7
       ) {
-        mcpValidated[result.input.toLowerCase()] = result.match;
+        const inputLower = result.input.toLowerCase();
+        const category = result.category as string | undefined;
+
+        // Check if this term matched an excluded category
+        if (category && EXCLUDED_MCP_CATEGORIES.has(category)) {
+          excludedTerms.add(inputLower);
+          console.log(`Filtering out '${result.input}' - matched category '${category}' (not a taggable entity)`);
+          continue;
+        }
+
+        mcpValidated[inputLower] = result.match;
       }
     }
 
-    // Apply MCP corrections to the mappings
+    // Apply MCP corrections to the mappings, excluding filtered terms
     const correctedMappings: Record<string, string> = {};
     for (const [colloquial, llmOfficial] of Object.entries(termMappings)) {
-      const mcpMatch = mcpValidated[llmOfficial.toLowerCase()];
+      const llmLower = llmOfficial.toLowerCase();
+
+      // Skip terms that matched excluded categories
+      if (excludedTerms.has(llmLower)) {
+        console.log(`Removing mapping '${colloquial}' → '${llmOfficial}' (matched excluded category)`);
+        continue;
+      }
+
+      const mcpMatch = mcpValidated[llmLower];
       // Use MCP match if found, otherwise keep LLM mapping
       correctedMappings[colloquial] = mcpMatch || llmOfficial;
     }
@@ -325,8 +372,13 @@ async function validateTermsWithMcp(
     const corrections = Object.entries(correctedMappings).filter(
       ([k, v]) => termMappings[k] !== v
     ).length;
+    const filtered = Object.keys(termMappings).length - Object.keys(correctedMappings).length;
+
     if (corrections > 0) {
       console.log(`MCP validation corrected ${corrections} term mappings`);
+    }
+    if (filtered > 0) {
+      console.log(`MCP validation filtered out ${filtered} non-taggable terms`);
     }
 
     return correctedMappings;

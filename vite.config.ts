@@ -14,6 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      '@mcp/types': resolve(__dirname, 'mcp-server/src/api-types.ts'),
     },
   },
   build: {

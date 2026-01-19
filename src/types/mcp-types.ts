@@ -1,123 +1,41 @@
 /**
  * MCP API Response Types
- * Types for the HTTP API responses from the MCP server
+ *
+ * Re-exports types from the shared api-types module for backwards compatibility.
+ * Extension-specific types that are not from the API are defined here.
  */
 
-export interface McpUnitStats {
-  movement: string | null;
-  toughness: number | null;
-  save: string | null;
-  invulnerableSave: string | null;
-  wounds: number | null;
-  leadership: number | null;
-  objectiveControl: number | null;
-}
-
-export interface McpWeapon {
-  name: string;
-  type: 'ranged' | 'melee';
-  range: string | null;
-  attacks: string | null;
-  skill: string | null;
-  strength: string | null;
-  ap: string | null;
-  damage: string | null;
-  abilities: string | null;
-}
-
-export interface McpAbility {
-  name: string;
-  type: string; // 'core' | 'faction' | 'unit' | 'wargear'
-  description: string;
-}
-
-export interface McpUnitResponse {
-  unit: {
-    name: string;
-    faction: string;
-    stats: McpUnitStats;
-    pointsCost: number | null;
-    composition: string | null;
-    wargearOptions: string | null;
-    leaderInfo: string | null;
-    ledBy: string | null;
-    transportCapacity: string | null;
-    isEpicHero: boolean | null;
-    isBattleline: boolean | null;
-  };
-  weapons: McpWeapon[];
-  abilities: McpAbility[];
-  keywords: string[];
-}
-
-export interface McpUnitSearchResult {
-  name: string;
-  faction: string;
-  movement: string | null;
-  toughness: number | null;
-  save: string | null;
-  wounds: number | null;
-  leadership: number | null;
-  objectiveControl: number | null;
-  pointsCost: number | null;
-}
-
-export interface McpUnitSearchResponse {
-  count: number;
-  units: McpUnitSearchResult[];
-}
-
-export interface McpStratagem {
-  name: string;
-  cpCost: string;
-  phase: string;
-  when: string | null;
-  target: string | null;
-  effect: string;
-  restrictions: string | null;
-  detachment: string | null;
-  faction: string | null;
-}
-
-export interface McpStratagemResponse {
-  stratagem: McpStratagem;
-}
-
-export interface McpStratagemSearchResponse {
-  faction: string;
-  count: number;
-  stratagems: Omit<McpStratagem, 'faction' | 'restrictions'>[];
-}
-
-export interface McpEnhancement {
-  name: string;
-  pointsCost: number;
-  description: string;
-  restrictions: string | null;
-  detachment: string | null;
-}
-
-export interface McpEnhancementResponse {
-  faction: string;
-  count: number;
-  enhancements: McpEnhancement[];
-}
-
-export interface McpHealthResponse {
-  status: 'ok';
-  timestamp: string;
-}
-
-export interface McpErrorResponse {
-  error: string;
-}
+// Re-export from shared types with Mcp prefix for backwards compatibility
+export type {
+  UnitStatsResponse as McpUnitStats,
+  WeaponResponse as McpWeapon,
+  AbilityResponse as McpAbility,
+  UnitResponse as McpUnitResponse,
+  UnitSearchResult as McpUnitSearchResult,
+  UnitSearchResponse as McpUnitSearchResponse,
+  StratagemResponse as McpStratagem,
+  StratagemDetailResponse as McpStratagemResponse,
+  StratagemSearchResponse as McpStratagemSearchResponse,
+  EnhancementResponse as McpEnhancement,
+  EnhancementSearchResponse as McpEnhancementResponse,
+  HealthResponse as McpHealthResponse,
+  ErrorResponse as McpErrorResponse,
+  ObjectivesResponse as McpObjectivesResponse,
+  ValidateTermsResponse as McpValidateTermsResponse,
+  ValidateTermResult as McpValidateTermResult,
+  FuzzySearchResponse as McpFuzzySearchResponse,
+  ResolveTermResponse as McpResolveTermResponse,
+} from '@mcp/types';
 
 /**
- * Enhanced entity data combining BSData with MCP data
+ * Extension-specific types (not from API)
  */
+
+import type { WeaponResponse, AbilityResponse } from '@mcp/types';
+
 export interface EnhancedUnitData {
-  weapons: McpWeapon[];
-  abilities: McpAbility[];
+  weapons: WeaponResponse[];
+  abilities: AbilityResponse[];
   mcpFetched: boolean;
 }
 

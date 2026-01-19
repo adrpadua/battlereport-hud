@@ -15,8 +15,6 @@ import { parseDatasheets } from '../scraper/parsers/unit-parser.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { getPool } from '../db/connection.js';
 
-type MenuAction = 'back' | 'exit' | (() => Promise<void>);
-
 async function showStatus(): Promise<void> {
   const db = getDb();
 

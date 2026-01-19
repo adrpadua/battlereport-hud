@@ -52,14 +52,15 @@ async function main() {
   const db = getDb();
 
   // Get or create T'au faction
-  let [faction] = await db.select().from(schema.factions).where(eq(schema.factions.slug, 't-au-empire'));
+  const factionResults = await db.select().from(schema.factions).where(eq(schema.factions.slug, 't-au-empire'));
+  let faction = factionResults[0];
 
   if (!faction) {
-    [faction] = await db.insert(schema.factions).values({
+    const insertResult = await db.insert(schema.factions).values({
       name: "T'au Empire",
       slug: 't-au-empire',
-      wahapediaUrl: 'https://wahapedia.ru/wh40k10ed/factions/t-au-empire/',
     }).returning();
+    faction = insertResult[0]!;
     console.log("Created T'au Empire faction");
   }
 
@@ -92,7 +93,7 @@ async function main() {
       const unitData = parsed[0]!;
 
       // Insert unit
-      const [unit] = await db
+      const unitResult = await db
         .insert(schema.units)
         .values({
           ...unitData.unit,
@@ -103,14 +104,16 @@ async function main() {
           set: { ...unitData.unit, updatedAt: new Date() },
         })
         .returning();
+      const unit = unitResult[0]!;
 
       // Insert weapons
       for (const weapon of unitData.weapons) {
-        const [insertedWeapon] = await db
+        const weaponResult = await db
           .insert(schema.weapons)
-          .values({ ...weapon, factionId: faction.id })
+          .values(weapon)
           .onConflictDoNothing()
           .returning();
+        const insertedWeapon = weaponResult[0];
 
         const weaponId = insertedWeapon?.id;
         if (weaponId) {
@@ -123,11 +126,12 @@ async function main() {
 
       // Insert abilities
       for (const ability of unitData.abilities) {
-        const [insertedAbility] = await db
+        const abilityResult = await db
           .insert(schema.abilities)
           .values({ ...ability, factionId: faction.id })
           .onConflictDoNothing()
           .returning();
+        const insertedAbility = abilityResult[0];
 
         if (insertedAbility) {
           await db
@@ -135,10 +139,11 @@ async function main() {
             .values({ unitId: unit.id, abilityId: insertedAbility.id })
             .onConflictDoNothing();
         } else {
-          const [existing] = await db.select()
+          const existingResults = await db.select()
             .from(schema.abilities)
             .where(eq(schema.abilities.slug, ability.slug))
             .limit(1);
+          const existing = existingResults[0];
           if (existing) {
             await db
               .insert(schema.unitAbilities)

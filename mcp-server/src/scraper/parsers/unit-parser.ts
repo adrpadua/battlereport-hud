@@ -85,7 +85,8 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
   const isEpicHero = /epic\s*hero/i.test(keywordsSection) || /epic\s*hero/i.test(markdown);
   const isBattleline = /battleline/i.test(markdown);
   const isDedicatedTransport = /dedicated\s*transport/i.test(markdown);
-  const legends = /legends?/i.test(markdown.slice(0, 2000)); // Only check early in doc
+  const _legends = /legends?/i.test(markdown.slice(0, 2000)); // Only check early in doc (reserved for future use)
+  void _legends;
 
   // Extract weapons
   const weapons = extractWeapons(markdown, sourceUrl);
@@ -330,8 +331,9 @@ function parseWeaponTable(
     const damage = cells[7];
 
     // Skip header rows (RANGED WEAPONS, MELEE WEAPONS) and separator rows
+    if (!name) continue;
     const lowerName = name.toLowerCase();
-    if (!name || lowerName === 'ranged weapons' || lowerName === 'melee weapons' || name.includes('---')) {
+    if (lowerName === 'ranged weapons' || lowerName === 'melee weapons' || name.includes('---')) {
       continue;
     }
 
@@ -356,40 +358,6 @@ function parseWeaponTable(
   }
 
   return weapons;
-}
-
-/**
- * Parse weapon ability keywords into array
- */
-function parseWeaponAbilities(abilities: string): string[] {
-  // Common weapon abilities
-  const knownAbilities = [
-    'Anti-',
-    'Assault',
-    'Blast',
-    'Devastating Wounds',
-    'Extra Attacks',
-    'Hazardous',
-    'Heavy',
-    'Ignores Cover',
-    'Indirect Fire',
-    'Lance',
-    'Lethal Hits',
-    'Melta',
-    'One Shot',
-    'Pistol',
-    'Precision',
-    'Psychic',
-    'Rapid Fire',
-    'Sustained Hits',
-    'Torrent',
-    'Twin-linked',
-  ];
-
-  return abilities
-    .split(/[,;]/)
-    .map((a) => a.trim())
-    .filter(Boolean);
 }
 
 /**
@@ -541,16 +509,6 @@ function extractAbilities(
   }
 
   return abilities;
-}
-
-function detectAbilityType(name: string, description: string): string {
-  const combined = `${name} ${description}`.toLowerCase();
-
-  if (combined.includes('core')) return 'core';
-  if (combined.includes('faction')) return 'faction';
-  if (combined.includes('wargear')) return 'wargear';
-
-  return 'unit';
 }
 
 function isHeaderSection(name: string): boolean {

@@ -1,7 +1,7 @@
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { Database } from '../db/connection.js';
 import * as schema from '../db/schema.js';
-import { eq, ilike, or, and, sql } from 'drizzle-orm';
+import { eq, ilike, or, and } from 'drizzle-orm';
 import {
   createValidationTools,
   handleValidationToolCall,
@@ -506,7 +506,20 @@ async function getDetachmentDetails(
 }
 
 async function searchUnits(db: Database, query: string, factionQuery?: string) {
-  let searchQuery = db
+  // Build WHERE condition first
+  let whereCondition = ilike(schema.units.name, `%${query}%`);
+
+  if (factionQuery) {
+    const faction = await findFaction(db, factionQuery);
+    if (faction) {
+      whereCondition = and(
+        ilike(schema.units.name, `%${query}%`),
+        eq(schema.units.factionId, faction.id)
+      )!;
+    }
+  }
+
+  const units = await db
     .select({
       name: schema.units.name,
       faction: schema.factions.name,
@@ -520,44 +533,34 @@ async function searchUnits(db: Database, query: string, factionQuery?: string) {
     })
     .from(schema.units)
     .innerJoin(schema.factions, eq(schema.units.factionId, schema.factions.id))
-    .where(ilike(schema.units.name, `%${query}%`));
+    .where(whereCondition)
+    .limit(20);
 
-  if (factionQuery) {
-    const faction = await findFaction(db, factionQuery);
-    if (faction) {
-      searchQuery = searchQuery.where(
-        and(
-          ilike(schema.units.name, `%${query}%`),
-          eq(schema.units.factionId, faction.id)
-        )
-      ) as typeof searchQuery;
-    }
-  }
-
-  const units = await searchQuery.limit(20);
   return { count: units.length, units };
 }
 
 async function getUnit(db: Database, unitQuery: string, factionQuery?: string) {
-  let baseQuery = db
-    .select()
-    .from(schema.units)
-    .innerJoin(schema.factions, eq(schema.units.factionId, schema.factions.id))
-    .where(ilike(schema.units.name, `%${unitQuery}%`));
+  // Build WHERE condition first
+  let whereCondition = ilike(schema.units.name, `%${unitQuery}%`);
 
   if (factionQuery) {
     const faction = await findFaction(db, factionQuery);
     if (faction) {
-      baseQuery = baseQuery.where(
-        and(
-          ilike(schema.units.name, `%${unitQuery}%`),
-          eq(schema.units.factionId, faction.id)
-        )
-      ) as typeof baseQuery;
+      whereCondition = and(
+        ilike(schema.units.name, `%${unitQuery}%`),
+        eq(schema.units.factionId, faction.id)
+      )!;
     }
   }
 
-  const [result] = await baseQuery.limit(1);
+  const results = await db
+    .select()
+    .from(schema.units)
+    .innerJoin(schema.factions, eq(schema.units.factionId, schema.factions.id))
+    .where(whereCondition)
+    .limit(1);
+
+  const result = results[0];
 
   if (!result) {
     return { error: `Unit not found: ${unitQuery}` };
@@ -634,7 +637,7 @@ async function getUnit(db: Database, unitQuery: string, factionQuery?: string) {
 async function getStratagems(
   db: Database,
   factionQuery: string,
-  detachmentQuery?: string,
+  _detachmentQuery?: string,
   phase?: string
 ) {
   const faction = await findFaction(db, factionQuery);
@@ -642,7 +645,17 @@ async function getStratagems(
     return { error: `Faction not found: ${factionQuery}` };
   }
 
-  let query = db
+  // Build WHERE condition first
+  let whereCondition = eq(schema.stratagems.factionId, faction.id);
+
+  if (phase) {
+    whereCondition = and(
+      eq(schema.stratagems.factionId, faction.id),
+      eq(schema.stratagems.phase, phase as any)
+    )!;
+  }
+
+  const stratagems = await db
     .select({
       name: schema.stratagems.name,
       cpCost: schema.stratagems.cpCost,
@@ -654,25 +667,15 @@ async function getStratagems(
     })
     .from(schema.stratagems)
     .leftJoin(schema.detachments, eq(schema.stratagems.detachmentId, schema.detachments.id))
-    .where(eq(schema.stratagems.factionId, faction.id));
+    .where(whereCondition);
 
-  if (phase) {
-    query = query.where(
-      and(
-        eq(schema.stratagems.factionId, faction.id),
-        eq(schema.stratagems.phase, phase as any)
-      )
-    ) as typeof query;
-  }
-
-  const stratagems = await query;
   return { faction: faction.name, count: stratagems.length, stratagems };
 }
 
 async function getEnhancements(
   db: Database,
   factionQuery: string,
-  detachmentQuery?: string
+  _detachmentQuery?: string
 ) {
   const faction = await findFaction(db, factionQuery);
   if (!faction) {
@@ -695,48 +698,48 @@ async function getEnhancements(
 }
 
 async function searchWeapons(db: Database, query: string, type?: string) {
-  let searchQuery = db
-    .select()
-    .from(schema.weapons)
-    .where(ilike(schema.weapons.name, `%${query}%`));
+  // Build WHERE condition first
+  let whereCondition = ilike(schema.weapons.name, `%${query}%`);
 
   if (type) {
-    searchQuery = searchQuery.where(
-      and(
-        ilike(schema.weapons.name, `%${query}%`),
-        eq(schema.weapons.weaponType, type as any)
-      )
-    ) as typeof searchQuery;
+    whereCondition = and(
+      ilike(schema.weapons.name, `%${query}%`),
+      eq(schema.weapons.weaponType, type as any)
+    )!;
   }
 
-  const weapons = await searchQuery.limit(20);
+  const weapons = await db
+    .select()
+    .from(schema.weapons)
+    .where(whereCondition)
+    .limit(20);
+
   return { count: weapons.length, weapons };
 }
 
 async function searchAbilities(db: Database, query: string, type?: string) {
-  let searchQuery = db
-    .select()
-    .from(schema.abilities)
-    .where(
+  // Build WHERE condition first
+  let whereCondition = or(
+    ilike(schema.abilities.name, `%${query}%`),
+    ilike(schema.abilities.description, `%${query}%`)
+  );
+
+  if (type) {
+    whereCondition = and(
       or(
         ilike(schema.abilities.name, `%${query}%`),
         ilike(schema.abilities.description, `%${query}%`)
-      )
+      ),
+      eq(schema.abilities.abilityType, type)
     );
-
-  if (type) {
-    searchQuery = searchQuery.where(
-      and(
-        or(
-          ilike(schema.abilities.name, `%${query}%`),
-          ilike(schema.abilities.description, `%${query}%`)
-        ),
-        eq(schema.abilities.abilityType, type)
-      )
-    ) as typeof searchQuery;
   }
 
-  const abilities = await searchQuery.limit(20);
+  const abilities = await db
+    .select()
+    .from(schema.abilities)
+    .where(whereCondition!)
+    .limit(20);
+
   return { count: abilities.length, abilities };
 }
 
@@ -766,34 +769,33 @@ async function getMissions(db: Database, type?: string) {
 }
 
 async function searchFaqs(db: Database, query: string, factionQuery?: string) {
-  let searchQuery = db
-    .select()
-    .from(schema.faqs)
-    .where(
-      or(
-        ilike(schema.faqs.question, `%${query}%`),
-        ilike(schema.faqs.answer, `%${query}%`),
-        ilike(schema.faqs.content, `%${query}%`)
-      )
-    );
+  // Build WHERE condition first
+  let whereCondition = or(
+    ilike(schema.faqs.question, `%${query}%`),
+    ilike(schema.faqs.answer, `%${query}%`),
+    ilike(schema.faqs.content, `%${query}%`)
+  );
 
   if (factionQuery) {
     const faction = await findFaction(db, factionQuery);
     if (faction) {
-      searchQuery = searchQuery.where(
-        and(
-          or(
-            ilike(schema.faqs.question, `%${query}%`),
-            ilike(schema.faqs.answer, `%${query}%`),
-            ilike(schema.faqs.content, `%${query}%`)
-          ),
-          eq(schema.faqs.factionId, faction.id)
-        )
-      ) as typeof searchQuery;
+      whereCondition = and(
+        or(
+          ilike(schema.faqs.question, `%${query}%`),
+          ilike(schema.faqs.answer, `%${query}%`),
+          ilike(schema.faqs.content, `%${query}%`)
+        ),
+        eq(schema.faqs.factionId, faction.id)
+      );
     }
   }
 
-  const faqs = await searchQuery.limit(20);
+  const faqs = await db
+    .select()
+    .from(schema.faqs)
+    .where(whereCondition!)
+    .limit(20);
+
   return { count: faqs.length, faqs };
 }
 

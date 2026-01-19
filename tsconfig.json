@@ -21,7 +21,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@mcp/types": ["mcp-server/src/api-types.ts"]
     }
   },
   "include": ["src"]

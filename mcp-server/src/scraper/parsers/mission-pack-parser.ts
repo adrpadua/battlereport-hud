@@ -81,7 +81,7 @@ function parsePrimaryMissions(markdown: string, sourceUrl: string, missionType: 
     const description = descMatch ? descMatch[1]?.trim() : '';
 
     // Extract scoring rules (everything after description)
-    const scoringRules = content.replace(description, '').trim();
+    const scoringRules = content.replace(description ?? '', '').trim();
 
     // Check for action definitions
     const actionMatch = content.match(/\(ACTION\)([\s\S]*?)(?=\n(?:SECOND|ANY|FIRST|START OF THE BATTLE|\*\*WHEN))/i);

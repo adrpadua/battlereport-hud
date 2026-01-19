@@ -290,7 +290,7 @@ export function formatDetachmentTimeline(
  */
 export function formatPreprocessedTranscript(
   preprocessed: PreprocessedTranscript,
-  maxLength: number = 50000
+  maxLength: number = 150000
 ): string {
   const segments = preprocessed.normalizedSegments;
   if (segments.length === 0) {
