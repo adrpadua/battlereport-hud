@@ -110,8 +110,8 @@ export const units = pgTable('units', {
   // Unit stats (can be null for units with variable profiles)
   movement: varchar('movement', { length: 20 }),
   toughness: integer('toughness'),
-  save: varchar('save', { length: 10 }),
-  invulnerableSave: varchar('invulnerable_save', { length: 10 }),
+  save: varchar('save', { length: 50 }),
+  invulnerableSave: varchar('invulnerable_save', { length: 50 }),
   wounds: integer('wounds'),
   leadership: integer('leadership'),
   objectiveControl: integer('objective_control'),
@@ -156,7 +156,7 @@ export const unitProfiles = pgTable('unit_profiles', {
   condition: varchar('condition', { length: 255 }), // e.g., "1-4 wounds remaining"
   movement: varchar('movement', { length: 20 }),
   toughness: integer('toughness'),
-  save: varchar('save', { length: 10 }),
+  save: varchar('save', { length: 50 }),
   wounds: integer('wounds'),
   leadership: integer('leadership'),
   objectiveControl: integer('objective_control'),
@@ -178,9 +178,9 @@ export const weapons = pgTable('weapons', {
   // Weapon stats
   range: varchar('range', { length: 20 }), // e.g., "24\"" or "Melee"
   attacks: varchar('attacks', { length: 20 }), // Can be "D6", "2", etc.
-  skill: varchar('skill', { length: 10 }), // BS or WS, e.g., "3+"
-  strength: varchar('strength', { length: 10 }),
-  armorPenetration: varchar('armor_penetration', { length: 10 }),
+  skill: varchar('skill', { length: 50 }), // BS or WS, e.g., "3+"
+  strength: varchar('strength', { length: 50 }),
+  armorPenetration: varchar('armor_penetration', { length: 50 }),
   damage: varchar('damage', { length: 20 }),
 
   // Weapon abilities (keywords like Rapid Fire, Melta, etc.)
@@ -391,6 +391,27 @@ export const secondaryObjectives = pgTable('secondary_objectives', {
 }));
 
 // ============================================================================
+// UNIT INDEX (for tracking discovered units before full scrape)
+// ============================================================================
+
+export const scrapeStatusEnum = pgEnum('scrape_status', ['pending', 'success', 'failed']);
+
+export const unitIndex = pgTable('unit_index', {
+  id: serial('id').primaryKey(),
+  factionId: integer('faction_id').references(() => factions.id).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  wahapediaUrl: text('wahapedia_url'),
+  discoveredAt: timestamp('discovered_at').defaultNow(),
+  lastScrapedAt: timestamp('last_scraped_at'),
+  scrapeStatus: scrapeStatusEnum('scrape_status').default('pending'),
+}, (table) => ({
+  factionIdx: index('unit_index_faction_idx').on(table.factionId),
+  slugFactionIdx: uniqueIndex('unit_index_slug_faction_idx').on(table.slug, table.factionId),
+  statusIdx: index('unit_index_status_idx').on(table.scrapeStatus),
+}));
+
+// ============================================================================
 // SCRAPE METADATA (for tracking what's been scraped)
 // ============================================================================
 
@@ -447,3 +468,6 @@ export type NewMission = typeof missions.$inferInsert;
 
 export type SecondaryObjective = typeof secondaryObjectives.$inferSelect;
 export type NewSecondaryObjective = typeof secondaryObjectives.$inferInsert;
+
+export type UnitIndex = typeof unitIndex.$inferSelect;
+export type NewUnitIndex = typeof unitIndex.$inferInsert;

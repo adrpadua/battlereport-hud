@@ -4,7 +4,6 @@ import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
-import { getCachedUnits, cacheUnits, clearCache } from './unit-cache.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { eq } from 'drizzle-orm';
@@ -20,17 +19,8 @@ async function main() {
   const factionIndex = args.indexOf('--faction');
   const singleFaction = factionIndex >= 0 ? args[factionIndex + 1] : null;
 
-  // Optional: refresh unit cache
-  const refreshCache = args.includes('--refresh-cache');
-  if (refreshCache) {
-    if (singleFaction) {
-      clearCache(singleFaction);
-      console.log(`Cleared unit cache for: ${singleFaction}`);
-    } else {
-      clearCache();
-      console.log('Cleared all unit cache');
-    }
-  }
+  // Optional: refresh unit index (re-discover units from datasheets page)
+  const refreshIndex = args.includes('--refresh-index');
 
   if (singleFaction) {
     console.log(`Starting Wahapedia scraper for faction: ${singleFaction}`);
@@ -53,7 +43,7 @@ async function main() {
     }
 
     if (target === 'units' || target === 'all') {
-      await scrapeUnits(client, db, singleFaction);
+      await scrapeUnits(client, db, singleFaction, refreshIndex);
     }
 
     console.log('\nScraping completed!');
@@ -206,7 +196,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
   }
 }
 
-async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null) {
+async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null, refreshIndex: boolean = false) {
   console.log('\n=== Scraping Units ===');
 
   // Get factions from database (filtered if single faction specified)
@@ -225,29 +215,55 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
     console.log(`\n--- Scraping units for: ${faction.name} ---`);
 
     try {
-      // Check cache first for unit slugs
-      let unitLinks = getCachedUnits(faction.slug);
-      let scrapedIndex = false;
       const indexUrl = WAHAPEDIA_URLS.datasheets(faction.slug);
 
-      if (unitLinks) {
-        console.log(`  Using cached unit list (${unitLinks.length} units)`);
+      // Check database for existing unit index
+      const existingUnits = await db
+        .select()
+        .from(schema.unitIndex)
+        .where(eq(schema.unitIndex.factionId, faction.id));
+
+      let unitLinks: { name: string; slug: string }[];
+
+      if (existingUnits.length > 0 && !refreshIndex) {
+        console.log(`  Using indexed unit list (${existingUnits.length} units)`);
+        unitLinks = existingUnits.map(u => ({ name: u.name, slug: u.slug }));
       } else {
-        // Scrape datasheets index to extract unit slugs
-        console.log(`  Fetching datasheets index...`);
+        // Scrape datasheets index to discover units
+        console.log(`  Fetching datasheets index${refreshIndex ? ' (refresh requested)' : ''}...`);
         const indexResult = await client.scrape(indexUrl);
-        scrapedIndex = true;
 
         // Extract unit slugs from TOC links
-        unitLinks = extractUnitLinksFromTOC(indexResult.markdown, faction.slug);
+        unitLinks = extractUnitLinksFromTOC(indexResult.markdown);
         console.log(`  Found ${unitLinks.length} unit links in TOC`);
 
-        // Cache for next time
-        cacheUnits(faction.slug, unitLinks);
-        console.log(`  Cached unit list for future runs`);
+        // Insert/update units in unit_index table
+        for (const { name, slug } of unitLinks) {
+          const wahapediaUrl = WAHAPEDIA_URLS.unitDatasheet(faction.slug, slug);
+          await db
+            .insert(schema.unitIndex)
+            .values({
+              factionId: faction.id,
+              slug,
+              name,
+              wahapediaUrl,
+              scrapeStatus: 'pending',
+            })
+            .onConflictDoNothing();
+        }
+        console.log(`  Indexed ${unitLinks.length} units in database`);
+
+        // Log index scrape
+        await db.insert(schema.scrapeLog).values({
+          url: indexUrl,
+          scrapeType: 'unit_index',
+          status: 'success',
+          contentHash: indexResult.contentHash,
+        });
       }
 
       let successCount = 0;
+      let failedCount = 0;
 
       // Scrape each individual unit page
       for (const { name, slug } of unitLinks) {
@@ -259,6 +275,12 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
           const units = parseDatasheets(unitResult.markdown, unitResult.url);
           if (units.length === 0) {
             console.log(`      No unit data parsed, skipping`);
+            // Update unit_index status to failed
+            await db
+              .update(schema.unitIndex)
+              .set({ scrapeStatus: 'failed', lastScrapedAt: new Date() })
+              .where(eq(schema.unitIndex.slug, slug));
+            failedCount++;
             continue;
           }
 
@@ -330,22 +352,27 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
             }
           }
 
+          // Update unit_index status to success
+          await db
+            .update(schema.unitIndex)
+            .set({ scrapeStatus: 'success', lastScrapedAt: new Date() })
+            .where(eq(schema.unitIndex.slug, slug));
+
           successCount++;
         } catch (unitError) {
           console.error(`      Failed to scrape unit ${name}:`, unitError instanceof Error ? unitError.message : unitError);
+
+          // Update unit_index status to failed
+          await db
+            .update(schema.unitIndex)
+            .set({ scrapeStatus: 'failed', lastScrapedAt: new Date() })
+            .where(eq(schema.unitIndex.slug, slug));
+
+          failedCount++;
         }
       }
 
-      console.log(`  Successfully scraped ${successCount}/${unitLinks.length} units`);
-
-      // Log scrape (only if we fetched the index)
-      if (scrapedIndex) {
-        await db.insert(schema.scrapeLog).values({
-          url: indexUrl,
-          scrapeType: 'units',
-          status: 'success',
-        });
-      }
+      console.log(`  Successfully scraped ${successCount}/${unitLinks.length} units (${failedCount} failed)`);
     } catch (error) {
       console.error(`  Failed to scrape units for ${faction.slug}:`, error);
 
@@ -363,7 +390,7 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
  * Extract unit links from the datasheets TOC
  * Format: [Unit Name](https://wahapedia.ru/wh40k10ed/factions/faction-slug/datasheets#Unit-Slug)
  */
-function extractUnitLinksFromTOC(markdown: string, factionSlug: string): { name: string; slug: string }[] {
+function extractUnitLinksFromTOC(markdown: string): { name: string; slug: string }[] {
   const units: { name: string; slug: string }[] = [];
   const seen = new Set<string>();
 
