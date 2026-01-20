@@ -5,7 +5,8 @@
   "workspaces": [
     "packages/*",
     "apps/*",
-    "mcp-server"
+    "mcp-server",
+    "cli"
   ],
   "scripts": {
     "dev": "turbo dev",
@@ -17,7 +18,8 @@
     "dev:docs": "turbo dev --filter=@battlereport/docs",
     "generate:factions": "tsx scripts/generate-faction-data.ts",
     "generate:stratagems": "tsx scripts/generate-stratagem-data.ts",
-    "generate:aliases": "tsx scripts/generate-unit-aliases.ts"
+    "generate:aliases": "tsx scripts/generate-unit-aliases.ts",
+    "cli": "tsx cli/src/index.ts"
   },
   "devDependencies": {
     "@turbo/gen": "^2.7.5",
