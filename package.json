@@ -14,6 +14,7 @@
     "dev:web": "turbo dev --filter=@battlereport/web",
     "dev:extension": "turbo dev --filter=@battlereport/extension",
     "dev:mcp": "turbo dev --filter=wh40k-rules-mcp",
+    "dev:docs": "turbo dev --filter=@battlereport/docs",
     "generate:factions": "tsx scripts/generate-faction-data.ts",
     "generate:stratagems": "tsx scripts/generate-stratagem-data.ts",
     "generate:aliases": "tsx scripts/generate-unit-aliases.ts"
