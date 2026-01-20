@@ -1,10 +1,14 @@
 // Chrome storage utility functions
+import type { UserMapping } from '@battlereport/shared/types';
 
 export interface StorageData {
   apiKey: string | null;
   hudPosition: 'left' | 'right';
   autoExtract: boolean;
 }
+
+// Storage key for user mappings (separate from settings)
+const USER_MAPPINGS_KEY = 'userMappings';
 
 const DEFAULT_SETTINGS: StorageData = {
   apiKey: null,
@@ -76,4 +80,61 @@ export function onStorageChange(
   return () => {
     chrome.storage.onChanged.removeListener(listener);
   };
+}
+
+// ============================================
+// User Mapping Persistence
+// ============================================
+
+/**
+ * Get all user mappings from storage.
+ */
+export async function getUserMappings(): Promise<UserMapping[]> {
+  try {
+    const result = await chrome.storage.local.get(USER_MAPPINGS_KEY);
+    return (result[USER_MAPPINGS_KEY] as UserMapping[]) ?? [];
+  } catch (error) {
+    console.error('Failed to get user mappings:', error);
+    return [];
+  }
+}
+
+/**
+ * Save all user mappings to storage (replaces existing).
+ */
+export async function saveUserMappings(mappings: UserMapping[]): Promise<void> {
+  try {
+    await chrome.storage.local.set({ [USER_MAPPINGS_KEY]: mappings });
+  } catch (error) {
+    console.error('Failed to save user mappings:', error);
+    throw error;
+  }
+}
+
+/**
+ * Save a single user mapping (adds to existing).
+ */
+export async function saveUserMapping(mapping: UserMapping): Promise<void> {
+  try {
+    const existing = await getUserMappings();
+    const updated = [...existing, mapping];
+    await saveUserMappings(updated);
+  } catch (error) {
+    console.error('Failed to save user mapping:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a user mapping by ID.
+ */
+export async function deleteUserMapping(mappingId: string): Promise<void> {
+  try {
+    const existing = await getUserMappings();
+    const filtered = existing.filter((m) => m.id !== mappingId);
+    await saveUserMappings(filtered);
+  } catch (error) {
+    console.error('Failed to delete user mapping:', error);
+    throw error;
+  }
 }

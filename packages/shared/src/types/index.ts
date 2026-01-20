@@ -9,3 +9,12 @@ export type {
 
 // YouTube types
 export type { VideoData, Chapter, TranscriptSegment } from './youtube';
+
+// Feedback types
+export type {
+  FeedbackEntityType,
+  FeedbackStatus,
+  FeedbackItem,
+  UserMapping,
+  ValidationWithFeedback,
+} from './feedback';

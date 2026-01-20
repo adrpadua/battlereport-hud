@@ -1,7 +1,8 @@
 import type { BattleReport, Unit, ConfidenceLevel, UnitSuggestion } from '@/types/battle-report';
 import type { FactionData, UnitStats } from '@/types/bsdata';
+import type { FeedbackItem, UserMapping } from '@battlereport/shared/types';
 import { loadFactionByName } from '@/utils/faction-loader';
-import { validateUnit, getBestMatch } from '@/utils/unit-validator';
+import { getBestMatch, validateUnitWithFeedback } from '@/utils/unit-validator';
 
 export interface EnrichedUnit extends Unit {
   stats?: UnitStats;
@@ -12,6 +13,16 @@ export interface EnrichedUnit extends Unit {
 
 export interface ProcessedBattleReport extends Omit<BattleReport, 'units'> {
   units: EnrichedUnit[];
+  feedbackItems: FeedbackItem[];
+}
+
+/**
+ * Options for processing a battle report with feedback capture.
+ */
+export interface ProcessOptions {
+  videoId: string;
+  userMappings?: UserMapping[];
+  transcriptContext?: string;
 }
 
 /**
@@ -40,15 +51,53 @@ function lowerConfidence(original: ConfidenceLevel): ConfidenceLevel {
 }
 
 /**
+ * Find a user mapping for a given alias.
+ */
+function findUserMapping(
+  alias: string,
+  entityType: 'unit' | 'stratagem' | 'faction' | 'detachment',
+  factionId: string | undefined,
+  userMappings: UserMapping[]
+): UserMapping | undefined {
+  const normalizedAlias = alias.toLowerCase().trim();
+
+  // First try faction-specific match
+  if (factionId) {
+    const factionMatch = userMappings.find(
+      (m) =>
+        m.alias.toLowerCase() === normalizedAlias &&
+        m.entityType === entityType &&
+        m.factionId === factionId
+    );
+    if (factionMatch) return factionMatch;
+  }
+
+  // Fall back to generic match (no faction)
+  return userMappings.find(
+    (m) =>
+      m.alias.toLowerCase() === normalizedAlias &&
+      m.entityType === entityType &&
+      !m.factionId
+  );
+}
+
+/**
  * Process and validate a battle report against BSData.
+ * - Applies user mappings first (learned aliases)
  * - Validates unit names using fuzzy matching
  * - Corrects spelling where confident
  * - Enriches units with stats and keywords
  * - Adjusts confidence levels based on validation
+ * - Captures feedback items for unknown/low-confidence tokens
  */
 export async function processBattleReport(
-  report: BattleReport
+  report: BattleReport,
+  options?: ProcessOptions
 ): Promise<ProcessedBattleReport> {
+  const userMappings = options?.userMappings ?? [];
+  const videoId = options?.videoId ?? '';
+  const transcriptContext = options?.transcriptContext ?? '';
+
   // Load factions for both players
   const factions = new Map<number, FactionData | null>();
 
@@ -58,6 +107,9 @@ export async function processBattleReport(
       factions.set(index, faction);
     })
   );
+
+  // Collect feedback items
+  const feedbackItems: FeedbackItem[] = [];
 
   // Process each unit
   const enrichedUnits: EnrichedUnit[] = report.units.map((unit) => {
@@ -72,8 +124,33 @@ export async function processBattleReport(
       };
     }
 
-    // Validate unit against faction
-    const validation = validateUnit(unit.name, playerFaction);
+    // Check user mappings first (apply learned aliases)
+    const mapping = findUserMapping(unit.name, 'unit', playerFaction.id, userMappings);
+    let unitNameToValidate = unit.name;
+
+    if (mapping) {
+      // User has a mapping for this alias - use the canonical name
+      unitNameToValidate = mapping.canonicalName;
+    }
+
+    // Validate unit against faction with feedback capture
+    const { validation, feedbackItem } = validateUnitWithFeedback(
+      unitNameToValidate,
+      playerFaction,
+      {
+        videoId,
+        transcriptContext,
+        videoTimestamp: unit.videoTimestamp,
+        playerIndex: unit.playerIndex,
+      }
+    );
+
+    // Collect feedback for unvalidated units (but not if we already had a mapping)
+    if (feedbackItem && !mapping) {
+      // Update the original token to the actual input (before mapping was applied)
+      feedbackItem.originalToken = unit.name;
+      feedbackItems.push(feedbackItem);
+    }
 
     if (validation.isValidated && validation.matchedUnit) {
       // Unit validated - enrich with data
@@ -115,6 +192,7 @@ export async function processBattleReport(
   return {
     ...report,
     units: enrichedUnits,
+    feedbackItems,
   };
 }
 

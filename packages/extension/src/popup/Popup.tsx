@@ -1,18 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useSettingsStore } from '@/store/settings-store';
+import { useFeedbackStore } from '@/store/feedback-store';
 
 function Popup(): React.ReactElement {
   const { apiKey, hudPosition, autoExtract, setApiKey, setHudPosition, setAutoExtract, loadSettings } =
     useSettingsStore();
 
+  const {
+    userMappings,
+    loadUserMappings,
+    clearAllMappings,
+    exportMappings,
+    importMappings,
+  } = useFeedbackStore();
+
   const [inputKey, setInputKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadSettings();
-  }, [loadSettings]);
+    loadUserMappings();
+  }, [loadSettings, loadUserMappings]);
 
   useEffect(() => {
     if (apiKey) {
@@ -29,6 +41,45 @@ function Popup(): React.ReactElement {
   const handleClearKey = () => {
     setInputKey('');
     setApiKey(null);
+  };
+
+  const handleExportMappings = () => {
+    const json = exportMappings();
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'battlereport-mappings.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      await importMappings(text);
+      setImportError(null);
+    } catch (err) {
+      setImportError('Failed to import. Please check the file format.');
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleClearMappings = async () => {
+    if (confirm('Are you sure you want to delete all saved mappings?')) {
+      await clearAllMappings();
+    }
   };
 
   const maskedKey = inputKey
@@ -125,6 +176,43 @@ function Popup(): React.ReactElement {
           />
           Auto-extract on page load
         </label>
+      </div>
+
+      <div style={styles.section}>
+        <label style={styles.label}>Learned Mappings</label>
+        <p style={styles.hint}>
+          {userMappings.length} saved mapping{userMappings.length !== 1 ? 's' : ''} for unit names
+        </p>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".json"
+          style={{ display: 'none' }}
+        />
+        <div style={styles.buttonGroup}>
+          <button
+            style={styles.button}
+            onClick={handleExportMappings}
+            disabled={userMappings.length === 0}
+          >
+            Export
+          </button>
+          <button style={styles.button} onClick={handleImportClick}>
+            Import
+          </button>
+          {userMappings.length > 0 && (
+            <button
+              style={{ ...styles.button, ...styles.dangerButton }}
+              onClick={handleClearMappings}
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+        {importError && (
+          <p style={{ ...styles.hint, color: '#ef4444' }}>{importError}</p>
+        )}
       </div>
 
       <div style={styles.footer}>

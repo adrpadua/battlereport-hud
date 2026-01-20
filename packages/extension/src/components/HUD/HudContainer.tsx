@@ -4,6 +4,7 @@ import { useSettingsStore } from '@/store/settings-store';
 import { PlayerCard } from './PlayerCard';
 import { LoadingState } from './LoadingState';
 import { FactionSelector } from './FactionSelector';
+import { FeedbackPanel } from './FeedbackPanel';
 
 // Type for the global functions exposed by content script
 declare global {
@@ -23,6 +24,7 @@ export function HudContainer(): React.ReactElement {
     reset,
     phase,
     statusMessage,
+    hasPendingFeedback,
   } = useBattleStore();
   const { loadSettings } = useSettingsStore();
 
@@ -130,6 +132,9 @@ export function HudContainer(): React.ReactElement {
                 stratagems={report.stratagems}
               />
             ))}
+
+            {/* Feedback panel for unknown/low-confidence entities */}
+            {hasPendingFeedback && <FeedbackPanel />}
 
             {/* Stratagems without player assignment */}
             {report.stratagems.filter((s) => s.playerIndex === undefined)

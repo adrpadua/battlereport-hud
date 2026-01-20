@@ -1,5 +1,6 @@
 import Fuse, { IFuseOptions } from 'fuse.js';
 import type { FactionData, UnitData } from '@/types/bsdata';
+import type { FeedbackItem } from '@battlereport/shared/types';
 
 export interface ValidatedUnit {
   originalName: string;
@@ -159,4 +160,67 @@ export function getSuggestions(
   const fuse = getFuseForFaction(faction);
   const results = fuse.search(partialName, { limit });
   return results.map((r) => r.item);
+}
+
+/**
+ * Configuration for feedback-enabled validation.
+ */
+export interface ValidateFeedbackOptions {
+  videoId: string;
+  transcriptContext: string;
+  videoTimestamp?: number;
+  playerIndex?: number;
+  /** Confidence threshold below which to generate feedback. Default: 0.6 */
+  feedbackThreshold?: number;
+}
+
+/**
+ * Result from validateUnitWithFeedback.
+ */
+export interface ValidationWithFeedbackResult {
+  validation: ValidatedUnit;
+  feedbackItem?: FeedbackItem;
+}
+
+/**
+ * Validate a unit name and generate a feedback item if confidence is low.
+ * Returns both the validation result and an optional feedback item for user review.
+ */
+export function validateUnitWithFeedback(
+  unitName: string,
+  faction: FactionData,
+  options: ValidateFeedbackOptions
+): ValidationWithFeedbackResult {
+  const validation = validateUnit(unitName, faction);
+  const feedbackThreshold = options.feedbackThreshold ?? 0.6;
+
+  // Generate feedback if confidence is below threshold or not validated
+  if (validation.confidence < feedbackThreshold || !validation.isValidated) {
+    const fuse = getFuseForFaction(faction);
+    const allResults = fuse.search(unitName, { limit: 5 });
+
+    // Build suggestions array
+    const suggestions = allResults.map((result) => ({
+      name: result.item.name,
+      confidence: 1 - (result.score ?? 1),
+    }));
+
+    const feedbackItem: FeedbackItem = {
+      id: `feedback-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      videoId: options.videoId,
+      originalToken: unitName,
+      entityType: 'unit',
+      playerIndex: options.playerIndex,
+      transcriptContext: options.transcriptContext,
+      videoTimestamp: options.videoTimestamp,
+      confidenceScore: validation.confidence,
+      suggestions,
+      status: 'pending',
+      factionId: faction.id,
+    };
+
+    return { validation, feedbackItem };
+  }
+
+  return { validation };
 }
