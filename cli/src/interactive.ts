@@ -1,7 +1,7 @@
 import { select, input, confirm } from '@inquirer/prompts';
-import { runScript, runTurboDev, runTurbo } from './utils/runner.js';
+import { runScript, runTurboDev, runTurbo, runMcpCli, runMcpScript, runMcpServer } from './utils/runner.js';
 
-type MenuAction = 'video' | 'generate' | 'dev' | 'turbo' | 'exit';
+type MenuAction = 'video' | 'generate' | 'dev' | 'turbo' | 'mcp' | 'server' | 'exit';
 
 async function videoMenu(): Promise<void> {
   const action = await select({
@@ -13,6 +13,7 @@ async function videoMenu(): Promise<void> {
       { name: 'Compare LLM vs pattern preprocessing', value: 'llm-preprocess' },
       { name: 'Generate narration', value: 'narrate' },
       { name: 'Test chapter detection', value: 'chapters' },
+      { name: 'Run preprocessor tests', value: 'test-preprocessor' },
       { name: 'Run E2E pipeline', value: 'pipeline' },
       { name: '<- Back', value: 'back' },
     ],
@@ -79,6 +80,8 @@ async function videoMenu(): Promise<void> {
       validate: (value) => value.trim().length > 0 || 'Please enter a video ID',
     });
     await runScript('test-chapter-detection.ts', [videoId]);
+  } else if (action === 'test-preprocessor') {
+    await runScript('test-transcript-preprocessor.ts');
   } else if (action === 'pipeline') {
     const url = await input({
       message: 'Enter YouTube URL:',
@@ -115,6 +118,8 @@ async function generateMenu(): Promise<void> {
       { name: 'Generate faction data from BSData', value: 'factions' },
       { name: 'Generate stratagem data from database', value: 'stratagems' },
       { name: 'Generate unit aliases via LLM', value: 'aliases' },
+      { name: 'Fetch BSData from GitHub', value: 'bsdata-fetch' },
+      { name: 'Parse BSData files', value: 'bsdata-parse' },
       { name: 'Run all data generation', value: 'all' },
       { name: '<- Back', value: 'back' },
     ],
@@ -138,6 +143,10 @@ async function generateMenu(): Promise<void> {
     if (faction.trim()) args.push(faction.trim());
     if (dryRun) args.push('--dry-run');
     await runScript('generate-unit-aliases.ts', args);
+  } else if (action === 'bsdata-fetch') {
+    await runScript('bsdata-fetcher.ts');
+  } else if (action === 'bsdata-parse') {
+    await runScript('bsdata-parser.ts');
   } else if (action === 'all') {
     console.log('\n=== Running All Data Generation ===\n');
 
@@ -192,6 +201,140 @@ async function turboMenu(): Promise<void> {
   await runTurbo(action);
 }
 
+async function mcpMenu(): Promise<void> {
+  const action = await select({
+    message: 'MCP Server Commands',
+    choices: [
+      { name: 'Database operations', value: 'db' },
+      { name: 'Scrape game data', value: 'scrape' },
+      { name: 'Ingest data', value: 'ingest' },
+      { name: 'Index management', value: 'index' },
+      { name: 'Query database', value: 'query' },
+      { name: 'Validate data', value: 'validate' },
+      { name: 'Start HTTP API server', value: 'server' },
+      { name: '<- Back', value: 'back' },
+    ],
+  });
+
+  if (action === 'back') return;
+
+  if (action === 'db') {
+    const dbAction = await select({
+      message: 'Database Operations',
+      choices: [
+        { name: 'Run migrations', value: 'migrate' },
+        { name: 'Seed database', value: 'seed' },
+        { name: 'Export database', value: 'export' },
+        { name: 'Cleanup duplicates', value: 'cleanup' },
+        { name: 'Show faction counts', value: 'counts' },
+        { name: '<- Back', value: 'back' },
+      ],
+    });
+    if (dbAction === 'back') return;
+    if (dbAction === 'migrate') await runMcpCli('db', ['migrate']);
+    else if (dbAction === 'seed') await runMcpCli('db', ['seed']);
+    else if (dbAction === 'export') await runMcpScript('export-database.ts');
+    else if (dbAction === 'cleanup') await runMcpScript('cleanup-duplicates.ts');
+    else if (dbAction === 'counts') await runMcpScript('faction-counts.ts');
+  } else if (action === 'scrape') {
+    const scrapeAction = await select({
+      message: 'Scrape Data',
+      choices: [
+        { name: 'Scrape core rules', value: 'core' },
+        { name: 'Scrape specific faction', value: 'faction' },
+        { name: 'Scrape all factions', value: 'all' },
+        { name: 'Scrape units for faction', value: 'units' },
+        { name: '<- Back', value: 'back' },
+      ],
+    });
+    if (scrapeAction === 'back') return;
+    if (scrapeAction === 'core') {
+      await runMcpCli('scrape', ['core-rules']);
+    } else if (scrapeAction === 'faction') {
+      const factionId = await input({
+        message: 'Enter faction ID:',
+        validate: (v) => v.trim().length > 0 || 'Please enter a faction ID',
+      });
+      await runMcpCli('scrape', ['faction', factionId]);
+    } else if (scrapeAction === 'all') {
+      await runMcpCli('scrape', ['all-factions']);
+    } else if (scrapeAction === 'units') {
+      const factionId = await input({
+        message: 'Enter faction ID:',
+        validate: (v) => v.trim().length > 0 || 'Please enter a faction ID',
+      });
+      await runMcpCli('scrape', ['units', factionId]);
+    }
+  } else if (action === 'ingest') {
+    const ingestAction = await select({
+      message: 'Ingest Data',
+      choices: [
+        { name: 'Ingest BSData', value: 'bsdata' },
+        { name: 'Ingest scraped data', value: 'scraped' },
+        { name: '<- Back', value: 'back' },
+      ],
+    });
+    if (ingestAction === 'back') return;
+    await runMcpCli('ingest', [ingestAction]);
+  } else if (action === 'index') {
+    const indexAction = await select({
+      message: 'Index Management',
+      choices: [
+        { name: 'Build search index', value: 'build' },
+        { name: 'Check index status', value: 'check' },
+        { name: '<- Back', value: 'back' },
+      ],
+    });
+    if (indexAction === 'back') return;
+    if (indexAction === 'build') await runMcpCli('index', ['build']);
+    else if (indexAction === 'check') await runMcpScript('check-index.ts');
+  } else if (action === 'query') {
+    const unitName = await input({
+      message: 'Enter unit name to query:',
+      validate: (v) => v.trim().length > 0 || 'Please enter a unit name',
+    });
+    await runMcpScript('query-unit.ts', [unitName]);
+  } else if (action === 'validate') {
+    await runMcpCli('validate');
+  } else if (action === 'server') {
+    console.log('\n=== Starting MCP HTTP API Server ===\n');
+    console.log('Endpoints will be available at http://localhost:40401');
+    console.log('Press Ctrl+C to stop.\n');
+    await runMcpServer();
+  }
+}
+
+async function serverMenu(): Promise<void> {
+  const action = await select({
+    message: 'Server Commands',
+    choices: [
+      { name: 'Start HTTP API server', value: 'api' },
+      { name: 'Start all dev servers', value: 'all' },
+      { name: 'Start web app only', value: 'web' },
+      { name: 'Start extension only', value: 'extension' },
+      { name: 'Start docs site only', value: 'docs' },
+      { name: '<- Back', value: 'back' },
+    ],
+  });
+
+  if (action === 'back') return;
+
+  if (action === 'api') {
+    console.log('\n=== Starting MCP HTTP API Server ===\n');
+    console.log('Endpoints available at http://localhost:40401');
+    console.log('Press Ctrl+C to stop.\n');
+    await runMcpServer();
+  } else if (action === 'all') {
+    await runTurboDev();
+  } else if (action === 'web') {
+    await runTurboDev('@battlereport/web');
+  } else if (action === 'extension') {
+    await runTurboDev('@battlereport/extension');
+  } else if (action === 'docs') {
+    await runTurboDev('@battlereport/docs');
+  }
+}
+
 async function mainMenu(): Promise<boolean> {
   console.log('');
   const action = await select<MenuAction>({
@@ -199,6 +342,8 @@ async function mainMenu(): Promise<boolean> {
     choices: [
       { name: 'Video Processing', value: 'video' },
       { name: 'Data Generation', value: 'generate' },
+      { name: 'MCP Server (Database/Scraping)', value: 'mcp' },
+      { name: 'Server Management', value: 'server' },
       { name: 'Development Servers', value: 'dev' },
       { name: 'Turbo Commands', value: 'turbo' },
       { name: 'Exit', value: 'exit' },
@@ -218,6 +363,10 @@ async function mainMenu(): Promise<boolean> {
       await devMenu();
     } else if (action === 'turbo') {
       await turboMenu();
+    } else if (action === 'mcp') {
+      await mcpMenu();
+    } else if (action === 'server') {
+      await serverMenu();
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes('User force closed')) {

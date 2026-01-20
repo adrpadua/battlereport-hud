@@ -33,6 +33,22 @@ generateCommand
     await runScript('generate-unit-aliases.ts', args);
   });
 
+// Fetch BSData
+generateCommand
+  .command('bsdata-fetch')
+  .description('Fetch raw BSData files from GitHub')
+  .action(async () => {
+    await runScript('bsdata-fetcher.ts');
+  });
+
+// Parse BSData
+generateCommand
+  .command('bsdata-parse')
+  .description('Parse BSData files into usable format')
+  .action(async () => {
+    await runScript('bsdata-parser.ts');
+  });
+
 // Generate all data
 generateCommand
   .command('all')

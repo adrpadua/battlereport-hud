@@ -62,6 +62,14 @@ videoCommand
     await runScript('test-chapter-detection.ts', [videoId]);
   });
 
+// Test transcript preprocessor
+videoCommand
+  .command('test-preprocessor')
+  .description('Run transcript preprocessor tests')
+  .action(async () => {
+    await runScript('test-transcript-preprocessor.ts');
+  });
+
 // E2E pipeline
 videoCommand
   .command('pipeline <url>')
