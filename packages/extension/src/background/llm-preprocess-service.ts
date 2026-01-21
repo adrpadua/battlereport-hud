@@ -62,7 +62,13 @@ Output JSON:
   }
 }
 
-NOTE: "devastating wounds" is NOT mapped because it's a weapon ability, not a unit.`;
+NOTE: "devastating wounds" is NOT mapped because it's a weapon ability, not a unit.
+
+SPELLING CORRECTION:
+You will receive a list of valid unit names for the factions in this game.
+When you see a term that sounds similar to a valid unit but is misspelled, map it to the correct spelling.
+Example: "Zangor" sounds like "Tzaangor" → map "Zangor" to "Tzaangors"
+Example: "Nurglings" is close to "Nurgling" → map appropriately`;
 
 interface ChunkInfo {
   segments: TranscriptSegment[];
@@ -83,6 +89,28 @@ function buildPhoneticOverrideMap(): Map<string, string> {
     }
   }
   return map;
+}
+
+/**
+ * Build reference data string for factions to help LLM correct misspellings.
+ * Returns a formatted list of unit names per faction.
+ */
+async function buildFactionReferenceData(factionIds: string[]): Promise<string> {
+  if (factionIds.length === 0) return '';
+
+  const sections: string[] = [];
+
+  for (const factionId of factionIds) {
+    const data = await loadFactionById(factionId);
+    if (!data?.units?.length) continue;
+
+    const unitNames = data.units.map(u => u.name).join(', ');
+    sections.push(`${data.name}: ${unitNames}`);
+  }
+
+  return sections.length > 0
+    ? `VALID UNIT NAMES (use to correct misspellings):\n${sections.join('\n')}`
+    : '';
 }
 
 // Cache the phonetic override map
@@ -273,11 +301,19 @@ function chunkTranscript(segments: TranscriptSegment[]): ChunkInfo[] {
 /**
  * Build the user prompt for preprocessing a chunk.
  */
-function buildPreprocessPrompt(chunk: ChunkInfo, factions: string[]): string {
+function buildPreprocessPrompt(
+  chunk: ChunkInfo,
+  factions: string[],
+  referenceData: string = ''
+): string {
   let prompt = '';
 
   if (factions.length > 0) {
     prompt += `FACTIONS IN THIS GAME: ${factions.join(', ')}\n\n`;
+  }
+
+  if (referenceData) {
+    prompt += `${referenceData}\n\n`;
   }
 
   prompt += `TRANSCRIPT CHUNK:\n${chunk.text}`;
@@ -313,18 +349,19 @@ function parseResponse(content: string): PreprocessResponse {
 async function processChunk(
   openai: OpenAI,
   chunk: ChunkInfo,
-  factions: string[]
+  factions: string[],
+  referenceData: string = ''
 ): Promise<PreprocessResponse> {
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-5-mini',
-        max_completion_tokens: 1000, // Only returning mappings, so less tokens needed
+        model: 'gpt-4o-mini',
+        max_completion_tokens: 2000, // Mappings + room for larger reference context
         messages: [
           { role: 'system', content: PREPROCESS_SYSTEM_PROMPT },
-          { role: 'user', content: buildPreprocessPrompt(chunk, factions) },
+          { role: 'user', content: buildPreprocessPrompt(chunk, factions, referenceData) },
         ],
         response_format: { type: 'json_object' },
       });
@@ -400,7 +437,8 @@ async function processChunk(
 async function processChunksWithConcurrency(
   openai: OpenAI,
   chunks: ChunkInfo[],
-  factions: string[]
+  factions: string[],
+  referenceData: string = ''
 ): Promise<PreprocessResponse[]> {
   const results: PreprocessResponse[] = new Array(chunks.length);
   let currentIdx = 0;
@@ -411,7 +449,7 @@ async function processChunksWithConcurrency(
       const chunk = chunks[idx];
       if (!chunk) continue;
       try {
-        results[idx] = await processChunk(openai, chunk, factions);
+        results[idx] = await processChunk(openai, chunk, factions, referenceData);
       } catch (error) {
         console.error(`Failed to process chunk ${idx}:`, error);
         results[idx] = { mappings: {} };
@@ -620,6 +658,16 @@ export async function preprocessWithLlm(
     console.log(`Applied ${totalApplied} phonetic override corrections`);
   }
 
+  // Step 2: Build faction reference data for LLM spelling correction
+  const factionIds = factions
+    .map(name => findFactionByName(name)?.id)
+    .filter((id): id is string => !!id);
+  const referenceData = await buildFactionReferenceData(factionIds);
+
+  if (referenceData) {
+    console.log(`Built reference data for ${factionIds.length} factions`);
+  }
+
   const openai = new OpenAI({ apiKey });
 
   // Calculate total text length to determine chunking strategy
@@ -637,7 +685,7 @@ export async function preprocessWithLlm(
       endIdx: normalizedTranscript.length - 1,
       text: normalizedTranscript.map(s => `[${Math.floor(s.startTime)}s] ${s.text}`).join(' '),
     };
-    const response = await processChunk(openai, singleChunk, factions);
+    const response = await processChunk(openai, singleChunk, factions, referenceData);
     const validatedMappings = await validateTermsWithMcp(response.mappings, factions);
 
     const normalizedSegments: NormalizedSegment[] = normalizedTranscript.map((seg) => {
@@ -672,7 +720,7 @@ export async function preprocessWithLlm(
   console.log(`LLM preprocessing: ${chunks.length} chunks for ${normalizedTranscript.length} segments (${totalTextLength} chars)`);
 
   // Process all chunks with concurrency limit
-  const responses = await processChunksWithConcurrency(openai, chunks, factions);
+  const responses = await processChunksWithConcurrency(openai, chunks, factions, referenceData);
 
   // Merge results from all chunks
   const { termMappings: rawTermMappings } = mergeChunkResponses(normalizedTranscript, responses);
