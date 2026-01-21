@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { FirecrawlClient } from './firecrawl-client.js';
 import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
-import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements } from './parsers/faction-parser.js';
+import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements, extractDetachmentSection } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
@@ -162,13 +162,17 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
 
         const detachmentId = insertedDetachment!.id;
 
-        // Parse enhancements for this detachment
-        const enhancements = parseEnhancements(factionResult.markdown, factionResult.url);
-        for (const enhancement of enhancements) {
-          await db
-            .insert(schema.enhancements)
-            .values({ ...enhancement, detachmentId })
-            .onConflictDoNothing();
+        // Parse enhancements from this specific detachment's section
+        const detachmentSection = extractDetachmentSection(factionResult.markdown, detachment.name);
+        if (detachmentSection) {
+          const enhancements = parseEnhancements(detachmentSection, factionResult.url);
+          console.log(`    Found ${enhancements.length} enhancements for ${detachment.name}`);
+          for (const enhancement of enhancements) {
+            await db
+              .insert(schema.enhancements)
+              .values({ ...enhancement, detachmentId })
+              .onConflictDoNothing();
+          }
         }
       }
 

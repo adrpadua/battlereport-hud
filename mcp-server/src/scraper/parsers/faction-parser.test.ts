@@ -468,13 +468,28 @@ Test – Stratagem
     expect(result).toHaveLength(1);
   });
 
-  it('handles missing WHEN/TARGET/EFFECT fields', () => {
+  it('skips stratagems without EFFECT field', () => {
+    // Real Wahapedia stratagems always have structured WHEN/TARGET/EFFECT fields
+    // Stratagems without EFFECT should be skipped
     const markdown = `
 SIMPLE STRATAGEM
 1CP
 Test – Wargear Stratagem
 
 Just a description without structured fields.
+    `;
+    const result = parseStratagems(markdown, sourceUrl);
+
+    expect(result).toHaveLength(0);
+  });
+
+  it('handles missing WHEN/TARGET but has EFFECT', () => {
+    const markdown = `
+SIMPLE STRATAGEM
+1CP
+Test – Wargear Stratagem
+
+**EFFECT:** Just an effect without when/target.
     `;
     const result = parseStratagems(markdown, sourceUrl);
 
@@ -534,11 +549,13 @@ No stratagems here.
 describe('parseEnhancements', () => {
   const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/space-marines/';
 
-  it('parses enhancement with points cost', () => {
+  it('parses enhancement from Wahapedia table format', () => {
     const markdown = `
-### Artificer Armour (20 pts)
+## Enhancements
 
-The bearer has a 2+ Save.
+|     |
+| --- |
+| - Artificer Armour 20 pts<br>A finely crafted set of armour.<br>SPACEMARINES model only. The bearer has a 2+ Save. |
     `;
     const result = parseEnhancements(markdown, sourceUrl);
 
@@ -546,17 +563,17 @@ The bearer has a 2+ Save.
     expect(result[0]).toMatchObject({
       name: 'Artificer Armour',
       pointsCost: 20,
-      description: 'The bearer has a 2+ Save.',
       slug: 'artificer-armour',
       dataSource: 'wahapedia',
     });
+    expect(result[0]?.description).toContain('A finely crafted set of armour');
   });
 
   it('handles pts format', () => {
     const markdown = `
-### Storm Shield (15 pts)
-
-4+ invulnerable save.
+|     |
+| --- |
+| - Storm Shield 15 pts<br>Defensive gear.<br>Effect text here. |
     `;
     const result = parseEnhancements(markdown, sourceUrl);
 
@@ -565,88 +582,52 @@ The bearer has a 2+ Save.
 
   it('handles pt format (singular)', () => {
     const markdown = `
-### Minor Relic (1 pt)
-
-A small bonus.
+|     |
+| --- |
+| - Minor Relic 1 pt<br>A small bonus. |
     `;
     const result = parseEnhancements(markdown, sourceUrl);
 
     expect(result[0]?.pointsCost).toBe(1);
   });
 
-  it('handles points format', () => {
+  it('extracts restrictions from model only pattern', () => {
     const markdown = `
-### Major Relic (25 points)
-
-A powerful artifact.
+|     |
+| --- |
+| - Chapter Master Relic 30 pts<br>A sacred weapon.<br>CAPTAIN model only. Grants rerolls. |
     `;
     const result = parseEnhancements(markdown, sourceUrl);
 
-    expect(result[0]?.pointsCost).toBe(25);
+    expect(result[0]?.restrictions).toContain('CAPTAIN model only');
   });
 
-  it('handles number only format', () => {
+  it('extracts restrictions with INFANTRY pattern', () => {
     const markdown = `
-### Basic Gear (10)
-
-Simple equipment.
+|     |
+| --- |
+| - Psyker Staff 25 pts<br>Psychic enhancement.<br>PSYKER INFANTRY model only. Add 1 to psychic tests. |
     `;
     const result = parseEnhancements(markdown, sourceUrl);
 
-    expect(result[0]?.pointsCost).toBe(10);
+    expect(result[0]?.restrictions).toContain('PSYKER INFANTRY model only');
   });
 
-  it('extracts restrictions with Restriction: prefix', () => {
+  it('parses multiple enhancements in table format', () => {
     const markdown = `
-### Chapter Master Relic (30 pts)
+## Enhancements
 
-A sacred weapon.
-Restriction: Captain model only.
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
+|     |
+| --- |
+| - First 10 pts<br>Description one. |
 
-    expect(result[0]?.restrictions).toBe('Captain model only.');
-  });
+|     |
+| --- |
+| - Second 20 pts<br>Description two. |
 
-  it('extracts restrictions with Only: prefix', () => {
-    const markdown = `
-### Psyker Staff (25 pts)
-
-Psychic enhancement.
-Only: PSYKER models.
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
-
-    expect(result[0]?.restrictions).toBe('PSYKER models.');
-  });
-
-  it('skips enhancements with empty description', () => {
-    const markdown = `
-### Empty Enhancement (10 pts)
-
-### Valid Enhancement (15 pts)
-
-Has a description.
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.name).toBe('Valid Enhancement');
-  });
-
-  it('parses multiple enhancements', () => {
-    const markdown = `
-### First (10 pts)
-
-Description one.
-
-### Second (20 pts)
-
-Description two.
-
-### Third (30 pts)
-
-Description three.
+|     |
+| --- |
+| - Third 30 pts<br>Description three. |
     `;
     const result = parseEnhancements(markdown, sourceUrl);
 
@@ -663,5 +644,37 @@ No enhancements here.
     const result = parseEnhancements(markdown, sourceUrl);
 
     expect(result).toEqual([]);
+  });
+
+  it('deduplicates enhancements with same name', () => {
+    const markdown = `
+|     |
+| --- |
+| - Duplicate 10 pts<br>First instance. |
+
+|     |
+| --- |
+| - Duplicate 10 pts<br>Second instance. |
+    `;
+    const result = parseEnhancements(markdown, sourceUrl);
+
+    expect(result).toHaveLength(1);
+  });
+
+  it('parses real Wahapedia format', () => {
+    // Real example from Thousand Sons
+    const markdown = `
+## Enhancements
+
+|     |
+| --- |
+| - Lord of Forbidden Lore 20 pts<br>This Sorcerer has committed many a grimoire and unholy tome to memory.<br>THOUSANDSONS model only. Each time the bearer manifests a Ritual, add 6" to its range. |
+    `;
+    const result = parseEnhancements(markdown, sourceUrl);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.name).toBe('Lord of Forbidden Lore');
+    expect(result[0]?.pointsCost).toBe(20);
+    expect(result[0]?.restrictions).toContain('THOUSANDSONS model only');
   });
 });

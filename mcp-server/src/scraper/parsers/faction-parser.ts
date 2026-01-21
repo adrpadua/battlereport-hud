@@ -235,40 +235,75 @@ export function parseStratagems(
 }
 
 /**
- * Parse enhancements from a detachment page
+ * Parse enhancements from a detachment's Enhancements section.
+ *
+ * Wahapedia format (markdown table):
+ * ## Enhancements
+ *
+ * |     |
+ * | --- |
+ * | - Enhancement Name XX pts<br>Lore description<br>RESTRICTION model only. Effect text |
+ *
+ * Each enhancement is in a table cell with <br> separating parts.
  */
 export function parseEnhancements(
   markdown: string,
   sourceUrl: string
 ): Omit<NewEnhancement, 'detachmentId'>[] {
   const enhancements: Omit<NewEnhancement, 'detachmentId'>[] = [];
+  const seen = new Set<string>();
 
-  // Look for enhancement patterns
-  // Pattern: ### Enhancement Name (X pts)
-  const enhancementPattern =
-    /### ([^\n(]+)\s*\((\d+)\s*(?:pts?|points)?\)\n([\s\S]*?)(?=###|$)/gi;
+  // Pattern to match table cell content: | - Name XX pts<br>... |
+  // The format is: | - EnhancementName XX pts<br>Description<br>Restriction. Effect |
+  const tableRowPattern = /\|\s*-\s*([^|]+)\s*\|/g;
   let match;
 
-  while ((match = enhancementPattern.exec(markdown)) !== null) {
-    const name = match[1]?.trim();
-    const pointsCost = parseInt(match[2] || '0', 10);
-    const description = match[3]?.trim();
+  while ((match = tableRowPattern.exec(markdown)) !== null) {
+    const cellContent = match[1]?.trim();
+    if (!cellContent) continue;
 
-    if (name && description) {
-      // Check for restrictions
-      const restrictionsMatch = description.match(/(?:Restriction|Only)[:\s]*([^\n]+)/i);
-      const restrictions = restrictionsMatch?.[1]?.trim() || null;
+    // Split by <br> to get parts
+    const parts = cellContent.split(/<br\s*\/?>/i).map(p => p.trim()).filter(Boolean);
+    if (parts.length === 0) continue;
 
-      enhancements.push({
-        slug: slugify(name).slice(0, 255),
-        name: name.slice(0, 255),
-        pointsCost,
-        description,
-        restrictions,
-        sourceUrl,
-        dataSource: 'wahapedia' as const,
-      });
+    // First part: "Enhancement Name XX pts"
+    const firstPart = parts[0]!;
+    const nameMatch = firstPart.match(/^(.+?)(\d+)\s*pts?$/i);
+    if (!nameMatch) continue;
+
+    const name = nameMatch[1]?.trim();
+    const pointsCost = parseInt(nameMatch[2] || '0', 10);
+
+    if (!name || seen.has(name.toLowerCase())) continue;
+    seen.add(name.toLowerCase());
+
+    // Combine remaining parts as description
+    const descriptionParts = parts.slice(1);
+    const fullDescription = descriptionParts.join(' ').trim();
+
+    // Extract restriction (e.g., "THOUSANDSONS model only." or "EXALTEDSORCERER model only.")
+    // Pattern: KEYWORD model(s)? only
+    const restrictionMatch = fullDescription.match(/([A-Z][A-Z\s]*(?:model|models?|INFANTRY|PSYKER)[^.]*only\.?)/i);
+    const restrictions = restrictionMatch?.[1]?.trim() || null;
+
+    // Clean description - take lore text (second part usually) or full description
+    let description = fullDescription;
+    if (descriptionParts.length >= 2) {
+      // First description part is usually lore, rest is rules
+      const lore = descriptionParts[0] || '';
+      const rules = descriptionParts.slice(1).join(' ');
+      description = `${lore}\n\n${rules}`.trim();
     }
+
+    enhancements.push({
+      slug: slugify(name).slice(0, 255),
+      name: name.slice(0, 255),
+      pointsCost,
+      description: description.slice(0, 2000),
+      restrictions,
+      sourceUrl,
+      dataSource: 'wahapedia' as const,
+    });
   }
 
   return enhancements;
@@ -291,6 +326,49 @@ export function detectPhase(text: string): 'command' | 'movement' | 'shooting' |
   if (lower.includes('fight')) return 'fight';
 
   return 'any';
+}
+
+/**
+ * Extract a detachment's section content including its Enhancements section.
+ * Returns the markdown from the detachment name header through its Stratagems section.
+ */
+export function extractDetachmentSection(markdown: string, detachmentName: string): string | null {
+  // Split by ## headers
+  const sections = markdown.split(/^## /m).filter(Boolean);
+
+  let collecting = false;
+  let detachmentContent: string[] = [];
+
+  for (const section of sections) {
+    const headerLine = section.split('\n')[0]?.trim();
+
+    if (headerLine?.toLowerCase() === detachmentName.toLowerCase()) {
+      // Found the detachment, start collecting
+      collecting = true;
+      detachmentContent.push(`## ${section}`);
+      continue;
+    }
+
+    if (collecting) {
+      // Check if we hit the next detachment (has "Detachment Rule" as next section)
+      const headerLower = headerLine?.toLowerCase() || '';
+
+      // System sections that are part of the current detachment
+      const detachmentSections = ['detachment rule', 'enhancements', 'stratagems'];
+      if (detachmentSections.some(s => headerLower === s || headerLower.startsWith(s))) {
+        detachmentContent.push(`## ${section}`);
+        // If we hit Stratagems, we're at the end of this detachment's content
+        if (headerLower === 'stratagems') {
+          break;
+        }
+      } else {
+        // Hit a new section that's not part of the detachment - stop
+        break;
+      }
+    }
+  }
+
+  return detachmentContent.length > 0 ? detachmentContent.join('\n') : null;
 }
 
 export { ParsedFaction };
