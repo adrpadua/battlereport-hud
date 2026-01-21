@@ -20,21 +20,22 @@ import {
   preprocessTranscript,
   preprocessTranscriptWithLlmMappings,
   type PreprocessedTranscript,
-} from '../src/background/transcript-preprocessor';
-import { preprocessWithLlm } from '../src/background/llm-preprocess-service';
-import { getFactionContextForPrompt } from '../src/background/report-processor';
-import { findFactionByName } from '../src/data/generated';
+} from '../packages/extension/src/background/transcript-preprocessor';
+import { preprocessWithLlm } from '../packages/extension/src/background/llm-preprocess-service';
+import { getFactionContextForPrompt } from '../packages/extension/src/background/report-processor';
+import { findFactionByName } from '../packages/extension/src/data/generated';
+import { inferFactionsFromText } from '../packages/extension/src/utils/faction-loader';
 import {
   GAME_NARRATOR_SYSTEM_PROMPT,
-  buildNarratorUserPrompt,
+  buildNarratorUserPromptWithContext,
   formatStratagemTimeline,
   formatObjectiveTimeline,
   formatUnitTimeline,
   formatFactionTimeline,
   formatDetachmentTimeline,
   type FactionData,
-} from '../src/prompts/game-narrator-prompt';
-import type { TranscriptSegment } from '../src/types/youtube';
+} from '../packages/extension/src/prompts/game-narrator-prompt';
+import type { TranscriptSegment } from '../packages/extension/src/types/youtube';
 import { formatTimestamp } from './transcript-extractor';
 
 const CAPTIONS_DIR = path.join(process.cwd(), 'test-data', 'captions');
@@ -58,51 +59,6 @@ function loadCaptions(videoId: string): CaptionFile {
 
   const content = fs.readFileSync(filepath, 'utf-8');
   return JSON.parse(content);
-}
-
-/**
- * Detect likely factions from video title.
- * Returns an array of faction names.
- */
-function detectFactionsFromTitle(title: string): string[] {
-  const searchText = title.toLowerCase();
-  const detectedFactions: string[] = [];
-
-  const factionPatterns: [RegExp, string][] = [
-    [/\bspace\s*marines?\b|\bastartes\b/i, 'Space Marines'],
-    [/\bnecrons?\b/i, 'Necrons'],
-    [/\borks?\b/i, 'Orks'],
-    [/\btyranids?\b|\bnids?\b/i, 'Tyranids'],
-    [/\baeldari\b|\beldar\b|\bcraftworld/i, 'Aeldari'],
-    [/\bdrukhari\b|\bdark\s*eldar\b|\bdukari\b/i, 'Drukhari'],
-    [/\bt'?au\b/i, "T'au Empire"],
-    [/\bchaos\s*space\s*marines?\b|\bcsm\b/i, 'Chaos Space Marines'],
-    [/\bdeath\s*guard\b/i, 'Death Guard'],
-    [/\bthousand\s*sons?\b/i, 'Thousand Sons'],
-    [/\bworld\s*eaters?\b/i, 'World Eaters'],
-    [/\bchaos\s*daemons?\b|\bdaemons?\b/i, 'Chaos Daemons'],
-    [/\bimperial\s*knights?\b/i, 'Imperial Knights'],
-    [/\bchaos\s*knights?\b/i, 'Chaos Knights'],
-    [/\bastra\s*militarum\b|\bimperial\s*guard\b/i, 'Astra Militarum'],
-    [/\badeptus\s*custodes\b|\bcustodes\b/i, 'Adeptus Custodes'],
-    [/\badepta\s*sororitas\b|\bsisters\b/i, 'Adepta Sororitas'],
-    [/\badeptus\s*mechanicus\b|\badmech\b/i, 'Adeptus Mechanicus'],
-    [/\bgrey\s*knights?\b/i, 'Grey Knights'],
-    [/\bblood\s*angels?\b/i, 'Blood Angels'],
-    [/\bdark\s*angels?\b/i, 'Dark Angels'],
-    [/\bblack\s*templars?\b/i, 'Black Templars'],
-    [/\bspace\s*wolves?\b/i, 'Space Wolves'],
-    [/\bgenestealer\s*cults?\b|\bgsc\b/i, 'Genestealer Cults'],
-    [/\bleagues?\s*(of\s*)?votann\b/i, 'Leagues of Votann'],
-  ];
-
-  for (const [pattern, factionName] of factionPatterns) {
-    if (pattern.test(searchText) && !detectedFactions.includes(factionName)) {
-      detectedFactions.push(factionName);
-    }
-  }
-
-  return detectedFactions;
 }
 
 async function main(): Promise<void> {
@@ -129,9 +85,9 @@ async function main(): Promise<void> {
   const duration = captions.segments[captions.segments.length - 1]?.startTime ?? 0;
   console.log(`Duration: ${formatTimestamp(duration)}`);
 
-  // Detect factions from title
-  const detectedFactions = detectFactionsFromTitle(captions.title);
-  console.log(`\nDetected factions: ${detectedFactions.join(', ') || 'None'}`);
+  // Detect factions from title using centralized inference
+  const detectedFactions = inferFactionsFromText(captions.title);
+  console.log(`\nDetected factions from title: ${detectedFactions.join(', ') || 'None'}`);
 
   // Load unit names for detected factions
   const factionUnitNames = new Map<string, string[]>();
@@ -161,16 +117,25 @@ async function main(): Promise<void> {
       console.log(`LLM preprocessing completed in ${(llmElapsed / 1000).toFixed(1)}s`);
       console.log(`Found ${Object.keys(llmResult.termMappings).length} term mappings`);
 
+      // Convert normalized segments back to TranscriptSegment format for further processing
+      // This preserves the phonetic override corrections applied during LLM preprocessing
+      const normalizedSegmentsAsTranscript = llmResult.normalizedSegments.map(seg => ({
+        text: seg.normalizedText, // Use the normalized text (with phonetic overrides applied)
+        startTime: seg.startTime,
+        duration: seg.duration,
+      }));
+
       // Use LLM mappings with pattern-based preprocessing for units/stratagems
       const llmPreprocessed = preprocessTranscriptWithLlmMappings(
-        captions.segments,
+        normalizedSegmentsAsTranscript,
         allUnitNames,
         llmResult.termMappings
       );
 
       // Also run pattern-only preprocessing to get objectives/factions/detachments
       // (preprocessTranscriptWithLlmMappings doesn't detect these yet)
-      const patternPreprocessed = preprocessTranscript(captions.segments, allUnitNames);
+      // Use normalized segments to preserve phonetic override corrections
+      const patternPreprocessed = preprocessTranscript(normalizedSegmentsAsTranscript, allUnitNames);
 
       // Merge: use LLM-enhanced units/stratagems, pattern-based objectives/factions/detachments
       preprocessed = {
@@ -227,11 +192,13 @@ async function main(): Promise<void> {
     };
   }
 
-  // Build the user prompt
-  const userPrompt = buildNarratorUserPrompt(
+  // Build the user prompt with game mechanics context
+  console.log('\nBuilding narrator prompt with rules context...');
+  const userPrompt = await buildNarratorUserPromptWithContext(
     { title: captions.title, videoId: captions.videoId },
     preprocessed,
-    factionData
+    factionData,
+    { includeRulesContext: true }
   );
 
   // Display results
@@ -300,12 +267,12 @@ async function main(): Promise<void> {
     const { default: OpenAI } = await import('openai');
     const openai = new OpenAI({ apiKey });
 
-    console.log('Sending request to GPT-5-mini...');
+    console.log('Sending request to GPT-4o-mini...');
     const startTime = Date.now();
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-5-mini',
-      max_completion_tokens: 32000,
+      model: 'gpt-4o-mini',
+      max_tokens: 16000,
       messages: [
         { role: 'system', content: GAME_NARRATOR_SYSTEM_PROMPT },
         { role: 'user', content: userPrompt },
