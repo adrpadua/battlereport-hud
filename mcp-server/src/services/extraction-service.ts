@@ -414,7 +414,7 @@ export async function extractBattleReport(
 
   // Use static system prompt for better prompt caching
   const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
+    model: 'gpt-5-mini',
     temperature: 0.1,
     max_tokens: 4000, // Limit output tokens for cost control
     messages: [

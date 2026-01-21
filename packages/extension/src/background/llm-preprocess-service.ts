@@ -2,6 +2,9 @@ import OpenAI from 'openai';
 import type { TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
 import type { NormalizedSegment } from './transcript-preprocessor';
+import { findFactionByName, loadFactionById } from '@/data/generated';
+import { ALL_STRATAGEMS, FACTIONS, DETACHMENTS } from '@/data/constants';
+import { PHONETIC_OVERRIDES } from '@/data/phonetic-overrides';
 
 const MAX_CHARS_PER_CHUNK = 12000; // ~3000 tokens - larger chunks = fewer API calls
 const OVERLAP_SEGMENTS = 1; // Reduced overlap for cost efficiency
@@ -66,6 +69,154 @@ interface ChunkInfo {
   startIdx: number;
   endIdx: number;
   text: string;
+}
+
+/**
+ * Build a reverse mapping from phonetic variations to canonical names.
+ * This is used to pre-normalize transcript text before LLM processing.
+ */
+function buildPhoneticOverrideMap(): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const [canonical, variations] of Object.entries(PHONETIC_OVERRIDES)) {
+    for (const variation of variations) {
+      map.set(variation.toLowerCase(), canonical);
+    }
+  }
+  return map;
+}
+
+// Cache the phonetic override map
+const phoneticOverrideMap = buildPhoneticOverrideMap();
+
+/**
+ * Apply phonetic overrides to normalize YouTube caption errors in text.
+ * This runs BEFORE LLM processing to fix common mishearings like "Gilman" → "Roboute Guilliman".
+ */
+function applyPhoneticOverrides(text: string): { text: string; applied: string[] } {
+  let result = text;
+  const applied: string[] = [];
+
+  // Sort by variation length (longest first) to avoid partial matches
+  const sortedEntries = [...phoneticOverrideMap.entries()].sort(
+    (a, b) => b[0].length - a[0].length
+  );
+
+  for (const [variation, canonical] of sortedEntries) {
+    // Create case-insensitive regex with word boundaries
+    const escapedVariation = variation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\b${escapedVariation}\\b`, 'gi');
+
+    if (regex.test(result)) {
+      result = result.replace(regex, (match) => {
+        // Preserve case of first letter
+        const firstChar = match[0] ?? '';
+        const isUpperCase = firstChar === firstChar.toUpperCase() && firstChar !== '';
+        applied.push(`${variation} → ${canonical}`);
+        return isUpperCase
+          ? canonical.charAt(0).toUpperCase() + canonical.slice(1)
+          : canonical.toLowerCase();
+      });
+    }
+  }
+
+  return { text: result, applied };
+}
+
+/**
+ * Pre-process transcript segments to normalize phonetic errors.
+ * Returns modified segments with corrected text.
+ */
+function normalizeTranscriptWithPhoneticOverrides(
+  segments: TranscriptSegment[]
+): { segments: TranscriptSegment[]; totalApplied: number } {
+  let totalApplied = 0;
+  const normalizedSegments = segments.map(seg => {
+    const { text, applied } = applyPhoneticOverrides(seg.text);
+    totalApplied += applied.length;
+    return { ...seg, text };
+  });
+  return { segments: normalizedSegments, totalApplied };
+}
+
+/**
+ * Load unit names for the specified factions.
+ * Returns a Set of lowercase unit names for efficient lookup.
+ */
+async function loadFactionUnits(factionNames: string[]): Promise<Set<string>> {
+  const units = new Set<string>();
+
+  for (const name of factionNames) {
+    const faction = findFactionByName(name);
+    if (faction) {
+      const data = await loadFactionById(faction.id);
+      if (data) {
+        for (const unit of data.units) {
+          units.add(unit.name.toLowerCase());
+        }
+      }
+    }
+  }
+
+  return units;
+}
+
+/**
+ * Filter term mappings to remove units that don't belong to the declared factions.
+ * This prevents cross-faction unit contamination (e.g., "Plasmancer" appearing in a non-Necron game).
+ */
+async function filterMappingsByFaction(
+  mappings: Record<string, string>,
+  factions: string[]
+): Promise<Record<string, string>> {
+  if (factions.length === 0) {
+    // No faction filtering if no factions declared
+    return mappings;
+  }
+
+  const factionUnits = await loadFactionUnits(factions);
+
+  // If we couldn't load any faction units, skip filtering to avoid removing everything
+  if (factionUnits.size === 0) {
+    console.warn('Could not load any faction unit data, skipping faction filtering');
+    return mappings;
+  }
+
+  // Build sets for known stratagems, factions, and detachments (lowercase for comparison)
+  const knownStratagems = new Set(ALL_STRATAGEMS.map(s => s.toLowerCase()));
+  const knownFactions = new Set(FACTIONS.map(f => f.toLowerCase()));
+  const knownDetachments = new Set(DETACHMENTS.map(d => d.toLowerCase()));
+
+  const finalMappings: Record<string, string> = {};
+  let filteredCount = 0;
+
+  for (const [colloquial, official] of Object.entries(mappings)) {
+    const officialLower = official.toLowerCase();
+
+    // Check if this is a known non-unit term (stratagem, faction, detachment)
+    const isKnownStratagem = knownStratagems.has(officialLower);
+    const isKnownFaction = knownFactions.has(officialLower);
+    const isKnownDetachment = knownDetachments.has(officialLower);
+
+    // If it's a known stratagem/faction/detachment, keep it
+    if (isKnownStratagem || isKnownFaction || isKnownDetachment) {
+      finalMappings[colloquial] = official;
+      continue;
+    }
+
+    // This term is likely a unit - check if it belongs to declared factions
+    if (factionUnits.has(officialLower)) {
+      finalMappings[colloquial] = official;
+    } else {
+      console.log(`Filtering out '${colloquial}' → '${official}' (unit not in declared factions: ${factions.join(', ')})`);
+      filteredCount++;
+    }
+  }
+
+  if (filteredCount > 0) {
+    console.log(`Faction filtering removed ${filteredCount} cross-faction unit mappings`);
+  }
+
+  return finalMappings;
 }
 
 /**
@@ -382,14 +533,18 @@ async function validateTermsWithMcp(
       console.log(`MCP validation filtered out ${filtered} non-taggable terms`);
     }
 
-    return correctedMappings;
+    // Filter out units not in declared factions
+    const factionFilteredMappings = await filterMappingsByFaction(correctedMappings, factions);
+
+    return factionFilteredMappings;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       console.warn('MCP validation timed out, using LLM mappings');
     } else {
       console.warn('MCP validation unavailable, using LLM mappings:', error);
     }
-    return termMappings;
+    // Still apply faction filtering even when MCP validation fails
+    return filterMappingsByFaction(termMappings, factions);
   }
 }
 
@@ -459,27 +614,34 @@ export async function preprocessWithLlm(
     };
   }
 
+  // Step 1: Apply phonetic overrides to fix YouTube caption errors
+  // This normalizes common mishearings like "Gilman" → "Roboute Guilliman" BEFORE LLM processing
+  const { segments: normalizedTranscript, totalApplied } = normalizeTranscriptWithPhoneticOverrides(transcript);
+  if (totalApplied > 0) {
+    console.log(`Applied ${totalApplied} phonetic override corrections`);
+  }
+
   const openai = new OpenAI({ apiKey });
 
   // Calculate total text length to determine chunking strategy
-  const totalTextLength = transcript.reduce(
+  const totalTextLength = normalizedTranscript.reduce(
     (acc, seg) => acc + `[${Math.floor(seg.startTime)}s] ${seg.text} `.length,
     0
   );
 
   // Use single request for short transcripts (cost optimization)
   if (totalTextLength <= SINGLE_REQUEST_THRESHOLD) {
-    console.log(`LLM preprocessing: single request for ${transcript.length} segments (${totalTextLength} chars)`);
+    console.log(`LLM preprocessing: single request for ${normalizedTranscript.length} segments (${totalTextLength} chars)`);
     const singleChunk: ChunkInfo = {
-      segments: transcript,
+      segments: normalizedTranscript,
       startIdx: 0,
-      endIdx: transcript.length - 1,
-      text: transcript.map(s => `[${Math.floor(s.startTime)}s] ${s.text}`).join(' '),
+      endIdx: normalizedTranscript.length - 1,
+      text: normalizedTranscript.map(s => `[${Math.floor(s.startTime)}s] ${s.text}`).join(' '),
     };
     const response = await processChunk(openai, singleChunk, factions);
     const validatedMappings = await validateTermsWithMcp(response.mappings, factions);
 
-    const normalizedSegments: NormalizedSegment[] = transcript.map((seg) => {
+    const normalizedSegments: NormalizedSegment[] = normalizedTranscript.map((seg) => {
       let normalizedText = seg.text;
       let taggedText = seg.text;
       for (const [colloquial, official] of Object.entries(validatedMappings)) {
@@ -507,20 +669,20 @@ export async function preprocessWithLlm(
   }
 
   // Chunk the transcript for longer content
-  const chunks = chunkTranscript(transcript);
-  console.log(`LLM preprocessing: ${chunks.length} chunks for ${transcript.length} segments (${totalTextLength} chars)`);
+  const chunks = chunkTranscript(normalizedTranscript);
+  console.log(`LLM preprocessing: ${chunks.length} chunks for ${normalizedTranscript.length} segments (${totalTextLength} chars)`);
 
   // Process all chunks with concurrency limit
   const responses = await processChunksWithConcurrency(openai, chunks, factions);
 
   // Merge results from all chunks
-  const { termMappings: rawTermMappings } = mergeChunkResponses(transcript, responses);
+  const { termMappings: rawTermMappings } = mergeChunkResponses(normalizedTranscript, responses);
 
   // Optionally validate LLM mappings against MCP server (non-blocking if unavailable)
   const validatedMappings = await validateTermsWithMcp(rawTermMappings, factions);
 
   // Apply validated mappings to create final normalized segments
-  const normalizedSegments: NormalizedSegment[] = transcript.map((seg) => {
+  const normalizedSegments: NormalizedSegment[] = normalizedTranscript.map((seg) => {
     let normalizedText = seg.text;
     let taggedText = seg.text;
 

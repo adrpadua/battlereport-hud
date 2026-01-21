@@ -152,7 +152,7 @@ async function generateAliasesForBatch(
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-mini',
         temperature: 0.3,
         max_tokens: 2000, // Limit output tokens for cost control
         messages: [
@@ -302,7 +302,7 @@ function createBatchRequests(factions: FactionData[]): BatchRequest[] {
         method: 'POST',
         url: '/v1/chat/completions',
         body: {
-          model: 'gpt-4o-mini',
+          model: 'gpt-5-mini',
           temperature: 0.3,
           max_tokens: 2000,
           messages: [
