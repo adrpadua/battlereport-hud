@@ -3,6 +3,7 @@ import { BattleReportExtractionSchema } from '@/types/ai-response';
 import type { BattleReport, Enhancement } from '@/types/battle-report';
 import type { VideoData, Chapter, TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
+import type { EnhancedExtractionResult } from '@/types/enhanced-extraction';
 import { getFactionContextForPrompt, processBattleReport } from './report-processor';
 import {
   preprocessTranscript,
@@ -16,6 +17,7 @@ import {
 import { getCachedPreprocess, setCachedPreprocess } from './cache-manager';
 import { preprocessWithLlm } from './llm-preprocess-service';
 import { inferFactionsFromText } from '@/utils/faction-loader';
+import { enhancedPreprocess, toHudBattleReport } from './preprocessing/enhanced-pipeline';
 
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
@@ -431,6 +433,7 @@ export async function extractBattleReport(
 /**
  * Extract battle report with user-selected factions.
  * Used for phased extraction where user confirms/selects factions.
+ * @deprecated Use extractWithEnhancedPipeline for new code.
  */
 export async function extractWithFactions(
   videoData: VideoData,
@@ -545,3 +548,48 @@ export async function extractWithFactions(
 
   return processedReport;
 }
+
+/**
+ * Extract battle report using the enhanced preprocessing pipeline.
+ * This is the new unified approach that combines detection and assignment.
+ *
+ * Benefits:
+ * - Single pipeline with one output structure
+ * - Reduced AI token usage (AI focuses on assignment, not detection)
+ * - Richer data with multiple timestamps per entity
+ * - Cleaner architecture
+ */
+export async function extractWithEnhancedPipeline(
+  videoData: VideoData,
+  factions: [string, string],
+  apiKey: string
+): Promise<EnhancedExtractionResult> {
+  return enhancedPreprocess({
+    videoId: videoData.videoId,
+    title: videoData.title,
+    description: videoData.description,
+    channel: videoData.channel,
+    pinnedComment: videoData.pinnedComment ?? undefined,
+    transcript: videoData.transcript,
+    chapters: videoData.chapters,
+    selectedFactions: factions,
+    apiKey,
+  });
+}
+
+/**
+ * Extract battle report using enhanced pipeline with backward-compatible output.
+ * Returns a BattleReport that can be used with existing HUD components.
+ */
+export async function extractWithEnhancedPipelineCompat(
+  videoData: VideoData,
+  factions: [string, string],
+  apiKey: string
+): Promise<BattleReport> {
+  const enhanced = await extractWithEnhancedPipeline(videoData, factions, apiKey);
+  return toHudBattleReport(enhanced);
+}
+
+// Re-export types and functions from enhanced pipeline for convenience
+export { toHudBattleReport } from './preprocessing/enhanced-pipeline';
+export type { EnhancedExtractionResult } from '@/types/enhanced-extraction';

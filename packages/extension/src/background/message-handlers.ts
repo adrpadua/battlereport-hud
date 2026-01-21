@@ -1,7 +1,13 @@
 import type { Message } from '@/types/messages';
 import type { VideoData } from '@/types/youtube';
 import { getCachedReport, setCachedReport, deleteCachedReport } from './cache-manager';
-import { extractBattleReport, detectFactionNamesFromVideo, extractWithFactions } from './ai-service';
+import {
+  extractBattleReport,
+  detectFactionNamesFromVideo,
+  extractWithFactions,
+  extractWithEnhancedPipeline,
+  toHudBattleReport,
+} from './ai-service';
 import { getAllFactionNames } from '@/utils/faction-loader';
 
 export function handleMessage(
@@ -111,6 +117,34 @@ async function processMessage(message: Message): Promise<Message> {
         return { type: 'EXTRACTION_RESULT', payload: report };
       } catch (error) {
         console.error('Extraction error:', error);
+        return {
+          type: 'EXTRACTION_ERROR',
+          payload: {
+            error: error instanceof Error ? error.message : 'Failed to extract battle report',
+          },
+        };
+      }
+    }
+
+    case 'EXTRACT_ENHANCED': {
+      const { videoData, factions } = message.payload;
+      const apiKey = await getApiKey();
+
+      if (!apiKey) {
+        return {
+          type: 'EXTRACTION_ERROR',
+          payload: { error: 'No API key configured. Please set your OpenAI API key in the extension popup.' },
+        };
+      }
+
+      try {
+        const enhanced = await extractWithEnhancedPipeline(videoData, factions, apiKey);
+        // Also cache the backward-compatible BattleReport format
+        const compatReport = toHudBattleReport(enhanced);
+        await setCachedReport(videoData.videoId, compatReport);
+        return { type: 'ENHANCED_EXTRACTION_RESULT', payload: enhanced };
+      } catch (error) {
+        console.error('Enhanced extraction error:', error);
         return {
           type: 'EXTRACTION_ERROR',
           payload: {

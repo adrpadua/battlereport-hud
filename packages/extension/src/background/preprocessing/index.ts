@@ -9,6 +9,12 @@ export {
   preprocessTranscriptSync,
 } from './pipeline';
 
+// Enhanced pipeline (new unified approach)
+export {
+  enhancedPreprocess,
+  toHudBattleReport,
+} from './enhanced-pipeline';
+
 // Types
 export type {
   TermType,

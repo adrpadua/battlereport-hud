@@ -1,5 +1,6 @@
 import type { VideoData } from './youtube';
 import type { BattleReport } from './battle-report';
+import type { EnhancedExtractionResult } from './enhanced-extraction';
 
 // Message types for communication between content script and service worker
 
@@ -17,7 +18,10 @@ export type MessageType =
   // Phased extraction messages
   | 'DETECT_FACTIONS'
   | 'FACTIONS_DETECTED'
-  | 'EXTRACT_WITH_FACTIONS';
+  | 'EXTRACT_WITH_FACTIONS'
+  // Enhanced pipeline messages
+  | 'EXTRACT_ENHANCED'
+  | 'ENHANCED_EXTRACTION_RESULT';
 
 export interface ExtractBattleReportMessage {
   type: 'EXTRACT_BATTLE_REPORT';
@@ -90,6 +94,21 @@ export interface ExtractWithFactionsMessage {
   };
 }
 
+// Enhanced pipeline messages
+
+export interface ExtractEnhancedMessage {
+  type: 'EXTRACT_ENHANCED';
+  payload: {
+    videoData: VideoData;
+    factions: [string, string];
+  };
+}
+
+export interface EnhancedExtractionResultMessage {
+  type: 'ENHANCED_EXTRACTION_RESULT';
+  payload: EnhancedExtractionResult;
+}
+
 export type Message =
   | ExtractBattleReportMessage
   | ExtractionResultMessage
@@ -103,4 +122,6 @@ export type Message =
   | ApiKeyResultMessage
   | DetectFactionsMessage
   | FactionsDetectedMessage
-  | ExtractWithFactionsMessage;
+  | ExtractWithFactionsMessage
+  | ExtractEnhancedMessage
+  | EnhancedExtractionResultMessage;
