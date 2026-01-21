@@ -42,7 +42,7 @@ interface BatchRequest {
   body: {
     model: string;
     temperature: number;
-    max_tokens: number;
+    max_completion_tokens: number;
     messages: Array<{ role: 'system' | 'user'; content: string }>;
     response_format: { type: 'json_object' };
   };
@@ -153,8 +153,7 @@ async function generateAliasesForBatch(
     try {
       const response = await openai.chat.completions.create({
         model: 'gpt-5-mini',
-        temperature: 0.3,
-        max_tokens: 2000, // Limit output tokens for cost control
+        max_completion_tokens: 2000, // Limit output tokens for cost control
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
@@ -303,8 +302,7 @@ function createBatchRequests(factions: FactionData[]): BatchRequest[] {
         url: '/v1/chat/completions',
         body: {
           model: 'gpt-5-mini',
-          temperature: 0.3,
-          max_tokens: 2000,
+          max_completion_tokens: 2000,
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },

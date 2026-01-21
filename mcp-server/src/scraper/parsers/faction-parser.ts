@@ -70,11 +70,11 @@ export function parseFactionPage(
   }
 
   return {
-    slug: factionSlug,
-    name: factionName,
+    slug: factionSlug.slice(0, 100),
+    name: factionName.slice(0, 255),
     armyRules: armyRules || null,
     lore: lore || null,
-    wahapediaPath: `/wh40k10ed/factions/${factionSlug}/`,
+    wahapediaPath: `/wh40k10ed/factions/${factionSlug}/`.slice(0, 255),
     sourceUrl,
     dataSource: 'wahapedia' as const,
   };
@@ -144,9 +144,9 @@ export function parseDetachments(
     }
 
     detachments.push({
-      slug: slugify(name),
-      name,
-      detachmentRuleName: detachmentRuleName || null,
+      slug: slugify(name).slice(0, 255),
+      name: name.slice(0, 255),
+      detachmentRuleName: detachmentRuleName?.slice(0, 255) || null,
       detachmentRule: detachmentRule || null,
       lore,
       sourceUrl,
@@ -159,11 +159,15 @@ export function parseDetachments(
 
 /**
  * Parse stratagems from faction page
- * Wahapedia format:
+ * Wahapedia format (with blank lines between sections):
  * STRATAGEM NAME
+ *
  * 1CP
+ *
  * {Detachment} – {Type} Stratagem
+ *
  * Description...
+ *
  * **WHEN:** ...
  * **TARGET:** ...
  * **EFFECT:** ...
@@ -176,8 +180,9 @@ export function parseStratagems(
   const seen = new Set<string>();
 
   // Pattern: ALL CAPS NAME followed by CP cost and "Stratagem" type
-  // Example: VOID HARDENED\n1CP\nNeedgaârd Oathband – Wargear Stratagem
-  const stratagemPattern = /([A-Z][A-Z\s']+)\n(\d+)CP\n([^\n]+Stratagem)\n([\s\S]*?)(?=\n[A-Z][A-Z\s']+\n\d+CP|## |$)/g;
+  // Handles blank lines between sections (using \n\n? to match 1-2 newlines)
+  // Example: ARMOUR OF CONTEMPT\n\n1CP\n\nGladius Task Force – Battle Tactic Stratagem
+  const stratagemPattern = /([A-Z][A-Z\s'''-]+)\n\n?(\d+)CP\n\n?([^\n]+Stratagem)\n([\s\S]*?)(?=\n[A-Z][A-Z\s'''-]{3,}\n\n?\d+CP|## |$)/g;
 
   let match;
   while ((match = stratagemPattern.exec(markdown)) !== null) {
@@ -187,6 +192,10 @@ export function parseStratagems(
     const content = match[4] || '';
 
     if (!name || seen.has(name)) continue;
+
+    // Skip if name is too short or looks like a header
+    if (name.length < 4) continue;
+
     seen.add(name);
 
     // Extract WHEN, TARGET, EFFECT
@@ -198,6 +207,9 @@ export function parseStratagems(
     const target = targetMatch?.[1]?.trim() || null;
     const effect = effectMatch?.[1]?.trim() || '';
 
+    // Skip if we didn't find the core effect content
+    if (!effect) continue;
+
     // Determine stratagem type from typeInfo (reserved for future use)
     let _stratagemType = 'other';
     if (typeInfo.includes('Battle Tactic')) _stratagemType = 'battle_tactic';
@@ -206,9 +218,9 @@ export function parseStratagems(
     void _stratagemType; // Suppress unused variable warning
 
     stratagems.push({
-      slug: slugify(name),
-      name,
-      cpCost,
+      slug: slugify(name).slice(0, 255),
+      name: name.slice(0, 255),
+      cpCost: cpCost.slice(0, 10),
       phase: detectPhase(when || ''),
       when,
       target,
@@ -248,8 +260,8 @@ export function parseEnhancements(
       const restrictions = restrictionsMatch?.[1]?.trim() || null;
 
       enhancements.push({
-        slug: slugify(name),
-        name,
+        slug: slugify(name).slice(0, 255),
+        name: name.slice(0, 255),
         pointsCost,
         description,
         restrictions,

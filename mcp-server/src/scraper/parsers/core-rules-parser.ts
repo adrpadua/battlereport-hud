@@ -79,10 +79,10 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
 
   // Convert to database format
   return sections.map((section) => ({
-    slug: section.slug,
-    title: section.title,
-    category: section.category,
-    subcategory: section.subcategory ?? null,
+    slug: section.slug.slice(0, 255),
+    title: section.title.slice(0, 255),
+    category: section.category.slice(0, 100),
+    subcategory: section.subcategory?.slice(0, 100) ?? null,
     content: section.content,
     orderIndex: section.orderIndex,
     sourceUrl,

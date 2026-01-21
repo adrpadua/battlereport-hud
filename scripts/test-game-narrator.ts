@@ -271,8 +271,8 @@ async function main(): Promise<void> {
     const startTime = Date.now();
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      max_tokens: 16000,
+      model: 'gpt-5-mini',
+      max_completion_tokens: 16000,
       messages: [
         { role: 'system', content: GAME_NARRATOR_SYSTEM_PROMPT },
         { role: 'user', content: userPrompt },

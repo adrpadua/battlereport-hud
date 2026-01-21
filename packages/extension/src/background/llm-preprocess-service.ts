@@ -320,9 +320,8 @@ async function processChunk(
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        temperature: 0.1,
-        max_tokens: 1000, // Only returning mappings, so less tokens needed
+        model: 'gpt-5-mini',
+        max_completion_tokens: 1000, // Only returning mappings, so less tokens needed
         messages: [
           { role: 'system', content: PREPROCESS_SYSTEM_PROMPT },
           { role: 'user', content: buildPreprocessPrompt(chunk, factions) },

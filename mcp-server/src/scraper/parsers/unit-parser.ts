@@ -99,8 +99,8 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
   const baseSize = baseSizeMatch?.[1] || null;
 
   const unit: Omit<NewUnit, 'factionId'> = {
-    slug: slugify(rawName),
-    name: rawName,
+    slug: slugify(rawName).slice(0, 255),
+    name: rawName.slice(0, 255),
     movement: stats.movement ?? null,
     toughness: stats.toughness ?? null,
     save: stats.save ?? null,
@@ -195,8 +195,8 @@ function parseUnitSection(section: string, sourceUrl: string): ParsedUnit | null
   const abilities = extractAbilities(content, sourceUrl);
 
   const unit: Omit<NewUnit, 'factionId'> = {
-    slug: slugify(name),
-    name,
+    slug: slugify(name).slice(0, 255),
+    name: name.slice(0, 255),
     movement: stats.movement ?? null,
     toughness: stats.toughness ?? null,
     save: stats.save ?? null,
@@ -341,8 +341,8 @@ function parseWeaponTable(
     if (!range || !attacks) continue;
 
     weapons.push({
-      slug: slugify(name),
-      name,
+      slug: slugify(name).slice(0, 255),
+      name: name.slice(0, 255),
       weaponType,
       range: range || null,
       attacks: attacks || null,
@@ -466,8 +466,8 @@ function extractAbilities(
     const name = labelMatch[2]?.trim();
     if (name && name.length >= 3) {
       abilities.push({
-        slug: slugify(name),
-        name,
+        slug: slugify(name).slice(0, 255),
+        name: name.slice(0, 255),
         abilityType,
         description: `${abilityType.toUpperCase()} ability`, // Minimal description for labeled abilities
         sourceUrl,
@@ -499,8 +499,8 @@ function extractAbilities(
     if (description.length < 10) continue;
 
     abilities.push({
-      slug: slugify(name),
-      name,
+      slug: slugify(name).slice(0, 255),
+      name: name.slice(0, 255),
       abilityType: 'unit',
       description,
       sourceUrl,

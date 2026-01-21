@@ -49,7 +49,7 @@ export const FACTION_SLUGS = [
   'chaos-knights',
   'chaos-space-marines',
   'death-guard',
-  'emperors-children',
+  // 'emperors-children', // Not yet on Wahapedia
   'thousand-sons',
   'world-eaters',
 
@@ -60,7 +60,7 @@ export const FACTION_SLUGS = [
   'leagues-of-votann',
   'necrons',
   'orks',
-  'tau-empire',
+  't-au-empire',
   'tyranids',
 
   // Unaligned
