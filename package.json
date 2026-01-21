@@ -9,7 +9,7 @@
     "cli"
   ],
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --filter=!@battlereport/docs",
     "build": "turbo build",
     "typecheck": "turbo typecheck",
     "dev:web": "turbo dev --filter=@battlereport/web",
