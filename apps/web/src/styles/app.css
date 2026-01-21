@@ -121,5 +121,11 @@ button:disabled {
   background: #1a1a1a;
   border: 1px solid #3a3a3a;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
+}
+
+/* Ensure select dropdowns render correctly */
+.faction-select {
+  position: relative;
+  z-index: 100;
 }

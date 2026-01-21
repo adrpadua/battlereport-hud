@@ -9,6 +9,10 @@ export default defineConfig({
     webExtension({
       manifest: 'manifest.json',
       watchFilePaths: ['manifest.json'],
+      browser: 'chromium',
+      webExtConfig: {
+        chromiumBinary: '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+      },
     }),
   ],
   resolve: {

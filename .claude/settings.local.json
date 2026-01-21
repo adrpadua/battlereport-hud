@@ -1,18 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run scrape:*)",
-      "Bash(npx drizzle-kit:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm test:*)",
-      "Bash(npm run:*)",
-      "Bash(npx tsx:*)",
-      "Bash(node:*)",
-      "Bash(head:*)",
+      "Bash(npm run scrape *)",
+      "Bash(npx drizzle-kit *)",
+      "Bash(npm run build *)",
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(npx tsx *)",
+      "Bash(node *)",
+      "Bash(head *)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__get-library-docs"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "wh40k-rules"
+  ],
+  "enableAllProjectMcpServers": true
 }

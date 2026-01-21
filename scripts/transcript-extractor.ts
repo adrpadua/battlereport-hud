@@ -11,7 +11,7 @@ import { execSync, spawn } from 'child_process';
 import { readFileSync, unlinkSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import type { TranscriptSegment } from '../src/types/youtube';
+import type { TranscriptSegment } from '../packages/extension/src/types/youtube';
 
 export interface TranscriptResult {
   videoId: string;
@@ -132,9 +132,22 @@ function parseVtt(vttContent: string): TranscriptSegment[] {
     }
   }
 
+  // Remove consecutive duplicate lines (common in YouTube auto-captions)
+  // YouTube often repeats the same text across multiple timestamps as captions "scroll"
+  const dedupedSegments: TranscriptSegment[] = [];
+  for (const seg of segments) {
+    const last = dedupedSegments[dedupedSegments.length - 1];
+    if (!last || last.text !== seg.text) {
+      dedupedSegments.push({ ...seg });
+    } else {
+      // Extend duration of previous segment to cover this duplicate
+      last.duration = seg.startTime + seg.duration - last.startTime;
+    }
+  }
+
   // Merge segments that are very close together (within 0.5s) with same text
   const mergedSegments: TranscriptSegment[] = [];
-  for (const seg of segments) {
+  for (const seg of dedupedSegments) {
     const last = mergedSegments[mergedSegments.length - 1];
     if (last && last.text === seg.text && seg.startTime - last.startTime < 0.5) {
       // Extend duration of previous segment

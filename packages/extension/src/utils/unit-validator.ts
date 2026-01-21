@@ -1,6 +1,11 @@
 import Fuse, { IFuseOptions } from 'fuse.js';
 import type { FactionData, UnitData } from '@/types/bsdata';
 import type { FeedbackItem } from '@battlereport/shared/types';
+import {
+  getPhoneticIndexForFaction,
+  findPhoneticMatches,
+  clearPhoneticCache,
+} from './phonetic-matcher';
 
 export interface ValidatedUnit {
   originalName: string;
@@ -41,6 +46,10 @@ function getFuseForFaction(faction: FactionData): Fuse<UnitData> {
 /**
  * Validate a single unit name against a faction's unit list.
  * Returns the best match with confidence score.
+ *
+ * Uses a multi-stage matching approach:
+ * 1. Fuse.js fuzzy matching (best for typos)
+ * 2. Phonetic matching fallback (best for mishearings)
  */
 export function validateUnit(
   unitName: string,
@@ -48,32 +57,84 @@ export function validateUnit(
 ): ValidatedUnit {
   const fuse = getFuseForFaction(faction);
 
-  // Search for matches
+  // Search for matches using Fuse.js
   const results = fuse.search(unitName);
 
-  if (results.length === 0 || results[0]!.score === undefined) {
+  // If Fuse found a high-confidence match, use it
+  if (results.length > 0 && results[0]!.score !== undefined) {
+    const bestMatch = results[0]!;
+    // Fuse score is 0 (perfect) to 1 (worst), invert for confidence
+    const fuseConfidence = 1 - bestMatch.score!;
+
+    // High confidence Fuse match - use it directly
+    if (fuseConfidence >= 0.6) {
+      return {
+        originalName: unitName,
+        matchedName: bestMatch.item.name,
+        matchedUnit: bestMatch.item,
+        confidence: fuseConfidence,
+        isValidated: true,
+      };
+    }
+  }
+
+  // Fuse confidence is low - try phonetic matching
+  const unitNames = faction.units.map(u => u.name);
+  const phoneticIndex = getPhoneticIndexForFaction(faction.id, unitNames);
+  const phoneticMatches = findPhoneticMatches(unitName, phoneticIndex, 3, 0.4);
+
+  const bestPhoneticMatch = phoneticMatches[0];
+  if (bestPhoneticMatch) {
+    // Find the actual UnitData for the phonetic match
+    const matchedUnit = faction.units.find(
+      u => u.name.toLowerCase() === bestPhoneticMatch.term.toLowerCase()
+    );
+
+    if (matchedUnit) {
+      // If we also had a Fuse result, combine the confidences
+      const fuseMatch = results.length > 0 ? results[0] : null;
+      const fuseConfidence = fuseMatch?.score !== undefined ? 1 - fuseMatch.score : 0;
+
+      // Boost confidence if phonetic and Fuse agree on the same term
+      let finalConfidence = bestPhoneticMatch.confidence;
+      if (fuseMatch && fuseMatch.item.name.toLowerCase() === bestPhoneticMatch.term.toLowerCase()) {
+        // Both methods agree - boost confidence
+        finalConfidence = Math.max(finalConfidence, fuseConfidence, 0.7);
+      }
+
+      // Validate if phonetic confidence is high enough
+      const isValidated = finalConfidence >= 0.5;
+
+      return {
+        originalName: unitName,
+        matchedName: isValidated ? matchedUnit.name : unitName,
+        matchedUnit: isValidated ? matchedUnit : null,
+        confidence: finalConfidence,
+        isValidated,
+      };
+    }
+  }
+
+  // Neither Fuse nor phonetic found a good match
+  // Return the best Fuse result if we have one, otherwise no match
+  if (results.length > 0 && results[0]!.score !== undefined) {
+    const bestMatch = results[0]!;
+    const confidence = 1 - bestMatch.score!;
     return {
       originalName: unitName,
       matchedName: unitName,
       matchedUnit: null,
-      confidence: 0,
+      confidence,
       isValidated: false,
     };
   }
 
-  const bestMatch = results[0]!;
-  // Fuse score is 0 (perfect) to 1 (worst), invert for confidence
-  const confidence = 1 - bestMatch.score!;
-
-  // Only validate if confidence is high enough
-  const isValidated = confidence >= 0.6;
-
   return {
     originalName: unitName,
-    matchedName: isValidated ? bestMatch.item.name : unitName,
-    matchedUnit: isValidated ? bestMatch.item : null,
-    confidence,
-    isValidated,
+    matchedName: unitName,
+    matchedUnit: null,
+    confidence: 0,
+    isValidated: false,
   };
 }
 
@@ -118,6 +179,7 @@ export function validateUnitAcrossFactions(
 /**
  * Get the best match for a unit name, regardless of validation threshold.
  * Useful for showing suggestions to the user.
+ * Combines Fuse.js and phonetic matching for better coverage.
  */
 export function getBestMatch(
   unitName: string,
@@ -126,27 +188,57 @@ export function getBestMatch(
   const fuse = getFuseForFaction(faction);
   const results = fuse.search(unitName);
 
-  if (results.length === 0 || results[0]!.score === undefined) {
-    return null;
+  // Try Fuse match first
+  let bestFuseMatch: ValidatedUnit | null = null;
+  if (results.length > 0 && results[0]!.score !== undefined) {
+    const match = results[0]!;
+    bestFuseMatch = {
+      originalName: unitName,
+      matchedName: match.item.name,
+      matchedUnit: match.item,
+      confidence: 1 - match.score!,
+      isValidated: (1 - match.score!) >= 0.6,
+    };
   }
 
-  const bestMatch = results[0]!;
-  const confidence = 1 - bestMatch.score!;
+  // Try phonetic match
+  const unitNames = faction.units.map(u => u.name);
+  const phoneticIndex = getPhoneticIndexForFaction(faction.id, unitNames);
+  const phoneticMatches = findPhoneticMatches(unitName, phoneticIndex, 1, 0.3);
 
-  return {
-    originalName: unitName,
-    matchedName: bestMatch.item.name,
-    matchedUnit: bestMatch.item,
-    confidence,
-    isValidated: confidence >= 0.6,
-  };
+  let bestPhoneticMatch: ValidatedUnit | null = null;
+  const phoneticMatch = phoneticMatches[0];
+  if (phoneticMatch) {
+    const matchedUnit = faction.units.find(
+      u => u.name.toLowerCase() === phoneticMatch.term.toLowerCase()
+    );
+    if (matchedUnit) {
+      bestPhoneticMatch = {
+        originalName: unitName,
+        matchedName: matchedUnit.name,
+        matchedUnit: matchedUnit,
+        confidence: phoneticMatch.confidence,
+        isValidated: phoneticMatch.confidence >= 0.5,
+      };
+    }
+  }
+
+  // Return the better of the two matches
+  if (bestFuseMatch && bestPhoneticMatch) {
+    return bestFuseMatch.confidence >= bestPhoneticMatch.confidence
+      ? bestFuseMatch
+      : bestPhoneticMatch;
+  }
+
+  return bestFuseMatch || bestPhoneticMatch || null;
 }
 
 /**
- * Clear the Fuse cache.
+ * Clear the Fuse and phonetic caches.
  */
 export function clearValidatorCache(): void {
   fuseCache.clear();
+  clearPhoneticCache();
 }
 
 /**
@@ -185,6 +277,7 @@ export interface ValidationWithFeedbackResult {
 /**
  * Validate a unit name and generate a feedback item if confidence is low.
  * Returns both the validation result and an optional feedback item for user review.
+ * Includes both Fuse.js and phonetic suggestions for comprehensive coverage.
  */
 export function validateUnitWithFeedback(
   unitName: string,
@@ -197,13 +290,38 @@ export function validateUnitWithFeedback(
   // Generate feedback if confidence is below threshold or not validated
   if (validation.confidence < feedbackThreshold || !validation.isValidated) {
     const fuse = getFuseForFaction(faction);
-    const allResults = fuse.search(unitName, { limit: 5 });
+    const fuseResults = fuse.search(unitName, { limit: 5 });
 
-    // Build suggestions array
-    const suggestions = allResults.map((result) => ({
-      name: result.item.name,
-      confidence: 1 - (result.score ?? 1),
-    }));
+    // Get phonetic suggestions
+    const unitNames = faction.units.map(u => u.name);
+    const phoneticIndex = getPhoneticIndexForFaction(faction.id, unitNames);
+    const phoneticMatches = findPhoneticMatches(unitName, phoneticIndex, 5, 0.3);
+
+    // Build suggestions array combining Fuse and phonetic matches
+    const suggestionMap = new Map<string, number>();
+
+    // Add Fuse suggestions
+    for (const result of fuseResults) {
+      const confidence = 1 - (result.score ?? 1);
+      const existing = suggestionMap.get(result.item.name);
+      if (!existing || confidence > existing) {
+        suggestionMap.set(result.item.name, confidence);
+      }
+    }
+
+    // Add phonetic suggestions (may boost or add new suggestions)
+    for (const match of phoneticMatches) {
+      const existing = suggestionMap.get(match.term);
+      if (!existing || match.confidence > existing) {
+        suggestionMap.set(match.term, match.confidence);
+      }
+    }
+
+    // Convert to sorted array
+    const suggestions = Array.from(suggestionMap.entries())
+      .map(([name, confidence]) => ({ name, confidence }))
+      .sort((a, b) => b.confidence - a.confidence)
+      .slice(0, 5);
 
     const feedbackItem: FeedbackItem = {
       id: `feedback-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,

@@ -19,10 +19,10 @@ import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
 import { extractTranscript, extractVideoId, formatTimestamp, isYtDlpInstalled, type TranscriptResult } from './transcript-extractor';
-import { preprocessTranscript } from '../src/background/transcript-preprocessor';
-import { preprocessWithLlm } from '../src/background/llm-preprocess-service';
-import { loadFactionById, factionIndex } from '../src/data/generated/index';
-import type { TranscriptSegment } from '../src/types/youtube';
+import { preprocessTranscript } from '../packages/extension/src/background/transcript-preprocessor';
+import { preprocessWithLlm } from '../packages/extension/src/background/llm-preprocess-service';
+import { loadFactionById, factionIndex } from '../packages/extension/src/data/generated/index';
+import type { TranscriptSegment } from '../packages/extension/src/types/youtube';
 
 const CAPTIONS_DIR = path.join(process.cwd(), 'test-data', 'captions');
 

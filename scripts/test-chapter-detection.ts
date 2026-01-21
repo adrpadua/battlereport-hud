@@ -7,9 +7,9 @@
  */
 
 import { extractTranscript, formatTimestamp } from './transcript-extractor';
-import { preprocessTranscript } from '../src/background/transcript-preprocessor';
-import { loadFactionById } from '../src/data/generated/index';
-import type { TranscriptSegment } from '../src/types/youtube';
+import { preprocessTranscript } from '../packages/extension/src/background/transcript-preprocessor';
+import { loadFactionById } from '../packages/extension/src/data/generated/index';
+import type { TranscriptSegment } from '../packages/extension/src/types/youtube';
 
 const ARMY_LIST_CHAPTER_KEYWORDS = [
   'army', 'list', 'lists', 'forces', 'armies', 'roster'

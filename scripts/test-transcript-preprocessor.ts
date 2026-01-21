@@ -14,9 +14,9 @@ import {
   preprocessTranscript,
   getDetectedStratagems,
   enrichUnitTimestamps,
-} from '../src/background/transcript-preprocessor';
-import type { TranscriptSegment } from '../src/types/youtube';
-import type { Unit } from '../src/types/battle-report';
+} from '../packages/extension/src/background/transcript-preprocessor';
+import type { TranscriptSegment } from '../packages/extension/src/types/youtube';
+import type { Unit } from '../packages/extension/src/types/battle-report';
 import {
   extractTranscript,
   extractVideoId,

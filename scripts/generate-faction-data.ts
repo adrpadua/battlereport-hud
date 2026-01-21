@@ -2,9 +2,9 @@ import { existsSync, mkdirSync, writeFileSync, readdirSync, unlinkSync, statSync
 import { join } from 'path';
 import { fetchAllCatalogues } from './bsdata-fetcher';
 import { parseCatalogue, extractFactionAliases } from './bsdata-parser';
-import type { FactionIndex } from '../src/types/bsdata';
+import type { FactionIndex } from '../packages/extension/src/types/bsdata';
 
-const OUTPUT_DIR = join(process.cwd(), 'src/data/generated');
+const OUTPUT_DIR = join(process.cwd(), 'packages/extension/src/data/generated');
 
 async function main() {
   console.log('🔧 Generating faction data from BSData...\n');

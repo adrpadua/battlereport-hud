@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import type { UnitData, UnitStats, WeaponProfile, FactionData } from '../src/types/bsdata';
+import type { UnitData, UnitStats, WeaponProfile, FactionData } from '../packages/extension/src/types/bsdata';
 
 // Profile type IDs from BSData schema
 const PROFILE_TYPE_IDS = {

@@ -13,6 +13,7 @@
     "@battlereport/hud": "*",
     "@battlereport/shared": "*",
     "fuse.js": "^7.1.0",
+    "natural": "^8.0.1",
     "openai": "^4.104.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.304",
+    "@types/natural": "^5.1.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",

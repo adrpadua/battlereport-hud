@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["packages/extension/src/*"],
+      "@mcp/types": ["mcp-server/src/api-types.ts"]
+    },
+    "noEmit": true
+  },
+  "include": ["scripts/**/*", "packages/extension/src/**/*"],
+  "exclude": ["node_modules", "**/dist/**"]
+}

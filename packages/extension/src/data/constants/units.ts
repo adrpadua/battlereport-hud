@@ -1,7 +1,88 @@
 /**
  * Unit-related constants for Warhammer 40K.
  * Includes unit aliases, character type patterns, and blocklist for game mechanics.
+ *
+ * The game mechanics blocklist supports dynamic loading from the MCP server API
+ * to keep it synchronized with the core rules database, with a static fallback.
  */
+
+import { getRulesCache } from '@/background/preprocessing/cache/rules-cache';
+
+// ============================================================================
+// Dynamic Game Mechanics Blocklist
+// ============================================================================
+
+// Storage for dynamically loaded terms
+let dynamicGameMechanicsTerms: string[] = [];
+let cachedBlocklist: Set<string> | null = null;
+
+/**
+ * Load game mechanics terms from the MCP server API.
+ * Returns true if successful, false if API unavailable (falls back to static).
+ */
+export async function loadGameMechanicsBlocklist(): Promise<boolean> {
+  try {
+    const rulesCache = getRulesCache();
+    const terms = await rulesCache.getGameMechanicsTerms();
+
+    if (terms.length > 0) {
+      dynamicGameMechanicsTerms = terms;
+      cachedBlocklist = null; // Invalidate cache to force rebuild
+      console.log(`[Blocklist] Loaded ${terms.length} game mechanics terms from API`);
+      return true;
+    }
+  } catch (error) {
+    console.warn('[Blocklist] Failed to load from API, using static fallback:', error);
+  }
+  return false;
+}
+
+/**
+ * Set dynamic game mechanics terms directly (for testing or manual updates).
+ */
+export function setDynamicGameMechanicsTerms(terms: string[]): void {
+  dynamicGameMechanicsTerms = terms;
+  cachedBlocklist = null;
+}
+
+/**
+ * Get the combined game mechanics blocklist (dynamic + static fallback).
+ * Caches the merged result for performance.
+ */
+export function getGameMechanicsBlocklist(): Set<string> {
+  if (cachedBlocklist) {
+    return cachedBlocklist;
+  }
+
+  // Start with static fallback
+  cachedBlocklist = new Set(GAME_MECHANICS_BLOCKLIST);
+
+  // Add dynamic terms
+  for (const term of dynamicGameMechanicsTerms) {
+    cachedBlocklist.add(term.toLowerCase());
+  }
+
+  return cachedBlocklist;
+}
+
+/**
+ * Check if a term is in the blocklist (convenience function).
+ */
+export function isGameMechanicsTerm(term: string): boolean {
+  return getGameMechanicsBlocklist().has(term.toLowerCase());
+}
+
+/**
+ * Reset dynamic terms (for testing).
+ */
+export function resetDynamicGameMechanicsTerms(): void {
+  dynamicGameMechanicsTerms = [];
+  cachedBlocklist = null;
+}
+
+// ============================================================================
+// Unit Aliases
+// ============================================================================
 
 // Map colloquial/shortened unit names to canonical names
 // Use proper capitalization matching BSData conventions

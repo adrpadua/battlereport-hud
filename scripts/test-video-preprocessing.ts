@@ -12,8 +12,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { extractTranscript, formatTimestamp, type TranscriptResult } from './transcript-extractor';
-import { preprocessTranscript, getDetectedStratagems } from '../src/background/transcript-preprocessor';
-import { loadFactionById, factionIndex } from '../src/data/generated/index';
+import { preprocessTranscript, getDetectedStratagems } from '../packages/extension/src/background/transcript-preprocessor';
+import { loadFactionById, factionIndex } from '../packages/extension/src/data/generated/index';
 
 const CAPTIONS_DIR = path.join(process.cwd(), 'test-data', 'captions');
 
