@@ -326,7 +326,8 @@ function buildTranscriptSection(videoData: VideoData): string {
   );
 }
 
-const BASE_SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
+// Static system prompt for better prompt caching (dynamic content moved to user prompt)
+const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
 
 You must respond with a valid JSON object containing the extracted battle report data.
 
@@ -345,32 +346,9 @@ Your JSON response must include: players (array with name, faction, detachment, 
 - For each stratagem, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
 
 /**
- * Build system prompt with faction-specific unit names.
- */
-function buildSystemPrompt(factionUnitNames: Map<string, string[]>): string {
-  let prompt = BASE_SYSTEM_PROMPT;
-
-  if (factionUnitNames.size > 0) {
-    prompt += '\n\nCANONICAL UNIT NAMES BY FACTION:';
-    prompt +=
-      '\nUse EXACT names from these lists when possible. Prefer these official names over abbreviations or nicknames.';
-
-    for (const [faction, units] of factionUnitNames) {
-      const limitedUnits = units.slice(0, 100);
-      prompt += `\n\n${faction.toUpperCase()}:\n${limitedUnits.join(', ')}`;
-      if (units.length > 100) {
-        prompt += ` ... and ${units.length - 100} more`;
-      }
-    }
-  }
-
-  return prompt;
-}
-
-/**
  * Build user prompt with video data.
  */
-function buildUserPrompt(videoData: VideoData): string {
+function buildUserPrompt(videoData: VideoData, factionUnitNames?: Map<string, string[]>): string {
   let prompt = `Analyze this Warhammer 40,000 battle report video and extract the army lists and game information.
 
 VIDEO TITLE: ${videoData.title}
@@ -380,6 +358,21 @@ CHANNEL: ${videoData.channel}
 DESCRIPTION:
 ${videoData.description}
 `;
+
+  // Add canonical unit names to user prompt (moved from system prompt for better caching)
+  if (factionUnitNames && factionUnitNames.size > 0) {
+    prompt += '\n\nCANONICAL UNIT NAMES BY FACTION:';
+    prompt += '\nUse EXACT names from these lists when possible. Prefer these official names over abbreviations or nicknames.';
+
+    for (const [faction, units] of factionUnitNames) {
+      // Limit to 50 most common units (reduced from 100)
+      const limitedUnits = units.slice(0, 50);
+      prompt += `\n\n${faction.toUpperCase()}:\n${limitedUnits.join(', ')}`;
+      if (units.length > 50) {
+        prompt += ` ... and ${units.length - 50} more`;
+      }
+    }
+  }
 
   if (videoData.chapters.length > 0) {
     prompt += `\n\nCHAPTERS:\n`;
@@ -419,14 +412,14 @@ export async function extractBattleReport(
 ): Promise<BattleReport> {
   const openai = new OpenAI({ apiKey });
 
-  const systemPrompt = buildSystemPrompt(factionUnitNames);
-
+  // Use static system prompt for better prompt caching
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     temperature: 0.1,
+    max_tokens: 4000, // Limit output tokens for cost control
     messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: buildUserPrompt(videoData) },
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: buildUserPrompt(videoData, factionUnitNames) },
     ],
     response_format: { type: 'json_object' },
   });

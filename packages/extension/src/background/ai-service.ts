@@ -14,6 +14,7 @@ import {
 } from './transcript-preprocessor';
 import { getCachedPreprocess, setCachedPreprocess } from './cache-manager';
 import { preprocessWithLlm } from './llm-preprocess-service';
+import { inferFactionsFromText } from '@/utils/faction-loader';
 
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
@@ -180,7 +181,8 @@ function buildTranscriptSection(
   );
 }
 
-const BASE_SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
+// Static system prompt for better prompt caching (dynamic content moved to user prompt)
+const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
 
 You must respond with a valid JSON object containing the extracted battle report data.
 
@@ -208,30 +210,11 @@ Your JSON response must include: players (array with name, faction, detachment, 
 
 - For each stratagem, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
 
-/**
- * Build system prompt with faction-specific unit names.
- */
-function buildSystemPrompt(factionUnitNames: Map<string, string[]>): string {
-  let prompt = BASE_SYSTEM_PROMPT;
-
-  if (factionUnitNames.size > 0) {
-    prompt += '\n\nCANONICAL UNIT NAMES BY FACTION:';
-    prompt += '\nUse EXACT names from these lists when possible. Prefer these official names over abbreviations or nicknames.';
-
-    for (const [faction, units] of factionUnitNames) {
-      // Limit units to avoid token overflow
-      const limitedUnits = units.slice(0, 100);
-      prompt += `\n\n${faction.toUpperCase()}:\n${limitedUnits.join(', ')}`;
-      if (units.length > 100) {
-        prompt += ` ... and ${units.length - 100} more`;
-      }
-    }
-  }
-
-  return prompt;
-}
-
-function buildUserPrompt(videoData: VideoData, preprocessed?: PreprocessedTranscript): string {
+function buildUserPrompt(
+  videoData: VideoData,
+  preprocessed?: PreprocessedTranscript,
+  factionUnitNames?: Map<string, string[]>
+): string {
   let prompt = `Analyze this Warhammer 40,000 battle report video and extract the army lists and game information.
 
 VIDEO TITLE: ${videoData.title}
@@ -241,6 +224,21 @@ CHANNEL: ${videoData.channel}
 DESCRIPTION:
 ${videoData.description}
 `;
+
+  // Add canonical unit names to user prompt (moved from system prompt for better caching)
+  if (factionUnitNames && factionUnitNames.size > 0) {
+    prompt += '\n\nCANONICAL UNIT NAMES BY FACTION:';
+    prompt += '\nUse EXACT names from these lists when possible. Prefer these official names over abbreviations or nicknames.';
+
+    for (const [faction, units] of factionUnitNames) {
+      // Limit to 50 most common units (reduced from 100)
+      const limitedUnits = units.slice(0, 50);
+      prompt += `\n\n${faction.toUpperCase()}:\n${limitedUnits.join(', ')}`;
+      if (units.length > 50) {
+        prompt += ` ... and ${units.length - 50} more`;
+      }
+    }
+  }
 
   if (videoData.chapters.length > 0) {
     prompt += `\n\nCHAPTERS:\n`;
@@ -286,52 +284,18 @@ ${videoData.description}
 /**
  * Get list of detected faction names from video metadata.
  * Used for the faction selection UI.
+ * Uses the centralized faction inference that reads from the faction index.
  */
 export function detectFactionNamesFromVideo(videoData: VideoData): string[] {
   const searchText = [videoData.title, videoData.description, videoData.pinnedComment ?? ''].join(' ');
-  const detectedFactions: string[] = [];
-
-  const factionPatterns: [RegExp, string][] = [
-    [/\bspace\s*marines?\b|\bastartes\b/i, 'Space Marines'],
-    [/\bnecrons?\b/i, 'Necrons'],
-    [/\borks?\b/i, 'Orks'],
-    [/\btyranids?\b|\bnids?\b/i, 'Tyranids'],
-    [/\baeldari\b|\beldar\b|\bcraftworld/i, 'Aeldari'],
-    [/\bdrukhari\b|\bdark\s*eldar/i, 'Drukhari'],
-    [/\bt'?au\b/i, "T'au Empire"],
-    [/\bchaos\s*space\s*marines?\b|\bcsm\b/i, 'Chaos Space Marines'],
-    [/\bdeath\s*guard\b/i, 'Death Guard'],
-    [/\bthousand\s*sons?\b/i, 'Thousand Sons'],
-    [/\bworld\s*eaters?\b/i, 'World Eaters'],
-    [/\bchaos\s*daemons?\b|\bdaemons?\b/i, 'Chaos Daemons'],
-    [/\bimperial\s*knights?\b/i, 'Imperial Knights'],
-    [/\bchaos\s*knights?\b/i, 'Chaos Knights'],
-    [/\bastra\s*militarum\b|\bimperial\s*guard\b/i, 'Astra Militarum'],
-    [/\badeptus\s*custodes\b|\bcustodes\b/i, 'Adeptus Custodes'],
-    [/\badepta\s*sororitas\b|\bsisters\b/i, 'Adepta Sororitas'],
-    [/\badeptus\s*mechanicus\b|\badmech\b/i, 'Adeptus Mechanicus'],
-    [/\bgrey\s*knights?\b/i, 'Grey Knights'],
-    [/\bblood\s*angels?\b/i, 'Blood Angels'],
-    [/\bdark\s*angels?\b/i, 'Dark Angels'],
-    [/\bblack\s*templars?\b/i, 'Black Templars'],
-    [/\bspace\s*wolves?\b/i, 'Space Wolves'],
-    [/\bgenestealer\s*cults?\b|\bgsc\b/i, 'Genestealer Cults'],
-    [/\bleagues?\s*(of\s*)?votann\b/i, 'Leagues of Votann'],
-    [/\bemperor'?s?\s*children\b/i, "Emperor's Children"],
-  ];
-
-  for (const [pattern, factionName] of factionPatterns) {
-    if (pattern.test(searchText) && !detectedFactions.includes(factionName)) {
-      detectedFactions.push(factionName);
-    }
-  }
-
-  return detectedFactions;
+  // Use centralized inference - allow more factions for UI display
+  return inferFactionsFromText(searchText, 10);
 }
 
 /**
  * Detect factions from video metadata for prompt enhancement.
  * Returns a map of detected faction names to their unit names.
+ * Uses the centralized faction inference that reads from the faction index.
  */
 export async function detectFactionsFromVideo(videoData: VideoData): Promise<Map<string, string[]>> {
   const factionUnitNames = new Map<string, string[]>();
@@ -339,43 +303,8 @@ export async function detectFactionsFromVideo(videoData: VideoData): Promise<Map
   // Combine text for faction detection
   const searchText = [videoData.title, videoData.description, videoData.pinnedComment ?? ''].join(' ');
 
-  // Detect factions mentioned in metadata
-  const detectedFactions = new Set<string>();
-
-  // Common faction detection patterns
-  const factionPatterns: [RegExp, string][] = [
-    [/\bspace\s*marines?\b|\bastartes\b/i, 'Space Marines'],
-    [/\bnecrons?\b/i, 'Necrons'],
-    [/\borks?\b/i, 'Orks'],
-    [/\btyranids?\b|\bnids?\b/i, 'Tyranids'],
-    [/\baeldari\b|\beldar\b|\bcraftworld/i, 'Aeldari'],
-    [/\bdrukhari\b|\bdark\s*eldar/i, 'Drukhari'],
-    [/\bt'?au\b/i, "T'au Empire"],
-    [/\bchaos\s*space\s*marines?\b|\bcsm\b/i, 'Chaos Space Marines'],
-    [/\bdeath\s*guard\b/i, 'Death Guard'],
-    [/\bthousand\s*sons?\b/i, 'Thousand Sons'],
-    [/\bworld\s*eaters?\b/i, 'World Eaters'],
-    [/\bchaos\s*daemons?\b|\bdaemons?\b/i, 'Chaos Daemons'],
-    [/\bimperial\s*knights?\b/i, 'Imperial Knights'],
-    [/\bchaos\s*knights?\b/i, 'Chaos Knights'],
-    [/\bastra\s*militarum\b|\bimperial\s*guard\b/i, 'Astra Militarum'],
-    [/\badeptus\s*custodes\b|\bcustodes\b/i, 'Adeptus Custodes'],
-    [/\badepta\s*sororitas\b|\bsisters\b/i, 'Adepta Sororitas'],
-    [/\badeptus\s*mechanicus\b|\badmech\b/i, 'Adeptus Mechanicus'],
-    [/\bgrey\s*knights?\b/i, 'Grey Knights'],
-    [/\bblood\s*angels?\b/i, 'Blood Angels'],
-    [/\bdark\s*angels?\b/i, 'Dark Angels'],
-    [/\bblack\s*templars?\b/i, 'Black Templars'],
-    [/\bspace\s*wolves?\b/i, 'Space Wolves'],
-    [/\bgenestealer\s*cults?\b|\bgsc\b/i, 'Genestealer Cults'],
-    [/\bleagues?\s*(of\s*)?votann\b/i, 'Leagues of Votann'],
-  ];
-
-  for (const [pattern, factionName] of factionPatterns) {
-    if (pattern.test(searchText)) {
-      detectedFactions.add(factionName);
-    }
-  }
+  // Use centralized faction inference
+  const detectedFactions = inferFactionsFromText(searchText, 10);
 
   // Load unit names for detected factions
   for (const faction of detectedFactions) {
@@ -425,15 +354,14 @@ export async function extractBattleReport(
     preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
   }
 
-  // Build faction-aware system prompt
-  const systemPrompt = buildSystemPrompt(factionUnitNames);
-
+  // Use static system prompt for better prompt caching
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     temperature: 0.1,
+    max_tokens: 4000, // Limit output tokens for cost control
     messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: buildUserPrompt(videoData, preprocessed) },
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: buildUserPrompt(videoData, preprocessed, factionUnitNames) },
     ],
     response_format: { type: 'json_object' },
   });
@@ -534,15 +462,14 @@ export async function extractWithFactions(
     preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
   }
 
-  // Build faction-aware system prompt
-  const systemPrompt = buildSystemPrompt(factionUnitNames);
-
+  // Use static system prompt for better prompt caching
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     temperature: 0.1,
+    max_tokens: 4000, // Limit output tokens for cost control
     messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: buildUserPrompt(videoData, preprocessed) },
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: buildUserPrompt(videoData, preprocessed, factionUnitNames) },
     ],
     response_format: { type: 'json_object' },
   });

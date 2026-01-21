@@ -3,8 +3,9 @@ import type { TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
 import type { NormalizedSegment } from './transcript-preprocessor';
 
-const MAX_CHARS_PER_CHUNK = 8000; // ~2000 tokens
-const OVERLAP_SEGMENTS = 2; // Number of segments to overlap between chunks
+const MAX_CHARS_PER_CHUNK = 12000; // ~3000 tokens - larger chunks = fewer API calls
+const OVERLAP_SEGMENTS = 1; // Reduced overlap for cost efficiency
+const SINGLE_REQUEST_THRESHOLD = 24000; // Skip chunking for short transcripts
 const MAX_CONCURRENT_REQUESTS = 3;
 const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY_MS = 1000;
@@ -460,9 +461,54 @@ export async function preprocessWithLlm(
 
   const openai = new OpenAI({ apiKey });
 
-  // Chunk the transcript
+  // Calculate total text length to determine chunking strategy
+  const totalTextLength = transcript.reduce(
+    (acc, seg) => acc + `[${Math.floor(seg.startTime)}s] ${seg.text} `.length,
+    0
+  );
+
+  // Use single request for short transcripts (cost optimization)
+  if (totalTextLength <= SINGLE_REQUEST_THRESHOLD) {
+    console.log(`LLM preprocessing: single request for ${transcript.length} segments (${totalTextLength} chars)`);
+    const singleChunk: ChunkInfo = {
+      segments: transcript,
+      startIdx: 0,
+      endIdx: transcript.length - 1,
+      text: transcript.map(s => `[${Math.floor(s.startTime)}s] ${s.text}`).join(' '),
+    };
+    const response = await processChunk(openai, singleChunk, factions);
+    const validatedMappings = await validateTermsWithMcp(response.mappings, factions);
+
+    const normalizedSegments: NormalizedSegment[] = transcript.map((seg) => {
+      let normalizedText = seg.text;
+      let taggedText = seg.text;
+      for (const [colloquial, official] of Object.entries(validatedMappings)) {
+        const escapedColloquial = colloquial.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`\\b${escapedColloquial}\\b`, 'gi');
+        normalizedText = normalizedText.replace(regex, (match) => {
+          const firstChar = match[0] ?? '';
+          const isUpperCase = firstChar === firstChar.toUpperCase() && firstChar !== '';
+          return isUpperCase
+            ? official.charAt(0).toUpperCase() + official.slice(1)
+            : official.toLowerCase();
+        });
+        taggedText = taggedText.replace(regex, `[TERM:${official}]`);
+      }
+      return { ...seg, normalizedText, taggedText };
+    });
+
+    return {
+      normalizedSegments,
+      termMappings: validatedMappings,
+      confidence: Object.keys(validatedMappings).length > 0 ? 1 : 0.5,
+      modelUsed: 'gpt-4o-mini',
+      processedAt: Date.now(),
+    };
+  }
+
+  // Chunk the transcript for longer content
   const chunks = chunkTranscript(transcript);
-  console.log(`LLM preprocessing: ${chunks.length} chunks for ${transcript.length} segments`);
+  console.log(`LLM preprocessing: ${chunks.length} chunks for ${transcript.length} segments (${totalTextLength} chars)`);
 
   // Process all chunks with concurrency limit
   const responses = await processChunksWithConcurrency(openai, chunks, factions);
