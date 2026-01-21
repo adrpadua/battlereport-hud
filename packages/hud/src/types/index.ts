@@ -1,5 +1,16 @@
+// Re-export game state types
+export * from './game-state';
+
 // Confidence level for extracted data
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
+
+// Progress log entry for extraction status
+export interface ProgressLogEntry {
+  id: string;
+  message: string;
+  timestamp: number;
+  status: 'pending' | 'in-progress' | 'complete' | 'error';
+}
 
 // Unit stats from BSData
 export interface UnitStats {
@@ -130,6 +141,7 @@ export interface BattleState {
   detectedFactions: string[];
   selectedFactions: [string, string] | null;
   allFactions: string[];
+  progressLogs: ProgressLogEntry[];
 }
 
 // Battle store actions
@@ -147,6 +159,9 @@ export interface BattleActions {
   setDetectedFactions: (factions: string[], allFactions: string[]) => void;
   setSelectedFactions: (factions: [string, string]) => void;
   startExtraction: () => void;
+  addProgressLog: (message: string, status?: ProgressLogEntry['status']) => string;
+  updateProgressLog: (id: string, updates: Partial<ProgressLogEntry>) => void;
+  clearProgressLogs: () => void;
 }
 
 // Full battle store type
