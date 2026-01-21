@@ -134,6 +134,7 @@ export function HudContainer({
                 player={player}
                 playerIndex={index}
                 stratagems={report.stratagems}
+                enhancements={report.enhancements}
                 onSeekToTimestamp={onSeekToTimestamp}
               />
             ))}
@@ -159,6 +160,40 @@ export function HudContainer({
                             title="Jump to this moment in the video"
                           >
                             {formatTimestamp(stratagem.videoTimestamp)}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* Enhancements without player assignment */}
+            {report.enhancements && report.enhancements.filter((e) => e.playerIndex === undefined)
+              .length > 0 && (
+              <div className="player-card">
+                <div className="section-title">Other Enhancements Mentioned</div>
+                <div className="unit-list">
+                  {report.enhancements
+                    .filter((e) => e.playerIndex === undefined)
+                    .map((enhancement, index) => (
+                      <div
+                        key={`enhancement-${index}`}
+                        className="unit-item"
+                      >
+                        <span style={{ color: '#f59e0b' }}>{enhancement.name}</span>
+                        {enhancement.pointsCost !== undefined && (
+                          <span style={{ color: '#9ca3af', marginLeft: '4px' }}>
+                            ({enhancement.pointsCost}pts)
+                          </span>
+                        )}
+                        {enhancement.videoTimestamp !== undefined && onSeekToTimestamp && (
+                          <button
+                            className="timestamp-button"
+                            onClick={() => handleSeek(enhancement.videoTimestamp!)}
+                            title="Jump to this moment in the video"
+                          >
+                            {formatTimestamp(enhancement.videoTimestamp)}
                           </button>
                         )}
                       </div>

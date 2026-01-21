@@ -1,13 +1,15 @@
 import React from 'react';
-import type { Player, Stratagem } from '../types';
+import type { Player, Stratagem, Enhancement } from '../types';
 import { ConfidenceBadge } from './ConfidenceBadge';
 import { UnitList } from './UnitList';
 import { StratagemList } from './StratagemList';
+import { EnhancementList } from './EnhancementList';
 
 interface PlayerCardProps {
   player: Player;
   playerIndex: number;
   stratagems: Stratagem[];
+  enhancements?: Enhancement[];
   onSeekToTimestamp?: (seconds: number) => void;
 }
 
@@ -15,6 +17,7 @@ export function PlayerCard({
   player,
   playerIndex,
   stratagems,
+  enhancements = [],
   onSeekToTimestamp,
 }: PlayerCardProps): React.ReactElement {
   // Choose a color based on player index
@@ -39,6 +42,7 @@ export function PlayerCard({
 
       <UnitList playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
       <StratagemList stratagems={stratagems} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
+      <EnhancementList enhancements={enhancements} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
     </div>
   );
 }

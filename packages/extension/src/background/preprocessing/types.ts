@@ -7,7 +7,7 @@ import type { TranscriptSegment } from '@/types/youtube';
 /**
  * Term types for categorization
  */
-export type TermType = 'faction' | 'detachment' | 'stratagem' | 'objective' | 'unit' | 'unknown';
+export type TermType = 'faction' | 'detachment' | 'stratagem' | 'objective' | 'unit' | 'enhancement' | 'unknown';
 
 /**
  * Result of matching a term to a canonical name
@@ -59,6 +59,7 @@ export interface PreprocessedTranscript {
   objectiveMentions: Map<string, number[]>; // objective name -> timestamps
   factionMentions: Map<string, number[]>; // faction name -> timestamps
   detachmentMentions: Map<string, number[]>; // detachment name -> timestamps
+  enhancementMentions: Map<string, number[]>; // enhancement name -> timestamps
   normalizedSegments: NormalizedSegment[]; // Segments with corrected/tagged terms (deduped)
   colloquialToOfficial: Map<string, string>; // Mapping of corrections made
 }
@@ -103,6 +104,7 @@ export interface PipelineContext {
     objectiveMentions: Map<string, number[]>;
     factionMentions: Map<string, number[]>;
     detachmentMentions: Map<string, number[]>;
+    enhancementMentions: Map<string, number[]>;
     normalizedSegments: NormalizedSegment[];
     colloquialToOfficial: Map<string, string>;
   };

@@ -28,6 +28,7 @@ const TAG_MAP: Record<TermType, string> = {
   stratagem: 'STRATAGEM',
   objective: 'OBJECTIVE',
   unit: 'UNIT',
+  enhancement: 'ENHANCEMENT',
   unknown: 'UNIT', // Fallback (shouldn't happen)
 };
 

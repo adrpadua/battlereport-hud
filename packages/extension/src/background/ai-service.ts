@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { BattleReportExtractionSchema } from '@/types/ai-response';
-import type { BattleReport } from '@/types/battle-report';
+import type { BattleReport, Enhancement } from '@/types/battle-report';
 import type { VideoData, Chapter, TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
 import { getFactionContextForPrompt, processBattleReport } from './report-processor';
@@ -9,6 +9,7 @@ import {
   preprocessTranscriptWithLlmMappings,
   enrichStratagemTimestamps,
   enrichUnitTimestamps,
+  enrichEnhancementTimestamps,
   type PreprocessedTranscript,
   type NormalizedSegment,
 } from './transcript-preprocessor';
@@ -182,7 +183,7 @@ function buildTranscriptSection(
 }
 
 // Static system prompt for better prompt caching (dynamic content moved to user prompt)
-const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
+const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, vehicles, and enhancements mentioned in the transcript.
 
 You must respond with a valid JSON object containing the extracted battle report data.
 
@@ -190,6 +191,7 @@ TRANSCRIPT FORMAT:
 - The transcript has been pre-processed with tagged gameplay terms
 - Units are tagged as [UNIT:Official Name] - use the official name from the tag
 - Stratagems are tagged as [STRAT:Official Name] - use the official name from the tag
+- Enhancements are tagged as [ENHANCEMENT:Official Name] - use the official name from the tag
 - These tags indicate terms that have been matched to official Warhammer 40k terminology
 - Always prefer the tagged official name over colloquial variations
 
@@ -198,17 +200,19 @@ Guidelines:
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
 - Look for [UNIT:...] tags for pre-identified units with official names
 - Look for [STRAT:...] tags for pre-identified stratagems
+- Look for [ENHANCEMENT:...] tags for pre-identified enhancements (relics, wargear upgrades)
 - Also look for untagged unit names during deployment, movement, shooting, charging, and combat phases
 - Include characters (e.g., Chaplain, Captain, Overlord), infantry squads, vehicles, monsters, and any other units
-- Assign each unit to player 0 or player 1 based on context (who owns/controls it)
+- Enhancements are upgrades like "Artificer Armour", "The Honour Vehement", relics, and wargear options
+- Assign each unit/enhancement to player 0 or player 1 based on context (who owns/controls it)
 - Confidence levels:
-  - "high": Unit clearly named (especially if tagged) and associated with a player
-  - "medium": Unit mentioned but player association less clear
+  - "high": Unit/enhancement clearly named (especially if tagged) and associated with a player
+  - "medium": Unit/enhancement mentioned but player association less clear
   - "low": Partial name or uncertain identification
 
-Your JSON response must include: players (array with name, faction, detachment, confidence), units (array with name, playerIndex, confidence, pointsCost), stratagems (array with name, playerIndex, confidence, videoTimestamp), mission (optional string), and pointsLimit (optional number).
+Your JSON response must include: players (array with name, faction, detachment, confidence), units (array with name, playerIndex, confidence, pointsCost), stratagems (array with name, playerIndex, confidence, videoTimestamp), enhancements (array with name, playerIndex, confidence, pointsCost, videoTimestamp), mission (optional string), and pointsLimit (optional number).
 
-- For each stratagem, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
+- For each stratagem and enhancement, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
 
 function buildUserPrompt(
   videoData: VideoData,
@@ -394,6 +398,16 @@ export async function extractBattleReport(
   }));
   const enrichedUnits = enrichUnitTimestamps(extractedUnits, preprocessed);
 
+  // Convert validated enhancements and enrich with timestamps
+  const extractedEnhancements: Enhancement[] = (validated.enhancements ?? []).map((e) => ({
+    name: e.name,
+    playerIndex: e.playerIndex ?? undefined,
+    pointsCost: e.pointsCost ?? undefined,
+    confidence: e.confidence,
+    videoTimestamp: e.videoTimestamp ?? undefined,
+  }));
+  const enrichedEnhancements = enrichEnhancementTimestamps(extractedEnhancements, preprocessed);
+
   const rawReport: BattleReport = {
     players: validated.players.map((p) => ({
       name: p.name,
@@ -403,6 +417,7 @@ export async function extractBattleReport(
     })) as BattleReport['players'],
     units: enrichedUnits,
     stratagems: enrichedStratagems,
+    enhancements: enrichedEnhancements.length > 0 ? enrichedEnhancements : undefined,
     mission: validated.mission ?? undefined,
     pointsLimit: validated.pointsLimit ?? undefined,
     extractedAt: Date.now(),
@@ -502,6 +517,16 @@ export async function extractWithFactions(
   }));
   const enrichedUnits = enrichUnitTimestamps(extractedUnits, preprocessed);
 
+  // Convert validated enhancements and enrich with timestamps
+  const extractedEnhancements: Enhancement[] = (validated.enhancements ?? []).map((e) => ({
+    name: e.name,
+    playerIndex: e.playerIndex ?? undefined,
+    pointsCost: e.pointsCost ?? undefined,
+    confidence: e.confidence,
+    videoTimestamp: e.videoTimestamp ?? undefined,
+  }));
+  const enrichedEnhancements = enrichEnhancementTimestamps(extractedEnhancements, preprocessed);
+
   const rawReport: BattleReport = {
     players: validated.players.map((p) => ({
       name: p.name,
@@ -511,6 +536,7 @@ export async function extractWithFactions(
     })) as BattleReport['players'],
     units: enrichedUnits,
     stratagems: enrichedStratagems,
+    enhancements: enrichedEnhancements.length > 0 ? enrichedEnhancements : undefined,
     mission: validated.mission ?? undefined,
     pointsLimit: validated.pointsLimit ?? undefined,
     extractedAt: Date.now(),

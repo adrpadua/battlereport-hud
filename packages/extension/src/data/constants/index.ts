@@ -48,4 +48,17 @@ export {
   UNIT_WITH_WEAPON_PATTERN,
   GENERIC_WORDS,
   GAME_MECHANICS_BLOCKLIST,
+  // Dynamic blocklist functions
+  loadGameMechanicsBlocklist,
+  setDynamicGameMechanicsTerms,
+  getGameMechanicsBlocklist,
+  isGameMechanicsTerm,
+  resetDynamicGameMechanicsTerms,
 } from './units';
+
+// Enhancements
+export {
+  ENHANCEMENT_CONTEXT_KEYWORDS,
+  ENHANCEMENT_TYPE_PATTERNS,
+  type EnhancementContextKeyword,
+} from './enhancements';

@@ -27,6 +27,18 @@ export const StratagemSchema = z.object({
     .describe('Approximate video timestamp in seconds when the stratagem was mentioned'),
 });
 
+export const EnhancementSchema = z.object({
+  name: z.string().describe('Enhancement name'),
+  playerIndex: z.number().min(0).max(1).nullable().optional().describe('Which player has this enhancement'),
+  pointsCost: z.number().nullable().optional().describe('Points cost of the enhancement'),
+  confidence: ConfidenceLevelSchema,
+  videoTimestamp: z
+    .number()
+    .nullable()
+    .optional()
+    .describe('Approximate video timestamp in seconds when the enhancement was mentioned'),
+});
+
 export const BattleReportExtractionSchema = z.object({
   players: z
     .array(PlayerSchema)
@@ -35,6 +47,7 @@ export const BattleReportExtractionSchema = z.object({
     .describe('The players in this battle report'),
   units: z.array(UnitSchema).describe('Units mentioned in the battle report'),
   stratagems: z.array(StratagemSchema).describe('Stratagems mentioned in the battle report'),
+  enhancements: z.array(EnhancementSchema).optional().describe('Enhancements mentioned in the battle report'),
   mission: z.string().nullable().optional().describe('The mission being played if mentioned'),
   pointsLimit: z.number().nullable().optional().describe('Points limit of the game (e.g., 2000)'),
 });

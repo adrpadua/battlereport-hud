@@ -121,6 +121,14 @@ export interface EnhancementResponse {
   detachment: string | null;
 }
 
+export interface EnhancementDetailItem extends EnhancementResponse {
+  faction: string;
+}
+
+export interface EnhancementDetailResponse {
+  enhancement: EnhancementDetailItem;
+}
+
 export interface EnhancementSearchResponse {
   faction: string;
   count: number;
@@ -224,6 +232,79 @@ export interface SecondaryObjectiveResponse {
     scoringMethod: string | null;
     missionPackId: number | null;
   };
+}
+
+// ============================================================================
+// Rules Types
+// ============================================================================
+
+/**
+ * Compact rule reference for index (minimal token usage)
+ */
+export interface RuleReference {
+  slug: string;
+  title: string;
+  category: string;
+  subcategory: string | null;
+}
+
+/**
+ * Full rule content
+ */
+export interface RuleContent extends RuleReference {
+  content: string;
+  orderIndex: number | null;
+}
+
+/**
+ * Category with count and rules
+ */
+export interface RuleCategorySummary {
+  category: string;
+  count: number;
+  rules: RuleReference[];
+}
+
+/**
+ * Response for GET /api/rules/index
+ */
+export interface RulesIndexResponse {
+  totalRules: number;
+  categoryCount: number;
+  categories: RuleCategorySummary[];
+}
+
+/**
+ * Response for GET /api/rules/:slug
+ */
+export interface RuleDetailResponse {
+  rule: RuleContent;
+}
+
+/**
+ * Response for GET /api/rules/category/:category
+ */
+export interface RulesCategoryResponse {
+  category: string;
+  count: number;
+  rules: RuleContent[];
+}
+
+/**
+ * Response for GET /api/rules/game-terms
+ */
+export interface GameTermsResponse {
+  terms: string[];
+  count: number;
+  categories: string[];
+}
+
+/**
+ * Response for GET /api/rules/phases
+ */
+export interface RulesPhasesResponse {
+  totalRules: number;
+  categories: Record<string, RuleContent[]>;
 }
 
 // ============================================================================

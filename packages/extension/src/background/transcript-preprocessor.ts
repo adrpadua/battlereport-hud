@@ -11,7 +11,7 @@
  */
 
 import type { TranscriptSegment } from '@/types/youtube';
-import type { Stratagem, Unit } from '@/types/battle-report';
+import type { Stratagem, Unit, Enhancement } from '@/types/battle-report';
 
 // Re-export types from the new module structure
 export type {
@@ -178,6 +178,7 @@ function preprocessTranscriptWithLlmMappingsImpl(
   const objectiveMentions = new Map<string, number[]>();
   const factionMentions = new Map<string, number[]>();
   const detachmentMentions = new Map<string, number[]>();
+  const enhancementMentions = new Map<string, number[]>();
   const normalizedSegments: import('./preprocessing').NormalizedSegment[] = [];
   const colloquialToOfficial = new Map<string, string>();
 
@@ -272,6 +273,7 @@ function preprocessTranscriptWithLlmMappingsImpl(
     objectiveMentions,
     factionMentions,
     detachmentMentions,
+    enhancementMentions,
     normalizedSegments,
     colloquialToOfficial,
   };
@@ -392,4 +394,34 @@ export function enrichUnitTimestamps(
     }
     return u;
   });
+}
+
+/**
+ * Enrich enhancements with timestamps from preprocessed transcript.
+ */
+export function enrichEnhancementTimestamps(
+  enhancements: Enhancement[],
+  preprocessed: PreprocessedTranscript
+): Enhancement[] {
+  return enhancements.map(e => {
+    if (e.videoTimestamp !== undefined) return e;
+    const timestamp = findEnhancementTimestamp(e.name, preprocessed.enhancementMentions);
+    if (timestamp !== undefined) {
+      return { ...e, videoTimestamp: timestamp };
+    }
+    return e;
+  });
+}
+
+/**
+ * Find the earliest timestamp for an enhancement mention.
+ */
+function findEnhancementTimestamp(name: string, mentions: Map<string, number[]>): number | undefined {
+  const normalizedName = name.toLowerCase();
+  for (const [enhancementName, timestamps] of mentions) {
+    if (enhancementName.toLowerCase() === normalizedName) {
+      return timestamps[0];
+    }
+  }
+  return undefined;
 }

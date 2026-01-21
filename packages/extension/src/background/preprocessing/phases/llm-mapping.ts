@@ -25,7 +25,7 @@ export function applyLlmMappings(
   matches: TermMatch[];
   replacements: TextReplacement[];
   mentionUpdates: Array<{
-    type: 'stratagem' | 'unit' | 'objective' | 'faction' | 'detachment';
+    type: 'stratagem' | 'unit' | 'objective' | 'faction' | 'detachment' | 'enhancement';
     canonical: string;
     timestamp: number;
   }>;
@@ -33,7 +33,7 @@ export function applyLlmMappings(
   const matches: TermMatch[] = [];
   const replacements: TextReplacement[] = [];
   const mentionUpdates: Array<{
-    type: 'stratagem' | 'unit' | 'objective' | 'faction' | 'detachment';
+    type: 'stratagem' | 'unit' | 'objective' | 'faction' | 'detachment' | 'enhancement';
     canonical: string;
     timestamp: number;
   }> = [];

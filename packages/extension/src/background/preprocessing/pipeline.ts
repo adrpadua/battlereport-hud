@@ -276,6 +276,7 @@ export async function preprocessTranscript(
     objectiveMentions: new Map<string, number[]>(),
     factionMentions: new Map<string, number[]>(),
     detachmentMentions: new Map<string, number[]>(),
+    enhancementMentions: new Map<string, number[]>(),
     colloquialToOfficial: new Map<string, string>(),
   };
 
@@ -324,6 +325,7 @@ export function preprocessTranscriptSync(
     objectiveMentions: new Map<string, number[]>(),
     factionMentions: new Map<string, number[]>(),
     detachmentMentions: new Map<string, number[]>(),
+    enhancementMentions: new Map<string, number[]>(),
     colloquialToOfficial: new Map<string, string>(),
   };
 

@@ -62,11 +62,22 @@ export interface Stratagem {
   videoTimestamp?: number; // seconds in video when used
 }
 
+// Enhancement in a battle report
+export interface Enhancement {
+  name: string;
+  playerIndex?: number;
+  pointsCost?: number;
+  detachment?: string;
+  confidence: ConfidenceLevel;
+  videoTimestamp?: number; // seconds in video when mentioned
+}
+
 // Complete battle report
 export interface BattleReport {
   players: [Player, Player] | [Player];
   units: Unit[];
   stratagems: Stratagem[];
+  enhancements?: Enhancement[];
   mission?: string;
   pointsLimit?: number;
   extractedAt: number; // timestamp

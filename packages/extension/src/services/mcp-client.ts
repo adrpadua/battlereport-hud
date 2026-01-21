@@ -7,9 +7,11 @@
 import type {
   McpUnitResponse,
   McpStratagemResponse,
+  McpEnhancementDetailResponse,
   McpHealthResponse,
   EnhancedUnitData,
   EnhancedStratagemData,
+  EnhancedEnhancementData,
 } from '@/types/mcp-types';
 
 const MCP_BASE_URL = 'http://localhost:40401';
@@ -77,10 +79,12 @@ class McpClient {
   private healthCheckTimer: ReturnType<typeof setTimeout> | null = null;
   private unitCache: LRUCache<EnhancedUnitData>;
   private stratagemCache: LRUCache<EnhancedStratagemData>;
+  private enhancementCache: LRUCache<EnhancedEnhancementData>;
 
   constructor() {
     this.unitCache = new LRUCache<EnhancedUnitData>(CACHE_MAX_ENTRIES, CACHE_TTL_MS);
     this.stratagemCache = new LRUCache<EnhancedStratagemData>(CACHE_MAX_ENTRIES, CACHE_TTL_MS);
+    this.enhancementCache = new LRUCache<EnhancedEnhancementData>(CACHE_MAX_ENTRIES, CACHE_TTL_MS);
     this.startHealthCheck();
   }
 
@@ -164,6 +168,43 @@ class McpClient {
   }
 
   /**
+   * Fetch enhanced enhancement data from MCP server
+   * Returns null on failure (never throws)
+   */
+  async fetchEnhancement(enhancementName: string, faction?: string): Promise<EnhancedEnhancementData | null> {
+    if (!this.isAvailable) return null;
+
+    const cacheKey = `enhancement:${enhancementName}:${faction ?? ''}`;
+    const cached = this.enhancementCache.get(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const params = new URLSearchParams();
+      if (faction) params.set('faction', faction);
+
+      const url = `${MCP_BASE_URL}/api/enhancements/${encodeURIComponent(enhancementName)}${params.toString() ? '?' + params.toString() : ''}`;
+      const response = await this.fetchWithTimeout(url, DATA_TIMEOUT_MS);
+
+      if (!response.ok) return null;
+
+      const data: McpEnhancementDetailResponse = await response.json();
+      const enhanced: EnhancedEnhancementData = {
+        pointsCost: data.enhancement.pointsCost,
+        description: data.enhancement.description,
+        restrictions: data.enhancement.restrictions,
+        detachment: data.enhancement.detachment,
+        faction: data.enhancement.faction,
+        mcpFetched: true,
+      };
+
+      this.enhancementCache.set(cacheKey, enhanced);
+      return enhanced;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
    * Force a health check (useful when user action might indicate server is up)
    */
   async checkHealthNow(): Promise<boolean> {
@@ -176,6 +217,7 @@ class McpClient {
   clearCache(): void {
     this.unitCache.clear();
     this.stratagemCache.clear();
+    this.enhancementCache.clear();
   }
 
   /**

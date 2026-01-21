@@ -17,6 +17,8 @@ export type {
   StratagemDetailResponse as McpStratagemResponse,
   StratagemSearchResponse as McpStratagemSearchResponse,
   EnhancementResponse as McpEnhancement,
+  EnhancementDetailItem as McpEnhancementDetail,
+  EnhancementDetailResponse as McpEnhancementDetailResponse,
   EnhancementSearchResponse as McpEnhancementResponse,
   HealthResponse as McpHealthResponse,
   ErrorResponse as McpErrorResponse,
@@ -25,6 +27,16 @@ export type {
   ValidateTermResult as McpValidateTermResult,
   FuzzySearchResponse as McpFuzzySearchResponse,
   ResolveTermResponse as McpResolveTermResponse,
+  ListValidNamesResponse as McpListValidNamesResponse,
+  // Rule types
+  RuleReference as McpRuleReference,
+  RuleContent as McpRuleContent,
+  RuleCategorySummary as McpRuleCategorySummary,
+  RulesIndexResponse as McpRulesIndexResponse,
+  RuleDetailResponse as McpRuleDetailResponse,
+  RulesCategoryResponse as McpRulesCategoryResponse,
+  GameTermsResponse as McpGameTermsResponse,
+  RulesPhasesResponse as McpRulesPhasesResponse,
 } from '@mcp/types';
 
 /**
@@ -46,5 +58,14 @@ export interface EnhancedStratagemData {
   target: string | null;
   effect: string;
   detachment: string | null;
+  mcpFetched: boolean;
+}
+
+export interface EnhancedEnhancementData {
+  pointsCost: number;
+  description: string;
+  restrictions: string | null;
+  detachment: string | null;
+  faction: string | null;
   mcpFetched: boolean;
 }

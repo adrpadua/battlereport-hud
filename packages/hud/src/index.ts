@@ -3,6 +3,7 @@ export { HudContainer } from './components/HudContainer';
 export { PlayerCard } from './components/PlayerCard';
 export { UnitList } from './components/UnitList';
 export { StratagemList } from './components/StratagemList';
+export { EnhancementList } from './components/EnhancementList';
 export { FactionSelector } from './components/FactionSelector';
 export { ConfidenceBadge } from './components/ConfidenceBadge';
 export { LoadingState } from './components/LoadingState';
@@ -19,6 +20,7 @@ export type {
   UnitSuggestion,
   Unit,
   Stratagem,
+  Enhancement,
   BattleReport,
   Chapter,
   TranscriptSegment,

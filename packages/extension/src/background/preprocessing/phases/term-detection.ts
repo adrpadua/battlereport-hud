@@ -12,7 +12,7 @@ import {
   FACTION_ALIASES,
   DETACHMENTS,
   DETACHMENT_ALIASES,
-  GAME_MECHANICS_BLOCKLIST,
+  getGameMechanicsBlocklist,
   UNIT_ALIASES,
   CHARACTER_TYPE_PATTERNS,
   UNIT_WITH_WEAPON_PATTERN,
@@ -38,6 +38,11 @@ let dynamicPrimaryObjectives: string[] = [];
 let dynamicGambits: string[] = [];
 let dynamicObjectiveAliases = new Map<string, string>();
 let cachedObjectiveAliasesWithCase: Map<string, string> | null = null;
+
+// Dynamic enhancements storage (can be updated from API)
+let dynamicEnhancements: string[] = [];
+let dynamicEnhancementAliases = new Map<string, string>();
+let cachedEnhancementAliasesWithCase: Map<string, string> | null = null;
 
 /**
  * Update dynamic objectives from API data.
@@ -90,8 +95,44 @@ function getObjectiveAliasesWithCase(): Map<string, string> {
 }
 
 /**
+ * Update dynamic enhancements from API data.
+ */
+export function setDynamicEnhancements(
+  enhancements: string[],
+  aliases: Map<string, string>
+): void {
+  dynamicEnhancements = enhancements;
+  dynamicEnhancementAliases = aliases;
+  cachedEnhancementAliasesWithCase = null; // Invalidate cache
+}
+
+/**
+ * Get all enhancements (from API if available).
+ */
+export function getAllEnhancements(): string[] {
+  return dynamicEnhancements;
+}
+
+/**
+ * Get enhancement aliases (from API if available).
+ */
+export function getEnhancementAliases(): Map<string, string> {
+  return dynamicEnhancementAliases;
+}
+
+/**
+ * Get enhancement aliases with case preservation.
+ */
+function getEnhancementAliasesWithCase(): Map<string, string> {
+  if (!cachedEnhancementAliasesWithCase) {
+    cachedEnhancementAliasesWithCase = buildCasePreservingAliases(getAllEnhancements(), getEnhancementAliases());
+  }
+  return cachedEnhancementAliasesWithCase;
+}
+
+/**
  * Categorize a term by checking against known lists.
- * Order: blocklist > faction > detachment > stratagem > objective > unit (fallback)
+ * Order: blocklist > faction > detachment > stratagem > enhancement > objective > unit (fallback)
  */
 export function categorizeTermType(
   term: string,
@@ -100,7 +141,8 @@ export function categorizeTermType(
   const normalized = term.toLowerCase();
 
   // Check blocklist first - these are game mechanics, not taggable entities
-  if (GAME_MECHANICS_BLOCKLIST.has(normalized)) {
+  // Uses dynamic blocklist with static fallback
+  if (getGameMechanicsBlocklist().has(normalized)) {
     return { type: 'unknown', canonical: term };
   }
 
@@ -132,6 +174,18 @@ export function categorizeTermType(
   const stratagemAlias = STRATAGEM_ALIASES.get(normalized);
   if (stratagemAlias) {
     return { type: 'stratagem', canonical: stratagemAlias };
+  }
+
+  // Check enhancements
+  const allEnhancements = getAllEnhancements();
+  const enhancementMatch = allEnhancements.find(e => e.toLowerCase() === normalized);
+  if (enhancementMatch) {
+    return { type: 'enhancement', canonical: enhancementMatch };
+  }
+  const enhancementAliases = getEnhancementAliases();
+  const enhancementAlias = enhancementAliases.get(normalized);
+  if (enhancementAlias) {
+    return { type: 'enhancement', canonical: enhancementAlias };
   }
 
   // Check objectives
@@ -263,6 +317,7 @@ export interface TermDetectionResult {
     objectives: Map<string, number[]>;
     factions: Map<string, number[]>;
     detachments: Map<string, number[]>;
+    enhancements: Map<string, number[]>;
   };
   colloquialToOfficial: Map<string, string>;
 }
@@ -280,6 +335,7 @@ export function detectTermsInText(
     detectObjectives?: boolean;
     detectFactions?: boolean;
     detectDetachments?: boolean;
+    detectEnhancements?: boolean;
   }
 ): TermDetectionResult {
   const matches: TermMatch[] = [];
@@ -292,9 +348,10 @@ export function detectTermsInText(
     objectives: new Map<string, number[]>(),
     factions: new Map<string, number[]>(),
     detachments: new Map<string, number[]>(),
+    enhancements: new Map<string, number[]>(),
   };
 
-  const { unitNames, unitAliases, phoneticIndex, detectObjectives = true, detectFactions = true, detectDetachments = true } = options;
+  const { unitNames, unitAliases, phoneticIndex, detectObjectives = true, detectFactions = true, detectDetachments = true, detectEnhancements = true } = options;
 
   // Build patterns
   const stratagemPattern = buildTermPattern([...ALL_STRATAGEMS], STRATAGEM_ALIASES);
@@ -302,6 +359,8 @@ export function detectTermsInText(
   const objectivePattern = detectObjectives ? buildTermPattern(getAllObjectives(), getObjectiveAliases()) : null;
   const factionPattern = detectFactions ? buildTermPattern([...FACTIONS], FACTION_ALIASES) : null;
   const detachmentPattern = detectDetachments ? buildTermPattern([...DETACHMENTS], DETACHMENT_ALIASES) : null;
+  const enhancementNames = getAllEnhancements();
+  const enhancementPattern = detectEnhancements && enhancementNames.length > 0 ? buildTermPattern(enhancementNames, getEnhancementAliases()) : null;
 
   // Helper to add mention
   const addMention = (map: Map<string, number[]>, canonical: string, ts: number) => {
@@ -407,6 +466,18 @@ export function detectTermsInText(
       const canonical = toCanonicalName(term, DETACHMENT_ALIASES_WITH_CASE);
       addMention(mentionsByType.detachments, canonical, timestamp);
       addMatch(term, canonical, 'detachment');
+    }
+  }
+
+  // Detect enhancements
+  if (enhancementPattern) {
+    for (const match of text.matchAll(enhancementPattern)) {
+      const term = match[1];
+      if (!term) continue;
+
+      const canonical = toCanonicalName(term, getEnhancementAliasesWithCase());
+      addMention(mentionsByType.enhancements, canonical, timestamp);
+      addMatch(term, canonical, 'enhancement');
     }
   }
 
