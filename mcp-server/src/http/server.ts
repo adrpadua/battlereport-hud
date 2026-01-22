@@ -9,6 +9,7 @@ import { registerValidationRoutes } from './routes/validation.js';
 import { registerObjectivesRoutes } from './routes/objectives.js';
 import { registerWebExtractionRoutes } from './routes/web-extraction.js';
 import { registerRulesRoutes } from './routes/rules.js';
+import { registerAbilityRoutes } from './routes/abilities.js';
 
 const HTTP_PORT = 40401;
 
@@ -36,6 +37,7 @@ export async function createHttpServer(db: Database) {
   registerObjectivesRoutes(fastify, db);
   registerWebExtractionRoutes(fastify, db);
   registerRulesRoutes(fastify, db);
+  registerAbilityRoutes(fastify, db);
 
   return fastify;
 }

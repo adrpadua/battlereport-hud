@@ -24,6 +24,7 @@
     "crawl": "tsx src/scraper/crawl-wahapedia.ts",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
+    "db:seed:weapon-abilities": "tsx src/scripts/seed-weapon-abilities.ts",
     "ingest": "tsx src/ingestion/run-ingestion.ts",
     "ingest:bsdata": "tsx src/ingestion/ingest-bsdata.ts",
     "test": "vitest",
