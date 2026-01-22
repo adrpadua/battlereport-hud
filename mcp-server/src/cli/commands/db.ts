@@ -396,7 +396,22 @@ async function runMigration(): Promise<void> {
       CREATE INDEX IF NOT EXISTS unit_index_status_idx ON unit_index(scrape_status);
     `);
 
-    // Extraction cache (for caching AI extraction results)
+    // AI response cache (for caching raw OpenAI JSON before processing)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS ai_response_cache (
+        id SERIAL PRIMARY KEY,
+        video_id VARCHAR(20) NOT NULL,
+        factions JSONB NOT NULL,
+        raw_response TEXT NOT NULL,
+        prompt_hash VARCHAR(64),
+        created_at TIMESTAMP DEFAULT NOW(),
+        expires_at TIMESTAMP NOT NULL
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS ai_response_cache_video_faction_idx ON ai_response_cache(video_id, factions);
+      CREATE INDEX IF NOT EXISTS ai_response_cache_expires_at_idx ON ai_response_cache(expires_at);
+    `);
+
+    // Extraction cache (for caching final extraction results)
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS extraction_cache (
         id SERIAL PRIMARY KEY,
@@ -438,7 +453,7 @@ async function checkStatus(): Promise<void> {
 
     // Get table counts
     const db2 = drizzle(pool);
-    const tables = ['factions', 'units', 'weapons', 'abilities', 'stratagems', 'detachments', 'core_rules', 'missions', 'secondary_objectives', 'extraction_cache'];
+    const tables = ['factions', 'units', 'weapons', 'abilities', 'stratagems', 'detachments', 'core_rules', 'missions', 'secondary_objectives', 'ai_response_cache', 'extraction_cache'];
 
     console.log('\n=== Table Counts ===');
     for (const table of tables) {

@@ -8,7 +8,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import { eq, and, gt } from 'drizzle-orm';
-import { extractionCache } from '../../db/schema.js';
+import { extractionCache, aiResponseCache } from '../../db/schema.js';
 import {
   extractTranscript,
   extractVideoId,
@@ -239,7 +239,28 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
           }
         }
 
-        console.log(`Cache miss for video ${videoId} - extracting with OpenAI`);
+        console.log(`Final report cache miss for video ${videoId}`);
+
+        // Check AI response cache (allows re-running validation without re-calling OpenAI)
+        let cachedAiResponse: string | undefined;
+        const aiCacheResult = await db
+          .select()
+          .from(aiResponseCache)
+          .where(
+            and(
+              eq(aiResponseCache.videoId, videoId),
+              eq(aiResponseCache.factions, sortedFactions),
+              gt(aiResponseCache.expiresAt, new Date())
+            )
+          )
+          .limit(1);
+
+        if (aiCacheResult.length > 0) {
+          cachedAiResponse = aiCacheResult[0]!.rawResponse;
+          console.log(`AI response cache hit for video ${videoId} (${cachedAiResponse.length} chars)`);
+        } else {
+          console.log(`AI response cache miss for video ${videoId} - will call OpenAI`);
+        }
 
         // If transcript not provided, fetch it
         let videoData: VideoData;
@@ -295,12 +316,32 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
         }
 
         // Extract battle report using OpenAI with artifact tracking
-        const { report, artifacts } = await extractBattleReportWithArtifacts({
+        const { report, artifacts, rawAiResponse } = await extractBattleReportWithArtifacts({
           videoData,
           factions: typedFactions,
           factionUnitNames,
           apiKey,
+          cachedAiResponse,
         });
+
+        // Cache the raw AI response if we didn't use a cached one
+        if (!cachedAiResponse && rawAiResponse) {
+          try {
+            const expiresAt = new Date(Date.now() + CACHE_TTL_MS);
+            await db
+              .insert(aiResponseCache)
+              .values({
+                videoId,
+                factions: sortedFactions,
+                rawResponse: rawAiResponse,
+                expiresAt,
+              })
+              .onConflictDoNothing();
+            console.log(`Cached AI response for video ${videoId}`);
+          } catch (cacheError) {
+            console.error('Failed to cache AI response:', cacheError);
+          }
+        }
 
         // Stage 5: Validate units against database
         let stage5: StageArtifact = createStageArtifact(5, 'validate-units');

@@ -62,6 +62,7 @@ function buildProgressMessage(artifact: StageArtifact): string {
   // Stage names to friendly labels
   const stageLabels: Record<string, string> = {
     'cache-hit': 'Cache Hit',
+    'ai-cache-hit': 'AI Response Cache Hit',
     'load-factions': 'Load Faction Data',
     'llm-preprocess': 'LLM Preprocessing',
     'pattern-preprocess': 'Pattern Preprocessing',

@@ -372,6 +372,7 @@ ${videoData.description}
 export interface ExtractionResultWithArtifacts {
   report: BattleReport;
   artifacts: StageArtifact[];
+  rawAiResponse: string; // Raw JSON string from OpenAI (for caching)
 }
 
 /**
@@ -383,6 +384,8 @@ export interface ExtractBattleReportOptions {
   factionUnitNames: Map<string, string[]>;
   apiKey: string;
   onStageComplete?: (artifact: StageArtifact) => void;
+  /** If provided, skip OpenAI call and use this cached response */
+  cachedAiResponse?: string;
 }
 
 /**
@@ -391,7 +394,7 @@ export interface ExtractBattleReportOptions {
 export async function extractBattleReportWithArtifacts(
   options: ExtractBattleReportOptions
 ): Promise<ExtractionResultWithArtifacts> {
-  const { videoData, factionUnitNames, apiKey, onStageComplete } = options;
+  const { videoData, factionUnitNames, apiKey, onStageComplete, cachedAiResponse } = options;
   const startTime = Date.now();
   const artifacts: StageArtifact[] = [];
 
@@ -405,76 +408,99 @@ export async function extractBattleReportWithArtifacts(
     onStageComplete?.(artifact);
   };
 
-  // Stage 1: Prepare prompt
-  let stage1 = createStageArtifact(1, 'prepare-prompt');
-  emitArtifact(stage1);
+  let content: string;
 
-  const unitCount =
-    factionUnitNames.size > 0
-      ? [...factionUnitNames.values()].reduce((sum, arr) => sum + arr.length, 0)
-      : 0;
-  const userPrompt = buildUserPrompt(videoData, factionUnitNames);
+  // Check if we have a cached AI response
+  if (cachedAiResponse) {
+    // Skip stages 1-2, use cached response
+    const now = Date.now();
+    const cacheArtifact: StageArtifact = {
+      stage: 0,
+      name: 'ai-cache-hit',
+      status: 'completed',
+      startedAt: now,
+      completedAt: now,
+      durationMs: 0,
+      summary: `Using cached AI response (${cachedAiResponse.length} chars)`,
+      details: { responseLength: cachedAiResponse.length },
+    };
+    emitArtifact(cacheArtifact);
+    console.log(`Using cached AI response for video ${videoData.videoId}`);
+    content = cachedAiResponse;
+  } else {
+    // Stage 1: Prepare prompt
+    let stage1 = createStageArtifact(1, 'prepare-prompt');
+    emitArtifact(stage1);
 
-  stage1 = completeStageArtifact(
-    stage1,
-    `Prompt prepared with ${unitCount} unit names, ${userPrompt.length} chars`,
-    { promptLength: userPrompt.length, unitCount }
-  );
-  emitArtifact(stage1);
+    const unitCount =
+      factionUnitNames.size > 0
+        ? [...factionUnitNames.values()].reduce((sum, arr) => sum + arr.length, 0)
+        : 0;
+    const userPrompt = buildUserPrompt(videoData, factionUnitNames);
 
-  // Stage 2: Call OpenAI
-  let stage2 = createStageArtifact(2, 'ai-extraction');
-  emitArtifact(stage2);
+    stage1 = completeStageArtifact(
+      stage1,
+      `Prompt prepared with ${unitCount} unit names, ${userPrompt.length} chars`,
+      { promptLength: userPrompt.length, unitCount }
+    );
+    emitArtifact(stage1);
 
-  const openai = new OpenAI({
-    apiKey,
-    timeout: 180000, // 3 minute timeout for reasoning models
-  });
-  console.log('Calling OpenAI with model: gpt-5-mini');
-  console.log('User prompt length:', userPrompt.length, 'chars');
-  console.log('Waiting for OpenAI response (may take 1-3 minutes for reasoning models)...');
+    // Stage 2: Call OpenAI
+    let stage2 = createStageArtifact(2, 'ai-extraction');
+    emitArtifact(stage2);
 
-  // Save prompt to file for debugging
-  const fs = await import('fs');
-  const path = await import('path');
-  const promptPath = path.join(process.cwd(), '..', 'test-data', `prompt-${videoData.videoId}.txt`);
-  const fullPrompt = `=== SYSTEM PROMPT ===\n${SYSTEM_PROMPT}\n\n=== USER PROMPT ===\n${userPrompt}`;
-  fs.writeFileSync(promptPath, fullPrompt);
-  console.log('Saved prompt to:', promptPath);
-
-  let response;
-  try {
-    response = await openai.chat.completions.create({
-      model: 'gpt-5-mini',
-      max_completion_tokens: 16000,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: userPrompt },
-      ],
-      response_format: { type: 'json_object' },
+    const openai = new OpenAI({
+      apiKey,
+      timeout: 180000, // 3 minute timeout for reasoning models
     });
-  } catch (error) {
-    console.error('OpenAI API error:', error);
-    stage2 = failStageArtifact(stage2, error instanceof Error ? error.message : 'AI call failed');
+    console.log('Calling OpenAI with model: gpt-5-mini');
+    console.log('User prompt length:', userPrompt.length, 'chars');
+    console.log('Waiting for OpenAI response (may take 1-3 minutes for reasoning models)...');
+
+    // Save prompt to file for debugging
+    const fs = await import('fs');
+    const path = await import('path');
+    const promptPath = path.join(process.cwd(), '..', 'test-data', `prompt-${videoData.videoId}.txt`);
+    const fullPrompt = `=== SYSTEM PROMPT ===\n${SYSTEM_PROMPT}\n\n=== USER PROMPT ===\n${userPrompt}`;
+    fs.writeFileSync(promptPath, fullPrompt);
+    console.log('Saved prompt to:', promptPath);
+
+    let response;
+    try {
+      response = await openai.chat.completions.create({
+        model: 'gpt-5-mini',
+        max_completion_tokens: 16000,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userPrompt },
+        ],
+        response_format: { type: 'json_object' },
+      });
+    } catch (error) {
+      console.error('OpenAI API error:', error);
+      stage2 = failStageArtifact(stage2, error instanceof Error ? error.message : 'AI call failed');
+      emitArtifact(stage2);
+      throw error;
+    }
+
+    console.log('OpenAI response received, finish_reason:', response.choices[0]?.finish_reason);
+
+    const responseContent = response.choices[0]?.message?.content;
+    if (!responseContent) {
+      stage2 = failStageArtifact(stage2, 'No response from AI');
+      emitArtifact(stage2);
+      console.error('OpenAI response:', JSON.stringify(response, null, 2));
+      throw new Error('No response from AI');
+    }
+
+    content = responseContent;
+
+    stage2 = completeStageArtifact(stage2, `AI response received (${content.length} chars)`, {
+      responseLength: content.length,
+      finishReason: response.choices[0]?.finish_reason,
+    });
     emitArtifact(stage2);
-    throw error;
   }
-
-  console.log('OpenAI response received, finish_reason:', response.choices[0]?.finish_reason);
-
-  const content = response.choices[0]?.message?.content;
-  if (!content) {
-    stage2 = failStageArtifact(stage2, 'No response from AI');
-    emitArtifact(stage2);
-    console.error('OpenAI response:', JSON.stringify(response, null, 2));
-    throw new Error('No response from AI');
-  }
-
-  stage2 = completeStageArtifact(stage2, `AI response received (${content.length} chars)`, {
-    responseLength: content.length,
-    finishReason: response.choices[0]?.finish_reason,
-  });
-  emitArtifact(stage2);
 
   // Stage 3: Parse and validate response
   let stage3 = createStageArtifact(3, 'parse-response');
@@ -545,6 +571,7 @@ export async function extractBattleReportWithArtifacts(
   return {
     report,
     artifacts: artifacts.filter((a) => a.status === 'completed' || a.status === 'failed'),
+    rawAiResponse: content,
   };
 }
 

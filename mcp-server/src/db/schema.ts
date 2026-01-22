@@ -443,7 +443,24 @@ export const unitIndex = pgTable('unit_index', {
 }));
 
 // ============================================================================
-// EXTRACTION CACHE (for caching AI extraction results)
+// AI RESPONSE CACHE (for caching raw OpenAI JSON before processing)
+// ============================================================================
+
+export const aiResponseCache = pgTable('ai_response_cache', {
+  id: serial('id').primaryKey(),
+  videoId: varchar('video_id', { length: 20 }).notNull(),
+  factions: jsonb('factions').notNull(), // [string, string] tuple (sorted)
+  rawResponse: text('raw_response').notNull(), // Raw JSON string from OpenAI
+  promptHash: varchar('prompt_hash', { length: 64 }), // Optional hash for cache invalidation
+  createdAt: timestamp('created_at').defaultNow(),
+  expiresAt: timestamp('expires_at').notNull(),
+}, (table) => ({
+  videoFactionIdx: uniqueIndex('ai_response_cache_video_faction_idx').on(table.videoId, table.factions),
+  expiresAtIdx: index('ai_response_cache_expires_at_idx').on(table.expiresAt),
+}));
+
+// ============================================================================
+// EXTRACTION CACHE (for caching final extraction results)
 // ============================================================================
 
 export const extractionCache = pgTable('extraction_cache', {
@@ -524,6 +541,9 @@ export type NewDetachmentUnit = typeof detachmentUnits.$inferInsert;
 
 export type DetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferSelect;
 export type NewDetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferInsert;
+
+export type AiResponseCache = typeof aiResponseCache.$inferSelect;
+export type NewAiResponseCache = typeof aiResponseCache.$inferInsert;
 
 export type ExtractionCache = typeof extractionCache.$inferSelect;
 export type NewExtractionCache = typeof extractionCache.$inferInsert;
