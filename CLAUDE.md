@@ -105,11 +105,21 @@ Database schema (`src/db/schema.ts`) uses Drizzle ORM with PostgreSQL:
 - `stratagems`, `enhancements`, `keywords`
 - `missions`, `secondary_objectives`
 
+### Wahapedia Scraping Pipeline (`mcp-server/src/scraper/`)
+
+The MCP server populates its database by scraping Wahapedia using Firecrawl:
+
+- **Firecrawl Client** (`firecrawl-client.ts`) - Web scraping with rate limiting, caching, retry logic
+- **Unit Parser** (`parsers/unit-parser.ts`) - Dual-format parser preferring HTML over markdown
+- **Run Scraper** (`run-scraper.ts`) - Orchestrates core rules, factions, and unit scraping
+
+**Key Design**: HTML parsing is preferred over markdown because Firecrawl's markdown conversion creates artifacts (e.g., `'blastpsychic'` instead of `'[BLAST], [PSYCHIC]'`). HTML parsing uses Cheerio to extract data directly from DOM structure.
+
 ### Data Flow
 1. YouTube video URL -> Extract transcript, chapters, metadata
 2. Detect factions from title/description -> Load faction-specific unit names
 3. Preprocess transcript (pattern matching + phonetic + LLM corrections)
-4. Send preprocessed transcript to GPT-4o-mini for structured extraction
+4. Send preprocessed transcript to GPT-5-mini for structured extraction
 5. Validate extracted units against BSData/MCP database
 6. Render HUD overlay with unit cards, stratagems, game state
 

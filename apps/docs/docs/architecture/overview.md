@@ -145,6 +145,8 @@ The preprocessing pipeline corrects these errors before AI extraction, significa
 ### Why BSData + Wahapedia?
 
 - **BSData**: Canonical unit names, points costs, faction structure (XML)
-- **Wahapedia**: Rich rules text, abilities, stratagems (scraped HTML)
+- **Wahapedia**: Rich rules text, abilities, stratagems (scraped via Firecrawl)
 
 Both sources are combined for comprehensive game data.
+
+**HTML Scraping**: Wahapedia content is scraped using Firecrawl with HTML parsing preferred over markdown. HTML parsing via Cheerio preserves the original DOM structure, avoiding markdown conversion artifacts (e.g., `'blastpsychic'` instead of `'[BLAST], [PSYCHIC]'`). Markdown parsing is retained as a fallback for cached content compatibility.

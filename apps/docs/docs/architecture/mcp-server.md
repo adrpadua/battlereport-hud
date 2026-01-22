@@ -64,6 +64,53 @@ npm run ingest:bsdata
 
 This imports unit data from BSData XML catalogs.
 
+## Scraping Architecture
+
+The scraper uses Firecrawl to fetch Wahapedia pages and parse them for structured data.
+
+### Components
+
+| File | Purpose |
+|------|---------|
+| `src/scraper/firecrawl-client.ts` | Firecrawl API client with caching, rate limiting |
+| `src/scraper/parsers/unit-parser.ts` | Dual-format parser (HTML preferred, markdown fallback) |
+| `src/scraper/run-scraper.ts` | Orchestration for core rules, factions, units |
+| `src/scraper/config.ts` | URL patterns and faction slugs |
+
+### HTML vs Markdown Parsing
+
+The scraper requests both HTML and markdown from Firecrawl (`includeHtml: true`) but **prefers HTML parsing**:
+
+**Why HTML?**
+- Firecrawl's markdown conversion creates artifacts (concatenated text)
+- Example: `'blastpsychic'` instead of `'[BLAST], [PSYCHIC]'`
+- HTML preserves original structure for accurate extraction
+
+**Smart Format Detection:**
+```typescript
+// Detects format and routes to appropriate parser
+const isHtml = content.trim().startsWith('<') || content.includes('<html');
+if (isHtml) {
+  return parseHtmlDatasheet(content, sourceUrl);  // Cheerio DOM parsing
+} else {
+  return parseMarkdownDatasheet(content, sourceUrl);  // Regex fallback
+}
+```
+
+**Markdown Fallback:**
+- Used for cached content from before HTML parsing was added
+- Includes `CONCATENATION_FIXES` map for common Firecrawl artifacts
+
+### Scrape Pipeline Stages
+
+```text
+1. Core Rules → /wh40k10ed/the-rules/core-rules/
+2. Factions → Detachments, Enhancements, Stratagems
+3. Units → Individual datasheets with weapons and abilities
+```
+
+Each stage upserts data to PostgreSQL, with scrape logs tracking success/failure.
+
 ### Seed Additional Data
 
 ```bash
