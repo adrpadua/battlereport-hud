@@ -705,71 +705,8 @@
       "pointsCost": null
     },
     {
-      "name": "Amallyn Shadowguide [Legends]",
-      "canonicalName": "amallyn-shadowguide-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Striking Scorpions",
       "canonicalName": "striking-scorpions",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Bonesinger [Legends]",
-      "canonicalName": "bonesinger-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Firestorm [Legends]",
-      "canonicalName": "firestorm-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Phoenix [Legends]",
-      "canonicalName": "phoenix-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Wasp Assault Walker [Legends]",
-      "canonicalName": "wasp-assault-walker-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Vampire Hunter [Legends]",
-      "canonicalName": "vampire-hunter-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Vampire Raider [Legends]",
-      "canonicalName": "vampire-raider-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -788,24 +725,6 @@
     {
       "name": "Corsair Voidscarred",
       "canonicalName": "corsair-voidscarred",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Reaper [Legends]",
-      "canonicalName": "reaper-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Raven Strike Fighter [Legends]",
-      "canonicalName": "raven-strike-fighter-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

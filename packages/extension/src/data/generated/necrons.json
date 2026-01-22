@@ -636,43 +636,6 @@
       "pointsCost": null
     },
     {
-      "name": "Canoptek Acanthrites [Legends]",
-      "canonicalName": "canoptek-acanthrites-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 5,
-        "save": "3+",
-        "wounds": 2,
-        "leadership": "8+",
-        "objectiveControl": 2
-      },
-      "weapons": [
-        {
-          "name": "Cutting beam",
-          "type": "ranged",
-          "range": "12\"",
-          "attacks": "1",
-          "skill": "4+",
-          "strength": 9,
-          "ap": -4,
-          "damage": "D6",
-          "keywords": [
-            "Melta 2"
-          ]
-        }
-      ],
-      "abilities": [
-        "Damaged Armour"
-      ],
-      "keywords": [
-        "Beast",
-        "Fly",
-        "Canoptek",
-        "Acanthrites"
-      ],
-      "pointsCost": 85
-    },
-    {
       "name": "Canoptek Macrocytes",
       "canonicalName": "canoptek-macrocytes",
       "stats": {
@@ -806,35 +769,8 @@
       "pointsCost": null
     },
     {
-      "name": "Anrakyr the Traveller [Legends]",
-      "canonicalName": "anrakyr-the-traveller-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Illuminor Szeras",
       "canonicalName": "illuminor-szeras",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Varguard Obyron [Legends]",
-      "canonicalName": "varguard-obyron-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Nemesor Zahndrekh [Legends]",
-      "canonicalName": "nemesor-zahndrekh-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -871,15 +807,6 @@
     {
       "name": "Lokhust Lord",
       "canonicalName": "lokhust-lord",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Lord [Legends]",
-      "canonicalName": "lord-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -1085,62 +1012,8 @@
       "pointsCost": null
     },
     {
-      "name": "Canoptek Tomb Stalker [Legends]",
-      "canonicalName": "canoptek-tomb-stalker-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Canoptek Tomb Sentinel [Legends]",
-      "canonicalName": "canoptek-tomb-sentinel-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Tesseract Ark [Legends]",
-      "canonicalName": "tesseract-ark-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Seraptek Heavy Construct",
       "canonicalName": "seraptek-heavy-construct",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Gauss Pylon [Legends]",
-      "canonicalName": "gauss-pylon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sentry Pylon [Legends]",
-      "canonicalName": "sentry-pylon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Night Shroud [Legends]",
-      "canonicalName": "night-shroud-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

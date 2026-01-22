@@ -675,98 +675,6 @@
       "pointsCost": 0
     },
     {
-      "name": "Secutarii Hoplites [Legends]",
-      "canonicalName": "secutarii-hoplites-legends",
-      "stats": {
-        "movement": "6\"",
-        "toughness": 3,
-        "save": "5+",
-        "wounds": 1,
-        "leadership": "7+",
-        "objectiveControl": 1
-      },
-      "weapons": [
-        {
-          "name": "Arc lance",
-          "type": "ranged",
-          "range": "12\"",
-          "attacks": "1",
-          "skill": "4+",
-          "strength": 5,
-          "ap": -1,
-          "damage": "1",
-          "keywords": [
-            "Anti-Vehicle 4+",
-            "Devastating Wounds"
-          ]
-        }
-      ],
-      "abilities": [
-        "Invulnerable Save",
-        "Titan Guard",
-        "Secutarii"
-      ],
-      "keywords": [
-        "Secutarii Hoplites",
-        "Infantry",
-        "Imperium",
-        "Skitarii"
-      ],
-      "pointsCost": 65
-    },
-    {
-      "name": "Secutarii Peltasts [Legends]",
-      "canonicalName": "secutarii-peltasts-legends",
-      "stats": {
-        "movement": "6\"",
-        "toughness": 3,
-        "save": "5+",
-        "wounds": 1,
-        "leadership": "7+",
-        "objectiveControl": 1
-      },
-      "weapons": [
-        {
-          "name": "➤ Galvanic caster - flechette",
-          "type": "ranged",
-          "range": "18\"",
-          "attacks": "5",
-          "skill": "4+",
-          "strength": 4,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Assault"
-          ]
-        },
-        {
-          "name": "➤ Galvanic caster - hammershot",
-          "type": "ranged",
-          "range": "24\"",
-          "attacks": "2",
-          "skill": "4+",
-          "strength": 5,
-          "ap": -1,
-          "damage": "1",
-          "keywords": [
-            "Heavy"
-          ]
-        }
-      ],
-      "abilities": [
-        "Invulnerable Save",
-        "Blind Barrage",
-        "Secutarii"
-      ],
-      "keywords": [
-        "Infantry",
-        "Secutarii Peltasts",
-        "Skitarii",
-        "Imperium"
-      ],
-      "pointsCost": 50
-    },
-    {
       "name": "Sydonian Skatros",
       "canonicalName": "sydonian-skatros",
       "stats": {
@@ -842,31 +750,6 @@
         "Smoke"
       ],
       "pointsCost": 55
-    },
-    {
-      "name": "Servitors [Legends]",
-      "canonicalName": "servitors-legends",
-      "stats": {
-        "movement": "6\"",
-        "toughness": 3,
-        "save": "4+",
-        "wounds": 1,
-        "leadership": "8+",
-        "objectiveControl": 0
-      },
-      "weapons": [],
-      "abilities": [
-        "Invulnerable Save",
-        "Mindlock",
-        "Servitor Retinue"
-      ],
-      "keywords": [
-        "Infantry",
-        "Imperium",
-        "Cult Mechanicus",
-        "Servitors"
-      ],
-      "pointsCost": 50
     },
     {
       "name": "Servitor Battleclade",
@@ -1088,24 +971,6 @@
     {
       "name": "Technoarcheologist",
       "canonicalName": "technoarcheologist",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Terrax-Pattern Termite [Legends]",
-      "canonicalName": "terrax-pattern-termite-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "X-101 [Legends]",
-      "canonicalName": "x-101-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

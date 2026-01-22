@@ -449,217 +449,6 @@
       "pointsCost": 65
     },
     {
-      "name": "Grot Tanks [Legends]",
-      "canonicalName": "grot-tanks-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Scatter!"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Grot Tanks",
-        "Grots"
-      ],
-      "pointsCost": 155
-    },
-    {
-      "name": "Nobz on Warbikes [Legends]",
-      "canonicalName": "nobz-on-warbikes-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 6,
-        "save": "4+",
-        "wounds": 4,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [
-        {
-          "name": "Twin dakkagun",
-          "type": "ranged",
-          "range": "18\"",
-          "attacks": "3",
-          "skill": "5+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Assault",
-            "Rapid Fire 2",
-            "Twin-linked"
-          ]
-        }
-      ],
-      "abilities": [
-        "Drive-by Krumpin'",
-        "Speed Freeks Mob"
-      ],
-      "keywords": [
-        "Mounted",
-        "Speed Freeks",
-        "Nobz on Warbikes",
-        "Grenades"
-      ],
-      "pointsCost": 125
-    },
-    {
-      "name": "Skorchas [Legends]",
-      "canonicalName": "skorchas-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 6,
-        "save": "4+",
-        "wounds": 6,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [],
-      "abilities": [
-        "Pyromaniaks"
-      ],
-      "keywords": [
-        "Mounted",
-        "Speed Freeks",
-        "Skorchas"
-      ],
-      "pointsCost": null
-    },
-    {
-      "name": "Wartrakks [Legends]",
-      "canonicalName": "wartrakks-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 6,
-        "save": "4+",
-        "wounds": 6,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [],
-      "abilities": [
-        "Drive-by Dakka"
-      ],
-      "keywords": [
-        "Mounted",
-        "Speed Freeks",
-        "Wartrakks"
-      ],
-      "pointsCost": null
-    },
-    {
-      "name": "Warbuggies [Legends]",
-      "canonicalName": "warbuggies-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 6,
-        "save": "4+",
-        "wounds": 6,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [],
-      "abilities": [
-        "Outflank"
-      ],
-      "keywords": [
-        "Mounted",
-        "Speed Freeks",
-        "Warbuggies"
-      ],
-      "pointsCost": null
-    },
-    {
-      "name": "Big Gunz [Legends]",
-      "canonicalName": "big-gunz-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "➤ Kannon - frag",
-          "type": "ranged",
-          "range": "36\"",
-          "attacks": "D6",
-          "skill": "6+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Blast",
-            "Heavy"
-          ]
-        },
-        {
-          "name": "➤ Kannon - shell",
-          "type": "ranged",
-          "range": "36\"",
-          "attacks": "1",
-          "skill": "6+",
-          "strength": 9,
-          "ap": -2,
-          "damage": "D6",
-          "keywords": [
-            "Heavy"
-          ]
-        },
-        {
-          "name": "Lobba",
-          "type": "ranged",
-          "range": "48\"",
-          "attacks": "D6",
-          "skill": "6+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Blast",
-            "Heavy",
-            "Indirect Fire"
-          ]
-        },
-        {
-          "name": "Zzap gun",
-          "type": "ranged",
-          "range": "36\"",
-          "attacks": "1",
-          "skill": "6+",
-          "strength": 2,
-          "ap": -3,
-          "damage": "3",
-          "keywords": [
-            "Devastating Wounds",
-            "Heavy"
-          ]
-        }
-      ],
-      "abilities": [
-        "Splat!",
-        "Big Gunz"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Artillery",
-        "Big Gunz",
-        "Grots"
-      ],
-      "pointsCost": null
-    },
-    {
-      "name": "Deffkoptas with Big Shootas [Legends]",
-      "canonicalName": "deffkoptas-with-big-shootas-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Deff from Above"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Deffkoptas with Big Shootas",
-        "Fly",
-        "Grenades"
-      ],
-      "pointsCost": 130
-    },
-    {
       "name": "Breaka Boyz",
       "canonicalName": "breaka-boyz",
       "stats": {
@@ -706,15 +495,6 @@
       "pointsCost": null
     },
     {
-      "name": "Big Mek with Kustom Force Field [Legends]",
-      "canonicalName": "big-mek-with-kustom-force-field-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Big Mek with Shokk Attack Gun",
       "canonicalName": "big-mek-with-shokk-attack-gun",
       "stats": null,
@@ -753,15 +533,6 @@
     {
       "name": "Boss Snikrot",
       "canonicalName": "boss-snikrot",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Boss Zagstruk [Legends]",
-      "canonicalName": "boss-zagstruk-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -823,15 +594,6 @@
       "pointsCost": null
     },
     {
-      "name": "Kaptin Badrukk [Legends]",
-      "canonicalName": "kaptin-badrukk-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Kill Rig",
       "canonicalName": "kill-rig",
       "stats": null,
@@ -843,15 +605,6 @@
     {
       "name": "Kustom Boosta-blasta",
       "canonicalName": "kustom-boosta-blasta",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Mad Dok Grotsnik [Legends]",
-      "canonicalName": "mad-dok-grotsnik-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -888,15 +641,6 @@
     {
       "name": "Mozrog Skragbad",
       "canonicalName": "mozrog-skragbad",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Nob with Waaagh! Banner [Legends]",
-      "canonicalName": "nob-with-waaagh-banner-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -1012,33 +756,6 @@
       "pointsCost": null
     },
     {
-      "name": "Mekboy Workshop [Legends]",
-      "canonicalName": "mekboy-workshop-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Grot Mega-Tank [Legends]",
-      "canonicalName": "grot-mega-tank-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Squiggoth [Legends]",
-      "canonicalName": "squiggoth-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Gargantuan Squiggoth",
       "canonicalName": "gargantuan-squiggoth",
       "stats": null,
@@ -1048,170 +765,8 @@
       "pointsCost": null
     },
     {
-      "name": "Kill Tank [Legends]",
-      "canonicalName": "kill-tank-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Mega Dread [Legends]",
-      "canonicalName": "mega-dread-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Meka-Dread [Legends]",
-      "canonicalName": "meka-dread-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Big Trakk [Legends]",
-      "canonicalName": "big-trakk-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Warboss on Warbike [Legends]",
-      "canonicalName": "warboss-on-warbike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Kannonwagon [Legends]",
-      "canonicalName": "kannonwagon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Da Red Gobbo [Legends]",
-      "canonicalName": "da-red-gobbo-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Painboy on Warbike [Legends]",
-      "canonicalName": "painboy-on-warbike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Beastboss on Squigosaur",
       "canonicalName": "beastboss-on-squigosaur",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Kill Krusha [Legends]",
-      "canonicalName": "kill-krusha-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Deff Rolla Battle Fortress [Legends]",
-      "canonicalName": "deff-rolla-battle-fortress-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Chinork Warkopta [Legends]",
-      "canonicalName": "chinork-warkopta-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Fighta-Bommer [Legends]",
-      "canonicalName": "fighta-bommer-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Attack Fighta [Legends]",
-      "canonicalName": "attack-fighta-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Lifta Wagon [Legends]",
-      "canonicalName": "lifta-wagon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Grot Bomm Launcha [Legends]",
-      "canonicalName": "grot-bomm-launcha-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Big Mek on Warbike [Legends]",
-      "canonicalName": "big-mek-on-warbike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Grotmas Gitz [Legends]",
-      "canonicalName": "grotmas-gitz-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Ufthak Blackhawk [Legends]",
-      "canonicalName": "ufthak-blackhawk-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -1239,24 +794,6 @@
     {
       "name": "Beastboss",
       "canonicalName": "beastboss",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Da Red Gobbo's A-bomb-inable Snowman [Legends]",
-      "canonicalName": "da-red-gobbo-s-a-bomb-inable-snowman-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Da Red Gobbo's Tinboy [Legends]",
-      "canonicalName": "da-red-gobbo-s-tinboy-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

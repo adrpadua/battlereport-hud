@@ -39,15 +39,6 @@
       "pointsCost": null
     },
     {
-      "name": "Autarch Skyrunner [Legends]",
-      "canonicalName": "autarch-skyrunner-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Autarch Wayleaper",
       "canonicalName": "autarch-wayleaper",
       "stats": null,
@@ -219,26 +210,8 @@
       "pointsCost": null
     },
     {
-      "name": "Illic Nightspear [Legends]",
-      "canonicalName": "illic-nightspear-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Jain Zar",
       "canonicalName": "jain-zar",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Karandras [Legends]",
-      "canonicalName": "karandras-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -257,15 +230,6 @@
     {
       "name": "Night Spinner",
       "canonicalName": "night-spinner",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Prince Yriel [Legends]",
-      "canonicalName": "prince-yriel-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -480,15 +444,6 @@
       "pointsCost": null
     },
     {
-      "name": "Webway Gate [Legends]",
-      "canonicalName": "webway-gate-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Wraithblades",
       "canonicalName": "wraithblades",
       "stats": null,
@@ -534,78 +489,6 @@
       "pointsCost": null
     },
     {
-      "name": "Cobra [Legends]",
-      "canonicalName": "cobra-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Hornet [Legends]",
-      "canonicalName": "hornet-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Irillyth [Legends]",
-      "canonicalName": "irillyth-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Lynx [Legends]",
-      "canonicalName": "lynx-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Nightwing [Legends]",
-      "canonicalName": "nightwing-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Scorpion [Legends]",
-      "canonicalName": "scorpion-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Skathach Wraithknight [Legends]",
-      "canonicalName": "skathach-wraithknight-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Shadow Spectres [Legends]",
-      "canonicalName": "shadow-spectres-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Phantom Titan",
       "canonicalName": "phantom-titan",
       "stats": null,
@@ -617,114 +500,6 @@
     {
       "name": "Revenant Titan",
       "canonicalName": "revenant-titan",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Warp Hunter [Legends]",
-      "canonicalName": "warp-hunter-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Wraithseer [Legends]",
-      "canonicalName": "wraithseer-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Amallyn Shadowguide [Legends]",
-      "canonicalName": "amallyn-shadowguide-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Bonesinger [Legends]",
-      "canonicalName": "bonesinger-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Corsair Cloud Dancer Band [Legends]",
-      "canonicalName": "corsair-cloud-dancer-band-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Corsair Reaver Band [Legends]",
-      "canonicalName": "corsair-reaver-band-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Corsair Skyreaver Band [Legends]",
-      "canonicalName": "corsair-skyreaver-band-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Phoenix [Legends]",
-      "canonicalName": "phoenix-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Firestorm [Legends]",
-      "canonicalName": "firestorm-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Vampire Hunter [Legends]",
-      "canonicalName": "vampire-hunter-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Vampire Raider [Legends]",
-      "canonicalName": "vampire-raider-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Wasp Assault Walker [Legends]",
-      "canonicalName": "wasp-assault-walker-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

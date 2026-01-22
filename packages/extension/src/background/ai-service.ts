@@ -300,8 +300,14 @@ export function detectFactionNamesFromVideo(videoData: VideoData): string[] {
  * Detect factions from video metadata for prompt enhancement.
  * Returns a map of detected faction names to their unit names.
  * Uses the centralized faction inference that reads from the faction index.
+ *
+ * @param videoData - Video metadata containing title, description, etc.
+ * @param detachments - Optional map of faction name to detachment name for filtered unit lists
  */
-export async function detectFactionsFromVideo(videoData: VideoData): Promise<Map<string, string[]>> {
+export async function detectFactionsFromVideo(
+  videoData: VideoData,
+  detachments?: Map<string, string>
+): Promise<Map<string, string[]>> {
   const factionUnitNames = new Map<string, string[]>();
 
   // Combine text for faction detection
@@ -312,7 +318,8 @@ export async function detectFactionsFromVideo(videoData: VideoData): Promise<Map
 
   // Load unit names for detected factions
   for (const faction of detectedFactions) {
-    const unitNames = await getFactionContextForPrompt(faction);
+    const detachment = detachments?.get(faction);
+    const unitNames = await getFactionContextForPrompt(faction, detachment);
     if (unitNames.length > 0) {
       factionUnitNames.set(faction, unitNames);
     }

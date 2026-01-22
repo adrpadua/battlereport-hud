@@ -12,24 +12,6 @@
       "pointsCost": null
     },
     {
-      "name": "Beastmaster [Legends]",
-      "canonicalName": "beastmaster-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Court of the Archon [Legends]",
-      "canonicalName": "court-of-the-archon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Cronos",
       "canonicalName": "cronos",
       "stats": null,
@@ -41,15 +23,6 @@
     {
       "name": "Drazhar",
       "canonicalName": "drazhar",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Grotesques [Legends]",
-      "canonicalName": "grotesques-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -174,15 +147,6 @@
       "pointsCost": null
     },
     {
-      "name": "Urien Rakarth [Legends]",
-      "canonicalName": "urien-rakarth-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Venom",
       "canonicalName": "venom",
       "stats": null,
@@ -212,15 +176,6 @@
     {
       "name": "Wyches",
       "canonicalName": "wyches",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Tantalus [Legends]",
-      "canonicalName": "tantalus-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -311,51 +266,6 @@
     {
       "name": "Troupe Master",
       "canonicalName": "troupe-master",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Reaper [Legends]",
-      "canonicalName": "reaper-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Raven Strike Fighter [Legends]",
-      "canonicalName": "raven-strike-fighter-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Corsair Cloud Dancer Band [Legends]",
-      "canonicalName": "corsair-cloud-dancer-band-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Corsair Reaver Band [Legends]",
-      "canonicalName": "corsair-reaver-band-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Corsair Skyreaver Band [Legends]",
-      "canonicalName": "corsair-skyreaver-band-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

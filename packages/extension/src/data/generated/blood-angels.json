@@ -3,31 +3,6 @@
   "name": "Blood Angels",
   "units": [
     {
-      "name": "Death Company Marines with Boltguns [Legends]",
-      "canonicalName": "death-company-marines-with-boltguns-legends",
-      "stats": {
-        "movement": "6\"",
-        "toughness": 4,
-        "save": "3+",
-        "wounds": 2,
-        "leadership": "6+",
-        "objectiveControl": 1
-      },
-      "weapons": [],
-      "abilities": [
-        "An Honourable Death in Combat",
-        "Attached Leader"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Death Company Marines with Boltguns",
-        "Death Company"
-      ],
-      "pointsCost": 125
-    },
-    {
       "name": "Death Company Marines with Jump Packs",
       "canonicalName": "death-company-marines-with-jump-packs",
       "stats": {
@@ -196,31 +171,6 @@
       "pointsCost": 85
     },
     {
-      "name": "Death Company Marines with Boltguns and Jump Packs [Legends]",
-      "canonicalName": "death-company-marines-with-boltguns-and-jump-packs-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 4,
-        "save": "3+",
-        "wounds": 2,
-        "leadership": "6+",
-        "objectiveControl": 1
-      },
-      "weapons": [],
-      "abilities": [
-        "Beserk Fury",
-        "Attached Leader"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Death Company Marines with Boltguns and Jump Packs",
-        "Death Company"
-      ],
-      "pointsCost": 140
-    },
-    {
       "name": "Death Company Intercessors",
       "canonicalName": "death-company-intercessors",
       "stats": null,
@@ -248,24 +198,6 @@
       "pointsCost": null
     },
     {
-      "name": "Brother Corbulo [Legends]",
-      "canonicalName": "brother-corbulo-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Captain Tycho [Legends]",
-      "canonicalName": "captain-tycho-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Chief Librarian Mephiston",
       "canonicalName": "chief-librarian-mephiston",
       "stats": null,
@@ -284,44 +216,8 @@
       "pointsCost": null
     },
     {
-      "name": "Death Company Dreadnought with Magna-Grapple [Legends]",
-      "canonicalName": "death-company-dreadnought-with-magna-grapple-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Furioso Dreadnought [Legends]",
-      "canonicalName": "furioso-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Gabriel Seth [Legends]",
-      "canonicalName": "gabriel-seth-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Lemartes",
       "canonicalName": "lemartes",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Librarian Dreadnought [Legends]",
-      "canonicalName": "librarian-dreadnought-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -338,35 +234,8 @@
       "pointsCost": null
     },
     {
-      "name": "Tycho the Lost [Legends]",
-      "canonicalName": "tycho-the-lost-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "The Sanguinor",
       "canonicalName": "the-sanguinor",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sanguinary Priest with Jump Pack [Legends]",
-      "canonicalName": "sanguinary-priest-with-jump-pack-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sanguinary Priest on Bike [Legends]",
-      "canonicalName": "sanguinary-priest-on-bike-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

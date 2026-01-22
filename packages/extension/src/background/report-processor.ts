@@ -198,14 +198,29 @@ export async function processBattleReport(
 
 /**
  * Get faction unit names for AI prompt injection.
+ * If detachment is provided, returns only units available for that detachment.
+ * Otherwise returns all units (for backwards compatibility).
  */
 export async function getFactionContextForPrompt(
-  factionName: string
+  factionName: string,
+  detachment?: string
 ): Promise<string[]> {
   const faction = await loadFactionByName(factionName);
   if (!faction) {
     return [];
   }
+
+  // If detachment specified and we have detachment-specific data, use filtered list
+  if (detachment && faction.detachmentUnits && faction.detachmentUnits[detachment]) {
+    return faction.detachmentUnits[detachment];
+  }
+
+  // If detachment specified but not found, fall back to core units if available
+  if (detachment && faction.coreUnits) {
+    return faction.coreUnits;
+  }
+
+  // Default: return all unit names
   return faction.units.map((u) => u.name);
 }
 

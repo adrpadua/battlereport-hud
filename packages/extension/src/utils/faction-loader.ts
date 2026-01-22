@@ -176,6 +176,45 @@ export async function getFactionUnitNames(factionName: string): Promise<string[]
 }
 
 /**
+ * Get available detachments for a faction.
+ * Returns empty array if faction has no detachment-specific data.
+ */
+export async function getFactionDetachments(factionName: string): Promise<string[]> {
+  const faction = await loadFactionByName(factionName);
+  if (!faction || !faction.detachmentUnits) {
+    return [];
+  }
+  return Object.keys(faction.detachmentUnits);
+}
+
+/**
+ * Get unit names for a specific faction and detachment combination.
+ * Falls back to all units if detachment not found.
+ */
+export async function getUnitsForDetachment(
+  factionName: string,
+  detachment: string
+): Promise<string[]> {
+  const faction = await loadFactionByName(factionName);
+  if (!faction) {
+    return [];
+  }
+
+  // Try detachment-specific list first
+  if (faction.detachmentUnits && faction.detachmentUnits[detachment]) {
+    return faction.detachmentUnits[detachment];
+  }
+
+  // Fall back to core units if available
+  if (faction.coreUnits) {
+    return faction.coreUnits;
+  }
+
+  // Fall back to all units
+  return faction.units.map((u) => u.name);
+}
+
+/**
  * Get a specific unit by name from a faction.
  * Returns null if not found.
  */

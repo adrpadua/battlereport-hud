@@ -435,39 +435,6 @@
       "pointsCost": 80
     },
     {
-      "name": "Death Cult Assassins [Legends]",
-      "canonicalName": "death-cult-assassins-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Death Cult",
-        "Invulnerable Save"
-      ],
-      "keywords": [
-        "Infantry",
-        "Imperium",
-        "Death Cult Assassins"
-      ],
-      "pointsCost": 55
-    },
-    {
-      "name": "Crusaders [Legends]",
-      "canonicalName": "crusaders-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Spiritual Fortitude",
-        "Attached Unit",
-        "Invulnerable Save"
-      ],
-      "keywords": [
-        "Infantry",
-        "Imperium",
-        "Crusaders"
-      ],
-      "pointsCost": 40
-    },
-    {
       "name": "Sanctifiers",
       "canonicalName": "sanctifiers",
       "stats": {
@@ -702,35 +669,8 @@
       "pointsCost": null
     },
     {
-      "name": "Repressor [Legends]",
-      "canonicalName": "repressor-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Canoness with Jump Pack",
       "canonicalName": "canoness-with-jump-pack",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Battle Sanctum [Legends]",
-      "canonicalName": "battle-sanctum-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Celestian Sacresant Aveline [Legends]",
-      "canonicalName": "celestian-sacresant-aveline-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

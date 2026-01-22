@@ -42,50 +42,6 @@
       "pointsCost": 200
     },
     {
-      "name": "Tyrannic War Veterans [Legends]",
-      "canonicalName": "tyrannic-war-veterans-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Bolt Pistol",
-          "type": "ranged",
-          "range": "12\"",
-          "attacks": "1",
-          "skill": "3+",
-          "strength": 4,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Anti-Tyranids 4+",
-            "Pistol"
-          ]
-        },
-        {
-          "name": "Boltgun",
-          "type": "ranged",
-          "range": "24\"",
-          "attacks": "2",
-          "skill": "3+",
-          "strength": 4,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Anti-Tyranids 4+"
-          ]
-        }
-      ],
-      "abilities": [
-        "Tyrannic War Veterans"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Tyrannic War Veterans"
-      ],
-      "pointsCost": 85
-    },
-    {
       "name": "Victrix Honour Guard",
       "canonicalName": "victrix-honour-guard",
       "stats": null,
@@ -166,15 +122,6 @@
       "pointsCost": null
     },
     {
-      "name": "Chaplain Cassius [Legends]",
-      "canonicalName": "chaplain-cassius-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Chief Librarian Tigurius",
       "canonicalName": "chief-librarian-tigurius",
       "stats": null,
@@ -193,35 +140,8 @@
       "pointsCost": null
     },
     {
-      "name": "Sergeant Chronus [Legends]",
-      "canonicalName": "sergeant-chronus-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sergeant Telion [Legends]",
-      "canonicalName": "sergeant-telion-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Uriel Ventris",
       "canonicalName": "uriel-ventris",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Ultramarines Honour Guard [Legends]",
-      "canonicalName": "ultramarines-honour-guard-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

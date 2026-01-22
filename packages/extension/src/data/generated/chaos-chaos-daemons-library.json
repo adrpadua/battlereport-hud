@@ -524,161 +524,6 @@
       "pointsCost": 0
     },
     {
-      "name": "Seeker Chariot [Legends]",
-      "canonicalName": "seeker-chariot-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Lashes of torment",
-          "type": "ranged",
-          "range": "6\"",
-          "attacks": "6",
-          "skill": "3+",
-          "strength": 4,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Anti-INFANTRY 3+",
-            "Assault",
-            "Pistol"
-          ]
-        }
-      ],
-      "abilities": [
-        "Scythed Impact",
-        "Invulnerable Save"
-      ],
-      "keywords": [
-        "Mounted",
-        "Chaos",
-        "Daemon",
-        "Slaanesh",
-        "Seeker Chariot",
-        "Slaanesh non-Battleline",
-        "Shadow Legion"
-      ],
-      "pointsCost": 0
-    },
-    {
-      "name": "Pox Riders [Legends]",
-      "canonicalName": "pox-riders-legends",
-      "stats": {
-        "movement": "7\"",
-        "toughness": 8,
-        "save": "6+",
-        "wounds": 5,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [
-        {
-          "name": "Grasping tongue",
-          "type": "ranged",
-          "range": "9\"",
-          "attacks": "D3",
-          "skill": "4+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Lethal Hits"
-          ]
-        }
-      ],
-      "abilities": [
-        "Invulnerable Save",
-        "Grandfather's Blessing",
-        "Bounding Assault"
-      ],
-      "keywords": [
-        "Mounted",
-        "Chaos",
-        "Daemon",
-        "Nurgle",
-        "Pox Riders",
-        "Nurgle non-Battleline",
-        "Shadow Legion"
-      ],
-      "pointsCost": 160
-    },
-    {
-      "name": "Plague Toads [Legends]",
-      "canonicalName": "plague-toads-legends",
-      "stats": {
-        "movement": "7\"",
-        "toughness": 8,
-        "save": "6+",
-        "wounds": 4,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [
-        {
-          "name": "Grasping tongue",
-          "type": "ranged",
-          "range": "9\"",
-          "attacks": "D3",
-          "skill": "4+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Lethal Hits"
-          ]
-        }
-      ],
-      "abilities": [
-        "Invulnerable Save",
-        "Grandfather's Blessing",
-        "Pouncing Leap"
-      ],
-      "keywords": [
-        "Beast",
-        "Chaos",
-        "Daemon",
-        "Nurgle",
-        "Plague Toads",
-        "Nurgle non-Battleline",
-        "Shadow Legion"
-      ],
-      "pointsCost": 120
-    },
-    {
-      "name": "Furies [Legends]",
-      "canonicalName": "furies-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 3,
-        "save": "7+",
-        "wounds": 1,
-        "leadership": "8+",
-        "objectiveControl": 1
-      },
-      "weapons": [],
-      "abilities": [
-        "Prey on the Weak",
-        "Invulnerable Save"
-      ],
-      "keywords": [
-        "Infantry",
-        "Chaos",
-        "Daemon",
-        "Fly",
-        "Furies",
-        "Shadow Legion"
-      ],
-      "pointsCost": 40
-    },
-    {
-      "name": "An'ggrath the Unbound [Legends]",
-      "canonicalName": "an-ggrath-the-unbound-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Be'lakor",
       "canonicalName": "be-lakor",
       "stats": null,
@@ -708,15 +553,6 @@
     {
       "name": "Burning Chariot",
       "canonicalName": "burning-chariot",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Aetaos'rau'keres [Legends]",
-      "canonicalName": "aetaos-rau-keres-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -778,15 +614,6 @@
       "pointsCost": null
     },
     {
-      "name": "Exalted Seeker Chariot [Legends]",
-      "canonicalName": "exalted-seeker-chariot-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Fateskimmer",
       "canonicalName": "fateskimmer",
       "stats": null,
@@ -814,26 +641,8 @@
       "pointsCost": null
     },
     {
-      "name": "Giant Chaos Spawn [Legends]",
-      "canonicalName": "giant-chaos-spawn-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Great Unclean One",
       "canonicalName": "great-unclean-one",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Herald of Slaanesh on Steed of Slaanesh [Legends]",
-      "canonicalName": "herald-of-slaanesh-on-steed-of-slaanesh-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -940,15 +749,6 @@
       "pointsCost": null
     },
     {
-      "name": "Scabeiathrax the Bloated [Legends]",
-      "canonicalName": "scabeiathrax-the-bloated-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Shalaxi Helbane",
       "canonicalName": "shalaxi-helbane",
       "stats": null,
@@ -1021,15 +821,6 @@
       "pointsCost": null
     },
     {
-      "name": "Spined Chaos Beast [Legends]",
-      "canonicalName": "spined-chaos-beast-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Spoilpox Scrivener",
       "canonicalName": "spoilpox-scrivener",
       "stats": null,
@@ -1095,15 +886,6 @@
     {
       "name": "Tzeentch Soul Grinder",
       "canonicalName": "tzeentch-soul-grinder",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Zarakynel [Legends]",
-      "canonicalName": "zarakynel-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

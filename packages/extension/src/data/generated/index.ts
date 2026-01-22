@@ -14,7 +14,7 @@ export const factionIndex: FactionIndex = {
         "sisters of battle",
         "sob"
       ],
-      "unitCount": 37
+      "unitCount": 32
     },
     {
       "id": "adeptus-custodes",
@@ -35,7 +35,7 @@ export const factionIndex: FactionIndex = {
         "ad mech",
         "mechanicus"
       ],
-      "unitCount": 36
+      "unitCount": 31
     },
     {
       "id": "adeptus-titanicus",
@@ -55,7 +55,7 @@ export const factionIndex: FactionIndex = {
         "craftworld",
         "aeldari aeldari library"
       ],
-      "unitCount": 45
+      "unitCount": 38
     },
     {
       "id": "agents-of-the-imperium",
@@ -65,7 +65,7 @@ export const factionIndex: FactionIndex = {
         "agents",
         "inquisition"
       ],
-      "unitCount": 45
+      "unitCount": 28
     },
     {
       "id": "imperium-astra-militarum-library",
@@ -78,7 +78,7 @@ export const factionIndex: FactionIndex = {
         "am",
         "imperium astra militarum library"
       ],
-      "unitCount": 34
+      "unitCount": 23
     },
     {
       "id": "astra-militarum",
@@ -90,7 +90,7 @@ export const factionIndex: FactionIndex = {
         "ig",
         "am"
       ],
-      "unitCount": 128
+      "unitCount": 66
     },
     {
       "id": "black-templars",
@@ -99,7 +99,7 @@ export const factionIndex: FactionIndex = {
         "black templars",
         "bt"
       ],
-      "unitCount": 20
+      "unitCount": 19
     },
     {
       "id": "blood-angels",
@@ -108,7 +108,7 @@ export const factionIndex: FactionIndex = {
         "blood angels",
         "ba"
       ],
-      "unitCount": 27
+      "unitCount": 16
     },
     {
       "id": "chaos-daemons",
@@ -118,7 +118,7 @@ export const factionIndex: FactionIndex = {
         "daemons",
         "demons"
       ],
-      "unitCount": 35
+      "unitCount": 25
     },
     {
       "id": "chaos-knights",
@@ -127,7 +127,7 @@ export const factionIndex: FactionIndex = {
         "chaos knights",
         "ck"
       ],
-      "unitCount": 17
+      "unitCount": 7
     },
     {
       "id": "chaos-chaos-knights-library",
@@ -147,7 +147,7 @@ export const factionIndex: FactionIndex = {
         "chaos marines",
         "heretic astartes"
       ],
-      "unitCount": 107
+      "unitCount": 53
     },
     {
       "id": "craftworlds",
@@ -158,7 +158,7 @@ export const factionIndex: FactionIndex = {
         "eldar",
         "aeldari"
       ],
-      "unitCount": 94
+      "unitCount": 69
     },
     {
       "id": "chaos-chaos-daemons-library",
@@ -167,7 +167,7 @@ export const factionIndex: FactionIndex = {
         "daemons library",
         "chaos chaos daemons library"
       ],
-      "unitCount": 68
+      "unitCount": 56
     },
     {
       "id": "dark-angels",
@@ -176,7 +176,7 @@ export const factionIndex: FactionIndex = {
         "dark angels",
         "da"
       ],
-      "unitCount": 19
+      "unitCount": 16
     },
     {
       "id": "death-guard",
@@ -185,7 +185,7 @@ export const factionIndex: FactionIndex = {
         "death guard",
         "dg"
       ],
-      "unitCount": 71
+      "unitCount": 36
     },
     {
       "id": "deathwatch",
@@ -194,7 +194,7 @@ export const factionIndex: FactionIndex = {
         "deathwatch",
         "dw"
       ],
-      "unitCount": 11
+      "unitCount": 10
     },
     {
       "id": "drukhari",
@@ -204,7 +204,7 @@ export const factionIndex: FactionIndex = {
         "dark eldar",
         "de"
       ],
-      "unitCount": 43
+      "unitCount": 33
     },
     {
       "id": "emperor-s-children",
@@ -225,7 +225,7 @@ export const factionIndex: FactionIndex = {
         "gsc",
         "genestealers"
       ],
-      "unitCount": 133
+      "unitCount": 85
     },
     {
       "id": "grey-knights",
@@ -234,7 +234,7 @@ export const factionIndex: FactionIndex = {
         "grey knights",
         "gk"
       ],
-      "unitCount": 32
+      "unitCount": 27
     },
     {
       "id": "imperial-fists",
@@ -302,7 +302,7 @@ export const factionIndex: FactionIndex = {
         "necrons",
         "crons"
       ],
-      "unitCount": 63
+      "unitCount": 52
     },
     {
       "id": "orks",
@@ -311,7 +311,7 @@ export const factionIndex: FactionIndex = {
         "orks",
         "orcs"
       ],
-      "unitCount": 88
+      "unitCount": 53
     },
     {
       "id": "raven-guard",
@@ -340,7 +340,7 @@ export const factionIndex: FactionIndex = {
         "astartes",
         "adeptus astartes"
       ],
-      "unitCount": 155
+      "unitCount": 82
     },
     {
       "id": "space-wolves",
@@ -350,7 +350,7 @@ export const factionIndex: FactionIndex = {
         "sw",
         "wolves"
       ],
-      "unitCount": 40
+      "unitCount": 21
     },
     {
       "id": "t-au-empire",
@@ -362,7 +362,7 @@ export const factionIndex: FactionIndex = {
         "tau empire",
         "t au empire"
       ],
-      "unitCount": 62
+      "unitCount": 42
     },
     {
       "id": "thousand-sons",
@@ -372,7 +372,7 @@ export const factionIndex: FactionIndex = {
         "tsons",
         "1ksons"
       ],
-      "unitCount": 62
+      "unitCount": 35
     },
     {
       "id": "titanicus-traitoris",
@@ -390,7 +390,7 @@ export const factionIndex: FactionIndex = {
         "nids",
         "bugs"
       ],
-      "unitCount": 55
+      "unitCount": 50
     },
     {
       "id": "library-tyranids",
@@ -409,7 +409,7 @@ export const factionIndex: FactionIndex = {
         "ultras",
         "smurfs"
       ],
-      "unitCount": 16
+      "unitCount": 11
     },
     {
       "id": "unaligned-forces",
@@ -417,7 +417,7 @@ export const factionIndex: FactionIndex = {
       "aliases": [
         "unaligned forces"
       ],
-      "unitCount": 23
+      "unitCount": 3
     },
     {
       "id": "white-scars",
@@ -437,7 +437,7 @@ export const factionIndex: FactionIndex = {
         "we",
         "khorne"
       ],
-      "unitCount": 59
+      "unitCount": 31
     },
     {
       "id": "ynnari",
@@ -445,7 +445,7 @@ export const factionIndex: FactionIndex = {
       "aliases": [
         "ynnari"
       ],
-      "unitCount": 90
+      "unitCount": 81
     }
   ]
 };

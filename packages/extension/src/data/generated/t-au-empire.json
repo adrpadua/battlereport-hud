@@ -3,23 +3,6 @@
   "name": "T'au Empire",
   "units": [
     {
-      "name": "Aun'va [Legends]",
-      "canonicalName": "aun-va-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Duality Shield",
-        "Invulnerable Save (4+)",
-        "Paradox of Duality",
-        "Supreme Loyalty (Aura)"
-      ],
-      "keywords": [
-        "Epic Hero",
-        "Non-Kroot"
-      ],
-      "pointsCost": 65
-    },
-    {
       "name": "Strike Team",
       "canonicalName": "strike-team",
       "stats": null,
@@ -174,25 +157,6 @@
         "Grenades"
       ],
       "pointsCost": 40
-    },
-    {
-      "name": "Crisis Battlesuits [Legends]",
-      "canonicalName": "crisis-battlesuits-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Turbo-jets",
-        "Crisis Bodyguard"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Walker",
-        "Fly",
-        "Battlesuit",
-        "Crisis",
-        "Non-Kroot"
-      ],
-      "pointsCost": 200
     },
     {
       "name": "Stealth Battlesuits",
@@ -350,27 +314,6 @@
       "pointsCost": 80
     },
     {
-      "name": "Tactical Drones [Legends]",
-      "canonicalName": "tactical-drones-legends",
-      "stats": {
-        "movement": "8\"",
-        "toughness": 3,
-        "save": "4+",
-        "wounds": 1,
-        "leadership": "7+",
-        "objectiveControl": 0
-      },
-      "weapons": [],
-      "abilities": [],
-      "keywords": [
-        "Drone",
-        "Fly",
-        "Tactical Drones",
-        "Non-Kroot"
-      ],
-      "pointsCost": 70
-    },
-    {
       "name": "Kroot Farstalkers",
       "canonicalName": "kroot-farstalkers",
       "stats": {
@@ -430,175 +373,6 @@
         "Farstalkers"
       ],
       "pointsCost": 85
-    },
-    {
-      "name": "Tetras [Legends]",
-      "canonicalName": "tetras-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "High-intensity Markerlights"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Fly",
-        "Markerlight",
-        "Tetras",
-        "Non-Kroot"
-      ],
-      "pointsCost": 80
-    },
-    {
-      "name": "Remora Stealth Drones [Legends]",
-      "canonicalName": "remora-stealth-drones-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Remora seeker missile",
-          "type": "ranged",
-          "range": "48\"",
-          "attacks": "1",
-          "skill": "4+",
-          "strength": 14,
-          "ap": -3,
-          "damage": "D6+1",
-          "keywords": [
-            "One Shot"
-          ]
-        },
-        {
-          "name": "Twin long-barrelled burst cannon",
-          "type": "ranged",
-          "range": "24\"",
-          "attacks": "4",
-          "skill": "4+",
-          "strength": 6,
-          "ap": -1,
-          "damage": "1",
-          "keywords": [
-            "Twin-linked"
-          ]
-        }
-      ],
-      "abilities": [
-        "Aerial Disengagement"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Fly",
-        "Markerlight",
-        "Remora Stealth Drones",
-        "Non-Kroot"
-      ],
-      "pointsCost": 160
-    },
-    {
-      "name": "Heavy Gun Drones [Legends]",
-      "canonicalName": "heavy-gun-drones-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Drone Escort"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Fly",
-        "Heavy Gun Drones",
-        "Non-Kroot"
-      ],
-      "pointsCost": 45
-    },
-    {
-      "name": "Knarloc Riders [Legends]",
-      "canonicalName": "knarloc-riders-legends",
-      "stats": {
-        "movement": "7\"",
-        "toughness": 5,
-        "save": "5+",
-        "wounds": 4,
-        "leadership": "7+",
-        "objectiveControl": 2
-      },
-      "weapons": [
-        {
-          "name": "Kroot rifle (Ranged)",
-          "type": "ranged",
-          "range": "24\"",
-          "attacks": "1",
-          "skill": "4+",
-          "strength": 4,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Rapid Fire 1"
-          ]
-        }
-      ],
-      "abilities": [],
-      "keywords": [
-        "Mounted",
-        "Kroot",
-        "Knarloc Riders"
-      ],
-      "pointsCost": 110
-    },
-    {
-      "name": "XV9 Hazard Battlesuits [Legends]",
-      "canonicalName": "xv9-hazard-battlesuits-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Fusion cascade",
-          "type": "ranged",
-          "range": "12\"",
-          "attacks": "1",
-          "skill": "4+",
-          "strength": 9,
-          "ap": -4,
-          "damage": "D6",
-          "keywords": [
-            "Melta 4"
-          ]
-        },
-        {
-          "name": "Phased ion gun",
-          "type": "ranged",
-          "range": "30\"",
-          "attacks": "4",
-          "skill": "4+",
-          "strength": 6,
-          "ap": -1,
-          "damage": "1",
-          "keywords": [
-            "-"
-          ]
-        },
-        {
-          "name": "Twin hazard burst cannon",
-          "type": "ranged",
-          "range": "24\"",
-          "attacks": "4",
-          "skill": "4+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Twin-linked"
-          ]
-        }
-      ],
-      "abilities": [
-        "Photon Casters"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Walker",
-        "Fly",
-        "XV9 Hazard",
-        "Battlesuit",
-        "Non-Kroot"
-      ],
-      "pointsCost": null
     },
     {
       "name": "Crisis Sunforge Battlesuits",
@@ -717,15 +491,6 @@
       "pointsCost": null
     },
     {
-      "name": "Commander in Crisis Battlesuit [Legends]",
-      "canonicalName": "commander-in-crisis-battlesuit-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Commander in Enforcer Battlesuit",
       "canonicalName": "commander-in-enforcer-battlesuit",
       "stats": null,
@@ -762,26 +527,8 @@
       "pointsCost": null
     },
     {
-      "name": "Aun'shi [Legends]",
-      "canonicalName": "aun-shi-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Darkstrider",
       "canonicalName": "darkstrider",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Longstrike [Legends]",
-      "canonicalName": "longstrike-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -897,35 +644,8 @@
       "pointsCost": null
     },
     {
-      "name": "R'varna Battlesuit [Legends]",
-      "canonicalName": "r-varna-battlesuit-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Y'vahra Battlesuit [Legends]",
-      "canonicalName": "y-vahra-battlesuit-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Ta'unar Supremacy Armour",
       "canonicalName": "ta-unar-supremacy-armour",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Barracuda [Legends]",
-      "canonicalName": "barracuda-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -953,60 +673,6 @@
     {
       "name": "Manta",
       "canonicalName": "manta",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Orca Dropship [Legends]",
-      "canonicalName": "orca-dropship-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Great Knarloc [Legends]",
-      "canonicalName": "great-knarloc-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "TX42 Piranha [Legends]",
-      "canonicalName": "tx42-piranha-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Shas'o R'alai [Legends]",
-      "canonicalName": "shas-o-r-alai-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Remote Sensor Tower [Legends]",
-      "canonicalName": "remote-sensor-tower-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Drone Sentry Turret [Legends]",
-      "canonicalName": "drone-sentry-turret-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

@@ -416,43 +416,6 @@
       "pointsCost": 75
     },
     {
-      "name": "Sky-slasher Swarms [Legends]",
-      "canonicalName": "sky-slasher-swarms-legends",
-      "stats": {
-        "movement": "12\"",
-        "toughness": 2,
-        "save": "6+",
-        "wounds": 4,
-        "leadership": "8+",
-        "objectiveControl": 0
-      },
-      "weapons": [
-        {
-          "name": "Spinemaws",
-          "type": "ranged",
-          "range": "6\"",
-          "attacks": "4",
-          "skill": "5+",
-          "strength": 3,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Pistol"
-          ]
-        }
-      ],
-      "abilities": [
-        "Chitinous Horrors"
-      ],
-      "keywords": [
-        "Swarm",
-        "Great Devourer",
-        "Fly",
-        "Sky-slasher Swarms"
-      ],
-      "pointsCost": 60
-    },
-    {
       "name": "Winged Hive Tyrant",
       "canonicalName": "winged-hive-tyrant",
       "stats": null,
@@ -696,24 +659,6 @@
       "pointsCost": null
     },
     {
-      "name": "Barbed Hierodule [Legends]",
-      "canonicalName": "barbed-hierodule-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Scythed Hierodule [Legends]",
-      "canonicalName": "scythed-hierodule-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Harridan",
       "canonicalName": "harridan",
       "stats": null,
@@ -734,24 +679,6 @@
     {
       "name": "Raveners",
       "canonicalName": "raveners",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Dimachaeron [Legends]",
-      "canonicalName": "dimachaeron-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Malanthrope [Legends]",
-      "canonicalName": "malanthrope-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

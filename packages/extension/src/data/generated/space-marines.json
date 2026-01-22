@@ -217,38 +217,6 @@
       "pointsCost": 70
     },
     {
-      "name": "Scout Sniper Squad [Legends]",
-      "canonicalName": "scout-sniper-squad-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Scout Sniper Rifle",
-          "type": "ranged",
-          "range": "36\"",
-          "attacks": "1",
-          "skill": "3+",
-          "strength": 4,
-          "ap": -2,
-          "damage": "2",
-          "keywords": [
-            "Heavy",
-            "Precision"
-          ]
-        }
-      ],
-      "abilities": [
-        "Concealed Positions"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Smoke",
-        "Scout Sniper Squad"
-      ],
-      "pointsCost": 75
-    },
-    {
       "name": "Bladeguard Veteran Squad",
       "canonicalName": "bladeguard-veteran-squad",
       "stats": null,
@@ -298,22 +266,6 @@
         "Vanguard Veteran Squad"
       ],
       "pointsCost": 100
-    },
-    {
-      "name": "Vanguard Veteran Squad [Legends]",
-      "canonicalName": "vanguard-veteran-squad-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Vanguard Assault"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Vanguard Veteran Squad"
-      ],
-      "pointsCost": 120
     },
     {
       "name": "Sternguard Veteran Squad",
@@ -459,76 +411,6 @@
       "pointsCost": 170
     },
     {
-      "name": "Relic Terminator Squad [Legends]",
-      "canonicalName": "relic-terminator-squad-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Volkite Charger",
-          "type": "ranged",
-          "range": "18\"",
-          "attacks": "2",
-          "skill": "3+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "2",
-          "keywords": [
-            "Devastating Wounds"
-          ]
-        },
-        {
-          "name": "➤ Plasma Blaster - Standard",
-          "type": "ranged",
-          "range": "18\"",
-          "attacks": "2",
-          "skill": "3+",
-          "strength": 7,
-          "ap": -2,
-          "damage": "1",
-          "keywords": [
-            "-"
-          ]
-        },
-        {
-          "name": "➤ Plasma Blaster - Supercharge",
-          "type": "ranged",
-          "range": "18\"",
-          "attacks": "2",
-          "skill": "3+",
-          "strength": 8,
-          "ap": -3,
-          "damage": "2",
-          "keywords": [
-            "Hazardous"
-          ]
-        },
-        {
-          "name": "Reaper Autocannon",
-          "type": "ranged",
-          "range": "36\"",
-          "attacks": "4",
-          "skill": "3+",
-          "strength": 7,
-          "ap": -1,
-          "damage": "1",
-          "keywords": [
-            "Devastating Wounds",
-            "Sustained Hits 1"
-          ]
-        }
-      ],
-      "abilities": [
-        "Fury of the First"
-      ],
-      "keywords": [
-        "Infantry",
-        "Imperium",
-        "Terminator",
-        "Relic Terminator Squad"
-      ],
-      "pointsCost": 200
-    },
-    {
       "name": "Centurion Assault Squad",
       "canonicalName": "centurion-assault-squad",
       "stats": null,
@@ -575,40 +457,6 @@
       "pointsCost": 175
     },
     {
-      "name": "Assault Squad [Legends]",
-      "canonicalName": "assault-squad-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Chainsword Doctrines"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Assault Squad"
-      ],
-      "pointsCost": 95
-    },
-    {
-      "name": "Assault Squad with Jump Packs [Legends]",
-      "canonicalName": "assault-squad-with-jump-packs-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Hammer of Wrath"
-      ],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Assault Squad with Jump Packs",
-        "Jump Pack",
-        "Fly"
-      ],
-      "pointsCost": 115
-    },
-    {
       "name": "Outrider Squad",
       "canonicalName": "outrider-squad",
       "stats": null,
@@ -623,55 +471,6 @@
         "Outrider Squad"
       ],
       "pointsCost": 80
-    },
-    {
-      "name": "Attack Bike Squad [Legends]",
-      "canonicalName": "attack-bike-squad-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Outrider Escort"
-      ],
-      "keywords": [
-        "Mounted",
-        "Grenades",
-        "Imperium",
-        "Attack Bike Squad"
-      ],
-      "pointsCost": null
-    },
-    {
-      "name": "Bike Squad [Legends]",
-      "canonicalName": "bike-squad-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Turbo Boost"
-      ],
-      "keywords": [
-        "Mounted",
-        "Grenades",
-        "Imperium",
-        "Bike Squad"
-      ],
-      "pointsCost": 80
-    },
-    {
-      "name": "Scout Bike Squad [Legends]",
-      "canonicalName": "scout-bike-squad-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Outflank"
-      ],
-      "keywords": [
-        "Mounted",
-        "Grenades",
-        "Imperium",
-        "Smoke",
-        "Scout Bike Squad"
-      ],
-      "pointsCost": 75
     },
     {
       "name": "Suppressor Squad",
@@ -945,38 +744,6 @@
       "pointsCost": 200
     },
     {
-      "name": "Thunderfire Cannon [Legends]",
-      "canonicalName": "thunderfire-cannon-legends",
-      "stats": null,
-      "weapons": [
-        {
-          "name": "Thunderfire Cannon",
-          "type": "ranged",
-          "range": "48\"",
-          "attacks": "D6+4",
-          "skill": "3+",
-          "strength": 5,
-          "ap": 0,
-          "damage": "1",
-          "keywords": [
-            "Blast",
-            "Indirect Fire"
-          ]
-        }
-      ],
-      "abilities": [
-        "Tremor Shells",
-        "Crewed Artillery"
-      ],
-      "keywords": [
-        "Vehicle",
-        "Imperium",
-        "Thunderfire Cannon",
-        "Artillery"
-      ],
-      "pointsCost": 90
-    },
-    {
       "name": "Firestrike Servo-Turrets",
       "canonicalName": "firestrike-servo-turrets",
       "stats": null,
@@ -991,53 +758,6 @@
         "Firestrike Servo-turrets"
       ],
       "pointsCost": null
-    },
-    {
-      "name": "Astartes Servitors [Legends]",
-      "canonicalName": "astartes-servitors-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Mindlock",
-        "Invulnerable Save",
-        "Servitor Retinue"
-      ],
-      "keywords": [
-        "Infantry",
-        "Imperium",
-        "Astartes Servitors"
-      ],
-      "pointsCost": 55
-    },
-    {
-      "name": "Command Squad [Legends]",
-      "canonicalName": "command-squad-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [
-        "Infantry",
-        "Grenades",
-        "Imperium",
-        "Command Squad"
-      ],
-      "pointsCost": 165
-    },
-    {
-      "name": "Company Veterans on Bikes [Legends]",
-      "canonicalName": "company-veterans-on-bikes-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [
-        "Vanguard Assault"
-      ],
-      "keywords": [
-        "Mounted",
-        "Imperium",
-        "Grenades",
-        "Company Veterans"
-      ],
-      "pointsCost": 110
     },
     {
       "name": "Assault Intercessors with Jump Packs",
@@ -1192,15 +912,6 @@
       "pointsCost": null
     },
     {
-      "name": "Captain on Bike [Legends]",
-      "canonicalName": "captain-on-bike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Captain with Jump Pack",
       "canonicalName": "captain-with-jump-pack",
       "stats": null,
@@ -1291,15 +1002,6 @@
       "pointsCost": null
     },
     {
-      "name": "Hunter [Legends]",
-      "canonicalName": "hunter-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Impulsor",
       "canonicalName": "impulsor",
       "stats": null,
@@ -1320,24 +1022,6 @@
     {
       "name": "Invader ATV",
       "canonicalName": "invader-atv",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Ironclad Dreadnought [Legends]",
-      "canonicalName": "ironclad-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Speeder Tornado [Legends]",
-      "canonicalName": "land-speeder-tornado-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -1381,44 +1065,8 @@
       "pointsCost": null
     },
     {
-      "name": "Land Speeder [Legends]",
-      "canonicalName": "land-speeder-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Speeder Typhoon [Legends]",
-      "canonicalName": "land-speeder-typhoon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Speeder Storm [Legends]",
-      "canonicalName": "land-speeder-storm-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Librarian in Phobos Armour",
       "canonicalName": "librarian-in-phobos-armour",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Librarian with Jump Pack [Legends]",
-      "canonicalName": "librarian-with-jump-pack-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],
@@ -1534,15 +1182,6 @@
       "pointsCost": null
     },
     {
-      "name": "Primaris Company Champion [Legends]",
-      "canonicalName": "primaris-company-champion-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Razorback",
       "canonicalName": "razorback",
       "stats": null,
@@ -1633,15 +1272,6 @@
       "pointsCost": null
     },
     {
-      "name": "Stalker [Legends]",
-      "canonicalName": "stalker-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Storm Speeder Hammerstrike",
       "canonicalName": "storm-speeder-hammerstrike",
       "stats": null,
@@ -1678,267 +1308,6 @@
       "pointsCost": null
     },
     {
-      "name": "Kratos [Legends]",
-      "canonicalName": "kratos-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Deredeo Dreadnought [Legends]",
-      "canonicalName": "deredeo-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Relic Contemptor Dreadnought [Legends]",
-      "canonicalName": "relic-contemptor-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Leviathan Dreadnought [Legends]",
-      "canonicalName": "leviathan-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Javelin Attack Speeder [Legends]",
-      "canonicalName": "javelin-attack-speeder-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Deathstorm Drop Pod [Legends]",
-      "canonicalName": "deathstorm-drop-pod-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Raider Proteus [Legends]",
-      "canonicalName": "land-raider-proteus-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Raider Achilles [Legends]",
-      "canonicalName": "land-raider-achilles-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sicaran Battle Tank [Legends]",
-      "canonicalName": "sicaran-battle-tank-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sicaran Punisher [Legends]",
-      "canonicalName": "sicaran-punisher-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sicaran Arcus [Legends]",
-      "canonicalName": "sicaran-arcus-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sicaran Omega [Legends]",
-      "canonicalName": "sicaran-omega-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sicaran Venator [Legends]",
-      "canonicalName": "sicaran-venator-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Rapier Carrier [Legends]",
-      "canonicalName": "rapier-carrier-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Whirlwind Scorpius [Legends]",
-      "canonicalName": "whirlwind-scorpius-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Vindicator Laser Destroyer [Legends]",
-      "canonicalName": "vindicator-laser-destroyer-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Dreadnought Drop Pod [Legends]",
-      "canonicalName": "dreadnought-drop-pod-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Terrax-pattern Termite [Legends]",
-      "canonicalName": "terrax-pattern-termite-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Xiphon Interceptor [Legends]",
-      "canonicalName": "xiphon-interceptor-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Storm Eagle Gunship [Legends]",
-      "canonicalName": "storm-eagle-gunship-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Fire Raptor Gunship [Legends]",
-      "canonicalName": "fire-raptor-gunship-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Typhon [Legends]",
-      "canonicalName": "typhon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Cerberus [Legends]",
-      "canonicalName": "cerberus-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Spartan [Legends]",
-      "canonicalName": "spartan-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Fellblade [Legends]",
-      "canonicalName": "fellblade-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Falchion [Legends]",
-      "canonicalName": "falchion-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Mastodon [Legends]",
-      "canonicalName": "mastodon-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Sokar-pattern Stormbird [Legends]",
-      "canonicalName": "sokar-pattern-stormbird-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Tarantula Sentry Battery [Legends]",
-      "canonicalName": "tarantula-sentry-battery-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
       "name": "Astraeus",
       "canonicalName": "astraeus",
       "stats": null,
@@ -1950,204 +1319,6 @@
     {
       "name": "Thunderhawk Gunship",
       "canonicalName": "thunderhawk-gunship",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Raider Helios [Legends]",
-      "canonicalName": "land-raider-helios-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Mortis Dreadnought [Legends]",
-      "canonicalName": "mortis-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Deimos Predator [Legends]",
-      "canonicalName": "deimos-predator-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Chaplain Venerable Dreadnought [Legends]",
-      "canonicalName": "chaplain-venerable-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Speeder Tempest [Legends]",
-      "canonicalName": "land-speeder-tempest-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Carab Culln the Risen [Legends]",
-      "canonicalName": "carab-culln-the-risen-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Caestus Assault Ram [Legends]",
-      "canonicalName": "caestus-assault-ram-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Raider Prometheus [Legends]",
-      "canonicalName": "land-raider-prometheus-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Imperial Space Marine [Legends]",
-      "canonicalName": "imperial-space-marine-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Terminus Ultra [Legends]",
-      "canonicalName": "terminus-ultra-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Relic Razorback [Legends]",
-      "canonicalName": "relic-razorback-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Company Champion on Bike [Legends]",
-      "canonicalName": "company-champion-on-bike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Ancient on Bike [Legends]",
-      "canonicalName": "ancient-on-bike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Apothecary on Bike [Legends]",
-      "canonicalName": "apothecary-on-bike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Techmarine on Bike [Legends]",
-      "canonicalName": "techmarine-on-bike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Librarian on Bike [Legends]",
-      "canonicalName": "librarian-on-bike-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Thunderhawk Transporter [Legends]",
-      "canonicalName": "thunderhawk-transporter-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Tarantula Air Defense Battery [Legends]",
-      "canonicalName": "tarantula-air-defense-battery-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Venerable Dreadnought [Legends]",
-      "canonicalName": "venerable-dreadnought-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Rhino Primaris [Legends]",
-      "canonicalName": "rhino-primaris-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Land Raider Excelsior [Legends]",
-      "canonicalName": "land-raider-excelsior-legends",
-      "stats": null,
-      "weapons": [],
-      "abilities": [],
-      "keywords": [],
-      "pointsCost": null
-    },
-    {
-      "name": "Ferren Areios [Legends]",
-      "canonicalName": "ferren-areios-legends",
       "stats": null,
       "weapons": [],
       "abilities": [],

@@ -1,5 +1,194 @@
 import { XMLParser } from 'fast-xml-parser';
-import type { UnitData, UnitStats, WeaponProfile, FactionData } from '../packages/extension/src/types/bsdata';
+import type { UnitData, UnitStats, WeaponProfile, FactionData, AllyGroup, DetachmentUnits } from '../packages/extension/src/types/bsdata';
+
+// Known ally flag IDs mapped to human-readable names
+// These were discovered by analyzing BSData catalogue modifier conditions
+const KNOWN_ALLY_FLAGS: Record<string, { name: string; conditionType: string; conditionValue: string }> = {
+  '0a59-1d64-257c-04fb': { name: 'Astra Militarum Allies', conditionType: 'equalTo', conditionValue: '0' },
+  'cb2f-554e-1162-75d5': { name: 'Tyranid Allies', conditionType: 'lessThan', conditionValue: '1' },
+};
+
+// Condition ID that gates some GSC characters (related to dataslate/index mode)
+const GSC_CHARACTER_GATE_ID = '1d6e-2579-8e7f-1ed4';
+
+// Manual mapping of detachments to ally flags
+// Since BSData doesn't store detachment names in faction catalogues, we need this config
+interface DetachmentAllyMapping {
+  detachmentName: string;
+  enabledAllyGroups: string[]; // flagIds that this detachment enables
+}
+
+const DETACHMENT_ALLY_MAPPINGS: Record<string, DetachmentAllyMapping[]> = {
+  'genestealer-cults': [
+    { detachmentName: 'Host of Ascension', enabledAllyGroups: [] },
+    { detachmentName: 'Xenocreed Congregation', enabledAllyGroups: [] },
+    { detachmentName: 'Biosanctic Broodsurge', enabledAllyGroups: ['cb2f-554e-1162-75d5'] }, // Tyranid allies
+    { detachmentName: 'Outlander Claw', enabledAllyGroups: [] },
+    { detachmentName: 'Brood Brother Auxilia', enabledAllyGroups: ['0a59-1d64-257c-04fb'] }, // AM allies
+    { detachmentName: 'Final Day', enabledAllyGroups: [] },
+  ],
+};
+
+interface ModifierCondition {
+  type: string;
+  value: string;
+  field: string;
+  childId: string;
+}
+
+/**
+ * Check if a unit name indicates it's a Legends unit
+ */
+function isLegendsUnit(name: string): boolean {
+  return name.includes('[Legends]') || name.toLowerCase().includes(' legends');
+}
+
+/**
+ * Extract modifier conditions from a BSData modifier element
+ */
+function extractModifierConditions(modifier: any): ModifierCondition[] {
+  const conditions: ModifierCondition[] = [];
+
+  // Direct conditions
+  const directConditions = ensureArray(modifier?.conditions?.condition);
+  for (const cond of directConditions) {
+    conditions.push({
+      type: cond['@_type'],
+      value: cond['@_value'],
+      field: cond['@_field'],
+      childId: cond['@_childId'],
+    });
+  }
+
+  // Conditions inside conditionGroups
+  const conditionGroups = ensureArray(modifier?.conditionGroups?.conditionGroup);
+  for (const group of conditionGroups) {
+    const groupConditions = ensureArray(group?.conditions?.condition);
+    for (const cond of groupConditions) {
+      conditions.push({
+        type: cond['@_type'],
+        value: cond['@_value'],
+        field: cond['@_field'],
+        childId: cond['@_childId'],
+      });
+    }
+  }
+
+  return conditions;
+}
+
+/**
+ * Parse ally conditions from entry links and categorize units
+ */
+function parseAllyConditions(
+  catalogue: any,
+  coreUnitNames: string[],
+  factionId: string
+): { coreUnits: string[]; allyGroups: AllyGroup[]; detachmentUnits: DetachmentUnits } {
+  const coreUnits = new Set<string>(coreUnitNames);
+  const allyGroupsMap = new Map<string, string[]>();
+
+  const entryLinks = ensureArray(catalogue.entryLinks?.entryLink);
+
+  for (const link of entryLinks) {
+    if (link['@_type'] !== 'selectionEntry') continue;
+    if (link['@_hidden'] === 'true') continue;
+
+    const name = link['@_name'];
+
+    // Skip non-unit entries
+    if (name.includes('Detachment') || name.includes('Order of Battle') ||
+        name.includes('Show/Hide') || name.includes('Configuration')) continue;
+
+    // Skip Legends units
+    if (isLegendsUnit(name)) continue;
+
+    // Check if this entry has modifiers with conditions
+    const modifiers = ensureArray(link.modifiers?.modifier);
+
+    // Find the "set hidden=true" modifier which contains the visibility conditions
+    const hiddenModifier = modifiers.find(
+      (m: any) => m['@_type'] === 'set' && m['@_field'] === 'hidden' && m['@_value'] === 'true'
+    );
+
+    if (!hiddenModifier) {
+      // No visibility conditions - add to core units if not already there
+      coreUnits.add(name);
+      continue;
+    }
+
+    // Extract conditions from the modifier
+    const conditions = extractModifierConditions(hiddenModifier);
+
+    // Find ally flag conditions (match by childId and expected condition pattern)
+    const allyFlagConditions = conditions.filter((c) => {
+      const flag = KNOWN_ALLY_FLAGS[c.childId];
+      if (!flag) return false;
+      return c.type === flag.conditionType && c.value === flag.conditionValue;
+    });
+
+    if (allyFlagConditions.length > 0) {
+      // This unit requires an ally flag to be enabled
+      for (const flagCond of allyFlagConditions) {
+        const flagId = flagCond.childId;
+        if (!allyGroupsMap.has(flagId)) {
+          allyGroupsMap.set(flagId, []);
+        }
+        const group = allyGroupsMap.get(flagId)!;
+        if (!group.includes(name)) {
+          group.push(name);
+        }
+      }
+    } else {
+      // Check for GSC character gate condition (these are core units with special visibility rules)
+      const hasCharacterGate = conditions.some(
+        (c) => c.type === 'atLeast' && c.childId === GSC_CHARACTER_GATE_ID
+      );
+
+      if (hasCharacterGate) {
+        coreUnits.add(name);
+      }
+      // Other unknown conditions - skip for now
+    }
+  }
+
+  // Convert ally groups map to array
+  const allyGroups: AllyGroup[] = [];
+  for (const [flagId, units] of allyGroupsMap) {
+    const flagInfo = KNOWN_ALLY_FLAGS[flagId];
+    allyGroups.push({
+      name: flagInfo?.name || `Unknown (${flagId})`,
+      flagId,
+      units: units.filter(u => !isLegendsUnit(u)).sort(),
+    });
+  }
+
+  // Generate detachment units mapping
+  const detachmentMappings = DETACHMENT_ALLY_MAPPINGS[factionId] || [];
+  const detachmentUnits: DetachmentUnits = {};
+
+  const coreUnitsArray = Array.from(coreUnits).filter(u => !isLegendsUnit(u)).sort();
+
+  for (const detachment of detachmentMappings) {
+    const units = [...coreUnitsArray];
+
+    // Add units from enabled ally groups
+    for (const flagId of detachment.enabledAllyGroups) {
+      const group = allyGroups.find((g) => g.flagId === flagId);
+      if (group) {
+        units.push(...group.units);
+      }
+    }
+
+    detachmentUnits[detachment.detachmentName] = units.sort();
+  }
+
+  return {
+    coreUnits: coreUnitsArray,
+    allyGroups,
+    detachmentUnits,
+  };
+}
 
 // Profile type IDs from BSData schema
 const PROFILE_TYPE_IDS = {
@@ -347,6 +536,18 @@ export function parseCatalogue(xmlContent: string, factionId: string, originalFi
     }
   }
 
+  // Get core unit names (from parsed entries, excluding Legends)
+  const coreUnitNames = units
+    .filter((u) => !isLegendsUnit(u.name))
+    .map((u) => u.name);
+
+  // Parse ally conditions from entry links
+  const { coreUnits, allyGroups, detachmentUnits } = parseAllyConditions(
+    catalogue,
+    coreUnitNames,
+    factionId
+  );
+
   // Extract unit names from entry links (for catalogues that reference other catalogues)
   // These won't have full stats, but we need the names for fuzzy matching
   const entryLinks = ensureArray(catalogue.entryLinks?.entryLink);
@@ -359,6 +560,9 @@ export function parseCatalogue(xmlContent: string, factionId: string, originalFi
     // Skip non-unit entries (detachments, options, etc.)
     if (name.includes('Detachment') || name.includes('Order of Battle') ||
         name.includes('Show/Hide') || name.includes('Configuration')) continue;
+
+    // Skip Legends units
+    if (isLegendsUnit(name)) continue;
 
     // Skip if we already have this unit from parsed entries
     if (units.some((u) => u.name === name)) continue;
@@ -377,10 +581,21 @@ export function parseCatalogue(xmlContent: string, factionId: string, originalFi
     });
   }
 
+  // Filter out Legends units from the final units array
+  const filteredUnits = units.filter((u) => !isLegendsUnit(u.name));
+
+  // Only include ally data if there are ally groups or detachment mappings
+  const hasAllyData = allyGroups.length > 0 || Object.keys(detachmentUnits).length > 0;
+
   return {
     id: factionId,
     name: factionName,
-    units,
+    units: filteredUnits,
+    ...(hasAllyData && {
+      coreUnits,
+      allyGroups,
+      detachmentUnits,
+    }),
   };
 }
 
