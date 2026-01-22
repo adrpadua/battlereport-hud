@@ -871,7 +871,10 @@ export async function extractGame(options: ExtractGameOptions): Promise<GameExtr
 
   let aiResponse: AIAssignmentResponse;
   try {
-    const openai = new OpenAI({ apiKey: options.apiKey });
+    const openai = new OpenAI({
+      apiKey: options.apiKey,
+      timeout: 180000, // 3 minute timeout for reasoning models
+    });
     aiResponse = await callAssignmentAI(openai, options, preprocessed);
 
     const player1 = aiResponse.players[0]?.name || 'Unknown';

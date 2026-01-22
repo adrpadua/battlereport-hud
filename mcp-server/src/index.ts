@@ -13,8 +13,9 @@ import { createTools, handleToolCall } from './tools/index.js';
 import { createResources, handleResourceRead } from './resources/index.js';
 import { startHttpServer } from './http/server.js';
 
-// Check if running in HTTP-only mode
+// Check running modes
 const httpOnlyMode = process.argv.includes('--http-only');
+const stdioOnlyMode = process.argv.includes('--stdio-only');
 
 const server = new Server(
   {
@@ -65,8 +66,10 @@ async function main() {
     process.exit(0);
   });
 
-  // Start HTTP API server
-  await startHttpServer(db);
+  // Start HTTP API server (unless in stdio-only mode)
+  if (!stdioOnlyMode) {
+    await startHttpServer(db);
+  }
 
   // Start stdio MCP server unless in HTTP-only mode
   if (!httpOnlyMode) {

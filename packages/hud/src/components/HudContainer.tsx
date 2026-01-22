@@ -26,6 +26,7 @@ export function HudContainer({
     reset,
     phase,
     statusMessage,
+    progressLogs,
   } = useBattleStore();
 
   const handleRefresh = (): void => {
@@ -96,7 +97,7 @@ export function HudContainer({
 
         {/* Loading states */}
         {(phase === 'extracting' || phase === 'ai-extracting') && (
-          <LoadingState message={statusMessage} />
+          <LoadingState message={statusMessage} progressLogs={progressLogs} />
         )}
 
         {/* Faction selection */}

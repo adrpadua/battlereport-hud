@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { BattleStore, BattleReport, Unit, VideoData, ExtractionPhase } from '../types';
+import type { BattleStore, BattleReport, Unit, VideoData, ExtractionPhase, ProgressLogEntry } from '../types';
 
 const initialState = {
   report: null,
@@ -13,6 +13,7 @@ const initialState = {
   detectedFactions: [],
   selectedFactions: null,
   allFactions: [],
+  progressLogs: [] as ProgressLogEntry[],
 };
 
 export const useBattleStore = create<BattleStore>((set) => ({
@@ -107,5 +108,26 @@ export const useBattleStore = create<BattleStore>((set) => ({
       loading: true,
       error: null,
       report: null,
+      progressLogs: [],
     }),
+
+  addProgressLog: (message: string, status: ProgressLogEntry['status'] = 'in-progress') => {
+    const id = `log-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    set((state) => ({
+      progressLogs: [
+        ...state.progressLogs,
+        { id, message, timestamp: Date.now(), status },
+      ],
+    }));
+    return id;
+  },
+
+  updateProgressLog: (id: string, updates: Partial<ProgressLogEntry>) =>
+    set((state) => ({
+      progressLogs: state.progressLogs.map((log) =>
+        log.id === id ? { ...log, ...updates } : log
+      ),
+    })),
+
+  clearProgressLogs: () => set({ progressLogs: [] }),
 }));

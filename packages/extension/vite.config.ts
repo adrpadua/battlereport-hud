@@ -21,6 +21,7 @@ export default defineConfig({
       '@mcp/types': resolve(__dirname, '../../mcp-server/src/api-types.ts'),
     },
   },
+  base: '',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
