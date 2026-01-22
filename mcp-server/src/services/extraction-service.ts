@@ -228,29 +228,6 @@ export const ALL_FACTIONS = [
   'World Eaters',
 ];
 
-// Keywords indicating army list chapters
-const ARMY_LIST_CHAPTER_KEYWORDS = ['army', 'list', 'lists', 'forces', 'armies', 'roster'];
-
-// Keywords indicating army list discussion
-const ARMY_LIST_KEYWORDS = [
-  'army list',
-  'my list',
-  'the list',
-  'list for',
-  'the lists',
-  'running with',
-  "i'm playing",
-  'playing with',
-  "i'm running",
-  'points of',
-  '2000 points',
-  '2,000 points',
-  '1000 points',
-  '1,000 points',
-  'strike force',
-  'incursion',
-];
-
 /**
  * Detect faction names from video metadata.
  */
@@ -270,92 +247,6 @@ export function detectFactionNamesFromVideo(videoData: VideoData): string[] {
 }
 
 /**
- * Find chapters that likely contain army list discussion.
- */
-function findArmyListChapters(chapters: Chapter[]): Chapter[] {
-  return chapters.filter((ch) =>
-    ARMY_LIST_CHAPTER_KEYWORDS.some((kw) => ch.title.toLowerCase().includes(kw))
-  );
-}
-
-/**
- * Get the end time for a chapter.
- */
-function getChapterEndTime(chapter: Chapter, chapters: Chapter[]): number {
-  const idx = chapters.indexOf(chapter);
-  const nextChapter = chapters[idx + 1];
-  return nextChapter?.startTime ?? chapter.startTime + 300; // default 5 min
-}
-
-/**
- * Find transcript segments that discuss army lists based on keywords.
- */
-function findArmyListByKeywords(transcript: TranscriptSegment[]): TranscriptSegment[] {
-  const result: TranscriptSegment[] = [];
-  let inArmySection = false;
-  let sectionEndTime = 0;
-
-  for (const seg of transcript) {
-    const lower = seg.text.toLowerCase();
-    const startsSection = ARMY_LIST_KEYWORDS.some((kw) => lower.includes(kw));
-
-    if (startsSection && !inArmySection) {
-      inArmySection = true;
-      sectionEndTime = seg.startTime + 180; // 3 min window
-    }
-
-    if (inArmySection) {
-      result.push(seg);
-      if (
-        seg.startTime > sectionEndTime ||
-        lower.includes('deploy') ||
-        lower.includes('first turn')
-      ) {
-        inArmySection = false;
-      }
-    }
-  }
-
-  return result;
-}
-
-/**
- * Sample gameplay segments at regular intervals.
- */
-function sampleGameplaySegments(
-  transcript: TranscriptSegment[],
-  afterTime: number
-): TranscriptSegment[] {
-  const samples: TranscriptSegment[] = [];
-  const sampleTimes = [300, 600, 900, 1200, 1500, 1800, 2400, 3000, 3600];
-
-  for (const time of sampleTimes) {
-    if (time <= afterTime) continue;
-    const window = transcript.filter(
-      (seg) => seg.startTime >= time && seg.startTime < time + 120
-    );
-    samples.push(...window);
-  }
-
-  return samples;
-}
-
-/**
- * Remove duplicate segments and sort by time.
- */
-function dedupeSegments<T extends { startTime: number }>(segments: T[]): T[] {
-  const seen = new Set<number>();
-  return segments
-    .filter((seg) => {
-      const key = Math.floor(seg.startTime);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .sort((a, b) => a.startTime - b.startTime);
-}
-
-/**
  * Format transcript segments with timestamps.
  */
 function formatTranscriptSegments(segments: TranscriptSegment[]): string {
@@ -363,48 +254,18 @@ function formatTranscriptSegments(segments: TranscriptSegment[]): string {
 }
 
 /**
- * Build transcript section using chapter-aware and keyword-based detection.
+ * Build transcript section with full transcript.
+ * GPT-5 mini has 400k token context window, so we can include everything.
  */
 function buildTranscriptSection(videoData: VideoData): string {
-  const { transcript, chapters } = videoData;
+  const { transcript } = videoData;
 
   if (transcript.length === 0) {
     return '';
   }
 
-  // Strategy 1: Use chapters if available
-  if (chapters.length > 0) {
-    const armyChapters = findArmyListChapters(chapters);
-
-    if (armyChapters.length > 0) {
-      const armyListSegments = armyChapters.flatMap((ch) => {
-        const endTime = getChapterEndTime(ch, chapters);
-        return transcript.filter(
-          (seg) => seg.startTime >= ch.startTime && seg.startTime < endTime
-        );
-      });
-
-      const introSegments = transcript.filter((seg) => seg.startTime < 300);
-      const sampledSegments = sampleGameplaySegments(transcript, 300);
-
-      const allSegments = dedupeSegments([
-        ...introSegments,
-        ...armyListSegments,
-        ...sampledSegments,
-      ]);
-
-      return formatTranscriptSegments(allSegments);
-    }
-  }
-
-  // Strategy 2: Fallback
-  const introSegments = transcript.filter((seg) => seg.startTime < 300);
-  const armyListByKeyword = findArmyListByKeywords(transcript);
-  const sampledSegments = sampleGameplaySegments(transcript, 300);
-
-  return formatTranscriptSegments(
-    dedupeSegments([...introSegments, ...armyListByKeyword, ...sampledSegments])
-  );
+  // Include full transcript - GPT-5 mini can handle it
+  return formatTranscriptSegments(transcript);
 }
 
 // Static system prompt for better prompt caching (dynamic content moved to user prompt)
@@ -470,13 +331,8 @@ ${videoData.description}
 
   const transcriptText = buildTranscriptSection(videoData);
   if (transcriptText) {
-    // Limit to ~12000 chars to stay within token limits
-    const limitedTranscript = transcriptText.slice(0, 12000);
-    prompt += `\n\nTRANSCRIPT:\n${limitedTranscript}`;
-
-    if (transcriptText.length > 12000) {
-      prompt += `\n\n[Transcript truncated - extract all units you can identify from the text above]`;
-    }
+    // GPT-5 mini has 400k token context - include full transcript
+    prompt += `\n\nTRANSCRIPT:\n${transcriptText}`;
   }
 
   return prompt;
@@ -542,9 +398,21 @@ export async function extractBattleReportWithArtifacts(
   let stage2 = createStageArtifact(2, 'ai-extraction');
   emitArtifact(stage2);
 
-  const openai = new OpenAI({ apiKey });
+  const openai = new OpenAI({
+    apiKey,
+    timeout: 180000, // 3 minute timeout for reasoning models
+  });
   console.log('Calling OpenAI with model: gpt-5-mini');
   console.log('User prompt length:', userPrompt.length, 'chars');
+  console.log('Waiting for OpenAI response (may take 1-3 minutes for reasoning models)...');
+
+  // Save prompt to file for debugging
+  const fs = await import('fs');
+  const path = await import('path');
+  const promptPath = path.join(process.cwd(), '..', 'test-data', `prompt-${videoData.videoId}.txt`);
+  const fullPrompt = `=== SYSTEM PROMPT ===\n${SYSTEM_PROMPT}\n\n=== USER PROMPT ===\n${userPrompt}`;
+  fs.writeFileSync(promptPath, fullPrompt);
+  console.log('Saved prompt to:', promptPath);
 
   let response;
   try {
@@ -558,6 +426,7 @@ export async function extractBattleReportWithArtifacts(
       response_format: { type: 'json_object' },
     });
   } catch (error) {
+    console.error('OpenAI API error:', error);
     stage2 = failStageArtifact(stage2, error instanceof Error ? error.message : 'AI call failed');
     emitArtifact(stage2);
     throw error;

@@ -19,6 +19,7 @@ import {
   ALL_FACTIONS,
   type VideoData,
 } from '../../services/extraction-service.js';
+import { fetchNamesForCategory } from '../../tools/validation-tools.js';
 
 interface FetchVideoBody {
   url: string;
@@ -222,12 +223,16 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
         }
 
         // Get unit names for selected factions from the database
-        // For now, we'll use empty maps - this can be enhanced to query the DB
         const factionUnitNames = new Map<string, string[]>();
         for (const faction of typedFactions) {
-          // TODO: Query database for unit names
-          // For now, just add empty arrays
-          factionUnitNames.set(faction, []);
+          try {
+            const unitNames = await fetchNamesForCategory(db, 'units', faction);
+            factionUnitNames.set(faction, unitNames);
+            console.log(`Loaded ${unitNames.length} unit names for faction: ${faction}`);
+          } catch (error) {
+            console.error(`Failed to load unit names for faction ${faction}:`, error);
+            factionUnitNames.set(faction, []);
+          }
         }
 
         // Extract battle report using OpenAI with artifact tracking
