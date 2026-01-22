@@ -513,6 +513,203 @@ dbCommand
     await clearCache(videoId);
   });
 
+dbCommand
+  .command('cleanup-duplicates')
+  .description('Remove duplicate weapons/abilities from join tables, keeping only the latest')
+  .option('--dry-run', 'Show what would be deleted without actually deleting')
+  .action(async (options: { dryRun?: boolean }) => {
+    await cleanupDuplicates(options.dryRun ?? false);
+  });
+
+async function cleanupDuplicates(dryRun: boolean): Promise<void> {
+  console.log(`Cleaning up duplicate weapons/abilities${dryRun ? ' (DRY RUN)' : ''}...\n`);
+
+  const pool = getPool();
+  const db = drizzle(pool);
+  const BATCH_SIZE = 1000;
+
+  try {
+    // Clean up duplicate weapon associations using a single DELETE with subquery
+    console.log('=== Cleaning up unit_weapons ===');
+    if (dryRun) {
+      const duplicateWeapons = await db.execute(sql`
+        WITH ranked_weapons AS (
+          SELECT
+            uw.id,
+            ROW_NUMBER() OVER (PARTITION BY uw.unit_id, w.name ORDER BY w.id DESC) as rn
+          FROM unit_weapons uw
+          JOIN weapons w ON uw.weapon_id = w.id
+        )
+        SELECT COUNT(*) as count FROM ranked_weapons WHERE rn > 1
+      `);
+      console.log(`  Found ${(duplicateWeapons.rows[0] as { count: string }).count} duplicate weapon associations`);
+    } else {
+      const result = await db.execute(sql`
+        DELETE FROM unit_weapons
+        WHERE id IN (
+          SELECT id FROM (
+            SELECT
+              uw.id,
+              ROW_NUMBER() OVER (PARTITION BY uw.unit_id, w.name ORDER BY w.id DESC) as rn
+            FROM unit_weapons uw
+            JOIN weapons w ON uw.weapon_id = w.id
+          ) ranked
+          WHERE rn > 1
+        )
+      `);
+      console.log(`  Deleted ${(result as { rowCount?: number }).rowCount ?? 0} duplicate weapon associations`);
+    }
+
+    // Clean up duplicate ability associations
+    console.log('\n=== Cleaning up unit_abilities ===');
+    if (dryRun) {
+      const duplicateAbilities = await db.execute(sql`
+        WITH ranked_abilities AS (
+          SELECT
+            ua.id,
+            ROW_NUMBER() OVER (PARTITION BY ua.unit_id, a.name ORDER BY a.id DESC) as rn
+          FROM unit_abilities ua
+          JOIN abilities a ON ua.ability_id = a.id
+        )
+        SELECT COUNT(*) as count FROM ranked_abilities WHERE rn > 1
+      `);
+      console.log(`  Found ${(duplicateAbilities.rows[0] as { count: string }).count} duplicate ability associations`);
+    } else {
+      const result = await db.execute(sql`
+        DELETE FROM unit_abilities
+        WHERE id IN (
+          SELECT id FROM (
+            SELECT
+              ua.id,
+              ROW_NUMBER() OVER (PARTITION BY ua.unit_id, a.name ORDER BY a.id DESC) as rn
+            FROM unit_abilities ua
+            JOIN abilities a ON ua.ability_id = a.id
+          ) ranked
+          WHERE rn > 1
+        )
+      `);
+      console.log(`  Deleted ${(result as { rowCount?: number }).rowCount ?? 0} duplicate ability associations`);
+    }
+
+    // Clean up duplicate keyword associations
+    console.log('\n=== Cleaning up unit_keywords ===');
+    if (dryRun) {
+      const duplicateKeywords = await db.execute(sql`
+        WITH ranked_keywords AS (
+          SELECT
+            uk.id,
+            ROW_NUMBER() OVER (PARTITION BY uk.unit_id, k.name ORDER BY k.id DESC) as rn
+          FROM unit_keywords uk
+          JOIN keywords k ON uk.keyword_id = k.id
+        )
+        SELECT COUNT(*) as count FROM ranked_keywords WHERE rn > 1
+      `);
+      console.log(`  Found ${(duplicateKeywords.rows[0] as { count: string }).count} duplicate keyword associations`);
+    } else {
+      const result = await db.execute(sql`
+        DELETE FROM unit_keywords
+        WHERE id IN (
+          SELECT id FROM (
+            SELECT
+              uk.id,
+              ROW_NUMBER() OVER (PARTITION BY uk.unit_id, k.name ORDER BY k.id DESC) as rn
+            FROM unit_keywords uk
+            JOIN keywords k ON uk.keyword_id = k.id
+          ) ranked
+          WHERE rn > 1
+        )
+      `);
+      console.log(`  Deleted ${(result as { rowCount?: number }).rowCount ?? 0} duplicate keyword associations`);
+    }
+
+    // Clean up weapons with corrupted names (concatenated ability keywords)
+    // These are weapons where the name contains ability keywords without spaces
+    console.log('\n=== Cleaning up corrupted weapon names ===');
+    const corruptedPatterns = [
+      'blastdevastatingwounds',
+      'devastatingwoundsheavy',
+      'heavyindirectfire',
+      'indirectfire',
+      'rapidfire',
+      'lethalhits',
+      'sustainedhits',
+      'twinlinked',
+    ];
+    const patternConditionWithAlias = corruptedPatterns.map(p => `LOWER(w.name) LIKE '%${p}%'`).join(' OR ');
+    const patternConditionNoAlias = corruptedPatterns.map(p => `LOWER(name) LIKE '%${p}%'`).join(' OR ');
+
+    if (dryRun) {
+      const corruptedWeapons = await db.execute(sql.raw(`
+        SELECT COUNT(*) as count FROM weapons w
+        WHERE ${patternConditionWithAlias}
+      `));
+      console.log(`  Found ${(corruptedWeapons.rows[0] as { count: string }).count} weapons with corrupted names`);
+    } else {
+      // First remove the unit_weapons associations
+      const assocResult = await db.execute(sql.raw(`
+        DELETE FROM unit_weapons
+        WHERE weapon_id IN (
+          SELECT w.id FROM weapons w WHERE ${patternConditionWithAlias}
+        )
+      `));
+      console.log(`  Removed ${(assocResult as { rowCount?: number }).rowCount ?? 0} corrupted weapon associations`);
+
+      // Then delete the weapons themselves
+      const weaponResult = await db.execute(sql.raw(`
+        DELETE FROM weapons WHERE ${patternConditionNoAlias}
+      `));
+      console.log(`  Deleted ${(weaponResult as { rowCount?: number }).rowCount ?? 0} corrupted weapons`);
+    }
+
+    // Clean up orphaned weapons (not associated with any unit)
+    console.log('\n=== Cleaning up orphaned weapons ===');
+    if (dryRun) {
+      const orphanedWeapons = await db.execute(sql`
+        SELECT COUNT(*) as count FROM weapons w
+        LEFT JOIN unit_weapons uw ON w.id = uw.weapon_id
+        WHERE uw.id IS NULL
+      `);
+      console.log(`  Found ${(orphanedWeapons.rows[0] as { count: string }).count} orphaned weapons`);
+    } else {
+      const result = await db.execute(sql`
+        DELETE FROM weapons WHERE id IN (
+          SELECT w.id FROM weapons w
+          LEFT JOIN unit_weapons uw ON w.id = uw.weapon_id
+          WHERE uw.id IS NULL
+        )
+      `);
+      console.log(`  Deleted ${(result as { rowCount?: number }).rowCount ?? 0} orphaned weapons`);
+    }
+
+    // Clean up orphaned abilities (not associated with any unit)
+    console.log('\n=== Cleaning up orphaned abilities ===');
+    if (dryRun) {
+      const orphanedAbilities = await db.execute(sql`
+        SELECT COUNT(*) as count FROM abilities a
+        LEFT JOIN unit_abilities ua ON a.id = ua.ability_id
+        WHERE ua.id IS NULL
+      `);
+      console.log(`  Found ${(orphanedAbilities.rows[0] as { count: string }).count} orphaned abilities`);
+    } else {
+      const result = await db.execute(sql`
+        DELETE FROM abilities WHERE id IN (
+          SELECT a.id FROM abilities a
+          LEFT JOIN unit_abilities ua ON a.id = ua.ability_id
+          WHERE ua.id IS NULL
+        )
+      `);
+      console.log(`  Deleted ${(result as { rowCount?: number }).rowCount ?? 0} orphaned abilities`);
+    }
+
+    console.log('\nCleanup completed!');
+  } catch (error) {
+    console.error('Cleanup failed:', error);
+    throw error;
+  } finally {
+    await closeConnection();
+  }
+}
+
 async function clearCache(videoId?: string): Promise<void> {
   const pool = getPool();
   const db = drizzle(pool);

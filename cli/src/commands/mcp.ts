@@ -75,8 +75,11 @@ dbCmd
 dbCmd
   .command('cleanup-duplicates')
   .description('Clean up duplicate entries in the database')
-  .action(async () => {
-    await runMcpScript('cleanup-duplicates.ts');
+  .option('--dry-run', 'Show what would be deleted without actually deleting')
+  .action(async (options: { dryRun?: boolean }) => {
+    const args = ['cleanup-duplicates'];
+    if (options.dryRun) args.push('--dry-run');
+    await runMcpCli('db', args);
   });
 
 dbCmd
