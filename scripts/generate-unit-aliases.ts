@@ -176,7 +176,7 @@ async function generateAliasesForBatch(
     try {
       const response = await openai.chat.completions.create({
         model: 'gpt-5-mini',
-        max_completion_tokens: 4000, // Increased for more comprehensive aliases
+        max_completion_tokens: 16000, // Includes reasoning tokens + output
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
@@ -325,7 +325,7 @@ function createBatchRequests(factions: FactionData[]): BatchRequest[] {
         url: '/v1/chat/completions',
         body: {
           model: 'gpt-5-mini',
-          max_completion_tokens: 4000,
+          max_completion_tokens: 16000,
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
