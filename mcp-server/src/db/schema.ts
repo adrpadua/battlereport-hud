@@ -476,6 +476,34 @@ export const extractionCache = pgTable('extraction_cache', {
 }));
 
 // ============================================================================
+// TERRAIN LAYOUTS
+// ============================================================================
+
+export const terrainLayouts = pgTable('terrain_layouts', {
+  id: serial('id').primaryKey(),
+  slug: varchar('slug', { length: 100 }).notNull().unique(),
+  name: varchar('name', { length: 100 }).notNull(), // "Layout 1", "Layout 2", etc.
+
+  // Season/ruleset
+  season: varchar('season', { length: 50 }).notNull(), // 'chapter_approved_2025_26'
+
+  // Image storage as base64-encoded PNG
+  imageBase64: text('image_base64').notNull(),
+
+  // Battlefield dimensions (in inches)
+  battlefieldWidth: integer('battlefield_width').notNull().default(60),
+  battlefieldHeight: integer('battlefield_height').notNull().default(44),
+
+  sourceUrl: text('source_url'),
+  dataSource: dataSourceEnum('data_source').notNull().default('wahapedia'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+}, (table) => ({
+  seasonIdx: index('terrain_layouts_season_idx').on(table.season),
+  slugIdx: uniqueIndex('terrain_layouts_slug_idx').on(table.slug),
+}));
+
+// ============================================================================
 // SCRAPE METADATA (for tracking what's been scraped)
 // ============================================================================
 
@@ -547,3 +575,6 @@ export type NewAiResponseCache = typeof aiResponseCache.$inferInsert;
 
 export type ExtractionCache = typeof extractionCache.$inferSelect;
 export type NewExtractionCache = typeof extractionCache.$inferInsert;
+
+export type TerrainLayout = typeof terrainLayouts.$inferSelect;
+export type NewTerrainLayout = typeof terrainLayouts.$inferInsert;
