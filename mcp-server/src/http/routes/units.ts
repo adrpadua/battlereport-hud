@@ -110,9 +110,9 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
         .innerJoin(schema.weapons, eq(schema.unitWeapons.weaponId, schema.weapons.id))
         .where(eq(schema.unitWeapons.unitId, unit.id));
 
-      // Deduplicate weapons by id
+      // Deduplicate weapons by name (database may have duplicate weapon records with same name)
       const weapons = Array.from(
-        new Map(weaponsRaw.map((w) => [w.id, w])).values()
+        new Map(weaponsRaw.map((w) => [w.name, w])).values()
       );
 
       // Get abilities (deduplicated by ability id)
@@ -127,9 +127,9 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
         .innerJoin(schema.abilities, eq(schema.unitAbilities.abilityId, schema.abilities.id))
         .where(eq(schema.unitAbilities.unitId, unit.id));
 
-      // Deduplicate abilities by id
+      // Deduplicate abilities by name (database may have duplicate ability records with same name)
       const abilities = Array.from(
-        new Map(abilitiesRaw.map((a) => [a.id, a])).values()
+        new Map(abilitiesRaw.map((a) => [a.name, a])).values()
       );
 
       // Get keywords (deduplicated by keyword id)
@@ -143,9 +143,9 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
         .innerJoin(schema.keywords, eq(schema.unitKeywords.keywordId, schema.keywords.id))
         .where(eq(schema.unitKeywords.unitId, unit.id));
 
-      // Deduplicate keywords by id
+      // Deduplicate keywords by name (database may have duplicate keyword records with same name)
       const keywords = Array.from(
-        new Map(keywordsRaw.map((k) => [k.id, k])).values()
+        new Map(keywordsRaw.map((k) => [k.name, k])).values()
       );
 
       return {

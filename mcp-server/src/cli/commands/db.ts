@@ -497,6 +497,121 @@ dbCommand
     await fixFactionNames();
   });
 
+dbCommand
+  .command('debug-unit')
+  .description('Debug unit data including duplicate weapons/abilities')
+  .argument('<name>', 'Unit name to search for')
+  .action(async (name: string) => {
+    await debugUnit(name);
+  });
+
+async function debugUnit(unitName: string): Promise<void> {
+  console.log(`Debugging unit: ${unitName}\n`);
+
+  const pool = getPool();
+  const db = drizzle(pool);
+
+  try {
+    // Find the unit
+    const units = await db.execute(sql`
+      SELECT u.id, u.name, f.name as faction
+      FROM units u
+      JOIN factions f ON u.faction_id = f.id
+      WHERE u.name ILIKE ${'%' + unitName + '%'}
+      LIMIT 5
+    `);
+
+    if (units.rows.length === 0) {
+      console.log('No units found matching that name');
+      return;
+    }
+
+    console.log('=== Matching Units ===');
+    for (const u of units.rows as { id: number; name: string; faction: string }[]) {
+      console.log(`  [${u.id}] ${u.name} (${u.faction})`);
+    }
+
+    const unitId = (units.rows[0] as { id: number }).id;
+    console.log(`\nUsing unit ID: ${unitId}\n`);
+
+    // Check weapon join table entries
+    console.log('=== Weapon Join Table Entries (unit_weapons) ===');
+    const weaponJoins = await db.execute(sql`
+      SELECT uw.id as join_id, uw.weapon_id, w.name, w.weapon_type
+      FROM unit_weapons uw
+      JOIN weapons w ON uw.weapon_id = w.id
+      WHERE uw.unit_id = ${unitId}
+      ORDER BY w.name
+    `);
+    for (const w of weaponJoins.rows as { join_id: number; weapon_id: number; name: string; weapon_type: string }[]) {
+      console.log(`  join_id=${w.join_id} weapon_id=${w.weapon_id} "${w.name}" (${w.weapon_type})`);
+    }
+    console.log(`Total: ${weaponJoins.rows.length} join entries`);
+
+    // Check for duplicate weapon names
+    console.log('\n=== Weapons Grouped by Name ===');
+    const weaponsByName = await db.execute(sql`
+      SELECT w.name, COUNT(*) as count, array_agg(DISTINCT w.id) as weapon_ids
+      FROM unit_weapons uw
+      JOIN weapons w ON uw.weapon_id = w.id
+      WHERE uw.unit_id = ${unitId}
+      GROUP BY w.name
+      ORDER BY count DESC
+    `);
+    for (const w of weaponsByName.rows as { name: string; count: string; weapon_ids: number[] }[]) {
+      console.log(`  "${w.name}": ${w.count} entries, weapon IDs: [${w.weapon_ids.join(', ')}]`);
+    }
+
+    // Check ability join table entries
+    console.log('\n=== Ability Join Table Entries (unit_abilities) ===');
+    const abilityJoins = await db.execute(sql`
+      SELECT ua.id as join_id, ua.ability_id, a.name, a.ability_type
+      FROM unit_abilities ua
+      JOIN abilities a ON ua.ability_id = a.id
+      WHERE ua.unit_id = ${unitId}
+      ORDER BY a.name
+    `);
+    for (const a of abilityJoins.rows as { join_id: number; ability_id: number; name: string; ability_type: string }[]) {
+      console.log(`  join_id=${a.join_id} ability_id=${a.ability_id} "${a.name}" (${a.ability_type})`);
+    }
+    console.log(`Total: ${abilityJoins.rows.length} join entries`);
+
+    // Check for duplicate ability names
+    console.log('\n=== Abilities Grouped by Name ===');
+    const abilitiesByName = await db.execute(sql`
+      SELECT a.name, COUNT(*) as count, array_agg(DISTINCT a.id) as ability_ids
+      FROM unit_abilities ua
+      JOIN abilities a ON ua.ability_id = a.id
+      WHERE ua.unit_id = ${unitId}
+      GROUP BY a.name
+      ORDER BY count DESC
+    `);
+    for (const a of abilitiesByName.rows as { name: string; count: string; ability_ids: number[] }[]) {
+      console.log(`  "${a.name}": ${a.count} entries, ability IDs: [${a.ability_ids.join(', ')}]`);
+    }
+
+    // Check keywords
+    console.log('\n=== Keyword Join Table Entries (unit_keywords) ===');
+    const keywordJoins = await db.execute(sql`
+      SELECT uk.id as join_id, uk.keyword_id, k.name
+      FROM unit_keywords uk
+      JOIN keywords k ON uk.keyword_id = k.id
+      WHERE uk.unit_id = ${unitId}
+      ORDER BY k.name
+    `);
+    for (const k of keywordJoins.rows as { join_id: number; keyword_id: number; name: string }[]) {
+      console.log(`  join_id=${k.join_id} keyword_id=${k.keyword_id} "${k.name}"`);
+    }
+    console.log(`Total: ${keywordJoins.rows.length} join entries`);
+
+  } catch (error) {
+    console.error('Debug failed:', error);
+    throw error;
+  } finally {
+    await closeConnection();
+  }
+}
+
 async function fixFactionNames(): Promise<void> {
   console.log('Fixing corrupted faction names...');
 

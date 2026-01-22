@@ -93,6 +93,13 @@ dbCmd
     await runMcpScript('faction-counts.ts');
   });
 
+dbCmd
+  .command('debug-unit <name>')
+  .description('Debug unit data including duplicate weapons/abilities')
+  .action(async (name: string) => {
+    await runMcpCli('db', ['debug-unit', name]);
+  });
+
 // Ingest command group
 const ingestCmd = mcpCommand
   .command('ingest')
