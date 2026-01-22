@@ -1,6 +1,40 @@
 {
   "factionId": "white-scars",
   "factionName": "White Scars",
-  "generatedAt": "2026-01-19T10:38:37.563Z",
-  "aliases": {}
+  "generatedAt": "2026-01-22T20:53:51.771Z",
+  "aliases": {
+    "Kor'sarro Khan": [
+      "ksk",
+      "korsarro",
+      "kor sarro",
+      "kor-sarro",
+      "kor'sar",
+      "kor",
+      "the khan",
+      "bike khan",
+      "bike kor",
+      "on bike",
+      "core saro",
+      "core sorrow",
+      "cor's arrow",
+      "course arrow",
+      "corsarro"
+    ],
+    "Suboden Khan": [
+      "sdk",
+      "suboden",
+      "sub oden",
+      "sub-oden",
+      "subo",
+      "sub",
+      "oden",
+      "the khan",
+      "bike subo",
+      "on bike",
+      "suburban",
+      "subodin",
+      "subodan",
+      "subodenn"
+    ]
+  }
 }

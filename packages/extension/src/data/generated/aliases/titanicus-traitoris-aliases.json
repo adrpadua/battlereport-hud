@@ -1,6 +1,71 @@
 {
   "factionId": "titanicus-traitoris",
   "factionName": "Titanicus Traitoris",
-  "generatedAt": "2026-01-19T10:37:36.897Z",
-  "aliases": {}
+  "generatedAt": "2026-01-22T20:53:51.770Z",
+  "aliases": {
+    "Reaver Titan": [
+      "reaver",
+      "rvr",
+      "rt",
+      "reav",
+      "mid titan",
+      "midboy",
+      "workhorse titan",
+      "river (ytcc error)",
+      "beaver (ytcc error)",
+      "reever",
+      "reaver-cannon",
+      "volcano reaver",
+      "reavers",
+      "reaver blob"
+    ],
+    "Warbringer Nemesis Titan": [
+      "warbringer",
+      "wb",
+      "wbn",
+      "nemesis",
+      "mace titan",
+      "war-bringer",
+      "war bringer",
+      "wormbringer (ytcc error)",
+      "war bringer nemesis (ytcc error)",
+      "nemesis mace",
+      "bringer",
+      "warbringer-mace",
+      "wb nemesis",
+      "warbringers"
+    ],
+    "Warhound Titan": [
+      "warhound",
+      "wh",
+      "hound",
+      "scout titan",
+      "light titan",
+      "war hound",
+      "war-hound",
+      "houndie",
+      "runner",
+      "small titan",
+      "warehound (ytcc error)",
+      "warbound (ytcc error)",
+      "speed dog",
+      "warhounds"
+    ],
+    "Warlord Titan": [
+      "warlord",
+      "wl",
+      "big w",
+      "big boy",
+      "behemoth",
+      "walking fortress",
+      "lord",
+      "war lord",
+      "warlord-primus",
+      "warloard (ytcc error)",
+      "walrod (ytcc error)",
+      "warlords",
+      "king of titans",
+      "monolith"
+    ]
+  }
 }

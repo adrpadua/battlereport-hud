@@ -1,55 +1,77 @@
 {
   "factionId": "imperial-knights",
   "factionName": "Imperial Knights",
-  "generatedAt": "2026-01-19T10:33:37.861Z",
+  "generatedAt": "2026-01-22T20:53:51.763Z",
   "aliases": {
     "Tech-Priest Manipulus": [
-      "tech priest manipulas",
-      "techpriest manipulus",
       "tpm",
+      "tpmanip",
       "manipulus",
-      "manipulist",
-      "tech priest manny",
-      "tech priest manny-pants",
-      "tech priest man"
+      "manip",
+      "man i plus",
+      "man i pulse",
+      "manip you lus",
+      "manipless",
+      "tech manip",
+      "manip priest",
+      "buff bot",
+      "canticle guy"
     ],
     "Skitarii Marshal": [
-      "skitarii marshel",
-      "skitarii marshall",
       "sm",
+      "skmarshal",
       "marshal",
-      "skit marshal",
-      "skitarii mar",
-      "skitarii marsh",
-      "squitar marshal"
+      "marsh",
+      "marshall",
+      "skittery marshal",
+      "skit marsh",
+      "marshel",
+      "marsh owl",
+      "marshal buff",
+      "skitarii leader",
+      "the marshal"
     ],
     "Skitarii Rangers": [
-      "skitarii rangerss",
       "sr",
       "skit rangers",
-      "skitarii rang",
-      "skitarii rangers squad",
-      "squitar rangers",
-      "squitar rangerses"
+      "rangers",
+      "ranger",
+      "skittery rangers",
+      "scutari rangers",
+      "transuranic rangers",
+      "tas rifle rangers",
+      "long rifle rangers",
+      "sniper rangers",
+      "ranger blob",
+      "ranger squad"
     ],
     "Skitarii Vanguard": [
-      "skitarii vanguardd",
       "sv",
+      "vanguard",
+      "vangard",
+      "van guard",
+      "vangs",
       "skit vanguard",
-      "skitarii vang",
-      "squitar vanguard",
-      "squitar vanguards",
-      "skit vanguards"
+      "assault vanguard",
+      "radium vanguard",
+      "arc vanguard",
+      "vanguard squad",
+      "vanguard blob",
+      "vang"
     ],
     "Tech-Priest Dominus": [
-      "tech priest dominus",
-      "techpriest dominus",
       "tpd",
+      "tp dom",
       "dominus",
-      "tech priest dom",
-      "tech priest domi",
-      "tech priest dominous",
-      "tech priest don"
+      "dom",
+      "dommy",
+      "domo",
+      "do minus",
+      "dom in us",
+      "tech dom",
+      "conversion dom",
+      "buff dom",
+      "lord tech"
     ]
   }
 }

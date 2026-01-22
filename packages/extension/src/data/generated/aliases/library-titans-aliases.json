@@ -1,6 +1,68 @@
 {
   "factionId": "library-titans",
   "factionName": "Library",
-  "generatedAt": "2026-01-19T10:33:56.946Z",
-  "aliases": {}
+  "generatedAt": "2026-01-22T20:53:51.764Z",
+  "aliases": {
+    "Reaver Titan": [
+      "reaver",
+      "rev",
+      "rvr",
+      "rt",
+      "river titan",
+      "raver",
+      "receiver",
+      "reaver-class",
+      "chainfist reaver",
+      "battlecannon reaver",
+      "reavers",
+      "the reaver",
+      "reaver blob"
+    ],
+    "Warbringer Nemesis Titan": [
+      "warbringer",
+      "warb",
+      "wb",
+      "nemesis",
+      "nemmy",
+      "nem",
+      "wasbringer",
+      "wormbringer",
+      "war bringer",
+      "wbnem",
+      "war-bringer",
+      "nemesis-bringer",
+      "warbringers",
+      "nemesises"
+    ],
+    "Warhound Titan": [
+      "warhound",
+      "hound",
+      "wh",
+      "war hound",
+      "war-hand",
+      "warhnd",
+      "houndie",
+      "little hound",
+      "light titan",
+      "dog titan",
+      "warhounds",
+      "two-leg",
+      "the hound"
+    ],
+    "Warlord Titan": [
+      "warlord",
+      "wl",
+      "big boy",
+      "wally",
+      "war-lord",
+      "wallord",
+      "wallard",
+      "lord titan",
+      "king titan",
+      "behemoth",
+      "warlords",
+      "the warlord",
+      "warlord-class"
+    ]
+  }
 }

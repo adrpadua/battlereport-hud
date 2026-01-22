@@ -1,33 +1,52 @@
 {
   "factionId": "imperial-fists",
   "factionName": "Imperial Fists",
-  "generatedAt": "2026-01-19T10:33:31.201Z",
+  "generatedAt": "2026-01-22T20:53:51.763Z",
   "aliases": {
     "Darnath Lysander": [
-      "darnath lynder",
-      "darnath lissander",
-      "darn lysander",
+      "lysander",
+      "darnath",
       "dl",
-      "d-lis",
-      "darny",
-      "lys",
-      "lysy"
+      "cpt lys",
+      "capt lys",
+      "darn",
+      "dinner",
+      "dinner lys",
+      "lie-sander",
+      "lessander",
+      "lys blade",
+      "paragon lys",
+      "lysanders"
     ],
     "Tor Garadon": [
+      "tor",
+      "garadon",
       "tg",
       "tor g",
-      "tor gary",
-      "garr",
-      "gar"
+      "capt garadon",
+      "tor gar",
+      "tour garden",
+      "tore garden",
+      "tor garden",
+      "garadan",
+      "garadin",
+      "tor with shield",
+      "tors"
     ],
     "Pedro Kantor": [
-      "pedro cantor",
-      "peter kantor",
+      "pedro",
+      "kantor",
       "pk",
+      "p k",
       "ped",
-      "kant",
-      "pedro k",
-      "p-kant"
+      "paper kantor",
+      "petro kantor",
+      "pedro canter",
+      "kandor",
+      "kantors",
+      "capt kantor",
+      "pedro axe",
+      "pedro-k"
     ]
   }
 }

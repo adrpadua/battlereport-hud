@@ -1,5 +1,73 @@
 import type { NewUnit, NewWeapon, NewAbility } from '../../db/schema.js';
 
+/**
+ * Common concatenated patterns from Firecrawl markdown conversion.
+ * Maps concatenated text to properly spaced text.
+ */
+const CONCATENATION_FIXES: Record<string, string> = {
+  // Weapon abilities that get concatenated
+  'blastpsychic': '[BLAST], [PSYCHIC]',
+  'lethalhitspsychic': '[LETHAL HITS], [PSYCHIC]',
+  'sustainedhitspsychic': '[SUSTAINED HITS], [PSYCHIC]',
+  'devastatingwoundspsychic': '[DEVASTATING WOUNDS], [PSYCHIC]',
+  'psychicblast': '[PSYCHIC], [BLAST]',
+  'psychiclethalhits': '[PSYCHIC], [LETHAL HITS]',
+  'psychicsustained': '[PSYCHIC], [SUSTAINED HITS]',
+  'assaultblast': '[ASSAULT], [BLAST]',
+  'heavyblast': '[HEAVY], [BLAST]',
+  'rapidfireblast': '[RAPID FIRE], [BLAST]',
+  'twinlinkedblast': '[TWIN-LINKED], [BLAST]',
+  'meltahazardous': '[MELTA], [HAZARDOUS]',
+  'torrentignorescover': '[TORRENT], [IGNORES COVER]',
+  // Faction abilities
+  'shadowinthewarp': 'Shadow in the Warp',
+  'synapseshadow': 'Synapse, Shadow',
+  // Common game terms
+  'mortalwounds': 'mortal wounds',
+  'mortalwound': 'mortal wound',
+  'invulnerablesave': 'invulnerable save',
+  'feelno pain': 'Feel No Pain',
+  'feelnopain': 'Feel No Pain',
+  'battleshock': 'Battle-shock',
+  'battleshocktest': 'Battle-shock test',
+  'battle-shocktest': 'Battle-shock test',
+  'commandpoints': 'Command Points',
+  'hitroll': 'Hit roll',
+  'woundroll': 'Wound roll',
+  'fightsfirst': 'Fights First',
+  'deepstrike': 'Deep Strike',
+  'loneoperative': 'Lone Operative',
+  'deadlydemise': 'Deadly Demise',
+  'firingdeck': 'Firing Deck',
+  // Keywords
+  'greatdevourer': 'Great Devourer',
+};
+
+/**
+ * Normalize text by fixing common concatenation issues from Firecrawl.
+ */
+function normalizeText(text: string): string {
+  let result = text;
+
+  // Apply known concatenation fixes (case-insensitive)
+  for (const [concat, fixed] of Object.entries(CONCATENATION_FIXES)) {
+    const regex = new RegExp(concat, 'gi');
+    result = result.replace(regex, fixed);
+  }
+
+  // Fix camelCase concatenation in ability names: "ShadowintheWarp" -> "Shadow in the Warp"
+  // Insert space before capital letters that follow lowercase
+  result = result.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+  // Fix "inthe" -> "in the", "ofthe" -> "of the" patterns
+  result = result.replace(/\b(in)(the)\b/gi, '$1 $2');
+  result = result.replace(/\b(of)(the)\b/gi, '$1 $2');
+  result = result.replace(/\b(to)(the)\b/gi, '$1 $2');
+  result = result.replace(/\b(from)(the)\b/gi, '$1 $2');
+
+  return result;
+}
+
 interface ParsedUnit {
   unit: Omit<NewUnit, 'factionId'>;
   weapons: NewWeapon[];
@@ -67,7 +135,12 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
   }
 
   // Extract invulnerable save if present
-  const invulnMatch = markdown.match(/(\d+\+?)\s*invulnerable save/i);
+  // Format can be: "4+ invulnerable save" or "INVULNERABLE SAVE\n\n4+"
+  let invulnMatch = markdown.match(/(\d+\+)\s*invulnerable save/i);
+  if (!invulnMatch) {
+    // Try format: "INVULNERABLE SAVE\n\n4+"
+    invulnMatch = markdown.match(/INVULNERABLE SAVE\s*\n+\s*(\d+\+)/i);
+  }
   if (invulnMatch) {
     stats.invulnerableSave = invulnMatch[1];
   }
@@ -76,9 +149,9 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
   const pointsMatch = markdown.match(/\|\s*\d+\s*model[s]?\s*\|\s*(\d+)\s*\|/i);
   const pointsCost = pointsMatch ? parseInt(pointsMatch[1]!, 10) : undefined;
 
-  // Extract unit composition - stop at KEYWORDS, FACTION KEYWORDS, STRATAGEMS, or other sections
+  // Extract unit composition - stop at LEADER, KEYWORDS, FACTION KEYWORDS, STRATAGEMS, or other sections
   const compositionMatch = markdown.match(
-    /UNIT COMPOSITION[\s\S]*?\n([\s\S]*?)(?=\n\s*(?:KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i
+    /UNIT COMPOSITION[\s\S]*?\n([\s\S]*?)(?=\n\s*(?:LEADER|KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i
   );
   let unitComposition: string | null = null;
   if (compositionMatch?.[1]) {
@@ -87,6 +160,11 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
       .replace(/\*\*/g, '')
       .replace(/!\[.*?\]\(.*?\)/g, '') // Remove image markdown
       .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+      .replace(/\|\s*[-]+\s*\|/g, '') // Remove table separator rows (| --- |)
+      .replace(/\|[^|]*\|[^|]*\|/g, '') // Remove table cells (| content | content |)
+      .replace(/\s*\|\s*/g, ' ') // Remove remaining pipes
+      .replace(/---\s*\d+(\s+\d+)*/g, '') // Remove "--- 100 200" point cost artifacts
+      .replace(/\s+/g, ' ') // Normalize whitespace
       .trim()
       .slice(0, 1000); // Reasonable limit for unit composition
 
@@ -96,6 +174,27 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
       if (cpIndex > 0) {
         unitComposition = unitComposition.slice(0, cpIndex).trim();
       }
+    }
+  }
+
+  // Extract LEADER info (for models that can attach to other units)
+  const leaderMatch = markdown.match(
+    /LEADER[\s\S]*?This model can be attached to the following units?:\s*([\s\S]*?)(?=\n\s*(?:KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i
+  );
+  let leaderInfo: string | null = null;
+  if (leaderMatch?.[1]) {
+    // Extract the list of units this model can lead
+    const unitsList = leaderMatch[1]
+      .replace(/\*\*/g, '')
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .split(/[-•]/)
+      .map(s => s.trim())
+      .filter(s => s.length > 0 && !s.includes('KEYWORDS'))
+      .join('\n• ');
+
+    if (unitsList) {
+      leaderInfo = `This model can be attached to:\n• ${unitsList}`;
     }
   }
 
@@ -131,7 +230,7 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
     baseSize,
     unitComposition,
     wargearOptions: null,
-    leaderInfo: null,
+    leaderInfo,
     ledBy: null,
     transportCapacity: null,
     isEpicHero,
@@ -352,13 +451,31 @@ export const WEAPON_ABILITY_KEYWORDS = [
 ];
 
 /**
- * Extract weapon abilities that were concatenated into the weapon name
+ * Extract weapon abilities that were concatenated into the weapon name.
+ * Also handles common patterns like "blastpsychic" -> "[BLAST], [PSYCHIC]"
  */
 export function cleanWeaponName(rawName: string): { name: string; abilities: string | null } {
   let name = rawName;
   const foundAbilities: string[] = [];
 
-  // Check for concatenated ability keywords (case-insensitive)
+  // First, apply normalizeText to handle known concatenation patterns
+  // This converts "blastpsychic" -> "[BLAST], [PSYCHIC]"
+  name = normalizeText(name);
+
+  // Extract bracketed abilities that were created by normalizeText
+  const bracketedPattern = /\[([A-Z][A-Z\s-]+)\]/g;
+  let bracketMatch;
+  while ((bracketMatch = bracketedPattern.exec(name)) !== null) {
+    foundAbilities.push(bracketMatch[0]); // Keep the brackets
+  }
+  // Remove the bracketed abilities from the name
+  name = name.replace(bracketedPattern, '').trim();
+  // Clean up any trailing commas or spaces
+  name = name.replace(/,\s*$/, '').replace(/\s+/g, ' ').trim();
+
+  // Check for remaining concatenated ability keywords (case-insensitive)
+  // Only extract abilities that are clearly concatenated (no space before them)
+  // or appear at the very end of the name
   const lowerName = name.toLowerCase();
 
   for (const keyword of WEAPON_ABILITY_KEYWORDS) {
@@ -367,6 +484,15 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
     const idx = lowerName.indexOf(noSpaceKeyword);
 
     if (idx > 0) {
+      // Check if this is truly concatenated (no space before it)
+      const charBefore = name[idx - 1];
+      const isConcatenated = charBefore !== ' ' && charBefore !== '-' && charBefore !== '–';
+
+      if (!isConcatenated) {
+        // Has a space before it - might be part of the weapon name, skip
+        continue;
+      }
+
       // Found concatenated ability - extract it
       const before = name.slice(0, idx).trim();
       const after = name.slice(idx + noSpaceKeyword.length);
@@ -378,24 +504,28 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
       // Update name to the part before the ability
       name = before;
 
-      // Check if there's more after - recursively clean
+      // Check if there's more after - recursively extract abilities
       if (after.length > 0) {
         const { name: afterName, abilities: afterAbilities } = cleanWeaponName(after);
         if (afterAbilities) {
-          foundAbilities.push(afterAbilities);
+          // afterAbilities is already comma-separated, split and add
+          foundAbilities.push(...afterAbilities.split(', ').filter(Boolean));
         }
-        // If afterName is not empty and starts with lowercase, it might be more abilities
-        if (afterName && !/^[a-z]/.test(afterName)) {
+        // If afterName is not empty and looks like a name part, append it
+        if (afterName && afterName.length > 1 && !/^[a-z]/.test(afterName)) {
           name = `${name} ${afterName}`.trim();
         }
       }
-      break; // Only handle one ability per pass
+      break; // Only handle one ability per pass (recursive handles the rest)
     }
   }
 
+  // Deduplicate abilities
+  const uniqueAbilities = [...new Set(foundAbilities)];
+
   return {
     name: name.trim(),
-    abilities: foundAbilities.length > 0 ? foundAbilities.join(', ') : null,
+    abilities: uniqueAbilities.length > 0 ? uniqueAbilities.join(', ') : null,
   };
 }
 
@@ -567,7 +697,9 @@ function extractAbilities(
   let labelMatch;
   while ((labelMatch = labeledAbilityPattern.exec(abilitiesContent)) !== null) {
     const abilityType = labelMatch[1]!.toLowerCase() as 'core' | 'faction';
-    const name = labelMatch[2]?.trim();
+    const rawName = labelMatch[2]?.trim();
+    // Normalize the ability name to fix concatenation issues
+    const name = rawName ? normalizeText(rawName) : '';
     if (name && name.length >= 3) {
       abilities.push({
         slug: slugify(name).slice(0, 255),
@@ -585,10 +717,14 @@ function extractAbilities(
   let match;
 
   while ((match = abilityPattern.exec(abilitiesContent)) !== null) {
-    const name = match[1]?.trim();
-    let description = match[2]?.trim();
+    const rawName = match[1]?.trim();
+    let rawDescription = match[2]?.trim();
 
-    if (!name || !description) continue;
+    if (!rawName || !rawDescription) continue;
+
+    // Normalize name and description to fix concatenation issues
+    const name = normalizeText(rawName);
+    let description = normalizeText(rawDescription);
 
     // Clean up description - remove trailing table junk
     description = description

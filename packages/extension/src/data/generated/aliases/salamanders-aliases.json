@@ -1,25 +1,38 @@
 {
   "factionId": "salamanders",
   "factionName": "Salamanders",
-  "generatedAt": "2026-01-19T10:35:15.581Z",
+  "generatedAt": "2026-01-22T20:53:51.768Z",
   "aliases": {
     "Adrax Agatone": [
-      "adraks agatone",
-      "aagaton",
-      "a. agatone",
+      "adrax",
+      "agatone",
+      "aa",
+      "ag",
       "adrak",
-      "adrak agaton",
-      "adrak the flame",
-      "adraks"
+      "add racks",
+      "add racks a gat one",
+      "adracks",
+      "aggie",
+      "adag",
+      "adrax on bike",
+      "adrax on foot",
+      "adrx"
     ],
     "Vulkan He'stan": [
-      "vulkan heestan",
-      "vulcan he'stan",
-      "vulkan hastan",
-      "v. he'stan",
-      "vulkan the flame",
+      "vulkan",
+      "hestan",
+      "vh",
+      "v-he",
+      "vhs",
       "vulcan",
-      "vulc"
+      "volcan",
+      "volcano",
+      "vulcan heston",
+      "vulkan heston",
+      "the anvil",
+      "anvil",
+      "forgefather",
+      "vulkan with hammer"
     ]
   }
 }

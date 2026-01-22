@@ -357,7 +357,7 @@ async function processChunk(
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-mini',
         max_completion_tokens: 2000, // Mappings + room for larger reference context
         messages: [
           { role: 'system', content: PREPROCESS_SYSTEM_PROMPT },
@@ -646,7 +646,7 @@ export async function preprocessWithLlm(
       normalizedSegments: [],
       termMappings: {},
       confidence: 1,
-      modelUsed: 'gpt-4o-mini',
+      modelUsed: 'gpt-5-mini',
       processedAt: Date.now(),
     };
   }
@@ -710,7 +710,7 @@ export async function preprocessWithLlm(
       normalizedSegments,
       termMappings: validatedMappings,
       confidence: Object.keys(validatedMappings).length > 0 ? 1 : 0.5,
-      modelUsed: 'gpt-4o-mini',
+      modelUsed: 'gpt-5-mini',
       processedAt: Date.now(),
     };
   }
@@ -765,7 +765,7 @@ export async function preprocessWithLlm(
     normalizedSegments,
     termMappings: validatedMappings,
     confidence,
-    modelUsed: 'gpt-4o-mini',
+    modelUsed: 'gpt-5-mini',
     processedAt: Date.now(),
   };
 }

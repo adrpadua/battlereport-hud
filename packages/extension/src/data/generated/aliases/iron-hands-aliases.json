@@ -1,26 +1,38 @@
 {
   "factionId": "iron-hands",
   "factionName": "Iron Hands",
-  "generatedAt": "2026-01-19T10:33:40.669Z",
+  "generatedAt": "2026-01-22T20:53:51.764Z",
   "aliases": {
     "Iron Father Feirros": [
-      "iron father ferros",
-      "iron fathr feirros",
+      "feirros",
+      "iron father",
+      "iff",
       "if feirros",
       "iron dad",
+      "feiros",
       "ferros",
-      "iron fether",
-      "iron farter",
-      "iron father ferris"
+      "ferris",
+      "iron fader",
+      "servo-arm feirros",
+      "aura feirros",
+      "melee feirros",
+      "iron fathers",
+      "buff feirros"
     ],
     "Caanok Var": [
-      "caanok varr",
-      "caanok vaar",
-      "cv",
       "caanok",
-      "caanok vahr",
-      "cannock var",
-      "cannon var"
+      "var",
+      "cv",
+      "c var",
+      "c-v",
+      "caanokv",
+      "canon var",
+      "cannon var",
+      "canock var",
+      "kaanok",
+      "melee caanok",
+      "support caanok",
+      "caanoks"
     ]
   }
 }

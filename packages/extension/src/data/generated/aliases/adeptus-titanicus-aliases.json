@@ -1,6 +1,74 @@
 {
   "factionId": "adeptus-titanicus",
   "factionName": "Adeptus Titanicus",
-  "generatedAt": "2026-01-19T10:27:33.308Z",
-  "aliases": {}
+  "generatedAt": "2026-01-22T20:53:51.751Z",
+  "aliases": {
+    "Reaver Titan": [
+      "reaver",
+      "rev",
+      "rvr",
+      "rt",
+      "mid titan",
+      "mid-titan",
+      "river",
+      "reever",
+      "reefer",
+      "weaver",
+      "reaverer",
+      "reavar",
+      "laser reaver",
+      "close reaver",
+      "reavers"
+    ],
+    "Warbringer Nemesis Titan": [
+      "warbringer",
+      "nemesis",
+      "wb",
+      "wn",
+      "warb",
+      "nem",
+      "nemmy",
+      "war bringer",
+      "war ringer",
+      "warbrnger",
+      "nemises",
+      "nemessis",
+      "siege warbringer",
+      "melee warbringer",
+      "warbringers"
+    ],
+    "Warhound Titan": [
+      "warhound",
+      "hound",
+      "wh",
+      "wd",
+      "war dog",
+      "doggo",
+      "fast titan",
+      "light titan",
+      "scout titan",
+      "war hound",
+      "war sound",
+      "werehound",
+      "jumping hound",
+      "brawler hound",
+      "warhounds"
+    ],
+    "Warlord Titan": [
+      "warlord",
+      "wl",
+      "w",
+      "lord",
+      "big daddy",
+      "big boy",
+      "war lord",
+      "war-lord",
+      "wharlord",
+      "war load",
+      "lumbering titan",
+      "siege warlord",
+      "battleship warlord",
+      "warlords"
+    ]
+  }
 }

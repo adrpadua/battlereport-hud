@@ -1,24 +1,41 @@
 {
   "factionId": "raven-guard",
   "factionName": "Raven Guard",
-  "generatedAt": "2026-01-19T10:35:12.925Z",
+  "generatedAt": "2026-01-22T20:53:51.766Z",
   "aliases": {
     "Kayvaan Shrike": [
-      "kayvan shrike",
-      "kavann shrike",
-      "k-shrike",
       "shrike",
-      "kay shrike",
-      "k-shriek",
-      "cayvan shrike",
-      "youtube might say: cave in strike"
+      "kayvaan",
+      "ks",
+      "k-s",
+      "kayv",
+      "kayvan",
+      "kevin shrike",
+      "kevin shriek",
+      "kay van shrike",
+      "cave-in shrike",
+      "raven guard captain",
+      "jump captain",
+      "jump pack shrike",
+      "assault shrike",
+      "shrikes"
     ],
     "Aethon Shaan": [
+      "aethon",
+      "shaan",
+      "as",
+      "a-s",
+      "ae",
       "aethon shan",
-      "aethon shawn",
-      "a-shaan",
-      "aeth shaan",
-      "youtube might say: a-thon shawn"
+      "ethan shawn",
+      "afton shan",
+      "a than shaan",
+      "primaris captain",
+      "shadow captain",
+      "infiltrator captain",
+      "ae shaan",
+      "shaans",
+      "aethons"
     ]
   }
 }

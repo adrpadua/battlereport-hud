@@ -1,127 +1,159 @@
 {
   "factionId": "ultramarines",
   "factionName": "Ultramarines",
-  "generatedAt": "2026-01-19T10:38:17.974Z",
+  "generatedAt": "2026-01-22T20:53:51.771Z",
   "aliases": {
     "Marneus Calgar": [
-      "calgar",
       "mc",
+      "calgar",
       "marneus",
-      "marcus calgar",
-      "marneus callgar",
-      "marnius calgar"
-    ],
-    "Tyrannic War Veterans [Legends]": [
-      "tyranic war veterans",
-      "tyr war vets",
-      "twv",
-      "tyrannic vets",
-      "tyrannic warriors",
-      "tyranic war vets",
-      "tyrannic war veterans"
+      "big mac",
+      "m calgar",
+      "mar news",
+      "mar news calgar",
+      "kalgar",
+      "call car",
+      "marnewscalgar",
+      "mar neus",
+      "calgars"
     ],
     "Victrix Honour Guard": [
-      "victrix honor guard",
-      "victrix",
       "vhg",
+      "victrix",
+      "honour guard",
+      "victory guard",
+      "victor's guard",
       "victrix guards",
-      "victrix honor",
-      "victorix",
-      "victrix honur gard",
-      "victrix honur guard"
+      "victrix honourguard",
+      "victrix honor guard",
+      "viktor guard",
+      "vicks trick",
+      "victorix guard",
+      "victor guard"
     ],
     "Wardens of Ultramar": [
       "wardens",
-      "wofu",
+      "warden",
       "ultramar wardens",
+      "wardens ultramar",
+      "wardens of ultra mar",
+      "wardens of ulter map",
+      "ultra-mar wardens",
       "wardens of ultramare",
-      "wardens of ultermar",
-      "wardens of ultramars"
+      "warden squad",
+      "warden blob",
+      "warden unit",
+      "ultramarian wardens"
     ],
     "Captain Sicarius": [
-      "c. sicarius",
-      "cs",
-      "captain sicarus",
-      "captain sicarious"
-    ],
-    "Chaplain Cassius [Legends]": [
-      "chaplain cassius",
-      "c. cassius",
-      "chaplain cass",
-      "chaplain cassious"
+      "sicarius",
+      "capt sic",
+      "cpt sicarius",
+      "captain sic",
+      "sic",
+      "sickarius",
+      "sick arius",
+      "sick areas",
+      "sickarius captain",
+      "siccy",
+      "sicarrius"
     ],
     "Chief Librarian Tigurius": [
-      "chief lib tigurius",
-      "clt",
-      "chief librarian t",
       "tigurius",
+      "tigs",
+      "chief tig",
       "chief lib",
-      "chief libarian tigurius"
+      "chief librarian",
+      "tigerius",
+      "tiger us",
+      "tygurius",
+      "tig the librarian",
+      "tigurius lib",
+      "tiguriuos",
+      "tigurius psych"
     ],
     "Roboute Guilliman": [
-      "r. guilliman",
-      "rob guilliman",
       "guilliman",
+      "rob g",
+      "rg",
       "roboute",
-      "robo guilliman",
-      "roboute guiliman"
-    ],
-    "Sergeant Chronus [Legends]": [
-      "sergeant chronus",
-      "s. chronus",
-      "sgt chronus",
-      "sergeant chornus",
-      "sergeant chronos",
-      "sgt chronos"
-    ],
-    "Sergeant Telion [Legends]": [
-      "sergeant telion",
-      "s. telion",
-      "sgt telion",
-      "sergeant telyon"
+      "robbie g",
+      "robot guilliman",
+      "rob out gill man",
+      "robert guilliman",
+      "g-man",
+      "gilliman primarch",
+      "guilli-man",
+      "guillimann"
     ],
     "Uriel Ventris": [
       "ventris",
-      "u. ventris",
-      "uriel ventriss"
-    ],
-    "Ultramarines Honour Guard [Legends]": [
-      "ultramarines honor guard",
-      "uhg",
-      "ultramarine guards",
-      "ultramarines guard",
-      "ultramarine honor",
-      "ultramarines honur guard",
-      "ultramarines honur gard",
-      "ultramarines honour guard"
+      "uriel",
+      "uri",
+      "uv",
+      "uriel v",
+      "your ill ventris",
+      "you real ventress",
+      "uriel ventress",
+      "ur real ventris",
+      "ventris captain",
+      "ventris on bike",
+      "uri ventris"
     ],
     "Lieutenant Titus": [
-      "lt. titus",
       "lt titus",
-      "lieut. titus",
-      "lieutenant titis"
+      "lieut titus",
+      "lt t",
+      "titus",
+      "lieutenant t",
+      "lie ten ant titus",
+      "leftenant titus",
+      "lieu titus",
+      "lt. titus",
+      "lt tit",
+      "titus lt",
+      "titus lieut"
     ],
     "Marneus Calgar in Armour of Antilochus": [
-      "marneus calgar in armor of antilochus",
-      "mc in armor",
-      "marneus in armor",
-      "marneus calgar antilochus",
-      "marneus calgar in antilochus",
-      "marneus calgar in arm of antilochus"
+      "calgar antilochus",
+      "antilochus calgar",
+      "calgar antilo",
+      "anty lochus calgar",
+      "calgar antilo armour",
+      "mc antilochus",
+      "antilo chees calgar",
+      "armour of anti locus",
+      "antilochus armour",
+      "calgar antiloch",
+      "antelochus calgar",
+      "antilochus variant"
     ],
     "Cato Sicarius": [
-      "c. sicarius",
       "cato",
-      "cato sicarus",
-      "cato sicarious"
+      "cato sic",
+      "cat o",
+      "kay toe",
+      "cato sick",
+      "cato sickarius",
+      "cato the captain",
+      "cato s",
+      "cato siccy",
+      "cato sicariuss",
+      "katao"
     ],
     "Captain Titus": [
-      "capn titus",
-      "c.titus",
-      "titus",
-      "cap t",
+      "capt titus",
+      "cpt titus",
+      "cap titus",
       "captain t",
-      "captain tightass"
+      "captain tytus",
+      "cap'n titus",
+      "captain ty",
+      "capten titus",
+      "capt tit",
+      "titus captain",
+      "cpt t",
+      "captain-titus"
     ]
   }
 }

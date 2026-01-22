@@ -1,229 +1,259 @@
 {
   "factionId": "chaos-daemons",
   "factionName": "Chaos Daemons",
-  "generatedAt": "2026-01-19T10:29:13.298Z",
+  "generatedAt": "2026-01-22T20:53:51.754Z",
   "aliases": {
     "Chaos Lord": [
-      "chaos lrd",
-      "chaos leader",
+      "cl",
+      "chlord",
+      "lord",
       "chaos boss",
-      "chaos l",
+      "lord-commander",
+      "warp lord",
+      "chaos laud",
       "chaos lard",
-      "chaos lore"
+      "ch-lord",
+      "lord on foot"
     ],
     "Fellgor Beastmen": [
-      "fellgor b",
+      "fellgor",
+      "felgor",
+      "fell gore",
+      "fg",
+      "fellgor bm",
+      "the fellgor",
       "beastmen",
-      "fellgore",
-      "fellgor beasties",
-      "fellgor beast men"
+      "beast man",
+      "fella gore",
+      "fellgor champion"
     ],
     "Chaos Lord with Jump Pack": [
-      "chaos jump lord",
+      "jump lord",
+      "jl",
+      "cl jp",
+      "cl jump",
       "jump pack lord",
-      "chaos lrd jp",
-      "chaos lord jp",
-      "chaos lord with jp",
-      "chaos lord with jump"
+      "lord jump",
+      "jetpack lord",
+      "jumpy lord",
+      "lord with jetpack",
+      "jplord"
     ],
     "Chaos Terminator Squad": [
-      "chaos termies",
-      "chaos terminators",
-      "chaos t squad",
-      "chaos t",
-      "chaos terminator",
-      "chaos term squad"
+      "terms",
+      "termies",
+      "terminators",
+      "ct",
+      "chaos terms",
+      "term squad",
+      "terminator vets",
+      "terminaters",
+      "terminatorz",
+      "armour termies"
     ],
     "Chosen": [
+      "chosens",
       "chozen",
-      "chose",
-      "chosen ones",
-      "chaos chosen",
-      "chaos ch",
-      "choosers"
+      "choz",
+      "chzn",
+      "chosen vets",
+      "chosen marines",
+      "chose 'em",
+      "the chosen ones",
+      "chozen marines",
+      "chosenboys"
     ],
     "Legionaries": [
-      "legionares",
       "legion",
-      "chaos leg"
+      "legionary",
+      "legionnaires",
+      "legs",
+      "legionarys",
+      "legionnaries",
+      "legion airies",
+      "lg",
+      "leggy",
+      "legion troops"
     ],
     "Dark Apostle": [
-      "dark apostal",
-      "dark ap"
+      "dap",
+      "da",
+      "dark ap",
+      "dapostle",
+      "dark apostel",
+      "dark apple",
+      "dark a pistol",
+      "warp preacher",
+      "preacher",
+      "chaplain of chaos"
     ],
     "Dark Commune": [
-      "dark comun",
-      "dark com"
+      "commune",
+      "dark comm",
+      "dark communion",
+      "darkcommune",
+      "commune ritual",
+      "commune of darkness",
+      "dark common",
+      "commune ability",
+      "commune cult",
+      "dark comms"
     ],
     "Havocs": [
-      "havoks",
       "havoc",
-      "chaos havocs",
-      "havs"
+      "havs",
+      "hvcs",
+      "havox",
+      "havoc squad",
+      "havoc guns",
+      "heavy gun havocs",
+      "autocannon havocs",
+      "missile havocs",
+      "have ox"
     ],
     "Master of Possession": [
+      "mop",
+      "m.o.p.",
+      "master poss",
+      "possessor",
+      "master of poss",
+      "master possession",
+      "possession master",
       "master of possesion",
-      "master of pos",
-      "master of possetion"
+      "master of possesions",
+      "master posses"
     ],
     "Possessed": [
-      "posessed"
+      "posse",
+      "possesed",
+      "possies",
+      "possed",
+      "possession squad",
+      "possession marines",
+      "possed marines",
+      "possed ones",
+      "possed boys",
+      "possin"
     ],
     "Raptors": [
-      "rapters",
-      "raptorss",
-      "rappters",
-      "rpt",
+      "raptor",
       "raps",
-      "rappy",
-      "rappies"
+      "rptrs",
+      "raptor squad",
+      "slaanesh raptor",
+      "raptor jumpers",
+      "raptor blob",
+      "rapters",
+      "wraptors",
+      "raptorz"
     ],
     "Sorcerer": [
-      "sorserer",
-      "sorcer",
-      "sorceror",
       "sorc",
       "sorcy",
-      "sorcy boy",
-      "sorcy dude"
+      "warpsorc",
+      "warp sorc",
+      "psykers",
+      "daemonic psyker",
+      "sorc lord",
+      "sorcer",
+      "sorser",
+      "sauce sir"
     ],
     "Sorcerer in Terminator Armour": [
-      "sorcerer in termie",
-      "sorcerer termi",
-      "sorcerer in terminator",
-      "sorcerer t-armour",
-      "sorcy in termie",
-      "sorcy in t-armor"
+      "sorc terminator",
+      "termie sorc",
+      "sorc termie",
+      "terminator sorc",
+      "sorc in termie armour",
+      "sorc in terminator armor",
+      "sorc t",
+      "warp termie",
+      "sore sir termie",
+      "sorc terminator armor"
     ],
     "Warp Talons": [
-      "warp talon",
-      "worp talons",
-      "w-tals",
-      "warp tals",
-      "w-talon",
-      "warp t"
+      "talons",
+      "warpclaws",
+      "talon brood",
+      "wtalons",
+      "w.t.",
+      "talon squad",
+      "jump talons",
+      "warp towels",
+      "warp turns",
+      "warptalons"
     ],
     "Traitor Guardsmen Squad": [
-      "traitor guards",
       "traitor guard",
-      "tg squad",
-      "traitor gs",
-      "traitor g-men",
-      "traitor g-squad"
+      "guardsmen",
+      "traitor guards",
+      "rebel guardsmen",
+      "guard blob",
+      "guard squad",
+      "tgs",
+      "traitor g",
+      "trader guardsmen",
+      "guardzmen"
     ],
     "Cultist Mob": [
-      "cultist mobb",
-      "cultist mobs",
       "cultists",
-      "cult mob",
-      "cultist group",
-      "cult mobb"
+      "cultist blob",
+      "cult blob",
+      "mob",
+      "cult",
+      "peasants",
+      "cult pack",
+      "coolest mob",
+      "cultisits",
+      "cultistes"
     ],
     "Chaos Lord in Terminator Armour": [
-      "chaos lord termi",
-      "chaos lord in t-armor",
-      "chaos lord in termie",
-      "cl in termie",
-      "chaos t-lord"
+      "lord terminator",
+      "lord termie",
+      "lord t",
+      "chaos lord t",
+      "lord in terminator",
+      "clord termie",
+      "chaos lord terminator",
+      "lord terminator armor",
+      "chaos lord t-armor",
+      "lord in terminator armour"
     ],
     "Cultist Firebrand": [
-      "cultist firebrandd",
-      "cult firebrand",
-      "cfirebrand",
-      "firebrand cultist",
-      "firebrand"
-    ],
-    "Cultist Mob with Firearms [Legends]": [
-      "cult mob firearms",
-      "cultist mob guns",
-      "cultist mob with guns",
-      "cult firearms mob",
-      "cultist mob firearms legends"
-    ],
-    "Rogue Psyker [Legends]": [
-      "rogue psyker",
-      "rogue psyker legends",
-      "rogue psyker boy",
-      "rogue psyker dude",
-      "rog psyker"
+      "firebrand",
+      "fb",
+      "fb cultist",
+      "firebrand cult",
+      "flame cultist",
+      "firebrandt",
+      "fire brand",
+      "firebrands",
+      "firebrandz",
+      "melta cultist"
     ],
     "Traitor Enforcer": [
-      "traitor enforser",
+      "enforcer",
+      "enf",
+      "enforcer guard",
       "traitor enforcers",
-      "traitor enforc",
-      "te",
-      "traitor enforcer dude",
-      "traitor enforcer boy"
-    ],
-    "Gellerpox Infected [Legends]": [
-      "gellerpox infectd",
-      "gellerpox",
-      "gellerpox inf",
-      "gellerpox legends",
-      "geller infected"
-    ],
-    "Negavolt Cultists [Legends]": [
-      "negavolt cultist",
-      "negavolt cultists",
-      "negavolt",
-      "negav cultists",
-      "negavolt legends"
-    ],
-    "Renegade Heavy Weapons Squad [Legends]": [
-      "renegade heavy weapons",
-      "renegade hw squad",
-      "renegade hw",
-      "renegade hws",
-      "rhws"
-    ],
-    "Renegade Ogryn Beast Handler [Legends]": [
-      "renegade ogryn handler",
-      "renegade beast handler",
-      "renegade ogryn",
-      "rog handler",
-      "renegade obh"
-    ],
-    "Renegade Ogryn Brutes [Legends]": [
-      "renegade ogryns",
-      "rogyn brutes",
-      "rogryn brutes",
-      "r ogres",
-      "ren ogres",
-      "ren brutes",
-      "renegade brutes",
-      "youtube might say: renegade ogre brutes"
-    ],
-    "Renegade Plague Ogryns [Legends]": [
-      "plague ogryns",
-      "renegade plague ogryns",
-      "ren plague ogryns",
-      "plague ogres",
-      "renegade ogres",
-      "renegade p ogres",
-      "youtube might say: renegade plague ogres"
-    ],
-    "Renegade Enforcer [Legends]": [
-      "renegade enforcers",
-      "ren enforcer",
-      "renegade e",
-      "renegade force",
-      "renegade enforc",
-      "youtube might say: renegade informer"
-    ],
-    "Mutoid Vermin [Legends]": [
-      "mutant vermin",
-      "mutoid vermins",
-      "mut vermin",
-      "mutant vermins",
-      "mutoid verm",
-      "youtube might say: mutated vermin"
+      "enforcer squad",
+      "traitor cop",
+      "tray tor enforcer",
+      "inforcer",
+      "enforcerz",
+      "trytor enforcer"
     ],
     "Accursed Cultists": [
-      "accursed cultist",
-      "cursed cultists",
-      "acc cultists",
+      "accursed",
       "accursed cult",
-      "youtube might say: accursed customers"
+      "accursed cultist",
+      "acc cult",
+      "acc cursed",
+      "curse cultists",
+      "a cursed cult",
+      "akkursed cultists",
+      "accursed mob",
+      "cursecults"
     ]
   }
 }

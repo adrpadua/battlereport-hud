@@ -1,51 +1,77 @@
 {
   "factionId": "library-tyranids",
   "factionName": "Tyranids Library",
-  "generatedAt": "2026-01-19T10:34:04.220Z",
+  "generatedAt": "2026-01-22T20:53:51.765Z",
   "aliases": {
     "Gargoyles": [
-      "gargoils",
-      "gargoyls",
       "gargs",
-      "gargies",
-      "garbs",
-      "gargle",
-      "garry",
-      "garrygoils"
+      "garg",
+      "gargoyle",
+      "gargoyl",
+      "gargoils",
+      "gargoiles",
+      "flying gargs",
+      "sky gargs",
+      "garg blob",
+      "garg squad",
+      "garg swarm",
+      "gargoyle gang"
     ],
     "Hyperadapted Raveners": [
-      "hyper raves",
       "hyper ravs",
-      "hyperadap ravs",
-      "hyper raveners",
+      "h-ravs",
+      "har",
+      "hr",
+      "hyperadapted ravs",
+      "hyper adapt ravens",
+      "hyper adapted ravens",
+      "hyper ravener",
+      "adapted ravs",
       "hype ravs",
-      "hype raves"
+      "hyper-ravs",
+      "hyper ravs adapt"
     ],
     "Raveners": [
       "ravs",
-      "raviners",
-      "ravners",
-      "raveeners",
-      "rave",
-      "raveens"
+      "ravener",
+      "rav",
+      "ravers",
+      "ravens",
+      "rav brood",
+      "jump ravs",
+      "scythe ravs",
+      "prey ravs",
+      "raven brood",
+      "rav clump",
+      "old ravs"
     ],
     "Von Ryan's Leapers": [
-      "von ryan leapers",
-      "vr leapers",
+      "von ryans",
       "vrl",
+      "vr leapers",
+      "vonryan leapers",
+      "leapers",
+      "von ryan jumpers",
       "ryan leapers",
       "vons",
-      "ryan's leapers",
-      "vryan leapers"
+      "von raisins",
+      "von rains",
+      "von ryan squad",
+      "jump leapers"
     ],
     "Ripper Swarms": [
-      "ripper sworms",
       "rippers",
       "rip swarms",
-      "rippas",
-      "rippin swarms",
       "rip swarm",
-      "rips"
+      "ripperlings",
+      "rippa swarms",
+      "ripper blob",
+      "ripples",
+      "river swarms",
+      "rip swarmers",
+      "rs",
+      "ripper pack",
+      "rippas"
     ]
   }
 }
