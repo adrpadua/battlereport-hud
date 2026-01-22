@@ -307,12 +307,8 @@ ${videoData.description}
     prompt += '\nUse EXACT names from these lists when possible. Prefer these official names over abbreviations or nicknames.';
 
     for (const [faction, units] of factionUnitNames) {
-      // Limit to 50 most common units (reduced from 100)
-      const limitedUnits = units.slice(0, 50);
-      prompt += `\n\n${faction.toUpperCase()}:\n${limitedUnits.join(', ')}`;
-      if (units.length > 50) {
-        prompt += ` ... and ${units.length - 50} more`;
-      }
+      // Include all unit names - GPT-5 mini has 400k context
+      prompt += `\n\n${faction.toUpperCase()}:\n${units.join(', ')}`;
     }
   }
 
