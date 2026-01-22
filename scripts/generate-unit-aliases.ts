@@ -61,15 +61,39 @@ interface BatchResult {
 const BATCH_STATUS_FILE = join(process.cwd(), '.batch-alias-status.json');
 
 // System prompt for LLM alias generation
-const SYSTEM_PROMPT = `You are a Warhammer 40,000 terminology expert. Generate common misspellings,
-abbreviations, and colloquial names for unit names.
+const SYSTEM_PROMPT = `You are a Warhammer 40,000 10th Edition terminology expert who watches many battle report videos on YouTube. Generate comprehensive aliases for unit names.
 
-For each unit, provide:
-- Common misspellings (phonetic errors, typos)
-- Abbreviations (first letters, shortened forms)
-- Informal names (nicknames used by players)
-- Plural/singular variations
-- How YouTube auto-captions might mishear the name
+For each unit, provide aliases in these categories:
+
+1. ABBREVIATIONS & SHORTENED FORMS
+   - Tournament abbreviations (e.g., "CIG" for Captain in Gravis Armour)
+   - First letter abbreviations (e.g., "HI" for Heavy Intercessors)
+   - Shortened names (e.g., "termies" for Terminators)
+
+2. YOUTUBE AUTO-CAPTION ERRORS
+   - How speech-to-text commonly mishears the name
+   - Phonetically similar words (e.g., "tyrant" → "tyran", "tire ant")
+   - Words that sound similar when spoken quickly
+
+3. COLLOQUIAL & COMMUNITY NAMES
+   - Nicknames from the competitive scene
+   - Streamer/YouTuber terminology (Tabletop Tactics, Play On Tabletop, etc.)
+   - Old edition names players still use
+   - Regional variations (UK vs US)
+
+4. SPELLING VARIATIONS
+   - Common typos and misspellings
+   - Phonetic spellings (e.g., "nids" for Tyranids)
+   - With/without hyphens, spaces, apostrophes
+
+5. MODEL/LOADOUT VARIATIONS
+   - Names based on common wargear (e.g., "plasma inceptors", "bolter intercessors")
+   - "Flying" vs "walking" variants for units with multiple builds
+   - Equipment-based nicknames
+
+6. SINGULAR/PLURAL FORMS
+   - Both singular and plural variations
+   - Collective nouns (e.g., "blob" of models)
 
 Output JSON format:
 {
@@ -79,14 +103,13 @@ Output JSON format:
 }
 
 Rules:
-- All aliases should be lowercase
-- Include the unit name without suffixes like "Squad" or "Unit"
-- Consider how YouTube auto-captions might mishear the name
-- Include common tournament/competitive scene abbreviations
+- All aliases MUST be lowercase
+- Generate 8-15 aliases per unit (more for complex/popular units, minimum 5 for simple ones)
+- Include the unit name without suffixes like "Squad", "Unit", or "[Legends]"
 - Do NOT include the original unit name as an alias
-- Focus on variations that are DIFFERENT from the original
-- Generate 3-8 aliases per unit (more for complex names, fewer for simple ones)
-- For character names, include common misspellings of their specific name`;
+- Focus on terms players ACTUALLY SAY in battle reports, not just theory
+- Prioritize aliases that are phonetically distinct from the original
+- Include both the full nickname and any shortened versions of that nickname`;
 
 /**
  * Load faction data from JSON file.
@@ -153,7 +176,7 @@ async function generateAliasesForBatch(
     try {
       const response = await openai.chat.completions.create({
         model: 'gpt-5-mini',
-        max_completion_tokens: 2000, // Limit output tokens for cost control
+        max_completion_tokens: 4000, // Increased for more comprehensive aliases
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt },
@@ -302,7 +325,7 @@ function createBatchRequests(factions: FactionData[]): BatchRequest[] {
         url: '/v1/chat/completions',
         body: {
           model: 'gpt-5-mini',
-          max_completion_tokens: 2000,
+          max_completion_tokens: 4000,
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
