@@ -673,8 +673,33 @@ async function getUnitKeywords(db: Database, unitId: number): Promise<string[]> 
 }
 
 /**
+ * Patterns that indicate the AI misclassified a stratagem/ability/rule as a unit.
+ * These should be filtered out.
+ */
+const MISCLASSIFIED_UNIT_PATTERNS = [
+  /\(stratagem/i,
+  /\(ability/i,
+  /\(rule/i,
+  /\(reserve/i,
+  /\(detachment/i,
+  /\(resource/i,
+  /\(reference\)/i,
+  /stratagem\s*\/\s*ability/i,
+  /ability\s*\/\s*stratagem/i,
+  /resurgent points/i,
+  /cult ambush.*token/i,
+];
+
+/**
+ * Check if a unit name looks like a misclassified stratagem/ability/rule
+ */
+function isMisclassifiedUnit(name: string): boolean {
+  return MISCLASSIFIED_UNIT_PATTERNS.some((pattern) => pattern.test(name));
+}
+
+/**
  * Enriches units with stats and keywords from the database.
- * This matches the processBattleReport behavior from the extension.
+ * Filters out units that don't match the database or are misclassified stratagems/abilities.
  */
 export async function enrichUnitsWithStats(
   units: Unit[],
@@ -687,6 +712,12 @@ export async function enrichUnitsWithStats(
   const factionCache = new Map<string, number | null>();
 
   for (const unit of units) {
+    // Skip units that look like misclassified stratagems/abilities
+    if (isMisclassifiedUnit(unit.name)) {
+      console.log(`Filtering out misclassified unit: "${unit.name}"`);
+      continue;
+    }
+
     const player = players[unit.playerIndex];
     const factionName = player?.faction;
 
@@ -723,8 +754,9 @@ export async function enrichUnitsWithStats(
         isValidated: true,
       });
     } else {
-      // Keep the unit as-is without enrichment
-      enrichedUnits.push(unit);
+      // Filter out units that don't match the database
+      // These are likely misheard names or non-existent units
+      console.log(`Filtering out unvalidated unit: "${unit.name}"`);
     }
   }
 
