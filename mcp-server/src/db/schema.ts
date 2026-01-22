@@ -443,6 +443,22 @@ export const unitIndex = pgTable('unit_index', {
 }));
 
 // ============================================================================
+// EXTRACTION CACHE (for caching AI extraction results)
+// ============================================================================
+
+export const extractionCache = pgTable('extraction_cache', {
+  id: serial('id').primaryKey(),
+  videoId: varchar('video_id', { length: 20 }).notNull().unique(),
+  factions: jsonb('factions').notNull(), // [string, string] tuple
+  report: jsonb('report').notNull(), // The full BattleReport object
+  createdAt: timestamp('created_at').defaultNow(),
+  expiresAt: timestamp('expires_at').notNull(), // TTL for cache expiration
+}, (table) => ({
+  videoIdIdx: uniqueIndex('extraction_cache_video_id_idx').on(table.videoId),
+  expiresAtIdx: index('extraction_cache_expires_at_idx').on(table.expiresAt),
+}));
+
+// ============================================================================
 // SCRAPE METADATA (for tracking what's been scraped)
 // ============================================================================
 
@@ -508,3 +524,6 @@ export type NewDetachmentUnit = typeof detachmentUnits.$inferInsert;
 
 export type DetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferSelect;
 export type NewDetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferInsert;
+
+export type ExtractionCache = typeof extractionCache.$inferSelect;
+export type NewExtractionCache = typeof extractionCache.$inferInsert;

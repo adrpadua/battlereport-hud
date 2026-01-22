@@ -5,7 +5,7 @@ export type ConfidenceLevel = 'high' | 'medium' | 'low';
 export interface Player {
   name: string;
   faction: string;
-  detachment?: string;
+  detachment: string;
   confidence: ConfidenceLevel;
 }
 

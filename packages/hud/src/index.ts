@@ -9,6 +9,7 @@ export { FactionSelector } from './components/FactionSelector';
 export { ConfidenceBadge } from './components/ConfidenceBadge';
 export { LoadingState } from './components/LoadingState';
 export { ProgressLogs } from './components/ProgressLogs';
+export { UnitDetailModal } from './components/UnitDetailModal';
 
 // Store
 export { useBattleStore } from './store/battle-store';
@@ -76,6 +77,12 @@ export type {
   BattleActions,
   BattleStore,
   ProgressLogEntry,
+  // Unit detail types
+  UnitDetailResponse,
+  UnitDetailUnit,
+  UnitDetailStats,
+  UnitDetailWeapon,
+  UnitDetailAbility,
   // Game state types
   GamePhase,
   TurnPhase,

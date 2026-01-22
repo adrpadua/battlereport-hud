@@ -88,7 +88,7 @@ export interface NarratorInput {
     name: string;
     faction: string;
     factionId?: string;
-    detachment?: string;
+    detachment: string;
   }>;
   /** Units with all their mention timestamps */
   units: Map<string, {

@@ -92,9 +92,10 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
 
       const unit = result.units;
 
-      // Get weapons
-      const weapons = await db
+      // Get weapons (deduplicated by weapon id)
+      const weaponsRaw = await db
         .select({
+          id: schema.weapons.id,
           name: schema.weapons.name,
           type: schema.weapons.weaponType,
           range: schema.weapons.range,
@@ -109,9 +110,15 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
         .innerJoin(schema.weapons, eq(schema.unitWeapons.weaponId, schema.weapons.id))
         .where(eq(schema.unitWeapons.unitId, unit.id));
 
-      // Get abilities
-      const abilities = await db
+      // Deduplicate weapons by id
+      const weapons = Array.from(
+        new Map(weaponsRaw.map((w) => [w.id, w])).values()
+      );
+
+      // Get abilities (deduplicated by ability id)
+      const abilitiesRaw = await db
         .select({
+          id: schema.abilities.id,
           name: schema.abilities.name,
           type: schema.abilities.abilityType,
           description: schema.abilities.description,
@@ -120,15 +127,26 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
         .innerJoin(schema.abilities, eq(schema.unitAbilities.abilityId, schema.abilities.id))
         .where(eq(schema.unitAbilities.unitId, unit.id));
 
-      // Get keywords
-      const keywords = await db
+      // Deduplicate abilities by id
+      const abilities = Array.from(
+        new Map(abilitiesRaw.map((a) => [a.id, a])).values()
+      );
+
+      // Get keywords (deduplicated by keyword id)
+      const keywordsRaw = await db
         .select({
+          id: schema.keywords.id,
           name: schema.keywords.name,
           type: schema.keywords.keywordType,
         })
         .from(schema.unitKeywords)
         .innerJoin(schema.keywords, eq(schema.unitKeywords.keywordId, schema.keywords.id))
         .where(eq(schema.unitKeywords.unitId, unit.id));
+
+      // Deduplicate keywords by id
+      const keywords = Array.from(
+        new Map(keywordsRaw.map((k) => [k.id, k])).values()
+      );
 
       return {
         unit: {

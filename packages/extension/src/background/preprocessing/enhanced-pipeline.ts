@@ -38,12 +38,12 @@ import { loadFactionByName, getFactionUnitNames } from '@/utils/faction-loader';
 import { findFactionByName } from '@/data/generated';
 import { getBestMatch, validateUnit } from '@/utils/unit-validator';
 
-// Zod schema for AI assignment response validation (transforms null to undefined)
+// Zod schema for AI assignment response validation (transforms null to default)
 const AIAssignmentResponseSchema = z.object({
   players: z.array(z.object({
     name: z.string(),
     faction: z.string(),
-    detachment: z.string().nullable().optional().transform(v => v ?? undefined),
+    detachment: z.string().nullable().optional().transform(v => v ?? 'Unknown'),
     confidence: z.enum(['high', 'medium', 'low']),
   })).min(1).max(2),
   unitAssignments: z.array(z.object({

@@ -7,6 +7,8 @@
 
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
+import { eq, and, gt } from 'drizzle-orm';
+import { extractionCache } from '../../db/schema.js';
 import {
   extractTranscript,
   extractVideoId,
@@ -16,10 +18,16 @@ import {
   detectFactionNamesFromVideo,
   extractBattleReportWithArtifacts,
   enrichUnitsWithStats,
+  createStageArtifact,
+  completeStageArtifact,
   ALL_FACTIONS,
   type VideoData,
+  type StageArtifact,
 } from '../../services/extraction-service.js';
 import { fetchNamesForCategory } from '../../tools/validation-tools.js';
+
+// Cache TTL: 7 days (matching extension behavior)
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 interface FetchVideoBody {
   url: string;
@@ -182,6 +190,57 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
       }
 
       try {
+        // Sort factions for consistent cache key
+        const sortedFactions = [...typedFactions].sort() as [string, string];
+
+        // Check cache first
+        const cachedResult = await db
+          .select()
+          .from(extractionCache)
+          .where(
+            and(
+              eq(extractionCache.videoId, videoId),
+              gt(extractionCache.expiresAt, new Date())
+            )
+          )
+          .limit(1);
+
+        if (cachedResult.length > 0) {
+          const cached = cachedResult[0]!;
+          const cachedFactions = cached.factions as [string, string];
+          const sortedCachedFactions = [...cachedFactions].sort();
+
+          // Check if factions match (order-independent)
+          if (
+            sortedCachedFactions[0] === sortedFactions[0] &&
+            sortedCachedFactions[1] === sortedFactions[1]
+          ) {
+            console.log(`Cache hit for video ${videoId} with factions ${typedFactions.join(', ')}`);
+
+            // Create cache-hit artifact
+            const now = Date.now();
+            const cacheArtifact: StageArtifact = {
+              stage: 0,
+              name: 'cache-hit',
+              status: 'completed',
+              startedAt: now,
+              completedAt: now,
+              durationMs: 0,
+              summary: `Loaded from cache (expires ${cached.expiresAt.toLocaleDateString()})`,
+              details: { cachedAt: cached.createdAt?.toISOString() },
+            };
+
+            // Return cached report with cache-hit artifact
+            const cachedReport = cached.report as Record<string, unknown>;
+            return reply.send({
+              ...cachedReport,
+              artifacts: [cacheArtifact],
+            });
+          }
+        }
+
+        console.log(`Cache miss for video ${videoId} - extracting with OpenAI`);
+
         // If transcript not provided, fetch it
         let videoData: VideoData;
 
@@ -243,13 +302,51 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
           apiKey,
         });
 
-        // Enrich units with stats and keywords from the database
+        // Stage 5: Validate units against database
+        let stage5: StageArtifact = createStageArtifact(5, 'validate-units');
         const enrichedUnits = await enrichUnitsWithStats(report.units, report.players, db);
+        const validatedCount = enrichedUnits.filter(u => u.isValidated).length;
+        stage5 = completeStageArtifact(
+          stage5,
+          `${validatedCount}/${enrichedUnits.length} units validated against database`,
+          { validatedCount, totalUnits: enrichedUnits.length }
+        );
 
-        return reply.send({
+        // Build final response
+        const finalReport = {
           ...report,
           units: enrichedUnits,
-          artifacts,
+        };
+
+        // Write to cache (upsert to handle race conditions)
+        try {
+          const expiresAt = new Date(Date.now() + CACHE_TTL_MS);
+          await db
+            .insert(extractionCache)
+            .values({
+              videoId,
+              factions: typedFactions,
+              report: finalReport,
+              expiresAt,
+            })
+            .onConflictDoUpdate({
+              target: extractionCache.videoId,
+              set: {
+                factions: typedFactions,
+                report: finalReport,
+                expiresAt,
+                createdAt: new Date(),
+              },
+            });
+          console.log(`Cached extraction result for video ${videoId}`);
+        } catch (cacheError) {
+          // Log but don't fail the request if caching fails
+          console.error('Failed to cache extraction result:', cacheError);
+        }
+
+        return reply.send({
+          ...finalReport,
+          artifacts: [...artifacts, stage5],
         });
       } catch (error) {
         console.error('Error extracting battle report:', error);

@@ -12,11 +12,7 @@ export const FETCH_PROGRESS_STEPS: ProgressStep[] = [
 ];
 
 export const EXTRACT_PROGRESS_STEPS: ProgressStep[] = [
-  { message: 'Preparing extraction...', delay: 0 },
-  { message: 'Preprocessing transcript...', delay: 300 },
-  { message: 'Initializing AI model...', delay: 800 },
-  { message: 'Analyzing battle report content...', delay: 1500 },
-  { message: 'Identifying units and wargear...', delay: 4000 },
-  { message: 'Detecting stratagems used...', delay: 7000 },
-  { message: 'Validating extracted data...', delay: 10000 },
+  { message: 'Building prompt with faction data...', delay: 0 },
+  { message: 'Sending to AI for extraction...', delay: 500 },
+  { message: 'AI is analyzing the transcript (this may take 1-2 minutes)...', delay: 2000 },
 ];

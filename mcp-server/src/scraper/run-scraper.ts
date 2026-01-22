@@ -423,7 +423,18 @@ function extractFactionName(markdown: string): string | null {
   // Try to find faction name from h1 header
   const h1Match = markdown.match(/^#\s+(.+)$/m);
   if (h1Match?.[1]) {
-    return h1Match[1].trim();
+    let name = h1Match[1].trim();
+
+    // Clean up common scraping artifacts from Wahapedia
+    // Remove filter UI elements like "[ No filter" or "\\[ No filter"
+    name = name.replace(/\s*\[?\s*No filter.*$/i, '');
+    name = name.replace(/\s*\\\[?\s*No filter.*$/i, '');
+
+    // Remove any remaining brackets and content after them
+    name = name.replace(/\s*[\[\(\\].*$/, '');
+
+    // Trim and return
+    return name.trim() || null;
   }
   return null;
 }

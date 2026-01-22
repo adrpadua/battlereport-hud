@@ -35,12 +35,12 @@ export function initializeGameFromReport(report: BattleReport): GameInitInput {
     player1: {
       name: player1?.name ?? 'Player 1',
       faction: player1?.faction ?? 'Unknown',
-      detachment: player1?.detachment,
+      detachment: player1?.detachment ?? 'Unknown',
     },
     player2: {
       name: player2?.name ?? 'Player 2',
       faction: player2?.faction ?? 'Unknown',
-      detachment: player2?.detachment,
+      detachment: player2?.detachment ?? 'Unknown',
     },
     mission: report.mission,
     units,

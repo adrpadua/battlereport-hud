@@ -11,6 +11,7 @@ interface PlayerCardProps {
   stratagems: Stratagem[];
   enhancements?: Enhancement[];
   onSeekToTimestamp?: (seconds: number) => void;
+  onOpenDetail?: (unitName: string, faction: string) => void;
 }
 
 export function PlayerCard({
@@ -19,6 +20,7 @@ export function PlayerCard({
   stratagems,
   enhancements = [],
   onSeekToTimestamp,
+  onOpenDetail,
 }: PlayerCardProps): React.ReactElement {
   // Choose a color based on player index
   const playerColors = ['#3b82f6', '#ef4444']; // Blue, Red
@@ -40,7 +42,7 @@ export function PlayerCard({
         <ConfidenceBadge level={player.confidence} />
       </div>
 
-      <UnitList playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
+      <UnitList playerIndex={playerIndex} playerFaction={player.faction} onSeekToTimestamp={onSeekToTimestamp} onOpenDetail={onOpenDetail} />
       <StratagemList stratagems={stratagems} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
       <EnhancementList enhancements={enhancements} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
     </div>

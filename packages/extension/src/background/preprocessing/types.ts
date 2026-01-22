@@ -140,7 +140,7 @@ export interface PlayerInfo {
   name: string;
   faction: string;
   factionId?: string;
-  detachment?: string;
+  detachment: string;
   confidence: 'high' | 'medium' | 'low';
 }
 

@@ -10,6 +10,7 @@ import { useBattleStore, type TranscriptSegment } from '@battlereport/hud';
 import { api, type FetchVideoResponse, type StageArtifact } from '../services/api';
 import {
   FETCH_PROGRESS_STEPS,
+  EXTRACT_PROGRESS_STEPS,
   type ProgressStep,
 } from '../constants/progress-steps';
 
@@ -60,6 +61,7 @@ function buildProgressMessage(artifact: StageArtifact): string {
 
   // Stage names to friendly labels
   const stageLabels: Record<string, string> = {
+    'cache-hit': 'Cache Hit',
     'load-factions': 'Load Faction Data',
     'llm-preprocess': 'LLM Preprocessing',
     'pattern-preprocess': 'Pattern Preprocessing',
@@ -69,9 +71,15 @@ function buildProgressMessage(artifact: StageArtifact): string {
     'ai-extraction': 'AI Extraction',
     'parse-response': 'Parse Response',
     'build-report': 'Build Report',
+    'validate-units': 'Validate Units',
   };
 
   const label = stageLabels[artifact.name] || artifact.name;
+
+  // Special handling for cache-hit (stage 0)
+  if (artifact.name === 'cache-hit') {
+    return `${statusIcon} ${label}${duration}\n  → ${artifact.summary}`;
+  }
 
   if (artifact.status === 'completed') {
     return `${statusIcon} Stage ${artifact.stage}: ${label}${duration}\n  → ${artifact.summary}`;
@@ -219,8 +227,8 @@ export function useExtraction() {
     battleStore.setSelectedFactions(factions);
     battleStore.clearProgressLogs();
 
-    // Add initial progress message
-    battleStore.addProgressLog('Starting extraction pipeline...', 'in-progress');
+    // Schedule extraction progress steps for user feedback during async operation
+    scheduleProgressSteps(EXTRACT_PROGRESS_STEPS);
 
     try {
       const response = await api.extractBattleReport(url, factions, transcript);
@@ -248,7 +256,7 @@ export function useExtraction() {
       battleStore.setError(message);
       throw error;
     }
-  }, [battleStore, state.videoData?.videoId, addArtifactLogs, errorAllProgressSteps]);
+  }, [battleStore, state.videoData?.videoId, addArtifactLogs, errorAllProgressSteps, scheduleProgressSteps, completeAllProgressSteps]);
 
   /**
    * Reset to initial state.

@@ -2,7 +2,7 @@
  * API client for the MCP server web extraction endpoints.
  */
 
-import type { TranscriptSegment, Chapter, BattleReport } from '@battlereport/hud';
+import type { TranscriptSegment, Chapter, BattleReport, UnitDetailResponse } from '@battlereport/hud';
 
 const API_BASE_URL = 'http://localhost:40401';
 
@@ -119,6 +119,17 @@ class ApiClient {
    */
   async getFactions(): Promise<{ factions: string[] }> {
     return this.request<{ factions: string[] }>('/api/web/factions');
+  }
+
+  /**
+   * Get detailed unit information for datasheet display.
+   */
+  async getUnitDetail(unitName: string, faction?: string): Promise<UnitDetailResponse> {
+    const params = new URLSearchParams();
+    if (faction) params.set('faction', faction);
+    const queryString = params.toString();
+    const url = `/api/units/${encodeURIComponent(unitName)}${queryString ? '?' + queryString : ''}`;
+    return this.request<UnitDetailResponse>(url);
   }
 }
 

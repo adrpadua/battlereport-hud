@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useBattleStore } from '../store/battle-store';
 import { PlayerCard } from './PlayerCard';
 import { LoadingState } from './LoadingState';
 import { FactionSelector } from './FactionSelector';
+import { UnitDetailModal } from './UnitDetailModal';
+import type { UnitDetailResponse } from '../types/unit-detail';
 
 interface HudContainerProps {
   onRefresh?: () => void;
   onStartExtraction?: () => void;
   onContinueWithFactions?: (factions: [string, string]) => void;
   onSeekToTimestamp?: (seconds: number) => void;
+  onFetchUnitDetail?: (unitName: string, faction: string) => Promise<UnitDetailResponse>;
 }
 
 export function HudContainer({
@@ -16,6 +19,7 @@ export function HudContainer({
   onStartExtraction,
   onContinueWithFactions,
   onSeekToTimestamp,
+  onFetchUnitDetail,
 }: HudContainerProps): React.ReactElement {
   const {
     report,
@@ -28,6 +32,19 @@ export function HudContainer({
     statusMessage,
     progressLogs,
   } = useBattleStore();
+
+  const [detailModal, setDetailModal] = useState<{
+    unitName: string;
+    faction: string;
+  } | null>(null);
+
+  const handleOpenDetail = (unitName: string, faction: string): void => {
+    setDetailModal({ unitName, faction });
+  };
+
+  const handleCloseDetail = (): void => {
+    setDetailModal(null);
+  };
 
   const handleRefresh = (): void => {
     if (onRefresh) {
@@ -137,6 +154,7 @@ export function HudContainer({
                 stratagems={report.stratagems}
                 enhancements={report.enhancements}
                 onSeekToTimestamp={onSeekToTimestamp}
+                onOpenDetail={onFetchUnitDetail ? handleOpenDetail : undefined}
               />
             ))}
 
@@ -205,6 +223,15 @@ export function HudContainer({
           </>
         )}
       </div>
+
+      {detailModal && onFetchUnitDetail && (
+        <UnitDetailModal
+          unitName={detailModal.unitName}
+          faction={detailModal.faction}
+          onClose={handleCloseDetail}
+          onFetch={onFetchUnitDetail}
+        />
+      )}
     </div>
   );
 }

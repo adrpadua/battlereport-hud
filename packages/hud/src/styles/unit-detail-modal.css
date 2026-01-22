@@ -1,0 +1,527 @@
+/* ============================================
+   Unit Detail Modal - Wahapedia-style datasheet
+   ============================================ */
+
+/* Overlay */
+.unit-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Container */
+.unit-detail-modal {
+  position: relative;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close Button */
+.unit-detail-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: #888;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  z-index: 1;
+}
+
+.unit-detail-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* Header Section */
+.unit-detail-header {
+  padding: 16px 20px;
+  background: #242424;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.unit-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+  padding-right: 40px; /* Space for close button */
+}
+
+.unit-detail-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.unit-detail-badges {
+  display: flex;
+  gap: 6px;
+}
+
+.unit-detail-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.unit-detail-badge.epic-hero {
+  background: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.unit-detail-badge.battleline {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.unit-detail-faction {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+/* Stats Grid */
+.unit-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.unit-detail-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #1a1a1a;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  padding: 6px 4px;
+}
+
+.unit-detail-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.unit-detail-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+/* Invulnerable Save Badge */
+.unit-detail-invuln {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 6px;
+  color: #a855f7;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Content Area - Scrollable */
+.unit-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Section Titles */
+.unit-detail-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+/* Weapons Table */
+.unit-detail-weapons-section {
+  background: #242424;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.unit-detail-weapons-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.unit-detail-weapons-table th {
+  text-align: left;
+  color: #888;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-bottom: 1px solid #3a3a3a;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.unit-detail-weapons-table th:not(:first-child) {
+  text-align: center;
+  width: 50px;
+}
+
+.unit-detail-weapons-table td {
+  padding: 8px;
+  color: #e5e5e5;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.unit-detail-weapons-table td:not(:first-child) {
+  text-align: center;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.unit-detail-weapons-table .weapon-name {
+  font-weight: 500;
+  color: #fff;
+}
+
+.unit-detail-weapons-table .weapon-abilities-row td {
+  padding: 4px 8px 10px;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.unit-detail-weapons-table .weapon-abilities {
+  color: #60a5fa;
+  font-style: italic;
+  font-size: 11px;
+}
+
+.unit-detail-weapons-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Abilities Panel */
+.unit-detail-abilities-section {
+  background: #242424;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.abilities-group {
+  margin-bottom: 16px;
+}
+
+.abilities-group:last-child {
+  margin-bottom: 0;
+}
+
+.abilities-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+}
+
+.core-abilities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.core-ability-badge {
+  padding: 4px 10px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  color: #60a5fa;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.core-ability-badge.known {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+.ability-item {
+  margin-bottom: 10px;
+}
+
+.ability-item:last-child {
+  margin-bottom: 0;
+}
+
+.ability-name {
+  font-weight: 600;
+  color: #fff;
+  font-size: 13px;
+}
+
+.ability-description {
+  margin: 4px 0 0;
+  color: #aaa;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Composition Section */
+.unit-detail-composition-section {
+  background: #242424;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.composition-group {
+  margin-bottom: 12px;
+}
+
+.composition-group:last-child {
+  margin-bottom: 0;
+}
+
+.composition-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 4px;
+}
+
+.composition-text {
+  margin: 0;
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Keywords Footer */
+.unit-detail-keywords-footer {
+  padding: 12px 20px;
+  background: #242424;
+  border-top: 1px solid #3a3a3a;
+}
+
+.keywords-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.keywords-row:last-child {
+  margin-bottom: 0;
+}
+
+.keywords-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.keywords-list {
+  font-size: 11px;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.keywords-list.faction-keyword {
+  color: #60a5fa;
+  font-weight: 500;
+}
+
+/* Loading State */
+.unit-detail-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #888;
+}
+
+.unit-detail-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #3a3a3a;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+/* Error State */
+.unit-detail-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.unit-detail-error-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  border-radius: 50%;
+  color: #ef4444;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.unit-detail-error-message {
+  color: #ef4444;
+  font-size: 14px;
+  margin-bottom: 16px;
+  max-width: 300px;
+}
+
+.unit-detail-retry {
+  padding: 8px 16px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.unit-detail-retry:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Info Button in UnitCell */
+.unit-info-button {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: 4px;
+  color: #60a5fa;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.unit-info-button:hover {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.6);
+}
+
+/* Scrollbar for modal content */
+.unit-detail-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.unit-detail-content::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.unit-detail-content::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 3px;
+}
+
+.unit-detail-content::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .unit-detail-overlay {
+    padding: 10px;
+  }
+
+  .unit-detail-modal {
+    max-height: 90vh;
+  }
+
+  .unit-detail-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .unit-detail-weapons-table {
+    font-size: 11px;
+  }
+
+  .unit-detail-weapons-table th:not(:first-child),
+  .unit-detail-weapons-table td:not(:first-child) {
+    width: 40px;
+    padding: 6px 4px;
+  }
+}

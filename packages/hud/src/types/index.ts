@@ -1,6 +1,9 @@
 // Re-export game state types
 export * from './game-state';
 
+// Re-export unit detail types
+export * from './unit-detail';
+
 // Confidence level for extracted data
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
@@ -39,7 +42,7 @@ export interface WeaponProfile {
 export interface Player {
   name: string;
   faction: string;
-  detachment?: string;
+  detachment: string;
   confidence: ConfidenceLevel;
 }
 

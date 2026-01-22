@@ -5,8 +5,10 @@ import type { Unit, UnitStats } from '../types';
 interface UnitCellProps {
   unit: Unit;
   unitIndex: number;
+  playerFaction?: string;
   onSeekToTimestamp?: (seconds: number) => void;
   onAcceptSuggestion?: (unitIndex: number) => void;
+  onOpenDetail?: (unitName: string, faction: string) => void;
 }
 
 function formatTimestamp(seconds: number): string {
@@ -87,8 +89,10 @@ function KeywordTags({ keywords }: KeywordTagsProps): React.ReactElement {
 export function UnitCell({
   unit,
   unitIndex,
+  playerFaction,
   onSeekToTimestamp,
   onAcceptSuggestion,
+  onOpenDetail,
 }: UnitCellProps): React.ReactElement {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -120,6 +124,13 @@ export function UnitCell({
     }
   };
 
+  const handleInfoClick = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    if (onOpenDetail && playerFaction) {
+      onOpenDetail(unit.name, playerFaction);
+    }
+  };
+
   return (
     <div className="unit-cell">
       <div
@@ -142,6 +153,15 @@ export function UnitCell({
           )}
         </span>
         <div className="unit-cell-actions">
+          {unit.isValidated && onOpenDetail && playerFaction && (
+            <button
+              onClick={handleInfoClick}
+              className="unit-info-button"
+              title="View full datasheet"
+            >
+              i
+            </button>
+          )}
           {unit.videoTimestamp !== undefined && onSeekToTimestamp && (
             <button
               onClick={handleTimestampClick}

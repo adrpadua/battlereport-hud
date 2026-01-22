@@ -14,7 +14,7 @@ export interface ExtractedPlayer {
   name: string;
   faction: string;
   factionId?: string; // Normalized faction ID (e.g., 'space-marines')
-  detachment?: string;
+  detachment: string;
   confidence: ConfidenceLevel;
 }
 
@@ -182,7 +182,7 @@ export interface AIAssignmentResponse {
   players: {
     name: string;
     faction: string;
-    detachment?: string | null;
+    detachment: string;
     confidence: ConfidenceLevel;
   }[];
 

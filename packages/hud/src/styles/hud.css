@@ -1,3 +1,6 @@
+/* Import unit detail modal styles */
+@import './unit-detail-modal.css';
+
 /* HUD Base Styles */
 .battlereport-hud-root {
   font-family: 'Roboto', 'YouTube Noto', Arial, sans-serif;

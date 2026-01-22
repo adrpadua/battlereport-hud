@@ -185,7 +185,46 @@ function buildTranscriptSection(
 // Static system prompt for better prompt caching (dynamic content moved to user prompt)
 const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, vehicles, and enhancements mentioned in the transcript.
 
-You must respond with a valid JSON object containing the extracted battle report data.
+You must respond with a valid JSON object matching this schema:
+
+{
+  "players": [
+    {
+      "name": "string (player name or identifier)",
+      "faction": "string (e.g., Space Marines, Necrons, Aeldari)",
+      "detachment": "string (REQUIRED - e.g., Gladius Task Force, Awakened Dynasty)",
+      "confidence": "high" | "medium" | "low"
+    }
+  ],
+  "units": [
+    {
+      "name": "string (unit name)",
+      "playerIndex": 0 | 1,
+      "confidence": "high" | "medium" | "low",
+      "pointsCost": "number or null",
+      "videoTimestamp": "number (seconds) or null"
+    }
+  ],
+  "stratagems": [
+    {
+      "name": "string (stratagem name)",
+      "playerIndex": 0 | 1 | null,
+      "confidence": "high" | "medium" | "low",
+      "videoTimestamp": "number (seconds) or null"
+    }
+  ],
+  "enhancements": [
+    {
+      "name": "string (enhancement name)",
+      "playerIndex": 0 | 1 | null,
+      "confidence": "high" | "medium" | "low",
+      "pointsCost": "number or null",
+      "videoTimestamp": "number (seconds) or null"
+    }
+  ],
+  "mission": "string or null",
+  "pointsLimit": "number or null"
+}
 
 TRANSCRIPT FORMAT:
 - The transcript has been pre-processed with tagged gameplay terms
@@ -197,6 +236,11 @@ TRANSCRIPT FORMAT:
 
 Guidelines:
 - Extract player names and their factions accurately
+- IMPORTANT: Detachment is REQUIRED for each player. Common detachments include:
+  - Space Marines: Gladius Task Force, Ironstorm Spearhead, Firestorm Assault Force, Vanguard Spearhead, etc.
+  - Aeldari: Battle Host, etc.
+  - Necrons: Awakened Dynasty, Canoptek Court, Hypercrypt Legion, etc.
+  - If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
 - Look for [UNIT:...] tags for pre-identified units with official names
 - Look for [STRAT:...] tags for pre-identified stratagems
@@ -209,10 +253,7 @@ Guidelines:
   - "high": Unit/enhancement clearly named (especially if tagged) and associated with a player
   - "medium": Unit/enhancement mentioned but player association less clear
   - "low": Partial name or uncertain identification
-
-Your JSON response must include: players (array with name, faction, detachment, confidence), units (array with name, playerIndex, confidence, pointsCost), stratagems (array with name, playerIndex, confidence, videoTimestamp), enhancements (array with name, playerIndex, confidence, pointsCost, videoTimestamp), mission (optional string), and pointsLimit (optional number).
-
-- For each stratagem and enhancement, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
+- For stratagems and enhancements, include the approximate video timestamp (in seconds) when mentioned. The transcript includes timestamps in [Xs] format.`;
 
 function buildUserPrompt(
   videoData: VideoData,

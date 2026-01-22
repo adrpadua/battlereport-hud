@@ -426,7 +426,7 @@ const AIAssignmentResponseSchema = z.object({
   players: z.array(z.object({
     name: z.string(),
     faction: z.string(),
-    detachment: z.string().nullable().optional().transform(v => v ?? undefined),
+    detachment: z.string().nullable().optional().transform(v => v ?? 'Unknown'),
     confidence: z.enum(['high', 'medium', 'low']),
   })).min(1).max(2),
   unitAssignments: z.array(z.object({

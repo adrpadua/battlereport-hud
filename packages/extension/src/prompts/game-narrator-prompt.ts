@@ -261,7 +261,7 @@ export function formatPreprocessedTranscript(
 export interface FactionData {
   name: string;
   units: string[];
-  detachment?: string;
+  detachment: string;
 }
 
 /**

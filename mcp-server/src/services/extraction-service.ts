@@ -34,7 +34,7 @@ export interface StageArtifact {
 /**
  * Create a new stage artifact with running status.
  */
-function createStageArtifact(stage: number, name: string): StageArtifact {
+export function createStageArtifact(stage: number, name: string): StageArtifact {
   return {
     stage,
     name,
@@ -47,7 +47,7 @@ function createStageArtifact(stage: number, name: string): StageArtifact {
 /**
  * Mark a stage as completed with summary and optional details.
  */
-function completeStageArtifact(
+export function completeStageArtifact(
   artifact: StageArtifact,
   summary: string,
   details?: Record<string, unknown>
@@ -94,7 +94,7 @@ export type ConfidenceLevel = 'high' | 'medium' | 'low';
 export interface Player {
   name: string;
   faction: string;
-  detachment?: string;
+  detachment: string;
   confidence: ConfidenceLevel;
 }
 
@@ -140,7 +140,7 @@ const ConfidenceLevelSchema = z.enum(['high', 'medium', 'low']);
 const PlayerSchema = z.object({
   name: z.string(),
   faction: z.string(),
-  detachment: z.string().nullable().optional(),
+  detachment: z.string(),
   confidence: ConfidenceLevelSchema,
 });
 
@@ -271,10 +271,45 @@ function buildTranscriptSection(videoData: VideoData): string {
 // Static system prompt for better prompt caching (dynamic content moved to user prompt)
 const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
 
-You must respond with a valid JSON object containing the extracted battle report data.
+You must respond with a valid JSON object matching this schema:
+
+{
+  "players": [
+    {
+      "name": "string (player name or identifier)",
+      "faction": "string (e.g., Space Marines, Necrons, Aeldari)",
+      "detachment": "string (REQUIRED - e.g., Gladius Task Force, Awakened Dynasty)",
+      "confidence": "high" | "medium" | "low"
+    }
+  ],
+  "units": [
+    {
+      "name": "string (unit name)",
+      "playerIndex": 0 | 1,
+      "confidence": "high" | "medium" | "low",
+      "pointsCost": "number or null",
+      "videoTimestamp": "number (seconds) or null"
+    }
+  ],
+  "stratagems": [
+    {
+      "name": "string (stratagem name)",
+      "playerIndex": 0 | 1 | null,
+      "confidence": "high" | "medium" | "low",
+      "videoTimestamp": "number (seconds) or null"
+    }
+  ],
+  "mission": "string or null",
+  "pointsLimit": "number or null"
+}
 
 Guidelines:
 - Extract player names and their factions accurately
+- IMPORTANT: Detachment is REQUIRED for each player. Common detachments include:
+  - Space Marines: Gladius Task Force, Ironstorm Spearhead, Firestorm Assault Force, Vanguard Spearhead, etc.
+  - Aeldari: Battle Host, etc.
+  - Necrons: Awakened Dynasty, Canoptek Court, Hypercrypt Legion, etc.
+  - If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
 - Include characters (e.g., Chaplain, Captain, Overlord), infantry squads, vehicles, monsters, and any other units
 - Assign each unit to player 0 or player 1 based on context (who owns/controls it)
@@ -282,10 +317,7 @@ Guidelines:
   - "high": Unit clearly named and associated with a player
   - "medium": Unit mentioned but player association less clear
   - "low": Partial name or uncertain identification
-
-Your JSON response must include: players (array with name, faction, detachment, confidence), units (array with name, playerIndex, confidence, pointsCost), stratagems (array with name, playerIndex, confidence, videoTimestamp), mission (optional string), and pointsLimit (optional number).
-
-- For each stratagem, include the approximate video timestamp (in seconds) when it was mentioned. The transcript includes timestamps in [Xs] format - use these to determine the videoTimestamp value.`;
+- For stratagems, include the approximate video timestamp (in seconds) when mentioned. The transcript includes timestamps in [Xs] format.`;
 
 /**
  * Build user prompt with video data.

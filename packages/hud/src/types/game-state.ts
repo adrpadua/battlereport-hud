@@ -46,7 +46,7 @@ export interface PlayerGameState {
   index: PlayerIndex;
   name: string;
   faction: string;
-  detachment?: string;
+  detachment: string;
   commandPoints: number;
   victoryPoints: number;
   isActive: boolean;
@@ -204,12 +204,12 @@ export interface GameInitInput {
   player1: {
     name: string;
     faction: string;
-    detachment?: string;
+    detachment: string;
   };
   player2: {
     name: string;
     faction: string;
-    detachment?: string;
+    detachment: string;
   };
   mission?: string;
   units?: Array<Omit<TrackedUnit, 'id' | 'status'>>;

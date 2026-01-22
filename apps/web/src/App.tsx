@@ -1,8 +1,10 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { HudContainer } from '@battlereport/hud';
+import type { UnitDetailResponse } from '@battlereport/hud';
 import { VideoInput } from './components/VideoInput';
 import { YouTubePlayer, type YouTubePlayerHandle } from './components/YouTubePlayer';
 import { useExtraction } from './hooks/useExtraction';
+import { api } from './services/api';
 
 // Extract video ID from URL for player
 function extractVideoId(url: string): string | null {
@@ -67,6 +69,10 @@ function App(): React.ReactElement {
     }
   }, []);
 
+  const handleFetchUnitDetail = useCallback(async (unitName: string, faction: string): Promise<UnitDetailResponse> => {
+    return api.getUnitDetail(unitName, faction);
+  }, []);
+
   const isLoading = step === 'fetching' || step === 'extracting';
 
   return (
@@ -115,6 +121,7 @@ function App(): React.ReactElement {
               onStartExtraction={handleStartExtraction}
               onContinueWithFactions={handleContinueWithFactions}
               onSeekToTimestamp={handleSeekToTimestamp}
+              onFetchUnitDetail={handleFetchUnitDetail}
             />
           </div>
         </div>

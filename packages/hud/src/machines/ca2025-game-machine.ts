@@ -84,7 +84,7 @@ const createCA2025InitialContext = (input: CA2025GameInitInput): CA2025GameConte
   // Create player states based on secondary type
   const createPlayerState = (
     index: PlayerIndex,
-    playerInput: { name: string; faction: string; detachment?: string },
+    playerInput: { name: string; faction: string; detachment: string },
     fixedSecondaries?: [SecondaryMission, SecondaryMission]
   ): CA2025PlayerState => {
     const base: CA2025PlayerState = {

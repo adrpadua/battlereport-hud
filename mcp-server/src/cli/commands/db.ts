@@ -396,6 +396,20 @@ async function runMigration(): Promise<void> {
       CREATE INDEX IF NOT EXISTS unit_index_status_idx ON unit_index(scrape_status);
     `);
 
+    // Extraction cache (for caching AI extraction results)
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS extraction_cache (
+        id SERIAL PRIMARY KEY,
+        video_id VARCHAR(20) NOT NULL UNIQUE,
+        factions JSONB NOT NULL,
+        report JSONB NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        expires_at TIMESTAMP NOT NULL
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS extraction_cache_video_id_idx ON extraction_cache(video_id);
+      CREATE INDEX IF NOT EXISTS extraction_cache_expires_at_idx ON extraction_cache(expires_at);
+    `);
+
     console.log('Migration completed successfully!');
   } catch (error) {
     console.error('Migration failed:', error);
@@ -424,7 +438,7 @@ async function checkStatus(): Promise<void> {
 
     // Get table counts
     const db2 = drizzle(pool);
-    const tables = ['factions', 'units', 'weapons', 'abilities', 'stratagems', 'detachments', 'core_rules', 'missions', 'secondary_objectives'];
+    const tables = ['factions', 'units', 'weapons', 'abilities', 'stratagems', 'detachments', 'core_rules', 'missions', 'secondary_objectives', 'extraction_cache'];
 
     console.log('\n=== Table Counts ===');
     for (const table of tables) {
@@ -460,3 +474,96 @@ dbCommand
   .action(async () => {
     await checkStatus();
   });
+
+dbCommand
+  .command('fix-factions')
+  .description('Fix corrupted faction names by deriving from slug')
+  .action(async () => {
+    await fixFactionNames();
+  });
+
+async function fixFactionNames(): Promise<void> {
+  console.log('Fixing corrupted faction names...');
+
+  const pool = getPool();
+  const db = drizzle(pool);
+
+  // Map of slug -> proper display name
+  const factionNameMap: Record<string, string> = {
+    'adeptus-custodes': 'Adeptus Custodes',
+    'adeptus-mechanicus': 'Adeptus Mechanicus',
+    'aeldari': 'Aeldari',
+    'agents-of-the-imperium': 'Agents of the Imperium',
+    'astra-militarum': 'Astra Militarum',
+    'black-templars': 'Black Templars',
+    'blood-angels': 'Blood Angels',
+    'chaos-daemons': 'Chaos Daemons',
+    'chaos-knights': 'Chaos Knights',
+    'chaos-space-marines': 'Chaos Space Marines',
+    'dark-angels': 'Dark Angels',
+    'death-guard': 'Death Guard',
+    'deathwatch': 'Deathwatch',
+    'drukhari': 'Drukhari',
+    'genestealers-cults': 'Genestealer Cults',
+    'genestealer-cults': 'Genestealer Cults',
+    'grey-knights': 'Grey Knights',
+    'imperial-knights': 'Imperial Knights',
+    'leagues-of-votann': 'Leagues of Votann',
+    'necrons': 'Necrons',
+    'orks': 'Orks',
+    'space-marines': 'Space Marines',
+    'space-wolves': 'Space Wolves',
+    'tau-empire': "T'au Empire",
+    't-au-empire': "T'au Empire",
+    'thousand-sons': 'Thousand Sons',
+    'tyranids': 'Tyranids',
+    'world-eaters': 'World Eaters',
+    'sisters-of-battle': 'Adepta Sororitas',
+    'adepta-sororitas': 'Adepta Sororitas',
+  };
+
+  try {
+    // Get all factions
+    const factions = await db.execute(sql`SELECT id, slug, name FROM factions`);
+
+    let fixedCount = 0;
+    for (const faction of factions.rows as { id: number; slug: string; name: string }[]) {
+      const properName = factionNameMap[faction.slug];
+
+      if (properName && faction.name !== properName) {
+        console.log(`  Fixing: "${faction.slug}"`);
+        console.log(`    Old name: "${faction.name.substring(0, 50)}${faction.name.length > 50 ? '...' : ''}"`);
+        console.log(`    New name: "${properName}"`);
+
+        await db.execute(
+          sql`UPDATE factions SET name = ${properName}, updated_at = NOW() WHERE id = ${faction.id}`
+        );
+        fixedCount++;
+      } else if (!properName) {
+        // Try to derive name from slug for unknown factions
+        const derivedName = faction.slug
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+
+        if (faction.name !== derivedName && faction.name.length > derivedName.length + 10) {
+          console.log(`  Fixing (derived): "${faction.slug}"`);
+          console.log(`    Old name: "${faction.name.substring(0, 50)}${faction.name.length > 50 ? '...' : ''}"`);
+          console.log(`    New name: "${derivedName}"`);
+
+          await db.execute(
+            sql`UPDATE factions SET name = ${derivedName}, updated_at = NOW() WHERE id = ${faction.id}`
+          );
+          fixedCount++;
+        }
+      }
+    }
+
+    console.log(`\nFixed ${fixedCount} faction name(s)`);
+  } catch (error) {
+    console.error('Failed to fix faction names:', error);
+    throw error;
+  } finally {
+    await closeConnection();
+  }
+}
