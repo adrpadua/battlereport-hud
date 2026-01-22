@@ -100,6 +100,15 @@ dbCmd
     await runMcpCli('db', ['debug-unit', name]);
   });
 
+dbCmd
+  .command('clear-cache [videoId]')
+  .description('Clear extraction cache for a video or all videos')
+  .action(async (videoId?: string) => {
+    const args = ['clear-cache'];
+    if (videoId) args.push(videoId);
+    await runMcpCli('db', args);
+  });
+
 // Ingest command group
 const ingestCmd = mcpCommand
   .command('ingest')

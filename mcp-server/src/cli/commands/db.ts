@@ -505,6 +505,52 @@ dbCommand
     await debugUnit(name);
   });
 
+dbCommand
+  .command('clear-cache')
+  .description('Clear extraction cache for a video or all videos')
+  .argument('[videoId]', 'Video ID to clear (omit for all)')
+  .action(async (videoId?: string) => {
+    await clearCache(videoId);
+  });
+
+async function clearCache(videoId?: string): Promise<void> {
+  const pool = getPool();
+  const db = drizzle(pool);
+
+  try {
+    if (videoId) {
+      console.log(`Clearing cache for video: ${videoId}`);
+
+      // Clear extraction cache
+      const result1 = await db.execute(
+        sql`DELETE FROM extraction_cache WHERE video_id = ${videoId}`
+      );
+      console.log(`  Deleted ${(result1 as { rowCount?: number }).rowCount ?? 0} extraction cache entries`);
+
+      // Clear AI response cache
+      const result2 = await db.execute(
+        sql`DELETE FROM ai_response_cache WHERE video_id = ${videoId}`
+      );
+      console.log(`  Deleted ${(result2 as { rowCount?: number }).rowCount ?? 0} AI response cache entries`);
+    } else {
+      console.log('Clearing all extraction caches...');
+
+      const result1 = await db.execute(sql`DELETE FROM extraction_cache`);
+      console.log(`  Deleted ${(result1 as { rowCount?: number }).rowCount ?? 0} extraction cache entries`);
+
+      const result2 = await db.execute(sql`DELETE FROM ai_response_cache`);
+      console.log(`  Deleted ${(result2 as { rowCount?: number }).rowCount ?? 0} AI response cache entries`);
+    }
+
+    console.log('Cache cleared successfully!');
+  } catch (error) {
+    console.error('Failed to clear cache:', error);
+    throw error;
+  } finally {
+    await closeConnection();
+  }
+}
+
 async function debugUnit(unitName: string): Promise<void> {
   console.log(`Debugging unit: ${unitName}\n`);
 
