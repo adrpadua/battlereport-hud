@@ -526,7 +526,6 @@ async function cleanupDuplicates(dryRun: boolean): Promise<void> {
 
   const pool = getPool();
   const db = drizzle(pool);
-  const BATCH_SIZE = 1000;
 
   try {
     // Clean up duplicate weapon associations using a single DELETE with subquery

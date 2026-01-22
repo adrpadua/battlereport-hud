@@ -236,6 +236,7 @@ TRANSCRIPT FORMAT:
 
 Guidelines:
 - Extract player names and their factions accurately
+- IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
 - IMPORTANT: Detachment is REQUIRED for each player. Common detachments include:
   - Space Marines: Gladius Task Force, Ironstorm Spearhead, Firestorm Assault Force, Vanguard Spearhead, etc.
   - Aeldari: Battle Host, etc.
