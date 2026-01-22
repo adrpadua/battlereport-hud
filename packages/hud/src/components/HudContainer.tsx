@@ -38,6 +38,8 @@ export function HudContainer({
     faction: string;
   } | null>(null);
 
+  const [showJsonModal, setShowJsonModal] = useState(false);
+
   const handleOpenDetail = (unitName: string, faction: string): void => {
     setDetailModal({ unitName, faction });
   };
@@ -83,6 +85,19 @@ export function HudContainer({
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {report && (
+            <button
+              className="header-refresh-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowJsonModal(true);
+              }}
+              title="View raw JSON response"
+              style={{ fontSize: '11px' }}
+            >
+              { }
+            </button>
+          )}
           {!loading && (
             <button
               className="header-refresh-button"
@@ -231,6 +246,29 @@ export function HudContainer({
           onClose={handleCloseDetail}
           onFetch={onFetchUnitDetail}
         />
+      )}
+
+      {showJsonModal && report && (
+        <div className="json-modal-overlay" onClick={() => setShowJsonModal(false)}>
+          <div className="json-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="json-modal-header">
+              <span>Raw AI Response</span>
+              <button onClick={() => setShowJsonModal(false)}>×</button>
+            </div>
+            <div className="json-modal-content">
+              <pre>{JSON.stringify(report, null, 2)}</pre>
+            </div>
+            <div className="json-modal-footer">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+                }}
+              >
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -76,9 +76,28 @@ function parseIndividualUnitPage(markdown: string, sourceUrl: string): ParsedUni
   const pointsMatch = markdown.match(/\|\s*\d+\s*model[s]?\s*\|\s*(\d+)\s*\|/i);
   const pointsCost = pointsMatch ? parseInt(pointsMatch[1]!, 10) : undefined;
 
-  // Extract unit composition
-  const compositionMatch = markdown.match(/UNIT COMPOSITION\s*\\?\n\s*-?\s*\*?\*?([^\\]+)/i);
-  const unitComposition = compositionMatch?.[1]?.trim().replace(/\*\*/g, '') || null;
+  // Extract unit composition - stop at KEYWORDS, FACTION KEYWORDS, STRATAGEMS, or other sections
+  const compositionMatch = markdown.match(
+    /UNIT COMPOSITION[\s\S]*?\n([\s\S]*?)(?=\n\s*(?:KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i
+  );
+  let unitComposition: string | null = null;
+  if (compositionMatch?.[1]) {
+    // Clean up the composition text - remove markdown formatting and limit length
+    unitComposition = compositionMatch[1]
+      .replace(/\*\*/g, '')
+      .replace(/!\[.*?\]\(.*?\)/g, '') // Remove image markdown
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+      .trim()
+      .slice(0, 1000); // Reasonable limit for unit composition
+
+    // If it still looks like garbage (contains stratagem-like content), truncate further
+    if (unitComposition.includes('1CP') || unitComposition.includes('2CP')) {
+      const cpIndex = unitComposition.search(/\d+CP/);
+      if (cpIndex > 0) {
+        unitComposition = unitComposition.slice(0, cpIndex).trim();
+      }
+    }
+  }
 
   // Detect unit types from keywords
   const keywordsSection = markdown.match(/KEYWORDS:\s*([^\n]+)/i)?.[1] || '';
@@ -299,6 +318,88 @@ function extractWeapons(content: string, sourceUrl: string): NewWeapon[] {
 }
 
 /**
+ * Known weapon ability keywords that might be concatenated into weapon names
+ */
+const WEAPON_ABILITY_KEYWORDS = [
+  'anti-',
+  'assault',
+  'blast',
+  'devastating wounds',
+  'devastatingwounds',
+  'extra attacks',
+  'hazardous',
+  'heavy',
+  'ignores cover',
+  'ignorescover',
+  'indirect fire',
+  'indirectfire',
+  'lance',
+  'lethal hits',
+  'lethalhits',
+  'melta',
+  'one shot',
+  'oneshot',
+  'pistol',
+  'precision',
+  'psychic',
+  'rapid fire',
+  'rapidfire',
+  'sustained hits',
+  'sustainedhits',
+  'torrent',
+  'twin-linked',
+  'twinlinked',
+];
+
+/**
+ * Extract weapon abilities that were concatenated into the weapon name
+ */
+function cleanWeaponName(rawName: string): { name: string; abilities: string | null } {
+  let name = rawName;
+  const foundAbilities: string[] = [];
+
+  // Check for concatenated ability keywords (case-insensitive)
+  const lowerName = name.toLowerCase();
+
+  for (const keyword of WEAPON_ABILITY_KEYWORDS) {
+    // Look for the keyword without spaces (e.g., "devastatingwounds" or "indirectfire")
+    const noSpaceKeyword = keyword.replace(/\s+/g, '');
+    const idx = lowerName.indexOf(noSpaceKeyword);
+
+    if (idx > 0) {
+      // Found concatenated ability - extract it
+      const before = name.slice(0, idx).trim();
+      const after = name.slice(idx + noSpaceKeyword.length);
+
+      // Format the ability properly (e.g., "devastating wounds" -> "[DEVASTATING WOUNDS]")
+      const formattedAbility = `[${keyword.toUpperCase()}]`;
+      foundAbilities.push(formattedAbility);
+
+      // Update name to the part before the ability
+      name = before;
+
+      // Check if there's more after - recursively clean
+      if (after.length > 0) {
+        const { name: afterName, abilities: afterAbilities } = cleanWeaponName(after);
+        if (afterAbilities) {
+          foundAbilities.push(afterAbilities);
+        }
+        // If afterName is not empty and starts with lowercase, it might be more abilities
+        if (afterName && !/^[a-z]/.test(afterName)) {
+          name = `${name} ${afterName}`.trim();
+        }
+      }
+      break; // Only handle one ability per pass
+    }
+  }
+
+  return {
+    name: name.trim(),
+    abilities: foundAbilities.length > 0 ? foundAbilities.join(', ') : null,
+  };
+}
+
+/**
  * Parse a weapons table
  */
 function parseWeaponTable(
@@ -322,7 +423,7 @@ function parseWeaponTable(
     // First cell should be empty (or just whitespace)
     if (cells[0] !== '') continue;
 
-    const name = cells[1];
+    const rawName = cells[1];
     const range = cells[2];
     const attacks = cells[3];
     const skill = cells[4];
@@ -331,14 +432,17 @@ function parseWeaponTable(
     const damage = cells[7];
 
     // Skip header rows (RANGED WEAPONS, MELEE WEAPONS) and separator rows
-    if (!name) continue;
-    const lowerName = name.toLowerCase();
-    if (lowerName === 'ranged weapons' || lowerName === 'melee weapons' || name.includes('---')) {
+    if (!rawName) continue;
+    const lowerName = rawName.toLowerCase();
+    if (lowerName === 'ranged weapons' || lowerName === 'melee weapons' || rawName.includes('---')) {
       continue;
     }
 
     // Skip rows without actual stats (just weapon name rows)
     if (!range || !attacks) continue;
+
+    // Clean up weapon name and extract any concatenated abilities
+    const { name, abilities } = cleanWeaponName(rawName);
 
     weapons.push({
       slug: slugify(name).slice(0, 255),
@@ -350,7 +454,7 @@ function parseWeaponTable(
       strength: strength || null,
       armorPenetration: ap || null,
       damage: damage || null,
-      abilities: null,
+      abilities,
       abilitiesJson: null,
       sourceUrl,
       dataSource: 'wahapedia' as const,
