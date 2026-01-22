@@ -75,7 +75,8 @@ async function checkCache(videoId: string): Promise<BattleReport | null> {
     });
 
     if (response.type === 'CACHE_HIT') {
-      return response.payload;
+      // Payload now contains { report, artifacts? }
+      return response.payload.report;
     }
   } catch (error) {
     console.error('Battle Report HUD: Cache check failed', error);
@@ -289,8 +290,10 @@ async function continueWithFactions(factions: [string, string]): Promise<void> {
     });
 
     if (response.type === 'EXTRACTION_RESULT') {
-      store.setReport(response.payload, videoId);
-      initializeTooltips(response.payload);
+      // Payload now contains { report, artifacts? }
+      const { report } = response.payload;
+      store.setReport(report, videoId);
+      initializeTooltips(report);
     } else if (response.type === 'EXTRACTION_ERROR') {
       store.setError(response.payload.error);
     }

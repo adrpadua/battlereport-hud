@@ -43,6 +43,10 @@ export type {
   EntityMentions,
   EntityAssignments,
   PlayerInfo,
+  // Pipeline artifacts
+  StageArtifact,
+  PipelineArtifacts,
+  PipelineStageName,
 } from './types';
 
 // Cache

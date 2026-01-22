@@ -6,6 +6,21 @@ import type { TranscriptSegment, Chapter, BattleReport } from '@battlereport/hud
 
 const API_BASE_URL = 'http://localhost:40401';
 
+/**
+ * Stage artifact from the extraction pipeline.
+ */
+export interface StageArtifact {
+  stage: number;
+  name: string;
+  status: 'running' | 'completed' | 'failed';
+  startedAt: number;
+  completedAt?: number;
+  durationMs?: number;
+  summary: string;
+  details?: Record<string, unknown>;
+  error?: string;
+}
+
 export interface FetchVideoResponse {
   videoId: string;
   title: string;
@@ -18,7 +33,9 @@ export interface FetchVideoResponse {
   allFactions: string[];
 }
 
-export interface ExtractResponse extends BattleReport {}
+export interface ExtractResponse extends BattleReport {
+  artifacts?: StageArtifact[];
+}
 
 export interface HealthResponse {
   status: 'healthy' | 'unhealthy';

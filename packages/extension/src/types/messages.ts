@@ -1,5 +1,6 @@
 import type { VideoData } from './youtube';
 import type { BattleReport } from './battle-report';
+import type { StageArtifact } from '@/background/preprocessing/types';
 
 // Message types for communication between content script and service worker
 
@@ -33,9 +34,14 @@ export interface ExtractBattleReportMessage {
   payload: VideoData;
 }
 
+export interface ExtractionResultPayload {
+  report: BattleReport;
+  artifacts?: StageArtifact[];
+}
+
 export interface ExtractionResultMessage {
   type: 'EXTRACTION_RESULT';
-  payload: BattleReport;
+  payload: ExtractionResultPayload;
 }
 
 export interface ExtractionErrorMessage {
@@ -50,7 +56,7 @@ export interface GetCachedReportMessage {
 
 export interface CacheHitMessage {
   type: 'CACHE_HIT';
-  payload: BattleReport;
+  payload: ExtractionResultPayload;
 }
 
 export interface CacheMissMessage {

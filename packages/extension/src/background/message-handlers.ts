@@ -1,5 +1,6 @@
 import type { Message } from '@/types/messages';
 import type { VideoData } from '@/types/youtube';
+import type { StageArtifact } from './preprocessing/types';
 import {
   getCachedReport,
   setCachedReport,
@@ -45,7 +46,7 @@ async function processMessage(message: Message): Promise<Message> {
       const cached = await getCachedReport(videoId);
 
       if (cached) {
-        return { type: 'CACHE_HIT', payload: cached };
+        return { type: 'CACHE_HIT', payload: { report: cached } };
       } else {
         return { type: 'CACHE_MISS' };
       }
@@ -65,7 +66,7 @@ async function processMessage(message: Message): Promise<Message> {
       try {
         const report = await extractBattleReport(videoData, apiKey);
         await setCachedReport(videoData.videoId, report);
-        return { type: 'EXTRACTION_RESULT', payload: report };
+        return { type: 'EXTRACTION_RESULT', payload: { report } };
       } catch (error) {
         console.error('Extraction error:', error);
         return {
@@ -142,7 +143,10 @@ async function processMessage(message: Message): Promise<Message> {
       }
 
       try {
-        // Use the unified extraction pipeline
+        // Collect artifacts during extraction
+        const artifacts: StageArtifact[] = [];
+
+        // Use the unified extraction pipeline with artifact callback
         const game = await extractGame({
           videoId: videoData.videoId,
           title: videoData.title,
@@ -153,11 +157,28 @@ async function processMessage(message: Message): Promise<Message> {
           chapters: videoData.chapters,
           factions,
           apiKey,
+          onStageComplete: (artifact) => {
+            // Store the latest version of each stage's artifact
+            const existingIndex = artifacts.findIndex(a => a.stage === artifact.stage);
+            if (existingIndex >= 0) {
+              artifacts[existingIndex] = artifact;
+            } else {
+              artifacts.push(artifact);
+            }
+          },
         });
+
         // Convert to BattleReport for HUD compatibility
         const report = toBattleReport(game);
         await setCachedReport(videoData.videoId, report);
-        return { type: 'EXTRACTION_RESULT', payload: report };
+
+        return {
+          type: 'EXTRACTION_RESULT',
+          payload: {
+            report,
+            artifacts: artifacts.filter(a => a.status === 'completed' || a.status === 'failed'),
+          },
+        };
       } catch (error) {
         console.error('Extraction error:', error);
         return {
@@ -183,6 +204,9 @@ async function processMessage(message: Message): Promise<Message> {
       }
 
       try {
+        // Collect artifacts during extraction
+        const artifacts: StageArtifact[] = [];
+
         const game = await extractGame({
           videoId: videoData.videoId,
           title: videoData.title,
@@ -193,11 +217,27 @@ async function processMessage(message: Message): Promise<Message> {
           chapters: videoData.chapters,
           factions,
           apiKey,
+          onStageComplete: (artifact) => {
+            const existingIndex = artifacts.findIndex(a => a.stage === artifact.stage);
+            if (existingIndex >= 0) {
+              artifacts[existingIndex] = artifact;
+            } else {
+              artifacts.push(artifact);
+            }
+          },
         });
+
         const report = toBattleReport(game);
         await setCachedReport(videoData.videoId, report);
+
         // Return as EXTRACTION_RESULT since we're deprecating ENHANCED_EXTRACTION_RESULT
-        return { type: 'EXTRACTION_RESULT', payload: report };
+        return {
+          type: 'EXTRACTION_RESULT',
+          payload: {
+            report,
+            artifacts: artifacts.filter(a => a.status === 'completed' || a.status === 'failed'),
+          },
+        };
       } catch (error) {
         console.error('Extraction error:', error);
         return {

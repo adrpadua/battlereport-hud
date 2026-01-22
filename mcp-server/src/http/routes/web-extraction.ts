@@ -14,7 +14,8 @@ import {
 } from '../../services/youtube-service.js';
 import {
   detectFactionNamesFromVideo,
-  extractBattleReport,
+  extractBattleReportWithArtifacts,
+  enrichUnitsWithStats,
   ALL_FACTIONS,
   type VideoData,
 } from '../../services/extraction-service.js';
@@ -33,7 +34,7 @@ interface ExtractBody {
   }[];
 }
 
-export function registerWebExtractionRoutes(fastify: FastifyInstance, _db: Database): void {
+export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Database): void {
   // Check if required environment variables are set
   const apiKey = process.env.OPENAI_API_KEY;
 
@@ -229,15 +230,22 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, _db: Datab
           factionUnitNames.set(faction, []);
         }
 
-        // Extract battle report using OpenAI
-        const report = await extractBattleReport(
+        // Extract battle report using OpenAI with artifact tracking
+        const { report, artifacts } = await extractBattleReportWithArtifacts({
           videoData,
-          typedFactions,
+          factions: typedFactions,
           factionUnitNames,
-          apiKey
-        );
+          apiKey,
+        });
 
-        return reply.send(report);
+        // Enrich units with stats and keywords from the database
+        const enrichedUnits = await enrichUnitsWithStats(report.units, report.players, db);
+
+        return reply.send({
+          ...report,
+          units: enrichedUnits,
+          artifacts,
+        });
       } catch (error) {
         console.error('Error extracting battle report:', error);
         const message = error instanceof Error ? error.message : 'Unknown error';

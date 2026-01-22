@@ -7,7 +7,76 @@
 
 import OpenAI from 'openai';
 import { z } from 'zod';
+import { eq, ilike, or, and } from 'drizzle-orm';
 import type { TranscriptSegment, Chapter } from './youtube-service.js';
+import type { Database } from '../db/connection.js';
+import * as schema from '../db/schema.js';
+
+// ============================================================================
+// Pipeline Stage Artifacts
+// ============================================================================
+
+/**
+ * Individual stage artifact capturing timing and results.
+ */
+export interface StageArtifact {
+  stage: number;
+  name: string;
+  status: 'running' | 'completed' | 'failed';
+  startedAt: number;
+  completedAt?: number;
+  durationMs?: number;
+  summary: string;
+  details?: Record<string, unknown>;
+  error?: string;
+}
+
+/**
+ * Create a new stage artifact with running status.
+ */
+function createStageArtifact(stage: number, name: string): StageArtifact {
+  return {
+    stage,
+    name,
+    status: 'running',
+    startedAt: Date.now(),
+    summary: '',
+  };
+}
+
+/**
+ * Mark a stage as completed with summary and optional details.
+ */
+function completeStageArtifact(
+  artifact: StageArtifact,
+  summary: string,
+  details?: Record<string, unknown>
+): StageArtifact {
+  const completedAt = Date.now();
+  return {
+    ...artifact,
+    status: 'completed',
+    completedAt,
+    durationMs: completedAt - artifact.startedAt,
+    summary,
+    details,
+  };
+}
+
+/**
+ * Mark a stage as failed with error message.
+ */
+function failStageArtifact(artifact: StageArtifact, error: string): StageArtifact {
+  const completedAt = Date.now();
+  return {
+    ...artifact,
+    status: 'failed',
+    completedAt,
+    durationMs: completedAt - artifact.startedAt,
+    summary: `Failed: ${error}`,
+    error,
+  };
+}
 
 // Types
 export interface VideoData {
@@ -29,12 +98,24 @@ export interface Player {
   confidence: ConfidenceLevel;
 }
 
+export interface UnitStats {
+  movement: string;
+  toughness: number;
+  save: string;
+  wounds: number;
+  leadership: string;
+  objectiveControl: number;
+}
+
 export interface Unit {
   name: string;
   playerIndex: number;
   confidence: ConfidenceLevel;
   pointsCost?: number;
   videoTimestamp?: number;
+  stats?: UnitStats;
+  keywords?: string[];
+  isValidated?: boolean;
 }
 
 export interface Stratagem {
@@ -402,36 +483,136 @@ ${videoData.description}
 }
 
 /**
- * Extract battle report using OpenAI.
+ * Extended extraction result with artifacts.
  */
-export async function extractBattleReport(
-  videoData: VideoData,
-  _factions: [string, string],
-  factionUnitNames: Map<string, string[]>,
-  apiKey: string
-): Promise<BattleReport> {
-  const openai = new OpenAI({ apiKey });
+export interface ExtractionResultWithArtifacts {
+  report: BattleReport;
+  artifacts: StageArtifact[];
+}
 
-  // Use static system prompt for better prompt caching
-  const response = await openai.chat.completions.create({
-    model: 'gpt-5-mini',
-    max_completion_tokens: 4000, // Limit output tokens for cost control
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: buildUserPrompt(videoData, factionUnitNames) },
-    ],
-    response_format: { type: 'json_object' },
-  });
+/**
+ * Extraction options with optional artifact callback.
+ */
+export interface ExtractBattleReportOptions {
+  videoData: VideoData;
+  factions: [string, string];
+  factionUnitNames: Map<string, string[]>;
+  apiKey: string;
+  onStageComplete?: (artifact: StageArtifact) => void;
+}
+
+/**
+ * Extract battle report using OpenAI with artifact tracking.
+ */
+export async function extractBattleReportWithArtifacts(
+  options: ExtractBattleReportOptions
+): Promise<ExtractionResultWithArtifacts> {
+  const { videoData, factionUnitNames, apiKey, onStageComplete } = options;
+  const startTime = Date.now();
+  const artifacts: StageArtifact[] = [];
+
+  const emitArtifact = (artifact: StageArtifact) => {
+    const existingIndex = artifacts.findIndex((a) => a.stage === artifact.stage);
+    if (existingIndex >= 0) {
+      artifacts[existingIndex] = artifact;
+    } else {
+      artifacts.push(artifact);
+    }
+    onStageComplete?.(artifact);
+  };
+
+  // Stage 1: Prepare prompt
+  let stage1 = createStageArtifact(1, 'prepare-prompt');
+  emitArtifact(stage1);
+
+  const unitCount =
+    factionUnitNames.size > 0
+      ? [...factionUnitNames.values()].reduce((sum, arr) => sum + arr.length, 0)
+      : 0;
+  const userPrompt = buildUserPrompt(videoData, factionUnitNames);
+
+  stage1 = completeStageArtifact(
+    stage1,
+    `Prompt prepared with ${unitCount} unit names, ${userPrompt.length} chars`,
+    { promptLength: userPrompt.length, unitCount }
+  );
+  emitArtifact(stage1);
+
+  // Stage 2: Call OpenAI
+  let stage2 = createStageArtifact(2, 'ai-extraction');
+  emitArtifact(stage2);
+
+  const openai = new OpenAI({ apiKey });
+  console.log('Calling OpenAI with model: gpt-5-mini');
+  console.log('User prompt length:', userPrompt.length, 'chars');
+
+  let response;
+  try {
+    response = await openai.chat.completions.create({
+      model: 'gpt-5-mini',
+      max_completion_tokens: 16000,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt },
+      ],
+      response_format: { type: 'json_object' },
+    });
+  } catch (error) {
+    stage2 = failStageArtifact(stage2, error instanceof Error ? error.message : 'AI call failed');
+    emitArtifact(stage2);
+    throw error;
+  }
+
+  console.log('OpenAI response received, finish_reason:', response.choices[0]?.finish_reason);
 
   const content = response.choices[0]?.message?.content;
   if (!content) {
+    stage2 = failStageArtifact(stage2, 'No response from AI');
+    emitArtifact(stage2);
+    console.error('OpenAI response:', JSON.stringify(response, null, 2));
     throw new Error('No response from AI');
   }
 
-  const parsed = JSON.parse(content);
-  const validated = BattleReportExtractionSchema.parse(parsed);
+  stage2 = completeStageArtifact(stage2, `AI response received (${content.length} chars)`, {
+    responseLength: content.length,
+    finishReason: response.choices[0]?.finish_reason,
+  });
+  emitArtifact(stage2);
 
-  // Convert to BattleReport format
+  // Stage 3: Parse and validate response
+  let stage3 = createStageArtifact(3, 'parse-response');
+  emitArtifact(stage3);
+
+  let validated;
+  try {
+    const parsed = JSON.parse(content);
+    validated = BattleReportExtractionSchema.parse(parsed);
+  } catch (error) {
+    stage3 = failStageArtifact(stage3, error instanceof Error ? error.message : 'Parse failed');
+    emitArtifact(stage3);
+    throw error;
+  }
+
+  const player1 = validated.players[0]?.name || 'Unknown';
+  const player1Faction = validated.players[0]?.faction || 'Unknown';
+  const player2 = validated.players[1]?.name || 'Unknown';
+  const player2Faction = validated.players[1]?.faction || 'Unknown';
+
+  stage3 = completeStageArtifact(
+    stage3,
+    `${player1} (${player1Faction}) vs ${player2} (${player2Faction}), ${validated.units.length} units`,
+    {
+      playerCount: validated.players.length,
+      unitCount: validated.units.length,
+      stratagemCount: validated.stratagems.length,
+    }
+  );
+  emitArtifact(stage3);
+
+  // Stage 4: Build report
+  let stage4 = createStageArtifact(4, 'build-report');
+  emitArtifact(stage4);
+
   const report: BattleReport = {
     players: validated.players.map((p) => ({
       name: p.name,
@@ -456,5 +637,172 @@ export async function extractBattleReport(
     extractedAt: Date.now(),
   };
 
-  return report;
+  const totalMs = Date.now() - startTime;
+  stage4 = completeStageArtifact(
+    stage4,
+    `Report built, total ${(totalMs / 1000).toFixed(1)}s`,
+    { processingTimeMs: totalMs }
+  );
+  emitArtifact(stage4);
+
+  return {
+    report,
+    artifacts: artifacts.filter((a) => a.status === 'completed' || a.status === 'failed'),
+  };
+}
+
+/**
+ * Extract battle report using OpenAI.
+ * @deprecated Use extractBattleReportWithArtifacts for artifact tracking
+ */
+export async function extractBattleReport(
+  videoData: VideoData,
+  factions: [string, string],
+  factionUnitNames: Map<string, string[]>,
+  apiKey: string
+): Promise<BattleReport> {
+  const result = await extractBattleReportWithArtifacts({
+    videoData,
+    factions,
+    factionUnitNames,
+    apiKey,
+  });
+  return result.report;
+}
+
+/**
+ * Find a faction by name or slug.
+ */
+async function findFaction(db: Database, query: string) {
+  const [faction] = await db
+    .select()
+    .from(schema.factions)
+    .where(
+      or(
+        ilike(schema.factions.name, `%${query}%`),
+        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
+      )
+    )
+    .limit(1);
+
+  return faction;
+}
+
+/**
+ * Normalize a unit name for database lookup.
+ * Strips parenthetical content (wargear options, unit sizes, etc.)
+ * and cleans up common formatting variations.
+ */
+function normalizeUnitName(name: string): string {
+  return name
+    .replace(/\s*\([^)]*\)/g, '') // Remove parenthetical content
+    .replace(/\s+/g, ' ')          // Normalize whitespace
+    .trim();
+}
+
+/**
+ * Find a unit by name, optionally scoped to a faction.
+ * Tries multiple matching strategies:
+ * 1. Normalized name (stripped of parenthetical content)
+ * 2. Original name as fallback
+ */
+async function findUnitByName(db: Database, unitName: string, factionId?: number) {
+  const normalizedName = normalizeUnitName(unitName);
+
+  // Try normalized name first (more likely to match)
+  for (const searchName of [normalizedName, unitName]) {
+    let whereCondition = ilike(schema.units.name, `%${searchName}%`);
+
+    if (factionId) {
+      whereCondition = and(
+        ilike(schema.units.name, `%${searchName}%`),
+        eq(schema.units.factionId, factionId)
+      )!;
+    }
+
+    const [result] = await db
+      .select()
+      .from(schema.units)
+      .innerJoin(schema.factions, eq(schema.units.factionId, schema.factions.id))
+      .where(whereCondition)
+      .limit(1);
+
+    if (result?.units) {
+      return result.units;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Get keywords for a unit by its ID.
+ */
+async function getUnitKeywords(db: Database, unitId: number): Promise<string[]> {
+  const keywords = await db
+    .select({ name: schema.keywords.name })
+    .from(schema.unitKeywords)
+    .innerJoin(schema.keywords, eq(schema.unitKeywords.keywordId, schema.keywords.id))
+    .where(eq(schema.unitKeywords.unitId, unitId));
+
+  return keywords.map((k) => k.name);
+}
+
+/**
+ * Enriches units with stats and keywords from the database.
+ * This matches the processBattleReport behavior from the extension.
+ */
+export async function enrichUnitsWithStats(
+  units: Unit[],
+  players: Player[],
+  db: Database
+): Promise<Unit[]> {
+  const enrichedUnits: Unit[] = [];
+
+  // Cache faction lookups to avoid repeated queries
+  const factionCache = new Map<string, number | null>();
+
+  for (const unit of units) {
+    const player = players[unit.playerIndex];
+    const factionName = player?.faction;
+
+    // Look up faction ID (with caching)
+    let factionId: number | null = null;
+    if (factionName) {
+      if (factionCache.has(factionName)) {
+        factionId = factionCache.get(factionName) ?? null;
+      } else {
+        const factionRecord = await findFaction(db, factionName);
+        factionId = factionRecord?.id ?? null;
+        factionCache.set(factionName, factionId);
+      }
+    }
+
+    // Query database for unit match
+    const dbUnit = await findUnitByName(db, unit.name, factionId ?? undefined);
+
+    if (dbUnit) {
+      // Get keywords for the unit
+      const keywords = await getUnitKeywords(db, dbUnit.id);
+
+      enrichedUnits.push({
+        ...unit,
+        stats: {
+          movement: dbUnit.movement ?? '-',
+          toughness: dbUnit.toughness ?? 0,
+          save: dbUnit.save ?? '-',
+          wounds: dbUnit.wounds ?? 0,
+          leadership: dbUnit.leadership?.toString() ?? '-',
+          objectiveControl: dbUnit.objectiveControl ?? 0,
+        },
+        keywords,
+        isValidated: true,
+      });
+    } else {
+      // Keep the unit as-is without enrichment
+      enrichedUnits.push(unit);
+    }
+  }
+
+  return enrichedUnits;
 }

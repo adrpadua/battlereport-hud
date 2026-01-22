@@ -211,6 +211,44 @@ export interface GameExtraction {
 /**
  * Options for the unified extractGame function.
  */
+// ============================================================================
+// Pipeline Stage Artifacts - Visibility into extraction progress
+// ============================================================================
+
+/**
+ * Individual stage artifact capturing timing and results.
+ */
+export interface StageArtifact {
+  stage: number;
+  name: string;
+  status: 'running' | 'completed' | 'failed';
+  startedAt: number;
+  completedAt?: number;
+  durationMs?: number;
+  summary: string;
+  details?: Record<string, unknown>;
+  error?: string;
+}
+
+/**
+ * Complete collection of pipeline artifacts.
+ */
+export interface PipelineArtifacts {
+  videoId: string;
+  stages: StageArtifact[];
+  totalDurationMs?: number;
+}
+
+/**
+ * Stage names for the extraction pipeline.
+ */
+export type PipelineStageName =
+  | 'load-factions'
+  | 'llm-preprocess'
+  | 'pattern-preprocess'
+  | 'ai-assignment'
+  | 'build-result';
+
 export interface ExtractGameOptions {
   videoId: string;
   title: string;
@@ -225,4 +263,6 @@ export interface ExtractGameOptions {
   skipLlmPreprocessing?: boolean;
   /** Pre-computed LLM mappings from cache */
   cachedLlmMappings?: Record<string, string>;
+  /** Callback invoked when a pipeline stage completes */
+  onStageComplete?: (artifact: StageArtifact) => void;
 }

@@ -361,12 +361,65 @@ import type {
   ExtractGameOptions,
   EntityMentions,
   PlayerInfo,
+  StageArtifact,
+  PipelineStageName,
 } from './types';
 import { preprocessWithLlm } from '../llm-preprocess-service';
 import { getCachedPreprocess, setCachedPreprocess } from '../cache-manager';
 import { loadFactionByName, getFactionUnitNames } from '@/utils/faction-loader';
 import { findFactionByName } from '@/data/generated';
 import { validateUnit, getBestMatch } from '@/utils/unit-validator';
+
+// ============================================================================
+// Pipeline Artifact Helpers
+// ============================================================================
+
+/**
+ * Create a new stage artifact with running status.
+ */
+function createStageArtifact(stage: number, name: PipelineStageName): StageArtifact {
+  return {
+    stage,
+    name,
+    status: 'running',
+    startedAt: Date.now(),
+    summary: '',
+  };
+}
+
+/**
+ * Mark a stage as completed with summary and optional details.
+ */
+function completeStageArtifact(
+  artifact: StageArtifact,
+  summary: string,
+  details?: Record<string, unknown>
+): StageArtifact {
+  const completedAt = Date.now();
+  return {
+    ...artifact,
+    status: 'completed',
+    completedAt,
+    durationMs: completedAt - artifact.startedAt,
+    summary,
+    details,
+  };
+}
+
+/**
+ * Mark a stage as failed with error message.
+ */
+function failStageArtifact(artifact: StageArtifact, error: string): StageArtifact {
+  const completedAt = Date.now();
+  return {
+    ...artifact,
+    status: 'failed',
+    completedAt,
+    durationMs: completedAt - artifact.startedAt,
+    summary: `Failed: ${error}`,
+    error,
+  };
+}
 
 // Zod schema for AI assignment response
 const AIAssignmentResponseSchema = z.object({
@@ -635,6 +688,14 @@ function buildEntityMentionsMap(
 }
 
 /**
+ * Extended game extraction result that includes pipeline artifacts.
+ */
+export interface ExtractGameResult {
+  extraction: GameExtraction;
+  artifacts: StageArtifact[];
+}
+
+/**
  * Unified game extraction pipeline.
  *
  * This is the single entry point for extracting game data from a battle report video.
@@ -646,39 +707,84 @@ function buildEntityMentionsMap(
  * 3. Run pattern-based preprocessing
  * 4. Call AI for player identification and entity assignment
  * 5. Merge into unified GameExtraction structure
+ *
+ * @param options - Extraction options including video data and callbacks
+ * @returns The game extraction result with artifacts
  */
 export async function extractGame(options: ExtractGameOptions): Promise<GameExtraction> {
   const startTime = Date.now();
+  const artifacts: StageArtifact[] = [];
+  const onStageComplete = options.onStageComplete;
 
+  // Helper to emit and store artifacts
+  const emitArtifact = (artifact: StageArtifact) => {
+    artifacts.push(artifact);
+    onStageComplete?.(artifact);
+  };
+
+  // =========================================================================
   // Stage 1: Load faction data
+  // =========================================================================
+  let stage1 = createStageArtifact(1, 'load-factions');
+  emitArtifact(stage1);
+
   const factionDataMap = new Map<number, FactionData | null>();
   const unitNamesMap = new Map<string, string[]>();
 
-  await Promise.all(
-    options.factions.map(async (factionName, index) => {
-      const faction = await loadFactionByName(factionName);
-      factionDataMap.set(index, faction);
-      const unitNames = await getFactionUnitNames(factionName);
-      unitNamesMap.set(factionName, unitNames);
-    })
-  );
+  try {
+    await Promise.all(
+      options.factions.map(async (factionName, index) => {
+        const faction = await loadFactionByName(factionName);
+        factionDataMap.set(index, faction);
+        const unitNames = await getFactionUnitNames(factionName);
+        unitNamesMap.set(factionName, unitNames);
+      })
+    );
+
+    const unitCounts: Record<string, number> = {};
+    for (const [faction, units] of unitNamesMap) {
+      unitCounts[faction] = units.length;
+    }
+
+    stage1 = completeStageArtifact(
+      stage1,
+      `Loaded ${Object.values(unitCounts).join(' + ')} units from ${options.factions.join(', ')}`,
+      { unitCounts, factionIds: options.factions }
+    );
+    emitArtifact(stage1);
+  } catch (error) {
+    stage1 = failStageArtifact(stage1, error instanceof Error ? error.message : 'Unknown error');
+    emitArtifact(stage1);
+    throw error;
+  }
 
   const allUnitNames = [...unitNamesMap.values()].flat();
   const factionIds = options.factions
     .map(name => findFactionByName(name)?.id)
     .filter((id): id is string => !!id);
 
+  // =========================================================================
   // Stage 2: LLM preprocessing (optional)
-  let llmMappings: Record<string, string> = {};
-  if (!options.skipLlmPreprocessing) {
-    const cachedLlm = options.cachedLlmMappings
-      ? { termMappings: options.cachedLlmMappings }
-      : await getCachedPreprocess(options.videoId);
+  // =========================================================================
+  let stage2 = createStageArtifact(2, 'llm-preprocess');
+  emitArtifact(stage2);
 
-    if (cachedLlm) {
-      llmMappings = cachedLlm.termMappings;
-    } else {
-      try {
+  let llmMappings: Record<string, string> = {};
+  let llmCached = false;
+
+  if (options.skipLlmPreprocessing) {
+    stage2 = completeStageArtifact(stage2, 'Skipped (pattern matching only)', { skipped: true });
+    emitArtifact(stage2);
+  } else {
+    try {
+      const cachedLlm = options.cachedLlmMappings
+        ? { termMappings: options.cachedLlmMappings }
+        : await getCachedPreprocess(options.videoId);
+
+      if (cachedLlm) {
+        llmMappings = cachedLlm.termMappings;
+        llmCached = true;
+      } else {
         const llmResult = await preprocessWithLlm(
           options.transcript,
           options.factions,
@@ -686,26 +792,119 @@ export async function extractGame(options: ExtractGameOptions): Promise<GameExtr
         );
         llmMappings = llmResult.termMappings;
         await setCachedPreprocess(options.videoId, llmResult);
-      } catch (error) {
-        console.warn('LLM preprocessing failed, continuing with pattern matching only:', error);
       }
+
+      const mappingCount = Object.keys(llmMappings).length;
+      const sampleMappings = Object.entries(llmMappings).slice(0, 5).map(([k, v]) => `"${k}" → "${v}"`);
+
+      stage2 = completeStageArtifact(
+        stage2,
+        `${mappingCount} term corrections (cached: ${llmCached})`,
+        {
+          mappingCount,
+          cached: llmCached,
+          sampleMappings,
+          allMappings: llmMappings,
+        }
+      );
+      emitArtifact(stage2);
+    } catch (error) {
+      // LLM preprocessing failure is non-fatal
+      console.warn('LLM preprocessing failed, continuing with pattern matching only:', error);
+      stage2 = completeStageArtifact(
+        stage2,
+        `Skipped (LLM failed: ${error instanceof Error ? error.message : 'Unknown error'})`,
+        { skipped: true, error: error instanceof Error ? error.message : 'Unknown error' }
+      );
+      emitArtifact(stage2);
     }
   }
 
+  // =========================================================================
   // Stage 3: Pattern-based preprocessing
-  const preprocessed = await preprocessTranscript(options.transcript, {
-    mode: 'full',
-    unitNames: allUnitNames,
-    factionIds,
-    llmMappings,
-    detectObjectives: true,
-    detectFactions: true,
-    detectDetachments: true,
-  });
+  // =========================================================================
+  let stage3 = createStageArtifact(3, 'pattern-preprocess');
+  emitArtifact(stage3);
 
+  let preprocessed: PreprocessedTranscript;
+  try {
+    preprocessed = await preprocessTranscript(options.transcript, {
+      mode: 'full',
+      unitNames: allUnitNames,
+      factionIds,
+      llmMappings,
+      detectObjectives: true,
+      detectFactions: true,
+      detectDetachments: true,
+    });
+
+    const unitCount = preprocessed.unitMentions.size;
+    const stratagemCount = preprocessed.stratagemMentions.size;
+    const enhancementCount = preprocessed.enhancementMentions.size;
+    const matchCount = preprocessed.matches.length;
+    const segmentCount = preprocessed.normalizedSegments.length;
+
+    stage3 = completeStageArtifact(
+      stage3,
+      `${unitCount} units, ${stratagemCount} stratagems, ${enhancementCount} enhancements detected`,
+      {
+        unitCount,
+        stratagemCount,
+        enhancementCount,
+        matchCount,
+        segmentCount,
+        corrections: preprocessed.colloquialToOfficial.size,
+      }
+    );
+    emitArtifact(stage3);
+  } catch (error) {
+    stage3 = failStageArtifact(stage3, error instanceof Error ? error.message : 'Unknown error');
+    emitArtifact(stage3);
+    throw error;
+  }
+
+  // =========================================================================
   // Stage 4: AI player assignment
-  const openai = new OpenAI({ apiKey: options.apiKey });
-  const aiResponse = await callAssignmentAI(openai, options, preprocessed);
+  // =========================================================================
+  let stage4 = createStageArtifact(4, 'ai-assignment');
+  emitArtifact(stage4);
+
+  let aiResponse: AIAssignmentResponse;
+  try {
+    const openai = new OpenAI({ apiKey: options.apiKey });
+    aiResponse = await callAssignmentAI(openai, options, preprocessed);
+
+    const player1 = aiResponse.players[0]?.name || 'Unknown';
+    const player1Faction = aiResponse.players[0]?.faction || 'Unknown';
+    const player2 = aiResponse.players[1]?.name || 'Unknown';
+    const player2Faction = aiResponse.players[1]?.faction || 'Unknown';
+    const assignmentCount = aiResponse.unitAssignments.length;
+
+    const confidenceCounts = {
+      high: aiResponse.unitAssignments.filter(a => a.confidence === 'high').length,
+      medium: aiResponse.unitAssignments.filter(a => a.confidence === 'medium').length,
+      low: aiResponse.unitAssignments.filter(a => a.confidence === 'low').length,
+    };
+
+    stage4 = completeStageArtifact(
+      stage4,
+      `${player1} (${player1Faction}) vs ${player2} (${player2Faction}), ${assignmentCount} assignments`,
+      {
+        players: aiResponse.players,
+        unitAssignmentCount: assignmentCount,
+        stratagemAssignmentCount: aiResponse.stratagemAssignments.length,
+        enhancementAssignmentCount: aiResponse.enhancementAssignments.length,
+        confidenceCounts,
+        mission: aiResponse.mission,
+        pointsLimit: aiResponse.pointsLimit,
+      }
+    );
+    emitArtifact(stage4);
+  } catch (error) {
+    stage4 = failStageArtifact(stage4, error instanceof Error ? error.message : 'Unknown error');
+    emitArtifact(stage4);
+    throw error;
+  }
 
   // Build assignment maps
   const unitAssignments = new Map<string, { playerIndex: number; confidence: 'high' | 'medium' | 'low' }>();
@@ -727,54 +926,84 @@ export async function extractGame(options: ExtractGameOptions): Promise<GameExtr
     });
   }
 
-  // Stage 5: Build GameExtraction
-  const players: PlayerInfo[] = aiResponse.players.map(p => ({
-    name: p.name,
-    faction: p.faction,
-    factionId: findFactionByName(p.faction)?.id,
-    detachment: p.detachment,
-    confidence: p.confidence,
-  }));
+  // =========================================================================
+  // Stage 5: Build GameExtraction result
+  // =========================================================================
+  let stage5 = createStageArtifact(5, 'build-result');
+  emitArtifact(stage5);
 
-  const units = buildEntityMentionsMap(
-    preprocessed.unitMentions,
-    unitAssignments as Map<string, { playerIndex?: number; confidence: 'high' | 'medium' | 'low' }>,
-    factionDataMap,
-    true
-  );
+  try {
+    const players: PlayerInfo[] = aiResponse.players.map(p => ({
+      name: p.name,
+      faction: p.faction,
+      factionId: findFactionByName(p.faction)?.id,
+      detachment: p.detachment,
+      confidence: p.confidence,
+    }));
 
-  const stratagems = buildEntityMentionsMap(
-    preprocessed.stratagemMentions,
-    stratagemAssignments,
-    factionDataMap
-  );
+    const units = buildEntityMentionsMap(
+      preprocessed.unitMentions,
+      unitAssignments as Map<string, { playerIndex?: number; confidence: 'high' | 'medium' | 'low' }>,
+      factionDataMap,
+      true
+    );
 
-  const enhancements = buildEntityMentionsMap(
-    preprocessed.enhancementMentions,
-    enhancementAssignments,
-    factionDataMap
-  );
+    const stratagems = buildEntityMentionsMap(
+      preprocessed.stratagemMentions,
+      stratagemAssignments,
+      factionDataMap
+    );
 
-  const processingTimeMs = Date.now() - startTime;
+    const enhancements = buildEntityMentionsMap(
+      preprocessed.enhancementMentions,
+      enhancementAssignments,
+      factionDataMap
+    );
 
-  return {
-    players: players.length === 2 ? [players[0]!, players[1]!] : [players[0]!],
-    units,
-    stratagems,
-    enhancements,
-    assignments: {
-      units: unitAssignments,
-      stratagems: stratagemAssignments,
-      enhancements: enhancementAssignments,
-    },
-    segments: preprocessed.normalizedSegments,
-    factions: preprocessed.factionMentions,
-    detachments: preprocessed.detachmentMentions,
-    objectives: preprocessed.objectiveMentions,
-    mission: aiResponse.mission,
-    pointsLimit: aiResponse.pointsLimit,
-    videoId: options.videoId,
-    extractedAt: Date.now(),
-    processingTimeMs,
-  };
+    // Count validated units
+    let validatedCount = 0;
+    for (const [, entity] of units) {
+      if (entity.isValidated) validatedCount++;
+    }
+
+    const processingTimeMs = Date.now() - startTime;
+
+    stage5 = completeStageArtifact(
+      stage5,
+      `${validatedCount}/${units.size} units validated, total ${(processingTimeMs / 1000).toFixed(1)}s`,
+      {
+        validatedUnits: validatedCount,
+        totalUnits: units.size,
+        totalStratagems: stratagems.size,
+        totalEnhancements: enhancements.size,
+        processingTimeMs,
+      }
+    );
+    emitArtifact(stage5);
+
+    return {
+      players: players.length === 2 ? [players[0]!, players[1]!] : [players[0]!],
+      units,
+      stratagems,
+      enhancements,
+      assignments: {
+        units: unitAssignments,
+        stratagems: stratagemAssignments,
+        enhancements: enhancementAssignments,
+      },
+      segments: preprocessed.normalizedSegments,
+      factions: preprocessed.factionMentions,
+      detachments: preprocessed.detachmentMentions,
+      objectives: preprocessed.objectiveMentions,
+      mission: aiResponse.mission,
+      pointsLimit: aiResponse.pointsLimit,
+      videoId: options.videoId,
+      extractedAt: Date.now(),
+      processingTimeMs,
+    };
+  } catch (error) {
+    stage5 = failStageArtifact(stage5, error instanceof Error ? error.message : 'Unknown error');
+    emitArtifact(stage5);
+    throw error;
+  }
 }
