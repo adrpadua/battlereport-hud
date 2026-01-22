@@ -128,3 +128,101 @@ export interface ObjectivesApiResponse {
   gambits: string[];
   aliases: Record<string, string>;
 }
+
+// ============================================================================
+// GameExtraction - Unified output for all consumers
+// ============================================================================
+
+/**
+ * Player information from AI extraction.
+ */
+export interface PlayerInfo {
+  name: string;
+  faction: string;
+  factionId?: string;
+  detachment?: string;
+  confidence: 'high' | 'medium' | 'low';
+}
+
+/**
+ * Entity mentions with all timestamps and metadata.
+ * Used for units, stratagems, and enhancements.
+ */
+export interface EntityMentions {
+  canonicalName: string;
+  timestamps: number[];
+  mentionCount: number;
+  isValidated: boolean;
+  source: 'preprocessed' | 'ai-discovered';
+  // Optional enrichment data (for units)
+  stats?: import('@/types/bsdata').UnitStats;
+  keywords?: string[];
+  pointsCost?: number;
+  suggestedMatch?: {
+    name: string;
+    confidence: number;
+  };
+}
+
+/**
+ * Entity-to-player assignments from AI.
+ * Maps entity canonical name (lowercase) to playerIndex (0 or 1).
+ */
+export interface EntityAssignments {
+  units: Map<string, { playerIndex: number; confidence: 'high' | 'medium' | 'low' }>;
+  stratagems: Map<string, { playerIndex?: number; confidence: 'high' | 'medium' | 'low' }>;
+  enhancements: Map<string, { playerIndex?: number; pointsCost?: number; confidence: 'high' | 'medium' | 'low' }>;
+}
+
+/**
+ * Complete game extraction result.
+ * Single source of truth for all consumers (HUD, narrator, web app).
+ */
+export interface GameExtraction {
+  // Player identification (from AI)
+  players: [PlayerInfo, PlayerInfo] | [PlayerInfo];
+
+  // Entity mentions with ALL timestamps (from preprocessing)
+  units: Map<string, EntityMentions>;
+  stratagems: Map<string, EntityMentions>;
+  enhancements: Map<string, EntityMentions>;
+
+  // Entity-to-player assignments (from AI)
+  assignments: EntityAssignments;
+
+  // Tagged transcript segments
+  segments: NormalizedSegment[];
+
+  // Additional detections
+  factions: Map<string, number[]>;
+  detachments: Map<string, number[]>;
+  objectives: Map<string, number[]>;
+
+  // Game info (from AI)
+  mission?: string;
+  pointsLimit?: number;
+
+  // Metadata
+  videoId: string;
+  extractedAt: number;
+  processingTimeMs: number;
+}
+
+/**
+ * Options for the unified extractGame function.
+ */
+export interface ExtractGameOptions {
+  videoId: string;
+  title: string;
+  description: string;
+  channel: string;
+  pinnedComment?: string;
+  transcript: import('@/types/youtube').TranscriptSegment[];
+  chapters: import('@/types/youtube').Chapter[];
+  factions: [string, string];
+  apiKey: string;
+  /** Skip LLM preprocessing (pattern matching only) */
+  skipLlmPreprocessing?: boolean;
+  /** Pre-computed LLM mappings from cache */
+  cachedLlmMappings?: Record<string, string>;
+}

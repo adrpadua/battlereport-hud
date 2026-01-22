@@ -3,7 +3,6 @@ import { BattleReportExtractionSchema } from '@/types/ai-response';
 import type { BattleReport, Enhancement } from '@/types/battle-report';
 import type { VideoData, Chapter, TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
-import type { EnhancedExtractionResult } from '@/types/enhanced-extraction';
 import { getFactionContextForPrompt, processBattleReport } from './report-processor';
 import {
   preprocessTranscript,
@@ -17,7 +16,6 @@ import {
 import { getCachedPreprocess, setCachedPreprocess } from './cache-manager';
 import { preprocessWithLlm } from './llm-preprocess-service';
 import { inferFactionsFromText } from '@/utils/faction-loader';
-import { enhancedPreprocess, toHudBattleReport } from './preprocessing/enhanced-pipeline';
 
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
@@ -430,166 +428,5 @@ export async function extractBattleReport(
   return processedReport;
 }
 
-/**
- * Extract battle report with user-selected factions.
- * Used for phased extraction where user confirms/selects factions.
- * @deprecated Use extractWithEnhancedPipeline for new code.
- */
-export async function extractWithFactions(
-  videoData: VideoData,
-  factions: [string, string],
-  apiKey: string
-): Promise<BattleReport> {
-  const openai = new OpenAI({ apiKey });
-
-  // Load unit names for selected factions
-  const factionUnitNames = new Map<string, string[]>();
-  for (const faction of factions) {
-    const unitNames = await getFactionContextForPrompt(faction);
-    if (unitNames.length > 0) {
-      factionUnitNames.set(faction, unitNames);
-    }
-  }
-
-  const allUnitNames = [...factionUnitNames.values()].flat();
-
-  // Try LLM preprocessing with caching
-  let preprocessed: PreprocessedTranscript;
-  try {
-    const cachedLlm = await getCachedPreprocess(videoData.videoId);
-    let llmResult: LlmPreprocessResult | null = cachedLlm;
-
-    if (!llmResult) {
-      console.log('Running LLM preprocessing for video:', videoData.videoId);
-      llmResult = await preprocessWithLlm(videoData.transcript, factions, apiKey);
-      await setCachedPreprocess(videoData.videoId, llmResult);
-      console.log('LLM preprocessing cached for video:', videoData.videoId);
-    } else {
-      console.log('Using cached LLM preprocess for video:', videoData.videoId);
-    }
-
-    // Use LLM mappings with pattern-based preprocessing
-    preprocessed = preprocessTranscriptWithLlmMappings(
-      videoData.transcript,
-      allUnitNames,
-      llmResult.termMappings
-    );
-  } catch (error) {
-    console.warn('LLM preprocessing failed, falling back to pattern matching:', error);
-    preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
-  }
-
-  // Use static system prompt for better prompt caching
-  const response = await openai.chat.completions.create({
-    model: 'gpt-5-mini',
-    max_completion_tokens: 4000, // Limit output tokens for cost control
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: buildUserPrompt(videoData, preprocessed, factionUnitNames) },
-    ],
-    response_format: { type: 'json_object' },
-  });
-
-  const content = response.choices[0]?.message?.content;
-  if (!content) {
-    throw new Error('No response from AI');
-  }
-
-  const parsed = JSON.parse(content);
-  const validated = BattleReportExtractionSchema.parse(parsed);
-
-  // Convert to BattleReport format (convert null to undefined)
-  const extractedStratagems = validated.stratagems.map((s) => ({
-    name: s.name,
-    playerIndex: s.playerIndex ?? undefined,
-    confidence: s.confidence,
-    videoTimestamp: s.videoTimestamp ?? undefined,
-  }));
-
-  // Enrich stratagems with timestamps from transcript preprocessing
-  const enrichedStratagems = enrichStratagemTimestamps(extractedStratagems, preprocessed);
-
-  // Convert validated units and enrich with timestamps
-  const extractedUnits = validated.units.map((u) => ({
-    name: u.name,
-    playerIndex: u.playerIndex,
-    confidence: u.confidence,
-    pointsCost: u.pointsCost ?? undefined,
-  }));
-  const enrichedUnits = enrichUnitTimestamps(extractedUnits, preprocessed);
-
-  // Convert validated enhancements and enrich with timestamps
-  const extractedEnhancements: Enhancement[] = (validated.enhancements ?? []).map((e) => ({
-    name: e.name,
-    playerIndex: e.playerIndex ?? undefined,
-    pointsCost: e.pointsCost ?? undefined,
-    confidence: e.confidence,
-    videoTimestamp: e.videoTimestamp ?? undefined,
-  }));
-  const enrichedEnhancements = enrichEnhancementTimestamps(extractedEnhancements, preprocessed);
-
-  const rawReport: BattleReport = {
-    players: validated.players.map((p) => ({
-      name: p.name,
-      faction: p.faction,
-      detachment: p.detachment ?? undefined,
-      confidence: p.confidence,
-    })) as BattleReport['players'],
-    units: enrichedUnits,
-    stratagems: enrichedStratagems,
-    enhancements: enrichedEnhancements.length > 0 ? enrichedEnhancements : undefined,
-    mission: validated.mission ?? undefined,
-    pointsLimit: validated.pointsLimit ?? undefined,
-    extractedAt: Date.now(),
-  };
-
-  // Process and validate units against BSData
-  const processedReport = await processBattleReport(rawReport);
-
-  return processedReport;
-}
-
-/**
- * Extract battle report using the enhanced preprocessing pipeline.
- * This is the new unified approach that combines detection and assignment.
- *
- * Benefits:
- * - Single pipeline with one output structure
- * - Reduced AI token usage (AI focuses on assignment, not detection)
- * - Richer data with multiple timestamps per entity
- * - Cleaner architecture
- */
-export async function extractWithEnhancedPipeline(
-  videoData: VideoData,
-  factions: [string, string],
-  apiKey: string
-): Promise<EnhancedExtractionResult> {
-  return enhancedPreprocess({
-    videoId: videoData.videoId,
-    title: videoData.title,
-    description: videoData.description,
-    channel: videoData.channel,
-    pinnedComment: videoData.pinnedComment ?? undefined,
-    transcript: videoData.transcript,
-    chapters: videoData.chapters,
-    selectedFactions: factions,
-    apiKey,
-  });
-}
-
-/**
- * Extract battle report using enhanced pipeline with backward-compatible output.
- * Returns a BattleReport that can be used with existing HUD components.
- */
-export async function extractWithEnhancedPipelineCompat(
-  videoData: VideoData,
-  factions: [string, string],
-  apiKey: string
-): Promise<BattleReport> {
-  const enhanced = await extractWithEnhancedPipeline(videoData, factions, apiKey);
-  return toHudBattleReport(enhanced);
-}
-
-// Re-export types and functions from enhanced pipeline for convenience
-export { toHudBattleReport } from './preprocessing/enhanced-pipeline';
-export type { EnhancedExtractionResult } from '@/types/enhanced-extraction';
+// Legacy functions removed - use extractGame() from preprocessing module instead.
+// See packages/extension/src/background/preprocessing/pipeline.ts for the unified pipeline.

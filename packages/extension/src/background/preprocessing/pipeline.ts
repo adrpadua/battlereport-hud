@@ -347,3 +347,434 @@ export function preprocessTranscriptSync(
     normalizedSegments,
   };
 }
+
+// ============================================================================
+// Unified Game Extraction Pipeline
+// ============================================================================
+
+import OpenAI from 'openai';
+import { z } from 'zod';
+import type { Chapter } from '@/types/youtube';
+import type { FactionData } from '@/types/bsdata';
+import type {
+  GameExtraction,
+  ExtractGameOptions,
+  EntityMentions,
+  PlayerInfo,
+} from './types';
+import { preprocessWithLlm } from '../llm-preprocess-service';
+import { getCachedPreprocess, setCachedPreprocess } from '../cache-manager';
+import { loadFactionByName, getFactionUnitNames } from '@/utils/faction-loader';
+import { findFactionByName } from '@/data/generated';
+import { validateUnit, getBestMatch } from '@/utils/unit-validator';
+
+// Zod schema for AI assignment response
+const AIAssignmentResponseSchema = z.object({
+  players: z.array(z.object({
+    name: z.string(),
+    faction: z.string(),
+    detachment: z.string().nullable().optional().transform(v => v ?? undefined),
+    confidence: z.enum(['high', 'medium', 'low']),
+  })).min(1).max(2),
+  unitAssignments: z.array(z.object({
+    name: z.string(),
+    playerIndex: z.number().min(0).max(1),
+    confidence: z.enum(['high', 'medium', 'low']),
+  })),
+  stratagemAssignments: z.array(z.object({
+    name: z.string(),
+    playerIndex: z.number().min(0).max(1).nullable().optional().transform(v => v ?? undefined),
+    confidence: z.enum(['high', 'medium', 'low']),
+  })),
+  enhancementAssignments: z.array(z.object({
+    name: z.string(),
+    playerIndex: z.number().min(0).max(1).nullable().optional().transform(v => v ?? undefined),
+    pointsCost: z.number().nullable().optional().transform(v => v ?? undefined),
+    confidence: z.enum(['high', 'medium', 'low']),
+  })),
+  mission: z.string().nullable().optional().transform(v => v ?? undefined),
+  pointsLimit: z.number().nullable().optional().transform(v => v ?? undefined),
+});
+
+type AIAssignmentResponse = z.infer<typeof AIAssignmentResponseSchema>;
+
+const ASSIGNMENT_SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to:
+1. Identify the players and their factions
+2. Assign pre-detected units, stratagems, and enhancements to the correct player
+
+IMPORTANT: Units, stratagems, and enhancements have ALREADY been detected from the transcript.
+Your job is to assign them to players, NOT to discover new ones.
+
+Guidelines:
+- Identify player names from how they're addressed in the video
+- Match player names to their factions based on context
+- Assign each detected unit to player 0 or player 1 based on:
+  - Direct statements ("my Intercessors", "John's Necron Warriors")
+  - Faction alignment (Space Marine units go to the Space Marine player)
+  - Context from army list sections
+- Confidence levels:
+  - "high": Clear player association from context or faction match
+  - "medium": Likely assignment based on faction, but not explicit
+  - "low": Uncertain assignment, made by process of elimination
+
+Respond with a JSON object containing:
+- players: Array of {name, faction, detachment?, confidence}
+- unitAssignments: Array of {name, playerIndex, confidence}
+- stratagemAssignments: Array of {name, playerIndex?, confidence}
+- enhancementAssignments: Array of {name, playerIndex?, pointsCost?, confidence}
+- mission: Optional mission name
+- pointsLimit: Optional points limit`;
+
+// Keywords for finding army list sections
+const ARMY_LIST_CHAPTER_KEYWORDS = ['army', 'list', 'lists', 'forces', 'armies', 'roster'];
+const ARMY_LIST_KEYWORDS = [
+  'army list', 'my list', 'the list', 'list for', 'the lists',
+  'running with', "i'm playing", 'playing with', "i'm running",
+  'points of', '2000 points', '2,000 points', '1000 points', '1,000 points',
+  'strike force', 'incursion'
+];
+
+function findArmyListChapters(chapters: Chapter[]): Chapter[] {
+  return chapters.filter(ch =>
+    ARMY_LIST_CHAPTER_KEYWORDS.some(kw => ch.title.toLowerCase().includes(kw))
+  );
+}
+
+function buildTranscriptExcerpts(
+  transcript: TranscriptSegment[],
+  chapters: Chapter[]
+): string {
+  const introSegments = transcript.filter(seg => seg.startTime < 300);
+  const armyChapters = findArmyListChapters(chapters);
+
+  let armyListSegments: TranscriptSegment[] = [];
+  if (armyChapters.length > 0) {
+    armyListSegments = armyChapters.flatMap(ch => {
+      const nextChapter = chapters[chapters.indexOf(ch) + 1];
+      const endTime = nextChapter?.startTime ?? ch.startTime + 300;
+      return transcript.filter(seg => seg.startTime >= ch.startTime && seg.startTime < endTime);
+    });
+  } else {
+    // Fallback: keyword-based detection
+    let inArmySection = false;
+    let sectionEndTime = 0;
+    for (const seg of transcript) {
+      const lower = seg.text.toLowerCase();
+      if (ARMY_LIST_KEYWORDS.some(kw => lower.includes(kw)) && !inArmySection) {
+        inArmySection = true;
+        sectionEndTime = seg.startTime + 180;
+      }
+      if (inArmySection) {
+        armyListSegments.push(seg);
+        if (seg.startTime > sectionEndTime || lower.includes('deploy') || lower.includes('first turn')) {
+          inArmySection = false;
+        }
+      }
+    }
+  }
+
+  // Dedupe and combine
+  const seen = new Set<number>();
+  const allSegments = [...introSegments, ...armyListSegments]
+    .filter(seg => {
+      const key = Math.floor(seg.startTime);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => a.startTime - b.startTime);
+
+  const text = allSegments
+    .map(seg => `[${Math.floor(seg.startTime)}s] ${seg.text}`)
+    .join(' ');
+
+  return text.slice(0, 8000);
+}
+
+function buildAssignmentPrompt(
+  options: ExtractGameOptions,
+  preprocessed: PreprocessedTranscript
+): string {
+  const detectedUnits = [...preprocessed.unitMentions.entries()].map(([name, ts]) => ({
+    name,
+    timestamps: ts,
+    mentionCount: ts.length,
+  }));
+
+  const detectedStratagems = [...preprocessed.stratagemMentions.entries()].map(([name, ts]) => ({
+    name,
+    timestamps: ts,
+    mentionCount: ts.length,
+  }));
+
+  const detectedEnhancements = [...preprocessed.enhancementMentions.entries()].map(([name, ts]) => ({
+    name,
+    timestamps: ts,
+    mentionCount: ts.length,
+  }));
+
+  let prompt = `Analyze this Warhammer 40,000 battle report and assign the detected entities to players.
+
+VIDEO: ${options.title}
+CHANNEL: ${options.channel}
+
+FACTIONS: ${options.factions.join(' vs ')}
+
+`;
+
+  if (options.chapters.length > 0) {
+    prompt += `CHAPTERS:\n`;
+    for (const ch of options.chapters.slice(0, 10)) {
+      const mins = Math.floor(ch.startTime / 60);
+      const secs = ch.startTime % 60;
+      prompt += `${mins}:${secs.toString().padStart(2, '0')} - ${ch.title}\n`;
+    }
+    prompt += '\n';
+  }
+
+  if (options.pinnedComment) {
+    prompt += `PINNED COMMENT:\n${options.pinnedComment.slice(0, 1000)}\n\n`;
+  }
+
+  prompt += `DETECTED UNITS (${detectedUnits.length}):\n`;
+  for (const unit of detectedUnits.slice(0, 50)) {
+    prompt += `- ${unit.name} (mentioned ${unit.mentionCount}x at ${unit.timestamps[0]}s)\n`;
+  }
+  if (detectedUnits.length > 50) {
+    prompt += `... and ${detectedUnits.length - 50} more\n`;
+  }
+
+  prompt += `\nDETECTED STRATAGEMS (${detectedStratagems.length}):\n`;
+  for (const strat of detectedStratagems.slice(0, 30)) {
+    prompt += `- ${strat.name} (used ${strat.mentionCount}x)\n`;
+  }
+
+  if (detectedEnhancements.length > 0) {
+    prompt += `\nDETECTED ENHANCEMENTS (${detectedEnhancements.length}):\n`;
+    for (const enh of detectedEnhancements.slice(0, 20)) {
+      prompt += `- ${enh.name}\n`;
+    }
+  }
+
+  const excerpts = buildTranscriptExcerpts(options.transcript, options.chapters);
+  prompt += `\nTRANSCRIPT EXCERPTS:\n${excerpts}`;
+
+  return prompt;
+}
+
+async function callAssignmentAI(
+  openai: OpenAI,
+  options: ExtractGameOptions,
+  preprocessed: PreprocessedTranscript
+): Promise<AIAssignmentResponse> {
+  const response = await openai.chat.completions.create({
+    model: 'gpt-5-mini',
+    max_completion_tokens: 3000,
+    messages: [
+      { role: 'system', content: ASSIGNMENT_SYSTEM_PROMPT },
+      { role: 'user', content: buildAssignmentPrompt(options, preprocessed) },
+    ],
+    response_format: { type: 'json_object' },
+  });
+
+  const content = response.choices[0]?.message?.content;
+  if (!content) {
+    throw new Error('No response from AI');
+  }
+
+  return AIAssignmentResponseSchema.parse(JSON.parse(content));
+}
+
+function buildEntityMentionsMap(
+  mentions: Map<string, number[]>,
+  assignments: Map<string, { playerIndex?: number; confidence: 'high' | 'medium' | 'low' }>,
+  factionDataMap: Map<number, FactionData | null>,
+  isUnit: boolean = false
+): Map<string, EntityMentions> {
+  const result = new Map<string, EntityMentions>();
+
+  for (const [name, timestamps] of mentions) {
+    const assignment = assignments.get(name.toLowerCase());
+    const playerIndex = assignment?.playerIndex ?? 0;
+
+    const entityMention: EntityMentions = {
+      canonicalName: name,
+      timestamps,
+      mentionCount: timestamps.length,
+      isValidated: false,
+      source: 'preprocessed',
+    };
+
+    // For units, try to validate against faction BSData
+    if (isUnit) {
+      const faction = factionDataMap.get(playerIndex);
+      if (faction) {
+        const validation = validateUnit(name, faction);
+        if (validation.isValidated && validation.matchedUnit) {
+          entityMention.canonicalName = validation.matchedName;
+          entityMention.isValidated = true;
+          entityMention.stats = validation.matchedUnit.stats ?? undefined;
+          entityMention.keywords = validation.matchedUnit.keywords;
+          entityMention.pointsCost = validation.matchedUnit.pointsCost ?? undefined;
+        } else {
+          const bestMatch = getBestMatch(name, faction);
+          if (bestMatch && bestMatch.confidence >= 0.3) {
+            entityMention.suggestedMatch = {
+              name: bestMatch.matchedName,
+              confidence: bestMatch.confidence,
+            };
+          }
+        }
+      }
+    }
+
+    result.set(name, entityMention);
+  }
+
+  return result;
+}
+
+/**
+ * Unified game extraction pipeline.
+ *
+ * This is the single entry point for extracting game data from a battle report video.
+ * It outputs a `GameExtraction` that can be consumed by HUD, narrator, and other apps.
+ *
+ * Pipeline stages:
+ * 1. Load faction data
+ * 2. Run LLM preprocessing (optional, for term correction)
+ * 3. Run pattern-based preprocessing
+ * 4. Call AI for player identification and entity assignment
+ * 5. Merge into unified GameExtraction structure
+ */
+export async function extractGame(options: ExtractGameOptions): Promise<GameExtraction> {
+  const startTime = Date.now();
+
+  // Stage 1: Load faction data
+  const factionDataMap = new Map<number, FactionData | null>();
+  const unitNamesMap = new Map<string, string[]>();
+
+  await Promise.all(
+    options.factions.map(async (factionName, index) => {
+      const faction = await loadFactionByName(factionName);
+      factionDataMap.set(index, faction);
+      const unitNames = await getFactionUnitNames(factionName);
+      unitNamesMap.set(factionName, unitNames);
+    })
+  );
+
+  const allUnitNames = [...unitNamesMap.values()].flat();
+  const factionIds = options.factions
+    .map(name => findFactionByName(name)?.id)
+    .filter((id): id is string => !!id);
+
+  // Stage 2: LLM preprocessing (optional)
+  let llmMappings: Record<string, string> = {};
+  if (!options.skipLlmPreprocessing) {
+    const cachedLlm = options.cachedLlmMappings
+      ? { termMappings: options.cachedLlmMappings }
+      : await getCachedPreprocess(options.videoId);
+
+    if (cachedLlm) {
+      llmMappings = cachedLlm.termMappings;
+    } else {
+      try {
+        const llmResult = await preprocessWithLlm(
+          options.transcript,
+          options.factions,
+          options.apiKey
+        );
+        llmMappings = llmResult.termMappings;
+        await setCachedPreprocess(options.videoId, llmResult);
+      } catch (error) {
+        console.warn('LLM preprocessing failed, continuing with pattern matching only:', error);
+      }
+    }
+  }
+
+  // Stage 3: Pattern-based preprocessing
+  const preprocessed = await preprocessTranscript(options.transcript, {
+    mode: 'full',
+    unitNames: allUnitNames,
+    factionIds,
+    llmMappings,
+    detectObjectives: true,
+    detectFactions: true,
+    detectDetachments: true,
+  });
+
+  // Stage 4: AI player assignment
+  const openai = new OpenAI({ apiKey: options.apiKey });
+  const aiResponse = await callAssignmentAI(openai, options, preprocessed);
+
+  // Build assignment maps
+  const unitAssignments = new Map<string, { playerIndex: number; confidence: 'high' | 'medium' | 'low' }>();
+  for (const a of aiResponse.unitAssignments) {
+    unitAssignments.set(a.name.toLowerCase(), { playerIndex: a.playerIndex, confidence: a.confidence });
+  }
+
+  const stratagemAssignments = new Map<string, { playerIndex?: number; confidence: 'high' | 'medium' | 'low' }>();
+  for (const a of aiResponse.stratagemAssignments) {
+    stratagemAssignments.set(a.name.toLowerCase(), { playerIndex: a.playerIndex, confidence: a.confidence });
+  }
+
+  const enhancementAssignments = new Map<string, { playerIndex?: number; pointsCost?: number; confidence: 'high' | 'medium' | 'low' }>();
+  for (const a of aiResponse.enhancementAssignments) {
+    enhancementAssignments.set(a.name.toLowerCase(), {
+      playerIndex: a.playerIndex,
+      pointsCost: a.pointsCost,
+      confidence: a.confidence,
+    });
+  }
+
+  // Stage 5: Build GameExtraction
+  const players: PlayerInfo[] = aiResponse.players.map(p => ({
+    name: p.name,
+    faction: p.faction,
+    factionId: findFactionByName(p.faction)?.id,
+    detachment: p.detachment,
+    confidence: p.confidence,
+  }));
+
+  const units = buildEntityMentionsMap(
+    preprocessed.unitMentions,
+    unitAssignments as Map<string, { playerIndex?: number; confidence: 'high' | 'medium' | 'low' }>,
+    factionDataMap,
+    true
+  );
+
+  const stratagems = buildEntityMentionsMap(
+    preprocessed.stratagemMentions,
+    stratagemAssignments,
+    factionDataMap
+  );
+
+  const enhancements = buildEntityMentionsMap(
+    preprocessed.enhancementMentions,
+    enhancementAssignments,
+    factionDataMap
+  );
+
+  const processingTimeMs = Date.now() - startTime;
+
+  return {
+    players: players.length === 2 ? [players[0]!, players[1]!] : [players[0]!],
+    units,
+    stratagems,
+    enhancements,
+    assignments: {
+      units: unitAssignments,
+      stratagems: stratagemAssignments,
+      enhancements: enhancementAssignments,
+    },
+    segments: preprocessed.normalizedSegments,
+    factions: preprocessed.factionMentions,
+    detachments: preprocessed.detachmentMentions,
+    objectives: preprocessed.objectiveMentions,
+    mission: aiResponse.mission,
+    pointsLimit: aiResponse.pointsLimit,
+    videoId: options.videoId,
+    extractedAt: Date.now(),
+    processingTimeMs,
+  };
+}

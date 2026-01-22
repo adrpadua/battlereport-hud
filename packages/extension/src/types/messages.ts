@@ -1,6 +1,5 @@
 import type { VideoData } from './youtube';
 import type { BattleReport } from './battle-report';
-import type { EnhancedExtractionResult } from './enhanced-extraction';
 
 // Message types for communication between content script and service worker
 
@@ -19,7 +18,7 @@ export type MessageType =
   | 'DETECT_FACTIONS'
   | 'FACTIONS_DETECTED'
   | 'EXTRACT_WITH_FACTIONS'
-  // Enhanced pipeline messages
+  // Legacy enhanced pipeline messages (deprecated, use EXTRACT_WITH_FACTIONS instead)
   | 'EXTRACT_ENHANCED'
   | 'ENHANCED_EXTRACTION_RESULT';
 
@@ -94,8 +93,12 @@ export interface ExtractWithFactionsMessage {
   };
 }
 
-// Enhanced pipeline messages
+// Enhanced pipeline messages (deprecated, use EXTRACT_WITH_FACTIONS instead)
 
+/**
+ * @deprecated Use ExtractWithFactionsMessage instead. EXTRACT_ENHANCED now returns
+ * EXTRACTION_RESULT with BattleReport for backwards compatibility.
+ */
 export interface ExtractEnhancedMessage {
   type: 'EXTRACT_ENHANCED';
   payload: {
@@ -104,9 +107,13 @@ export interface ExtractEnhancedMessage {
   };
 }
 
+/**
+ * @deprecated Use ExtractionResultMessage instead. This message type is no longer
+ * returned by the message handler.
+ */
 export interface EnhancedExtractionResultMessage {
   type: 'ENHANCED_EXTRACTION_RESULT';
-  payload: EnhancedExtractionResult;
+  payload: BattleReport; // Changed from EnhancedExtractionResult for backwards compat
 }
 
 export type Message =

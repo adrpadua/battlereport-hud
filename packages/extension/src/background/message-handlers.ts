@@ -4,10 +4,8 @@ import { getCachedReport, setCachedReport, deleteCachedReport } from './cache-ma
 import {
   extractBattleReport,
   detectFactionNamesFromVideo,
-  extractWithFactions,
-  extractWithEnhancedPipeline,
-  toHudBattleReport,
 } from './ai-service';
+import { extractGame, toBattleReport } from './preprocessing';
 import { getAllFactionNames } from '@/utils/faction-loader';
 
 export function handleMessage(
@@ -112,7 +110,20 @@ async function processMessage(message: Message): Promise<Message> {
       }
 
       try {
-        const report = await extractWithFactions(videoData, factions, apiKey);
+        // Use the unified extraction pipeline
+        const game = await extractGame({
+          videoId: videoData.videoId,
+          title: videoData.title,
+          description: videoData.description,
+          channel: videoData.channel,
+          pinnedComment: videoData.pinnedComment ?? undefined,
+          transcript: videoData.transcript,
+          chapters: videoData.chapters,
+          factions,
+          apiKey,
+        });
+        // Convert to BattleReport for HUD compatibility
+        const report = toBattleReport(game);
         await setCachedReport(videoData.videoId, report);
         return { type: 'EXTRACTION_RESULT', payload: report };
       } catch (error) {
@@ -127,6 +138,8 @@ async function processMessage(message: Message): Promise<Message> {
     }
 
     case 'EXTRACT_ENHANCED': {
+      // Deprecated: use EXTRACT_WITH_FACTIONS instead
+      // This handler now uses the same unified pipeline for backwards compatibility
       const { videoData, factions } = message.payload;
       const apiKey = await getApiKey();
 
@@ -138,13 +151,23 @@ async function processMessage(message: Message): Promise<Message> {
       }
 
       try {
-        const enhanced = await extractWithEnhancedPipeline(videoData, factions, apiKey);
-        // Also cache the backward-compatible BattleReport format
-        const compatReport = toHudBattleReport(enhanced);
-        await setCachedReport(videoData.videoId, compatReport);
-        return { type: 'ENHANCED_EXTRACTION_RESULT', payload: enhanced };
+        const game = await extractGame({
+          videoId: videoData.videoId,
+          title: videoData.title,
+          description: videoData.description,
+          channel: videoData.channel,
+          pinnedComment: videoData.pinnedComment ?? undefined,
+          transcript: videoData.transcript,
+          chapters: videoData.chapters,
+          factions,
+          apiKey,
+        });
+        const report = toBattleReport(game);
+        await setCachedReport(videoData.videoId, report);
+        // Return as EXTRACTION_RESULT since we're deprecating ENHANCED_EXTRACTION_RESULT
+        return { type: 'EXTRACTION_RESULT', payload: report };
       } catch (error) {
-        console.error('Enhanced extraction error:', error);
+        console.error('Extraction error:', error);
         return {
           type: 'EXTRACTION_ERROR',
           payload: {

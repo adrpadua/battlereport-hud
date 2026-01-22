@@ -7,9 +7,19 @@
 export {
   preprocessTranscript,
   preprocessTranscriptSync,
+  extractGame,
 } from './pipeline';
 
-// Enhanced pipeline (new unified approach)
+// Consumer adapters
+export {
+  toBattleReport,
+  toNarratorInput,
+  getEntityTimeline,
+  getExtractionStats,
+  type NarratorInput,
+} from './adapters';
+
+// Legacy: Enhanced pipeline (deprecated, use extractGame + toBattleReport instead)
 export {
   enhancedPreprocess,
   toHudBattleReport,
@@ -27,6 +37,12 @@ export type {
   ObjectivesApiResponse,
   MatchResult,
   PipelineContext,
+  // GameExtraction types
+  GameExtraction,
+  ExtractGameOptions,
+  EntityMentions,
+  EntityAssignments,
+  PlayerInfo,
 } from './types';
 
 // Cache
