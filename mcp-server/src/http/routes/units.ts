@@ -3,6 +3,24 @@ import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
 import { eq, ilike, or, and } from 'drizzle-orm';
 
+/**
+ * Patterns that indicate a corrupted weapon name (ability keywords concatenated into name).
+ */
+const CORRUPTED_WEAPON_PATTERNS = [
+  /anti-vehicle\d/i,
+  /anti-infantry\d/i,
+  /sustainedhits/i,
+  /lethalhits/i,
+  /devastatingwounds/i,
+  /rapidfire/i,
+  /indirectfire/i,
+  /twinlinked/i,
+  /torrent\d/i,
+  /blast\d/i,
+  /melta\d/i,
+  /hazardous\d/i,
+];
+
 interface UnitParams {
   name: string;
 }
@@ -110,9 +128,13 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
         .innerJoin(schema.weapons, eq(schema.unitWeapons.weaponId, schema.weapons.id))
         .where(eq(schema.unitWeapons.unitId, unit.id));
 
-      // Deduplicate weapons by name (database may have duplicate weapon records with same name)
+      // Filter out corrupted weapons and deduplicate by name
       const weapons = Array.from(
-        new Map(weaponsRaw.map((w) => [w.name, w])).values()
+        new Map(
+          weaponsRaw
+            .filter((w) => !CORRUPTED_WEAPON_PATTERNS.some((p) => p.test(w.name)))
+            .map((w) => [w.name, w])
+        ).values()
       );
 
       // Get abilities (deduplicated by ability id)
