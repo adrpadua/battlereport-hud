@@ -676,7 +676,7 @@ async function getUnitKeywords(db: Database, unitId: number): Promise<string[]> 
  * Patterns that indicate the AI misclassified a stratagem/ability/rule as a unit.
  * These should be filtered out.
  */
-const MISCLASSIFIED_UNIT_PATTERNS = [
+export const MISCLASSIFIED_UNIT_PATTERNS = [
   /\(stratagem/i,
   /\(ability/i,
   /\(rule/i,
@@ -693,7 +693,7 @@ const MISCLASSIFIED_UNIT_PATTERNS = [
 /**
  * Check if a unit name looks like a misclassified stratagem/ability/rule
  */
-function isMisclassifiedUnit(name: string): boolean {
+export function isMisclassifiedUnit(name: string): boolean {
   return MISCLASSIFIED_UNIT_PATTERNS.some((pattern) => pattern.test(name));
 }
 

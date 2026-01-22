@@ -320,7 +320,7 @@ function extractWeapons(content: string, sourceUrl: string): NewWeapon[] {
 /**
  * Known weapon ability keywords that might be concatenated into weapon names
  */
-const WEAPON_ABILITY_KEYWORDS = [
+export const WEAPON_ABILITY_KEYWORDS = [
   'anti-',
   'assault',
   'blast',
@@ -354,7 +354,7 @@ const WEAPON_ABILITY_KEYWORDS = [
 /**
  * Extract weapon abilities that were concatenated into the weapon name
  */
-function cleanWeaponName(rawName: string): { name: string; abilities: string | null } {
+export function cleanWeaponName(rawName: string): { name: string; abilities: string | null } {
   let name = rawName;
   const foundAbilities: string[] = [];
 
