@@ -12,6 +12,84 @@ import { readFileSync, unlinkSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+// ============================================================================
+// Transcript Cache
+// ============================================================================
+
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+interface CachedTranscript {
+  result: TranscriptResult;
+  cachedAt: number;
+}
+
+const transcriptCache = new Map<string, CachedTranscript>();
+
+/**
+ * Get cached transcript if available and not expired.
+ */
+function getCachedTranscript(videoId: string): TranscriptResult | null {
+  const cached = transcriptCache.get(videoId);
+  if (!cached) return null;
+
+  const now = Date.now();
+  if (now - cached.cachedAt > CACHE_TTL_MS) {
+    transcriptCache.delete(videoId);
+    return null;
+  }
+
+  return cached.result;
+}
+
+/**
+ * Cache a transcript result.
+ */
+function cacheTranscript(videoId: string, result: TranscriptResult): void {
+  transcriptCache.set(videoId, {
+    result,
+    cachedAt: Date.now(),
+  });
+}
+
+/**
+ * Clear expired cache entries. Call periodically.
+ */
+export function clearExpiredTranscriptCache(): number {
+  const now = Date.now();
+  let cleared = 0;
+
+  for (const [videoId, cached] of transcriptCache) {
+    if (now - cached.cachedAt > CACHE_TTL_MS) {
+      transcriptCache.delete(videoId);
+      cleared++;
+    }
+  }
+
+  return cleared;
+}
+
+/**
+ * Get cache statistics for monitoring.
+ */
+export function getTranscriptCacheStats(): { size: number; oldestAge: number } {
+  let oldestAge = 0;
+  const now = Date.now();
+
+  for (const cached of transcriptCache.values()) {
+    const age = now - cached.cachedAt;
+    if (age > oldestAge) oldestAge = age;
+  }
+
+  return {
+    size: transcriptCache.size,
+    oldestAge: Math.floor(oldestAge / 1000 / 60), // minutes
+  };
+}
+
+// ============================================================================
+// Types
+// ============================================================================
+
 export interface TranscriptSegment {
   text: string;
   startTime: number; // seconds
@@ -251,6 +329,7 @@ async function downloadSubtitles(
 
 /**
  * Extract transcript from a YouTube video.
+ * Results are cached for 7 days to avoid repeated yt-dlp calls.
  */
 export async function extractTranscript(
   videoIdOrUrl: string,
@@ -258,17 +337,24 @@ export async function extractTranscript(
 ): Promise<TranscriptResult> {
   const { language = 'en', keepFile = false, outputDir = tmpdir() } = options;
 
+  // Extract video ID first (needed for cache lookup)
+  const videoId = extractVideoId(videoIdOrUrl);
+  if (!videoId) {
+    throw new Error(`Invalid video ID or URL: ${videoIdOrUrl}`);
+  }
+
+  // Check cache first
+  const cached = getCachedTranscript(videoId);
+  if (cached) {
+    console.error(`Using cached transcript for ${videoId}`);
+    return cached;
+  }
+
   // Check yt-dlp is installed
   if (!isYtDlpInstalled()) {
     throw new Error(
       'yt-dlp is not installed. Install it with: brew install yt-dlp (macOS) or pip install yt-dlp'
     );
-  }
-
-  // Extract video ID
-  const videoId = extractVideoId(videoIdOrUrl);
-  if (!videoId) {
-    throw new Error(`Invalid video ID or URL: ${videoIdOrUrl}`);
   }
 
   const outputBase = join(outputDir, videoId);
@@ -304,7 +390,7 @@ export async function extractTranscript(
 
     console.error(`Extracted ${segments.length} segments (${Math.floor(duration / 60)} minutes)`);
 
-    return {
+    const result: TranscriptResult = {
       videoId,
       title: metadata.title,
       channel: metadata.channel,
@@ -314,6 +400,12 @@ export async function extractTranscript(
       duration,
       language,
     };
+
+    // Cache the result
+    cacheTranscript(videoId, result);
+    console.error(`Cached transcript for ${videoId}`);
+
+    return result;
   } finally {
     // Cleanup VTT file unless keepFile is true
     if (!keepFile && existsSync(vttPath)) {

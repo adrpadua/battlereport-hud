@@ -14,6 +14,12 @@ export type MessageType =
   | 'CLEAR_CACHE_RESULT'
   | 'GET_API_KEY'
   | 'API_KEY_RESULT'
+  // Video data (transcript) caching
+  | 'GET_CACHED_VIDEO_DATA'
+  | 'VIDEO_DATA_HIT'
+  | 'VIDEO_DATA_MISS'
+  | 'CACHE_VIDEO_DATA'
+  | 'VIDEO_DATA_CACHED'
   // Phased extraction messages
   | 'DETECT_FACTIONS'
   | 'FACTIONS_DETECTED'
@@ -67,6 +73,32 @@ export interface ClearCacheMessage {
 
 export interface ClearCacheResultMessage {
   type: 'CLEAR_CACHE_RESULT';
+  payload: { success: boolean };
+}
+
+// Video data (transcript) caching messages
+
+export interface GetCachedVideoDataMessage {
+  type: 'GET_CACHED_VIDEO_DATA';
+  payload: { videoId: string };
+}
+
+export interface VideoDataHitMessage {
+  type: 'VIDEO_DATA_HIT';
+  payload: VideoData;
+}
+
+export interface VideoDataMissMessage {
+  type: 'VIDEO_DATA_MISS';
+}
+
+export interface CacheVideoDataMessage {
+  type: 'CACHE_VIDEO_DATA';
+  payload: VideoData;
+}
+
+export interface VideoDataCachedMessage {
+  type: 'VIDEO_DATA_CACHED';
   payload: { success: boolean };
 }
 
@@ -127,6 +159,11 @@ export type Message =
   | ClearCacheResultMessage
   | GetApiKeyMessage
   | ApiKeyResultMessage
+  | GetCachedVideoDataMessage
+  | VideoDataHitMessage
+  | VideoDataMissMessage
+  | CacheVideoDataMessage
+  | VideoDataCachedMessage
   | DetectFactionsMessage
   | FactionsDetectedMessage
   | ExtractWithFactionsMessage

@@ -84,6 +84,33 @@ async function checkCache(videoId: string): Promise<BattleReport | null> {
   return null;
 }
 
+async function getCachedVideoData(videoId: string): Promise<import('@/types/youtube').VideoData | null> {
+  try {
+    const response = await sendMessageWithRetry({
+      type: 'GET_CACHED_VIDEO_DATA',
+      payload: { videoId },
+    });
+
+    if (response.type === 'VIDEO_DATA_HIT') {
+      return response.payload;
+    }
+  } catch (error) {
+    console.error('Battle Report HUD: Video data cache check failed', error);
+  }
+
+  return null;
+}
+
+function cacheVideoData(videoData: import('@/types/youtube').VideoData): void {
+  // Cache in background (don't await)
+  sendMessageWithRetry({
+    type: 'CACHE_VIDEO_DATA',
+    payload: videoData,
+  }).catch((error) => {
+    console.error('Battle Report HUD: Failed to cache video data', error);
+  });
+}
+
 /**
  * Check if the extension context is still valid.
  * This becomes invalid after extension reload/update.
@@ -188,17 +215,30 @@ async function startExtraction(): Promise<void> {
   store.startExtraction();
 
   try {
-    // Extract video data
-    const videoData = await extractVideoData();
-    if (!videoData) {
-      store.setError('Failed to extract video data');
-      return;
-    }
+    // Check for cached video data first
+    let videoData = await getCachedVideoData(videoId);
 
-    console.log('Battle Report HUD: Extracted video data', {
-      videoId: videoData.videoId,
-      transcriptLength: videoData.transcript.length,
-    });
+    if (videoData) {
+      console.log('Battle Report HUD: Using cached video data', {
+        videoId: videoData.videoId,
+        transcriptLength: videoData.transcript.length,
+      });
+    } else {
+      // Extract video data from DOM
+      videoData = await extractVideoData();
+      if (!videoData) {
+        store.setError('Failed to extract video data');
+        return;
+      }
+
+      console.log('Battle Report HUD: Extracted video data from DOM', {
+        videoId: videoData.videoId,
+        transcriptLength: videoData.transcript.length,
+      });
+
+      // Cache the video data for future use
+      cacheVideoData(videoData);
+    }
 
     store.setVideoData(videoData);
     store.setPhase('extracting', 'Detecting factions...');

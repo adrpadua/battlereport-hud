@@ -1,6 +1,13 @@
 import type { Message } from '@/types/messages';
 import type { VideoData } from '@/types/youtube';
-import { getCachedReport, setCachedReport, deleteCachedReport } from './cache-manager';
+import {
+  getCachedReport,
+  setCachedReport,
+  deleteCachedReport,
+  getCachedVideoData,
+  setCachedVideoData,
+  deleteCachedVideoData,
+} from './cache-manager';
 import {
   extractBattleReport,
   detectFactionNamesFromVideo,
@@ -79,11 +86,36 @@ async function processMessage(message: Message): Promise<Message> {
       const { videoId } = message.payload;
       try {
         await deleteCachedReport(videoId);
+        await deleteCachedVideoData(videoId);
         console.log('Battle Report HUD: Cleared cache for video', videoId);
         return { type: 'CLEAR_CACHE_RESULT', payload: { success: true } };
       } catch (error) {
         console.error('Battle Report HUD: Failed to clear cache', error);
         return { type: 'CLEAR_CACHE_RESULT', payload: { success: false } };
+      }
+    }
+
+    case 'GET_CACHED_VIDEO_DATA': {
+      const { videoId } = message.payload;
+      const cached = await getCachedVideoData(videoId);
+
+      if (cached) {
+        console.log('Battle Report HUD: Video data cache hit for', videoId);
+        return { type: 'VIDEO_DATA_HIT', payload: cached };
+      } else {
+        return { type: 'VIDEO_DATA_MISS' };
+      }
+    }
+
+    case 'CACHE_VIDEO_DATA': {
+      const videoData = message.payload as VideoData;
+      try {
+        await setCachedVideoData(videoData.videoId, videoData);
+        console.log('Battle Report HUD: Cached video data for', videoData.videoId);
+        return { type: 'VIDEO_DATA_CACHED', payload: { success: true } };
+      } catch (error) {
+        console.error('Battle Report HUD: Failed to cache video data', error);
+        return { type: 'VIDEO_DATA_CACHED', payload: { success: false } };
       }
     }
 
