@@ -25,11 +25,11 @@ import {
   DeduplicationTracker,
 } from './utils.js';
 import {
-  SLUG_MAX_LENGTH,
-  NAME_MAX_LENGTH,
   SHORT_DESCRIPTION_MAX_LENGTH,
   MAX_LEADER_ATTACHMENTS,
   isValidPointsCost,
+  truncateSlug,
+  truncateName,
 } from './constants.js';
 import {
   type WahapediaSettings,
@@ -171,8 +171,8 @@ function parseHtmlDatasheet(
   const abilities = extractAbilitiesFromHtml($, sourceUrl);
 
   const unit: Omit<NewUnit, 'factionId'> = {
-    slug: slugify(unitName).slice(0, SLUG_MAX_LENGTH),
-    name: unitName.slice(0, NAME_MAX_LENGTH),
+    slug: truncateSlug(slugify(unitName)),
+    name: truncateName(unitName),
     movement: stats.movement ?? null,
     toughness: stats.toughness ?? null,
     save: stats.save ?? null,
@@ -592,8 +592,8 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       const actualWeaponType: 'ranged' | 'melee' = range?.toLowerCase() === 'melee' ? 'melee' : weaponType;
 
       weapons.push({
-        slug: slugify(weaponName).slice(0, SLUG_MAX_LENGTH),
-        name: weaponName.slice(0, NAME_MAX_LENGTH),
+        slug: truncateSlug(slugify(weaponName)),
+        name: truncateName(weaponName),
         weaponType: actualWeaponType,
         range: range || null,
         attacks: attacks || null,
@@ -631,8 +631,8 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
         const name = normalizeText(rawName);
         if (name && name.length >= 3 && seenAbilities.addIfNew(name)) {
           abilities.push({
-            slug: slugify(name).slice(0, SLUG_MAX_LENGTH),
-            name: name.slice(0, NAME_MAX_LENGTH),
+            slug: truncateSlug(slugify(name)),
+            name: truncateName(name),
             abilityType: 'core',
             description: 'CORE ability',
             sourceUrl,
@@ -655,8 +655,8 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
         const name = normalizeText(rawName);
         if (name && name.length >= 3 && seenAbilities.addIfNew(name)) {
           abilities.push({
-            slug: slugify(name).slice(0, SLUG_MAX_LENGTH),
-            name: name.slice(0, NAME_MAX_LENGTH),
+            slug: truncateSlug(slugify(name)),
+            name: truncateName(name),
             abilityType: 'faction',
             description: 'FACTION ability',
             sourceUrl,
@@ -747,8 +747,8 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
 
     seenAbilities.add(name);
     abilities.push({
-      slug: slugify(name).slice(0, SLUG_MAX_LENGTH),
-      name: name.slice(0, NAME_MAX_LENGTH),
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(name),
       abilityType: 'unit',
       description,
       sourceUrl,

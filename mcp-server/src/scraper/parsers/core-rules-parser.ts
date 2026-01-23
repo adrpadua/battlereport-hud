@@ -1,10 +1,10 @@
 import * as cheerio from 'cheerio';
 import type { NewCoreRule } from '../../db/schema.js';
-import { slugify, detectRuleCategory } from './utils.js';
+import { slugify, detectRuleCategory, toTitleCase } from './utils.js';
 import {
-  SLUG_MAX_LENGTH,
-  TITLE_MAX_LENGTH,
   CATEGORY_MAX_LENGTH,
+  truncateSlug,
+  truncateName,
 } from './constants.js';
 
 interface ParsedSection {
@@ -104,8 +104,8 @@ export function parseCoreRules(html: string, sourceUrl: string): NewCoreRule[] {
 
   // Convert to database format
   return sections.map((section) => ({
-    slug: section.slug.slice(0, SLUG_MAX_LENGTH),
-    title: section.title.slice(0, TITLE_MAX_LENGTH),
+    slug: truncateSlug(section.slug),
+    title: truncateName(section.title),
     category: section.category.slice(0, CATEGORY_MAX_LENGTH),
     subcategory: section.subcategory?.slice(0, CATEGORY_MAX_LENGTH) ?? null,
     content: section.content,
@@ -194,17 +194,6 @@ function parseByAnchors(
       });
     }
   });
-}
-
-/**
- * Convert string to title case
- */
-function toTitleCase(str: string): string {
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
 }
 
 /**

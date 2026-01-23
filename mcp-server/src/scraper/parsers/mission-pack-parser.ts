@@ -123,7 +123,7 @@ function parsePrimaryMissions(
       deployment: null,
       missionRule: missionRule.slice(0, RULE_CONTENT_MAX_LENGTH) || null,
       sourceUrl,
-      dataSource: 'wahapedia',
+      dataSource: 'wahapedia' as const,
     });
   });
 
@@ -152,7 +152,7 @@ function parsePrimaryMissions(
       deployment: null,
       missionRule: content.slice(0, RULE_CONTENT_MAX_LENGTH) || null,
       sourceUrl,
-      dataSource: 'wahapedia',
+      dataSource: 'wahapedia' as const,
     });
   });
 
@@ -226,7 +226,7 @@ function parseSecondaryMissions(
         maxPoints,
         factionId: null,
         sourceUrl,
-        dataSource: 'wahapedia',
+        dataSource: 'wahapedia' as const,
       });
     }
   );
@@ -255,7 +255,7 @@ function parseSecondaryMissions(
       maxPoints: null,
       factionId: null,
       sourceUrl,
-      dataSource: 'wahapedia',
+      dataSource: 'wahapedia' as const,
     });
   });
 
