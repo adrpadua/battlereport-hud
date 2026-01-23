@@ -29,6 +29,74 @@ const CORE_ABILITIES = new Set([
   'Stealth',
 ]);
 
+// Generic rule definitions that should be tooltips, not displayed as abilities
+// These are core game rules that appear when hovering over terms in ability descriptions
+const GENERIC_RULES = new Set([
+  'hit roll',
+  'hit roll (ranged attack)',
+  'hit roll (melee attack)',
+  'wound roll',
+  'critical hit',
+  'critical wound',
+  'saving throw',
+  'advance move',
+  'advance',
+  'fall back move',
+  'fall back',
+  'desperate escape test',
+  'engagement range',
+  'unmodified dice',
+  'normal move',
+  'charge move',
+  'charge',
+  'benefit of cover',
+  'invulnerable save',
+  'mortal wound',
+  'mortal wounds',
+  'battle-shock',
+  'battle-shock test',
+  'hazardous',
+  'sustained hits',
+  'lethal hits',
+  'devastating wounds',
+  'anti-',
+  'torrent',
+  'blast',
+  'heavy',
+  'rapid fire',
+  'assault',
+  'pistol',
+  'melta',
+  'lance',
+  'twin-linked',
+  'precision',
+  'indirect fire',
+  'ignores cover',
+  'psychic',
+  'extra attacks',
+  'one shot',
+  'designer\'s note',
+  'example',
+  'every model is equipped with',
+]);
+
+/**
+ * Check if an ability name matches a generic rule that should be filtered out
+ */
+function isGenericRule(abilityName: string): boolean {
+  const normalized = abilityName.toLowerCase().trim();
+
+  // Direct match
+  if (GENERIC_RULES.has(normalized)) return true;
+
+  // Check for partial matches (e.g., "Anti-Infantry 4+")
+  for (const rule of GENERIC_RULES) {
+    if (normalized.startsWith(rule)) return true;
+  }
+
+  return false;
+}
+
 function UnitDetailHeader({ unit }: { unit: UnitDetailUnit }): React.ReactElement {
   const statItems = [
     { label: 'M', value: unit.stats.movement ?? '-' },
@@ -150,10 +218,13 @@ function WeaponTable({
 }
 
 function AbilitiesPanel({ abilities }: { abilities: UnitDetailAbility[] }): React.ReactElement {
-  const coreAbilities = abilities.filter(a => a.type === 'core');
-  const factionAbilities = abilities.filter(a => a.type === 'faction');
-  const unitAbilities = abilities.filter(a => a.type === 'unit');
-  const wargearAbilities = abilities.filter(a => a.type === 'wargear');
+  // Filter out generic rule definitions - they're available as tooltips instead
+  const filteredAbilities = abilities.filter(a => !isGenericRule(a.name));
+
+  const coreAbilities = filteredAbilities.filter(a => a.type === 'core');
+  const factionAbilities = filteredAbilities.filter(a => a.type === 'faction');
+  const unitAbilities = filteredAbilities.filter(a => a.type === 'unit');
+  const wargearAbilities = filteredAbilities.filter(a => a.type === 'wargear');
 
   // Render an ability item with cleaned name and parsed description
   const renderAbilityItem = (ability: UnitDetailAbility) => {
@@ -200,7 +271,20 @@ function AbilitiesPanel({ abilities }: { abilities: UnitDetailAbility[] }): Reac
       {factionAbilities.length > 0 && (
         <div className="abilities-group">
           <div className="abilities-group-label">Faction</div>
-          {factionAbilities.map(renderAbilityItem)}
+          <div className="faction-abilities-list">
+            {factionAbilities.map((ability) => {
+              const cleanedName = cleanAbilityName(ability.name);
+              return (
+                <Tooltip
+                  key={ability.name}
+                  content={ability.description}
+                  position="top"
+                >
+                  <span className="faction-ability-badge">{cleanedName}</span>
+                </Tooltip>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -438,18 +522,23 @@ export function UnitDetailModal({
             <UnitDetailHeader unit={data.unit} />
 
             <div className="unit-detail-content">
-              {rangedWeapons.length > 0 && (
-                <WeaponTable weapons={rangedWeapons} type="ranged" />
-              )}
-              {meleeWeapons.length > 0 && (
-                <WeaponTable weapons={meleeWeapons} type="melee" />
-              )}
+              {/* Left Column: Weapons */}
+              <div className="unit-detail-left-column">
+                {rangedWeapons.length > 0 && (
+                  <WeaponTable weapons={rangedWeapons} type="ranged" />
+                )}
+                {meleeWeapons.length > 0 && (
+                  <WeaponTable weapons={meleeWeapons} type="melee" />
+                )}
+              </div>
 
-              {data.abilities.length > 0 && (
-                <AbilitiesPanel abilities={data.abilities} />
-              )}
-
-              <CompositionSection unit={data.unit} />
+              {/* Right Column: Abilities + Composition */}
+              <div className="unit-detail-right-column">
+                {data.abilities.length > 0 && (
+                  <AbilitiesPanel abilities={data.abilities} />
+                )}
+                <CompositionSection unit={data.unit} />
+              </div>
             </div>
 
             {data.keywords.length > 0 && (
