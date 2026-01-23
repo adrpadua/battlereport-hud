@@ -22,14 +22,6 @@
  */
 export const TITLE_UNIT_NAME = /[–-]\s*([^[\–-]+)/;
 
-/**
- * Match markdown h1 header with faction-unit format.
- * Captures: [1] = unit name after the dash
- *
- * @example "# Tyranids – Hive Tyrant" → "Hive Tyrant"
- */
-export const MARKDOWN_H1_UNIT_NAME = /^# [^–]+–\s*([^\[\\]+)/m;
-
 // =============================================================================
 // UNIT STATS EXTRACTION
 // =============================================================================
@@ -43,26 +35,6 @@ export const MARKDOWN_H1_UNIT_NAME = /^# [^–]+–\s*([^\[\\]+)/m;
  * @example "M 6" T 5 Sv 3+ W 6 Ld 6+ OC 2" → ["6\"", "5", "3+", "6", "6+", "2"]
  */
 export const INLINE_STATS = /M\s+(\d+"?)\s+T\s+(\d+)\s+Sv\s+(\d+\+?)\s+W\s+(\d+)\s+Ld\s+(\d+\+?)\s+OC\s+(\d+)/;
-
-/**
- * Match stat block in markdown table format: | M | T | Sv | W | Ld | OC |
- *
- * Captures: [1]=movement, [2]=toughness, [3]=save, [4]=wounds, [5]=leadership, [6]=OC
- *
- * @example "| 6" | 5 | 3+ | 6 | 6+ | 2 |" → ["6\"", "5", "3+", "6", "6+", "2"]
- */
-export const TABLE_STATS = /\|\s*(\d+"?)\s*\|\s*(\d+)\s*\|\s*(\d+\+?)\s*\|\s*(\d+)\s*\|\s*(\d+\+?)\s*\|\s*(\d+)\s*\|/;
-
-/**
- * Individual stat patterns for fallback extraction when full block doesn't match.
- */
-export const STAT_MOVEMENT = /(?:M|Movement)[:\s]*(\d+")/i;
-export const STAT_TOUGHNESS = /(?:T|Toughness)[:\s]*(\d+)/i;
-export const STAT_SAVE = /(?:SV|Save)[:\s]*(\d+\+)/i;
-export const STAT_WOUNDS = /(?:W|Wounds)[:\s]*(\d+)/i;
-export const STAT_LEADERSHIP = /(?:LD|Leadership)[:\s]*(\d+\+?)/i;
-export const STAT_OBJECTIVE_CONTROL = /(?:OC|Objective Control)[:\s]*(\d+)/i;
-export const STAT_INVULN = /(?:Invulnerable Save|Invuln)[:\s]*(\d+\+)/i;
 
 // =============================================================================
 // INVULNERABLE SAVE EXTRACTION
@@ -117,26 +89,9 @@ export const STANDALONE_POINTS = /^(\d{2,3})$/;
  */
 export const TABLE_POINTS_FORMAT = /\|\s*\d+\s*model[s]?\s*\|\s*(\d+)\s*\|/i;
 
-/**
- * Match points with "pts" or "points" suffix.
- *
- * Captures: [1] = points value
- *
- * @example "65 pts" → "65"
- */
-export const POINTS_WITH_SUFFIX = /(\d+)\s*(?:pts?|points)/i;
-
 // =============================================================================
 // UNIT COMPOSITION & LEADER INFO
 // =============================================================================
-
-/**
- * Extract unit composition section content.
- * Matches from "UNIT COMPOSITION" header to next major section.
- *
- * Captures: [1] = composition content
- */
-export const UNIT_COMPOSITION_SECTION = /UNIT COMPOSITION[\s\S]*?\n([\s\S]*?)(?=\n\s*(?:LEADER|KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i;
 
 /**
  * Extract leader attachment info.
@@ -483,21 +438,3 @@ export const POINTS_ARTIFACT = /\d{3}\s+\d{3}/g;
  */
 export const CP_COST_MARKER = /\d+CP/;
 
-// =============================================================================
-// HTML DETECTION
-// =============================================================================
-
-/**
- * Check if content appears to be HTML.
- * Used to route to HTML vs markdown parser.
- */
-export function isHtmlContent(content: string): boolean {
-  const trimmed = content.trim();
-  return (
-    trimmed.startsWith('<') ||
-    trimmed.includes('<!DOCTYPE') ||
-    trimmed.includes('<html') ||
-    trimmed.includes('<body') ||
-    trimmed.includes('<div')
-  );
-}
