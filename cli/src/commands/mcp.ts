@@ -49,10 +49,12 @@ scrapeCmd
 scrapeCmd
   .command('unit <factionSlug> <unitSlug>')
   .description('Scrape a specific unit (e.g., space-marines Intercessor-Squad)')
-  .option('--force', 'Force overwrite existing unit')
-  .action(async (factionSlug: string, unitSlug: string, options: { force?: boolean }) => {
+  .option('--force', 'Force re-fetch from Wahapedia (uses API credits)')
+  .option('--reparse', 'Re-parse cached data and update database (no API credits)')
+  .action(async (factionSlug: string, unitSlug: string, options: { force?: boolean; reparse?: boolean }) => {
     const args = [factionSlug, unitSlug];
     if (options.force) args.push('--force');
+    if (options.reparse) args.push('--reparse');
     await runMcpScraper('scrape-unit.ts', args);
   });
 

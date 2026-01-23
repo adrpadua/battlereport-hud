@@ -18,12 +18,16 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 2) {
-    console.log('Usage: npx tsx src/scraper/scrape-unit.ts <faction-slug> <unit-slug>');
+    console.log('Usage: npx tsx src/scraper/scrape-unit.ts <faction-slug> <unit-slug> [options]');
+    console.log('');
+    console.log('Options:');
+    console.log('  --force    Bypass cache and re-fetch from Wahapedia (uses API credits)');
+    console.log('  --reparse  Re-parse cached data and update database (no API credits)');
     console.log('');
     console.log('Examples:');
     console.log('  npx tsx src/scraper/scrape-unit.ts space-marines Intercessor-Squad');
-    console.log('  npx tsx src/scraper/scrape-unit.ts tyranids Hive-Tyrant');
-    console.log('  npx tsx src/scraper/scrape-unit.ts astra-militarum Leman-Russ-Battle-Tank');
+    console.log('  npx tsx src/scraper/scrape-unit.ts tyranids Hive-Tyrant --reparse');
+    console.log('  npx tsx src/scraper/scrape-unit.ts astra-militarum Leman-Russ-Battle-Tank --force');
     console.log('');
     console.log('Note: Unit slug should match Wahapedia URL format (capitalized with hyphens)');
     process.exit(1);
@@ -32,6 +36,7 @@ async function main() {
   const factionSlug = args[0]!;
   const unitSlug = args[1]!;
   const forceRefresh = args.includes('--force');
+  const reparseOnly = args.includes('--reparse'); // Use cache, but re-parse and update DB
 
   const client = new FirecrawlClient();
   const db = getDb();
@@ -57,10 +62,10 @@ async function main() {
     const unitUrl = WAHAPEDIA_URLS.unitDatasheet(factionSlug, unitSlug);
     console.log(`URL: ${unitUrl}`);
 
-    // Scrape the unit page
+    // Scrape the unit page (use cache if --reparse, bypass cache only if --force)
     const result = await client.scrape(unitUrl, {
       includeHtml: true,
-      forceRefresh
+      forceRefresh: forceRefresh && !reparseOnly // --reparse uses cache
     });
 
     if (!result.html && !result.markdown) {
@@ -96,8 +101,8 @@ async function main() {
         eq(schema.units.factionId, faction.id)
       ));
 
-    if (existingUnit.length > 0 && !forceRefresh) {
-      console.log(`\nUnit already exists in database. Use --force to overwrite.`);
+    if (existingUnit.length > 0 && !forceRefresh && !reparseOnly) {
+      console.log(`\nUnit already exists in database. Use --force to overwrite or --reparse to re-parse cached data.`);
       process.exit(0);
     }
 

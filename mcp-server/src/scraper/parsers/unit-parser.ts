@@ -373,6 +373,9 @@ function extractBaseSizeFromHtml($: cheerio.CheerioAPI): string | null {
  * Extract weapon name and abilities from a cell element.
  * Wahapedia embeds abilities as <span class="kwb2"> elements inside the weapon name cell.
  * The structure is: <span>Weapon Name <span class="kwb2"><span class="tt">ability</span></span></span>
+ *
+ * Also handles cases where abilities get concatenated into the weapon name text
+ * (e.g., "Bellow of endless fury ignorescovertorrent").
  */
 function extractWeaponNameAndAbilities($: cheerio.CheerioAPI, $cell: cheerio.Cheerio<cheerio.Element>): { name: string; abilities: string | null } {
   // Extract abilities from span.kwb2 elements (these contain keywords like "blast", "psychic", etc.)
@@ -402,8 +405,25 @@ function extractWeaponNameAndAbilities($: cheerio.CheerioAPI, $cell: cheerio.Che
     .replace(/^\s*[-–]\s*/, '')
     .trim();
 
-  // Deduplicate abilities
-  const uniqueAbilities = [...new Set(abilities)];
+  // Check if abilities got concatenated into the weapon name (common HTML parsing issue)
+  // Use cleanWeaponName to extract any embedded abilities
+  const { name: cleanedName, abilities: extractedAbilities } = cleanWeaponName(name);
+  name = cleanedName;
+
+  // Merge extracted abilities with span-extracted abilities
+  if (extractedAbilities) {
+    const extractedList = extractedAbilities.split(', ').filter(Boolean);
+    abilities.push(...extractedList);
+  }
+
+  // Deduplicate abilities (case-insensitive)
+  const seen = new Set<string>();
+  const uniqueAbilities = abilities.filter(ability => {
+    const normalized = ability.toUpperCase();
+    if (seen.has(normalized)) return false;
+    seen.add(normalized);
+    return true;
+  });
 
   return {
     name,
@@ -547,15 +567,19 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
   $('b, strong').each((_, el) => {
     const text = $(el).text().trim();
     if (text.toUpperCase().startsWith('CORE:')) {
-      const names = text.replace(/^CORE:\s*/i, '').split(',').map(s => s.trim());
-      names.forEach(name => {
+      const rawNames = text.replace(/^CORE:\s*/i, '');
+      // Normalize the text first to fix concatenations like "DeadlyDemiseD6, DeepStrike"
+      const normalizedNames = normalizeText(rawNames);
+      const names = normalizedNames.split(',').map(s => s.trim());
+      names.forEach(rawName => {
+        const name = normalizeText(rawName);
         if (name && name.length >= 3 && !seenAbilities.has(name.toLowerCase())) {
           seenAbilities.add(name.toLowerCase());
           abilities.push({
             slug: slugify(name).slice(0, 255),
             name: name.slice(0, 255),
             abilityType: 'core',
-            description: 'Core ability',
+            description: 'CORE ability',
             sourceUrl,
             dataSource: 'wahapedia' as const,
           });
@@ -568,15 +592,19 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
   $('b, strong').each((_, el) => {
     const text = $(el).text().trim();
     if (text.toUpperCase().startsWith('FACTION:')) {
-      const names = text.replace(/^FACTION:\s*/i, '').split(',').map(s => s.trim());
-      names.forEach(name => {
+      const rawNames = text.replace(/^FACTION:\s*/i, '');
+      // Normalize the text first to fix concatenations like "PactofBlood"
+      const normalizedNames = normalizeText(rawNames);
+      const names = normalizedNames.split(',').map(s => s.trim());
+      names.forEach(rawName => {
+        const name = normalizeText(rawName);
         if (name && name.length >= 3 && !seenAbilities.has(name.toLowerCase())) {
           seenAbilities.add(name.toLowerCase());
           abilities.push({
             slug: slugify(name).slice(0, 255),
             name: name.slice(0, 255),
             abilityType: 'faction',
-            description: 'Faction ability',
+            description: 'FACTION ability',
             sourceUrl,
             dataSource: 'wahapedia' as const,
           });
@@ -616,6 +644,11 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
     /^unit composition$/i,
     /^wargear options?$/i,
     /^leader$/i,
+    // Battle size rules - not unit abilities
+    /^combat patrol$/i,
+    /^incursion$/i,
+    /^strike force$/i,
+    /^onslaught$/i,
   ];
 
   $('b, strong').each((_, el) => {
@@ -678,6 +711,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
  * Maps concatenated text to properly spaced text.
  */
 const CONCATENATION_FIXES: Record<string, string> = {
+  // Weapon ability combinations
   'blastpsychic': '[BLAST], [PSYCHIC]',
   'lethalhitspsychic': '[LETHAL HITS], [PSYCHIC]',
   'sustainedhitspsychic': '[SUSTAINED HITS], [PSYCHIC]',
@@ -691,25 +725,37 @@ const CONCATENATION_FIXES: Record<string, string> = {
   'twinlinkedblast': '[TWIN-LINKED], [BLAST]',
   'meltahazardous': '[MELTA], [HAZARDOUS]',
   'torrentignorescover': '[TORRENT], [IGNORES COVER]',
-  'shadowinthewarp': 'Shadow in the Warp',
-  'synapseshadow': 'Synapse, Shadow',
-  'mortalwounds': 'mortal wounds',
-  'mortalwound': 'mortal wound',
-  'invulnerablesave': 'invulnerable save',
-  'feelno pain': 'Feel No Pain',
+  'ignorescovertorrent': '[IGNORES COVER], [TORRENT]',
+  // Core abilities
   'feelnopain': 'Feel No Pain',
-  'battleshock': 'Battle-shock',
-  'battleshocktest': 'Battle-shock test',
-  'battle-shocktest': 'Battle-shock test',
-  'commandpoints': 'Command Points',
-  'hitroll': 'Hit roll',
-  'woundroll': 'Wound roll',
+  'feelno pain': 'Feel No Pain',
   'fightsfirst': 'Fights First',
   'deepstrike': 'Deep Strike',
   'loneoperative': 'Lone Operative',
   'deadlydemise': 'Deadly Demise',
   'firingdeck': 'Firing Deck',
+  // Faction abilities
+  'pactofblood': 'Pact of Blood',
+  'oathofmoment': 'Oath of Moment',
+  'shadowinthewarp': 'Shadow in the Warp',
+  'synapseshadow': 'Synapse, Shadow',
   'greatdevourer': 'Great Devourer',
+  'fortheemperor': 'For the Emperor',
+  'powerofthemachine': 'Power of the Machine Spirit',
+  'codeofhonour': 'Code of Honour',
+  'armyofrenown': 'Army of Renown',
+  'blessingsofkhorne': 'Blessings of Khorne',
+  'bloodforthebloodgod': 'Blood for the Blood God',
+  // Game terms
+  'mortalwounds': 'mortal wounds',
+  'mortalwound': 'mortal wound',
+  'invulnerablesave': 'invulnerable save',
+  'battleshock': 'Battle-shock',
+  'battleshocktest': 'Battle-shock test',
+  'battle-shocktest': 'Battle-shock test',
+  'commandpoints': 'Command points',
+  'hitroll': 'Hit roll',
+  'woundroll': 'Wound roll',
 };
 
 /**
@@ -1232,6 +1278,11 @@ const SKIP_ABILITY_PATTERNS = [
   /^\d+$/,
   /^\+$/,
   /^and others\.\.\.$/i,
+  // Battle size rules - not unit abilities
+  /^Combat Patrol$/i,
+  /^Incursion$/i,
+  /^Strike Force$/i,
+  /^Onslaught$/i,
 ];
 
 function shouldSkipAbility(name: string, description: string): boolean {

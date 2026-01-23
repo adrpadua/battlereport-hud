@@ -47,10 +47,25 @@ export function parseFactionPage(
   let armyRules = '';
   let lore = '';
 
-  // Try to extract army rules section
-  const armyRulesMatch = markdown.match(/## Army Rules?\s*([\s\S]*?)(?=##|$)/i);
-  if (armyRulesMatch?.[1]) {
-    armyRules = armyRulesMatch[1].trim();
+  // Try to extract army rules section using multiple patterns
+  // Wahapedia formats vary - try several heading patterns
+  const armyRulesPatterns = [
+    // Standard ## heading
+    /## Army Rules?\s*([\s\S]*?)(?=\n## (?!###)|$)/i,
+    // # heading (h1)
+    /# Army Rules?\s*([\s\S]*?)(?=\n# (?!##)|$)/i,
+    // ### heading
+    /### Army Rules?\s*([\s\S]*?)(?=\n### (?!####)|$)/i,
+    // Bold text section marker (Firecrawl sometimes converts headings to bold)
+    /\*\*Army Rules?\*\*\s*([\s\S]*?)(?=\n\*\*[A-Z]|\n## |\n# |$)/i,
+  ];
+
+  for (const pattern of armyRulesPatterns) {
+    const match = markdown.match(pattern);
+    if (match?.[1]?.trim()) {
+      armyRules = match[1].trim();
+      break;
+    }
   }
 
   // Try to extract lore/background
