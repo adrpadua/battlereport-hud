@@ -217,14 +217,16 @@ export function useExtraction() {
 
   /**
    * Continue extraction with selected factions.
+   * @param skipCache - If true, bypasses the server cache and forces a fresh extraction
    */
   const extractWithFactions = useCallback(async (
     url: string,
     factions: [string, string],
-    transcript?: TranscriptSegment[]
+    transcript?: TranscriptSegment[],
+    skipCache?: boolean
   ) => {
     setState(prev => ({ ...prev, step: 'extracting', error: null }));
-    battleStore.setPhase('ai-extracting', 'Extracting battle report...');
+    battleStore.setPhase('ai-extracting', skipCache ? 'Re-extracting (bypassing cache)...' : 'Extracting battle report...');
     battleStore.setSelectedFactions(factions);
     battleStore.clearProgressLogs();
 
@@ -232,7 +234,7 @@ export function useExtraction() {
     scheduleProgressSteps(EXTRACT_PROGRESS_STEPS);
 
     try {
-      const response = await api.extractBattleReport(url, factions, transcript);
+      const response = await api.extractBattleReport(url, factions, transcript, skipCache);
 
       // Clear the initial message
       battleStore.clearProgressLogs();

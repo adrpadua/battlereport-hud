@@ -226,7 +226,13 @@ You must respond with a valid JSON object matching this schema:
   "pointsLimit": "number or null"
 }
 
-IMPORTANT: For all "name" fields, output ONLY the exact unit/stratagem/enhancement name. Do NOT include type annotations like "(unit)", "(stratagem)", or "(enhancement)" in the name.
+IMPORTANT: For all "name" fields, output ONLY the canonical unit/stratagem/enhancement name with NO parenthetical content. Examples of what NOT to include:
+- Type annotations: "(unit)", "(stratagem)", "(enhancement)"
+- Model counts: "(15)", "(6 model unit)", "(10 models)"
+- Unit numbering: "(unit 1)", "(unit 2)"
+- Context notes: "(deep strike)", "(proxied as X)", "(mentioned as an idea)"
+- Loadouts: "(mortar)", "(mining laser)"
+Just output the base name like "Intercessor Squad" or "Zoanthropes", not "Zoanthropes (6 model unit)".
 
 TRANSCRIPT FORMAT:
 - The transcript has been pre-processed with tagged gameplay terms

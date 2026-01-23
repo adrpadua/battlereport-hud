@@ -7,9 +7,10 @@ interface UnitListProps {
   playerFaction?: string;
   onSeekToTimestamp?: (seconds: number) => void;
   onOpenDetail?: (unitName: string, faction: string) => void;
+  onSearchCorrection?: (unitName: string, faction: string, unitIndex: number) => void;
 }
 
-export function UnitList({ playerIndex, playerFaction, onSeekToTimestamp, onOpenDetail }: UnitListProps): React.ReactElement | null {
+export function UnitList({ playerIndex, playerFaction, onSeekToTimestamp, onOpenDetail, onSearchCorrection }: UnitListProps): React.ReactElement | null {
   const acceptSuggestion = useBattleStore((state) => state.acceptSuggestion);
   const allUnits = useBattleStore((state) => state.report?.units ?? []);
 
@@ -35,6 +36,7 @@ export function UnitList({ playerIndex, playerFaction, onSeekToTimestamp, onOpen
             onSeekToTimestamp={onSeekToTimestamp}
             onAcceptSuggestion={acceptSuggestion}
             onOpenDetail={onOpenDetail}
+            onSearchCorrection={onSearchCorrection}
           />
         ))}
       </div>

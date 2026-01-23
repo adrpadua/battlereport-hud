@@ -456,6 +456,7 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       // Skip header-like rows (check first cell text)
       const firstCellText = $(cells[0]).text().trim().toUpperCase();
       if (firstCellText === 'RANGED WEAPONS' || firstCellText === 'MELEE WEAPONS' ||
+          firstCellText === 'WEAPON' || firstCellText === 'WEAPONS' ||
           firstCellText.includes('RANGE') || firstCellText.includes('---')) {
         return;
       }
@@ -483,7 +484,7 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       const upperName = weaponName.toUpperCase();
       if (upperName === 'RANGED WEAPONS' || upperName === 'MELEE WEAPONS' ||
           upperName.includes('RANGED WEAPON') || upperName.includes('MELEE WEAPON') ||
-          upperName === 'RANGE' || upperName === 'WEAPON' ||
+          upperName === 'RANGE' || upperName === 'WEAPON' || upperName === 'WEAPONS' ||
           upperName.includes('DEED') || upperName.includes('VOW')) {
         return;
       }
@@ -1019,6 +1020,32 @@ export const WEAPON_ABILITY_KEYWORDS = [
   'twinlinked',
 ];
 
+// Weapon names that contain ability keywords but should NOT be split.
+// These are legitimate compound weapon names, not concatenated abilities.
+const WEAPON_NAME_BLOCKLIST = new Set([
+  'autopistol',
+  'bolt pistol',
+  'plasma pistol',
+  'hand flamer pistol',
+  'stub pistol',
+  'laspistol',
+  'shuriken pistol',
+  'neuro disruptor pistol',
+  'needle pistol',
+  'phosphor serpenta pistol',
+  'multi-melta',
+  'multimelta',
+  'melta gun',
+  'meltagun',
+  'melta rifle',
+  'melta destroyer',
+  'inferno pistol', // has both melta effect and pistol in name
+  'power lance',
+  'hunting lance',
+  'shock lance',
+  'prioris lance',
+]);
+
 export function cleanWeaponName(rawName: string): { name: string; abilities: string | null } {
   let name = rawName;
   const foundAbilities: string[] = [];
@@ -1035,6 +1062,14 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
 
   const lowerName = name.toLowerCase();
 
+  // Check if the entire weapon name is in the blocklist (don't split these)
+  if (WEAPON_NAME_BLOCKLIST.has(lowerName)) {
+    return {
+      name: name.trim(),
+      abilities: foundAbilities.length > 0 ? foundAbilities.join(', ') : null,
+    };
+  }
+
   for (const keyword of WEAPON_ABILITY_KEYWORDS) {
     const noSpaceKeyword = keyword.replace(/\s+/g, '');
     const idx = lowerName.indexOf(noSpaceKeyword);
@@ -1049,6 +1084,14 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
 
       const before = name.slice(0, idx).trim();
       const after = name.slice(idx + noSpaceKeyword.length);
+
+      // Check if the "before" portion would result in a blocklisted weapon name
+      // This catches cases like "Autopistolpistol" where we'd split to "Autopistol" + [PISTOL]
+      // but "Autopistol" is a valid weapon name that shouldn't have been concatenated
+      const beforeLower = before.toLowerCase();
+      if (WEAPON_NAME_BLOCKLIST.has(beforeLower)) {
+        continue; // Skip this split - the "before" is a complete weapon name
+      }
 
       const formattedAbility = `[${keyword.toUpperCase()}]`;
       foundAbilities.push(formattedAbility);
@@ -1072,7 +1115,7 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
 
   return {
     name: name.trim(),
-    abilities: uniqueAbilities.length > 0 ? uniqueAbilities.join(', ') : null,
+    abilities: foundAbilities.length > 0 ? uniqueAbilities.join(', ') : null,
   };
 }
 
@@ -1124,8 +1167,11 @@ function parseMarkdownWeaponTable(
     const damage = cells[7];
 
     if (!rawName) continue;
-    const lowerName = rawName.toLowerCase();
-    if (lowerName === 'ranged weapons' || lowerName === 'melee weapons' || rawName.includes('---')) {
+    const lowerName = rawName.toLowerCase().trim();
+    // Skip header rows
+    if (lowerName === 'ranged weapons' || lowerName === 'melee weapons' ||
+        lowerName === 'weapon' || lowerName === 'weapons' ||
+        lowerName === 'range' || rawName.includes('---')) {
       continue;
     }
 

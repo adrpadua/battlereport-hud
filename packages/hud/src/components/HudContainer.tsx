@@ -1,25 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useBattleStore } from '../store/battle-store';
 import { PlayerCard } from './PlayerCard';
 import { LoadingState } from './LoadingState';
 import { FactionSelector } from './FactionSelector';
 import { UnitDetailModal } from './UnitDetailModal';
+import { UnitSearchModal } from './UnitSearchModal';
+import { saveCorrection } from '../utils/user-corrections';
 import type { UnitDetailResponse } from '../types/unit-detail';
+import type { UnitSearchResult } from '../types';
 
 interface HudContainerProps {
   onRefresh?: () => void;
+  onForceReExtract?: () => void;
   onStartExtraction?: () => void;
   onContinueWithFactions?: (factions: [string, string]) => void;
   onSeekToTimestamp?: (seconds: number) => void;
   onFetchUnitDetail?: (unitName: string, faction: string) => Promise<UnitDetailResponse>;
+  onSearchUnits?: (query: string, faction: string) => Promise<UnitSearchResult[]>;
 }
 
 export function HudContainer({
   onRefresh,
+  onForceReExtract,
   onStartExtraction,
   onContinueWithFactions,
   onSeekToTimestamp,
   onFetchUnitDetail,
+  onSearchUnits,
 }: HudContainerProps): React.ReactElement {
   const {
     report,
@@ -31,11 +38,18 @@ export function HudContainer({
     phase,
     statusMessage,
     progressLogs,
+    updateUnit,
   } = useBattleStore();
 
   const [detailModal, setDetailModal] = useState<{
     unitName: string;
     faction: string;
+  } | null>(null);
+
+  const [searchModal, setSearchModal] = useState<{
+    unitName: string;
+    faction: string;
+    unitIndex: number;
   } | null>(null);
 
   const [showJsonModal, setShowJsonModal] = useState(false);
@@ -68,6 +82,32 @@ export function HudContainer({
     }
   };
 
+  const handleSearchCorrection = (unitName: string, faction: string, unitIndex: number): void => {
+    setSearchModal({ unitName, faction, unitIndex });
+  };
+
+  const handleCloseSearch = (): void => {
+    setSearchModal(null);
+  };
+
+  const handleSelectCorrection = useCallback((correctedName: string): void => {
+    if (!searchModal) return;
+
+    // Save correction to localStorage for future use
+    saveCorrection(searchModal.unitName, correctedName, searchModal.faction);
+
+    // Update the unit in the store
+    updateUnit(searchModal.unitIndex, {
+      name: correctedName,
+      isValidated: true,
+      confidence: 'high',
+      suggestedMatch: undefined,
+    });
+
+    // Close the modal
+    setSearchModal(null);
+  }, [searchModal, updateUnit]);
+
   const formatTimestamp = (seconds: number): string => {
     return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
   };
@@ -95,17 +135,29 @@ export function HudContainer({
               title="View raw JSON response"
               style={{ fontSize: '11px' }}
             >
-              { }
+              {'{}'}
             </button>
           )}
-          {!loading && (
+          {report && onForceReExtract && !loading && (
+            <button
+              className="header-refresh-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onForceReExtract();
+              }}
+              title="Force re-extract (bypass cache)"
+            >
+              ↻
+            </button>
+          )}
+          {!loading && !report && (
             <button
               className="header-refresh-button"
               onClick={(e) => {
                 e.stopPropagation();
                 handleRefresh();
               }}
-              title="Re-extract battle report (clears cache)"
+              title="Start over"
             >
               ↻
             </button>
@@ -170,6 +222,7 @@ export function HudContainer({
                 enhancements={report.enhancements}
                 onSeekToTimestamp={onSeekToTimestamp}
                 onOpenDetail={onFetchUnitDetail ? handleOpenDetail : undefined}
+                onSearchCorrection={onSearchUnits ? handleSearchCorrection : undefined}
               />
             ))}
 
@@ -253,22 +306,34 @@ export function HudContainer({
           <div className="json-modal" onClick={(e) => e.stopPropagation()}>
             <div className="json-modal-header">
               <span>Raw AI Response</span>
-              <button onClick={() => setShowJsonModal(false)}>×</button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+                  }}
+                  title="Copy to clipboard"
+                >
+                  ⧉
+                </button>
+                <button onClick={() => setShowJsonModal(false)}>×</button>
+              </div>
             </div>
             <div className="json-modal-content">
               <pre>{JSON.stringify(report, null, 2)}</pre>
             </div>
-            <div className="json-modal-footer">
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(JSON.stringify(report, null, 2));
-                }}
-              >
-                Copy to Clipboard
-              </button>
-            </div>
           </div>
         </div>
+      )}
+
+      {searchModal && onSearchUnits && (
+        <UnitSearchModal
+          isOpen={true}
+          initialQuery={searchModal.unitName}
+          faction={searchModal.faction}
+          onClose={handleCloseSearch}
+          onSelect={handleSelectCorrection}
+          onSearch={onSearchUnits}
+        />
       )}
     </div>
   );

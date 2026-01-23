@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { HudContainer } from '@battlereport/hud';
-import type { UnitDetailResponse } from '@battlereport/hud';
+import { HudContainer, useBattleStore } from '@battlereport/hud';
+import type { UnitDetailResponse, UnitSearchResult } from '@battlereport/hud';
 import { VideoInput } from './components/VideoInput';
 import { YouTubePlayer, type YouTubePlayerHandle } from './components/YouTubePlayer';
 import { useExtraction } from './hooks/useExtraction';
@@ -27,8 +27,10 @@ function App(): React.ReactElement {
   const playerRef = useRef<YouTubePlayerHandle>(null);
   const [currentUrl, setCurrentUrl] = useState('');
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [lastFactions, setLastFactions] = useState<[string, string] | null>(null);
 
   const { step, videoData, fetchVideo, extractWithFactions, reset } = useExtraction();
+  const { report } = useBattleStore();
 
   const handleAnalyze = useCallback(async (url: string) => {
     setCurrentUrl(url);
@@ -45,6 +47,7 @@ function App(): React.ReactElement {
   const handleContinueWithFactions = useCallback(async (factions: [string, string]) => {
     if (!currentUrl || !videoData) return;
 
+    setLastFactions(factions);
     try {
       await extractWithFactions(currentUrl, factions, videoData.transcript);
     } catch {
@@ -56,7 +59,19 @@ function App(): React.ReactElement {
     reset();
     setVideoId(null);
     setCurrentUrl('');
+    setLastFactions(null);
   }, [reset]);
+
+  const handleForceReExtract = useCallback(async () => {
+    // Re-extract with cache bypass using current URL and factions
+    if (!currentUrl || !lastFactions || !videoData) return;
+
+    try {
+      await extractWithFactions(currentUrl, lastFactions, videoData.transcript, true);
+    } catch {
+      // Error is handled in useExtraction
+    }
+  }, [currentUrl, lastFactions, videoData, extractWithFactions]);
 
   const handleStartExtraction = useCallback(() => {
     // For web app, this would re-trigger the URL submission
@@ -71,6 +86,10 @@ function App(): React.ReactElement {
 
   const handleFetchUnitDetail = useCallback(async (unitName: string, faction: string): Promise<UnitDetailResponse> => {
     return api.getUnitDetail(unitName, faction);
+  }, []);
+
+  const handleSearchUnits = useCallback(async (query: string, faction: string): Promise<UnitSearchResult[]> => {
+    return api.searchUnits(query, faction);
   }, []);
 
   const isLoading = step === 'fetching' || step === 'extracting';
@@ -118,10 +137,12 @@ function App(): React.ReactElement {
           <div className="hud-panel">
             <HudContainer
               onRefresh={handleRefresh}
+              onForceReExtract={report ? handleForceReExtract : undefined}
               onStartExtraction={handleStartExtraction}
               onContinueWithFactions={handleContinueWithFactions}
               onSeekToTimestamp={handleSeekToTimestamp}
               onFetchUnitDetail={handleFetchUnitDetail}
+              onSearchUnits={handleSearchUnits}
             />
           </div>
         </div>

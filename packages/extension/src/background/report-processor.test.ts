@@ -79,19 +79,37 @@ async function runTests() {
     });
   });
 
-  await describe('cleanEntityName - preserve valid names', async () => {
+  await describe('cleanEntityName - strip AI descriptive annotations', async () => {
+    await it('removes model count annotations', () => {
+      expect(cleanEntityName('Zoanthropes (6 model unit)')).toBe('Zoanthropes');
+      expect(cleanEntityName('Hormagaunts (15)')).toBe('Hormagaunts');
+      expect(cleanEntityName('Tactical Squad (10 models)')).toBe('Tactical Squad');
+    });
+
+    await it('removes unit numbering', () => {
+      expect(cleanEntityName('Raveners (unit 1)')).toBe('Raveners');
+      expect(cleanEntityName('Exalted Eightbound (unit 2)')).toBe('Exalted Eightbound');
+      expect(cleanEntityName('Gargoyles (unit 2, deep strike)')).toBe('Gargoyles');
+    });
+
+    await it('removes context notes', () => {
+      expect(cleanEntityName('Tyranid Warriors (proxied as Raveners)')).toBe('Tyranid Warriors');
+      expect(cleanEntityName('Genestealers (mentioned as an idea)')).toBe('Genestealers');
+    });
+
+    await it('removes loadout/variant annotations', () => {
+      expect(cleanEntityName('Achilles Ridgerunners (mortar)')).toBe('Achilles Ridgerunners');
+      expect(cleanEntityName('Rhino (Transport)')).toBe('Rhino');
+    });
+  });
+
+  await describe('cleanEntityName - preserve valid names without parentheses', async () => {
     await it('does NOT modify valid unit names', () => {
       expect(cleanEntityName('Eightbound')).toBe('Eightbound');
       expect(cleanEntityName('Exalted Eightbound')).toBe('Exalted Eightbound');
       expect(cleanEntityName('Khârn The Betrayer')).toBe('Khârn The Betrayer');
       expect(cleanEntityName('Intercessor Squad')).toBe('Intercessor Squad');
-    });
-
-    await it('preserves valid parenthetical info', () => {
-      expect(cleanEntityName('Space Marines (Primaris)')).toBe('Space Marines (Primaris)');
-      expect(cleanEntityName('Tactical Squad (10 models)')).toBe('Tactical Squad (10 models)');
-      expect(cleanEntityName('Achilles Ridgerunners (mortar)')).toBe('Achilles Ridgerunners (mortar)');
-      expect(cleanEntityName('Rhino (Transport)')).toBe('Rhino (Transport)');
+      expect(cleanEntityName('Primaris Intercessors')).toBe('Primaris Intercessors');
     });
   });
 

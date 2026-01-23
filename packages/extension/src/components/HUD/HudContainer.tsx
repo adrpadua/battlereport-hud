@@ -11,6 +11,7 @@ declare global {
   interface Window {
     battleReportHudRefresh?: () => Promise<void>;
     battleReportStartExtraction?: () => Promise<void>;
+    battleReportClearCache?: () => Promise<void>;
   }
 }
 
@@ -50,6 +51,12 @@ export function HudContainer(): React.ReactElement {
     }
   };
 
+  const handleClearCache = async () => {
+    if (window.battleReportClearCache) {
+      await window.battleReportClearCache();
+    }
+  };
+
   return (
     <div className="hud-container">
       <div className="hud-header" onClick={toggleExpanded}>
@@ -63,6 +70,18 @@ export function HudContainer(): React.ReactElement {
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {report && !loading && (
+            <button
+              className="header-refresh-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClearCache();
+              }}
+              title="Clear cached AI response"
+            >
+              ×
+            </button>
+          )}
           {!loading && (
             <button
               className="header-refresh-button"

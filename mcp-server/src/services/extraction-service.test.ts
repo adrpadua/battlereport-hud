@@ -187,17 +187,45 @@ describe('cleanEntityName', () => {
     });
   });
 
-  describe('should NOT modify valid unit names', () => {
+  describe('should strip AI descriptive annotations from names', () => {
+    it('removes model count annotations', () => {
+      expect(cleanEntityName('Zoanthropes (6 model unit)')).toBe('Zoanthropes');
+      expect(cleanEntityName('Hormagaunts (15)')).toBe('Hormagaunts');
+      expect(cleanEntityName('Tactical Squad (10 models)')).toBe('Tactical Squad');
+    });
+
+    it('removes unit numbering', () => {
+      expect(cleanEntityName('Raveners (unit 1)')).toBe('Raveners');
+      expect(cleanEntityName('Exalted Eightbound (unit 2)')).toBe('Exalted Eightbound');
+      expect(cleanEntityName('Gargoyles (unit 2, deep strike)')).toBe('Gargoyles');
+    });
+
+    it('removes context notes', () => {
+      expect(cleanEntityName('Tyranid Warriors (proxied as Raveners)')).toBe('Tyranid Warriors');
+      expect(cleanEntityName('Genestealers (mentioned as an idea)')).toBe('Genestealers');
+      expect(cleanEntityName('Forgefiend (considered but NOT taken)')).toBe('Forgefiend');
+    });
+
+    it('removes character annotations', () => {
+      expect(cleanEntityName("Khârn the Betrayer (named — 'Ker Betrayer')")).toBe('Khârn the Betrayer');
+      expect(cleanEntityName('Daemon Prince (Gateways of Eternity / Vessel option)')).toBe('Daemon Prince');
+    });
+
+    it('removes loadout/variant annotations', () => {
+      expect(cleanEntityName('Achilles Ridgerunners (mortar)')).toBe('Achilles Ridgerunners');
+      expect(cleanEntityName('Achilles Ridgerunners (mining laser)')).toBe('Achilles Ridgerunners');
+      expect(cleanEntityName('Rhino (Transport)')).toBe('Rhino');
+    });
+  });
+
+  describe('should NOT modify valid unit names without parentheses', () => {
     const validNames = [
       'Eightbound',
       'Exalted Eightbound',
       'Khârn The Betrayer',
       'Intercessor Squad',
-      'Space Marines (Primaris)',
-      'Tactical Squad (10 models)',
-      'Achilles Ridgerunners (mortar)',
-      'Achilles Ridgerunners (mining laser)',
-      'Rhino (Transport)',
+      'Primaris Intercessors',
+      'Chaos Space Marines',
     ];
 
     it.each(validNames)('should NOT modify: %s', (name) => {
@@ -215,7 +243,7 @@ describe('cleanEntityName', () => {
     });
 
     it('only removes suffix, not middle occurrences', () => {
-      // If "(unit)" appears in the middle, it should stay
+      // If parenthetical content appears in the middle, it should stay
       expect(cleanEntityName('Some (unit) Thing')).toBe('Some (unit) Thing');
     });
 

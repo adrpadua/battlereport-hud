@@ -137,7 +137,7 @@ export function UnitCell({
         <span className="unit-name">
           {stripUnitNameParentheses(unit.name)}
           {unit.pointsCost && (
-            <span className="unit-points">({unit.pointsCost}pts)</span>
+            <span className="unit-points"> ({unit.pointsCost})</span>
           )}
           {unit.isValidated && (
             <span className="unit-validated" title="Validated against BSData">

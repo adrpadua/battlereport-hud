@@ -2,7 +2,7 @@
  * API client for the MCP server web extraction endpoints.
  */
 
-import type { TranscriptSegment, Chapter, BattleReport, UnitDetailResponse } from '@battlereport/hud';
+import type { TranscriptSegment, Chapter, BattleReport, UnitDetailResponse, UnitSearchResult } from '@battlereport/hud';
 
 const API_BASE_URL = 'http://localhost:40401';
 
@@ -98,11 +98,13 @@ class ApiClient {
 
   /**
    * Extract battle report from video.
+   * @param skipCache - If true, bypasses the server cache and forces a fresh extraction
    */
   async extractBattleReport(
     url: string,
     factions: [string, string],
-    transcript?: TranscriptSegment[]
+    transcript?: TranscriptSegment[],
+    skipCache?: boolean
   ): Promise<ExtractResponse> {
     return this.request<ExtractResponse>('/api/web/extract', {
       method: 'POST',
@@ -110,6 +112,7 @@ class ApiClient {
         url,
         factions,
         transcript,
+        skipCache,
       }),
     });
   }
@@ -130,6 +133,22 @@ class ApiClient {
     const queryString = params.toString();
     const url = `/api/units/${encodeURIComponent(unitName)}${queryString ? '?' + queryString : ''}`;
     return this.request<UnitDetailResponse>(url);
+  }
+
+  /**
+   * Search for units using fuzzy matching.
+   */
+  async searchUnits(query: string, faction?: string, limit: number = 5): Promise<UnitSearchResult[]> {
+    const params = new URLSearchParams();
+    params.set('query', query);
+    params.set('categories', 'units');
+    params.set('limit', String(limit));
+    if (faction) params.set('faction', faction);
+
+    const response = await this.request<{ query: string; matches: UnitSearchResult[] }>(
+      `/api/fuzzy-search?${params.toString()}`
+    );
+    return response.matches;
   }
 }
 

@@ -24,6 +24,7 @@ declare global {
     battleReportHudRefresh?: () => Promise<void>;
     battleReportStartExtraction?: () => Promise<void>;
     battleReportContinueWithFactions?: (factions: [string, string]) => Promise<void>;
+    battleReportClearCache?: () => Promise<void>;
   }
 }
 
@@ -334,10 +335,38 @@ async function forceRefresh(): Promise<void> {
   await startExtraction();
 }
 
+// Clear cache only: clear AI response cache without re-extracting
+async function clearCacheOnly(): Promise<void> {
+  const videoId = getVideoId();
+  if (!videoId) {
+    console.log('Battle Report HUD: Cannot clear cache - not on a watch page');
+    return;
+  }
+
+  const store = useBattleStore.getState();
+
+  // Clear cache for this video
+  try {
+    await sendMessageWithRetry({
+      type: 'CLEAR_CACHE',
+      payload: { videoId },
+    });
+    console.log('Battle Report HUD: Cache cleared');
+  } catch (error) {
+    console.error('Battle Report HUD: Failed to clear cache', error);
+  }
+
+  // Reset state to idle without starting extraction
+  store.reset();
+  store.setVideoId(videoId);
+  store.setPhase('idle', 'Cache cleared. Click Extract to analyze this video');
+}
+
 // Expose to window for HUD component
 window.battleReportHudRefresh = forceRefresh;
 window.battleReportStartExtraction = startExtraction;
 window.battleReportContinueWithFactions = continueWithFactions;
+window.battleReportClearCache = clearCacheOnly;
 
 function cleanup(): void {
   stopCaptionObserver();

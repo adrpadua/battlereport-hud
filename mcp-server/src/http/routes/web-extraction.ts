@@ -41,6 +41,7 @@ interface ExtractBody {
     startTime: number;
     duration: number;
   }[];
+  skipCache?: boolean;
 }
 
 export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Database): void {
@@ -158,12 +159,13 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
                 },
               },
             },
+            skipCache: { type: 'boolean' },
           },
         },
       },
     },
     async (request, reply) => {
-      const { url, factions, transcript: providedTranscript } = request.body;
+      const { url, factions, transcript: providedTranscript, skipCache } = request.body;
 
       // Check API key
       if (!apiKey) {
@@ -193,19 +195,20 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
         // Sort factions for consistent cache key
         const sortedFactions = [...typedFactions].sort() as [string, string];
 
-        // Check cache first
-        const cachedResult = await db
-          .select()
-          .from(extractionCache)
-          .where(
-            and(
-              eq(extractionCache.videoId, videoId),
-              gt(extractionCache.expiresAt, new Date())
+        // Check cache first (unless skipCache is set)
+        if (!skipCache) {
+          const cachedResult = await db
+            .select()
+            .from(extractionCache)
+            .where(
+              and(
+                eq(extractionCache.videoId, videoId),
+                gt(extractionCache.expiresAt, new Date())
+              )
             )
-          )
-          .limit(1);
+            .limit(1);
 
-        if (cachedResult.length > 0) {
+          if (cachedResult.length > 0) {
           const cached = cachedResult[0]!;
           const cachedFactions = cached.factions as [string, string];
           const sortedCachedFactions = [...cachedFactions].sort();
@@ -238,8 +241,9 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
             });
           }
         }
+        } // end skipCache check
 
-        console.log(`Final report cache miss for video ${videoId}`);
+        console.log(`${skipCache ? 'Cache bypassed' : 'Final report cache miss'} for video ${videoId}`);
 
         // Check AI response cache (allows re-running validation without re-calling OpenAI)
         let cachedAiResponse: string | undefined;

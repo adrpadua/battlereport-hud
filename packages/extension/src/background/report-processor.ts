@@ -5,16 +5,16 @@ import { loadFactionByName } from '@/utils/faction-loader';
 import { getBestMatch, validateUnitWithFeedback } from '@/utils/unit-validator';
 
 /**
- * Clean up entity names that may have type annotations from AI output.
- * Removes patterns like "(unit)", "(stratagem)", "(enhancement)" that the AI
- * may have incorrectly included based on the schema examples.
+ * Clean up entity names that may have annotations from AI output.
+ * Removes all trailing parenthetical content like:
+ * - Type annotations: "(unit)", "(stratagem)", "(enhancement)"
+ * - Descriptive suffixes: "(6 model unit)", "(unit 1)", "(deep strike)"
+ * - Model counts: "(15)", "(10)"
+ * - Context notes: "(proxied as Raveners)", "(mentioned as an idea)"
  */
 export function cleanEntityName(name: string): string {
-  return name
-    .replace(/\s*\(unit\)\s*$/i, '')
-    .replace(/\s*\(stratagem\)\s*$/i, '')
-    .replace(/\s*\(enhancement\)\s*$/i, '')
-    .trim();
+  // Strip all trailing parenthetical content
+  return name.replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
 export interface EnrichedUnit extends Unit {
