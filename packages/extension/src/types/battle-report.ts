@@ -29,6 +29,7 @@ export interface Unit {
   // Suggestion for non-validated units
   suggestedMatch?: UnitSuggestion;
   videoTimestamp?: number; // seconds in video when first mentioned
+  mentionCount?: number; // how many times mentioned throughout video
 }
 
 export interface Stratagem {

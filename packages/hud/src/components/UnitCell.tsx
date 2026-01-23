@@ -153,6 +153,11 @@ export function UnitCell({
               ✓
             </span>
           )}
+          {unit.mentionCount && unit.mentionCount > 1 && (
+            <span className="unit-mentions" title={`Mentioned ${unit.mentionCount} times in video`}>
+              ×{unit.mentionCount}
+            </span>
+          )}
         </span>
         <div className="unit-cell-actions">
           {onSearchCorrection && playerFaction && (

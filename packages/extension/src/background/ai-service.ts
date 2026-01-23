@@ -9,6 +9,7 @@ import {
   preprocessTranscriptWithLlmMappings,
   enrichStratagemTimestamps,
   enrichUnitTimestamps,
+  enrichUnitMentionCounts,
   enrichEnhancementTimestamps,
   type PreprocessedTranscript,
   type NormalizedSegment,
@@ -840,14 +841,15 @@ export async function extractBattleReport(
   // Enrich stratagems with timestamps from transcript preprocessing
   const enrichedStratagems = enrichStratagemTimestamps(extractedStratagems, preprocessed);
 
-  // Convert validated units and enrich with timestamps
+  // Convert validated units and enrich with timestamps and mention counts
   const extractedUnits = validated.units.map((u) => ({
     name: u.name,
     playerIndex: u.playerIndex,
     confidence: u.confidence,
     pointsCost: u.pointsCost ?? undefined,
   }));
-  const enrichedUnits = enrichUnitTimestamps(extractedUnits, preprocessed);
+  const unitsWithTimestamps = enrichUnitTimestamps(extractedUnits, preprocessed);
+  const enrichedUnits = enrichUnitMentionCounts(unitsWithTimestamps, preprocessed);
 
   // Convert validated enhancements and enrich with timestamps
   const extractedEnhancements: Enhancement[] = (validated.enhancements ?? []).map((e) => ({

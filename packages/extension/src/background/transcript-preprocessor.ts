@@ -425,3 +425,57 @@ function findEnhancementTimestamp(name: string, mentions: Map<string, number[]>)
   }
   return undefined;
 }
+
+/**
+ * Find mention count for a unit name.
+ */
+function findUnitMentionCount(name: string, mentions: Map<string, number[]>): number {
+  const normalized = normalizeTerm(name);
+
+  // Direct match
+  if (mentions.has(normalized)) {
+    return mentions.get(normalized)!.length;
+  }
+
+  // Partial match - find best match
+  let bestCount = 0;
+  for (const [mentionedName, timestamps] of mentions) {
+    // Substring match
+    if (mentionedName.includes(normalized) || normalized.includes(mentionedName)) {
+      if (timestamps.length > bestCount) {
+        bestCount = timestamps.length;
+      }
+      continue;
+    }
+
+    // Word overlap match
+    const nameWords = normalized.split(' ').filter(w => w.length > 2);
+    const mentionWords = mentionedName.split(' ').filter(w => w.length > 2);
+    const overlap = nameWords.filter(w => mentionWords.includes(w));
+    if (overlap.length >= Math.min(nameWords.length, mentionWords.length) / 2) {
+      if (timestamps.length > bestCount) {
+        bestCount = timestamps.length;
+      }
+    }
+  }
+
+  return bestCount;
+}
+
+/**
+ * Enrich units with mention counts from preprocessed transcript.
+ * The mention count indicates how many times a unit was mentioned
+ * throughout the video, which can indicate unit activity/importance.
+ */
+export function enrichUnitMentionCounts(
+  units: Unit[],
+  preprocessed: PreprocessedTranscript
+): Unit[] {
+  return units.map(u => {
+    const mentionCount = findUnitMentionCount(u.name, preprocessed.unitMentions);
+    if (mentionCount > 0) {
+      return { ...u, mentionCount };
+    }
+    return u;
+  });
+}
