@@ -35,6 +35,7 @@ npm run cli generate aliases [faction]       # Generate unit aliases via LLM
 npm run cli mcp server                       # Start MCP HTTP server
 npm run cli mcp db migrate                   # Run database migrations
 npm run cli mcp scrape faction <factionId>   # Scrape faction from Wahapedia
+npm run cli mcp scrape unit <faction> <unit> # Scrape individual unit (e.g., tyranids Hive-Tyrant)
 ```
 
 ### MCP Server Tests
@@ -161,3 +162,13 @@ npm run scrape:core      # Scrape core rules
 npm run scrape:factions  # Scrape all factions
 npm run ingest:bsdata    # Ingest BSData files
 ```
+
+### Scraping Individual Units
+To scrape a specific unit without re-scraping an entire faction:
+```bash
+npm run cli mcp scrape unit <faction-slug> <unit-slug>
+npm run cli mcp scrape unit space-marines Intercessor-Squad
+npm run cli mcp scrape unit tyranids Hive-Tyrant --force  # Overwrite existing
+```
+
+Unit slugs use Wahapedia URL format (capitalized with hyphens). Uses cached Firecrawl results when available.
