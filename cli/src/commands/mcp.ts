@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { runMcpCli, runMcpScript, runMcpServer } from '../utils/runner.js';
+import { runMcpCli, runMcpScript, runMcpServer, runMcpScraper } from '../utils/runner.js';
 
 export const mcpCommand = new Command('mcp')
   .description('MCP server commands (database, scraping, indexing)');
@@ -44,6 +44,16 @@ scrapeCmd
   .description('Scrape a mission pack')
   .action(async (packId: string) => {
     await runMcpCli('scrape', ['mission-pack', packId]);
+  });
+
+scrapeCmd
+  .command('unit <factionSlug> <unitSlug>')
+  .description('Scrape a specific unit (e.g., space-marines Intercessor-Squad)')
+  .option('--force', 'Force overwrite existing unit')
+  .action(async (factionSlug: string, unitSlug: string, options: { force?: boolean }) => {
+    const args = [factionSlug, unitSlug];
+    if (options.force) args.push('--force');
+    await runMcpScraper('scrape-unit.ts', args);
   });
 
 // Database command group

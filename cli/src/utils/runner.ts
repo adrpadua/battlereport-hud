@@ -155,3 +155,31 @@ export async function runTurboDev(filter?: string): Promise<void> {
   const args = filter ? ['--filter', filter] : [];
   return runTurbo('dev', args);
 }
+
+/**
+ * Run a script from the mcp-server/src/scraper directory.
+ */
+export async function runMcpScraper(scriptName: string, args: string[] = []): Promise<void> {
+  const root = getMonorepoRoot();
+  const scriptPath = join(root, 'mcp-server', 'src', 'scraper', scriptName);
+
+  return new Promise((resolve, reject) => {
+    const proc = spawn('npx', ['tsx', scriptPath, ...args], {
+      stdio: 'inherit',
+      cwd: join(root, 'mcp-server'),
+      shell: true,
+    });
+
+    proc.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`MCP scraper ${scriptName} exited with code ${code}`));
+      }
+    });
+
+    proc.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
