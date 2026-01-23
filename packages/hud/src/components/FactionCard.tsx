@@ -5,10 +5,12 @@ import { useExpandable } from '../hooks/useExpandable';
 
 interface FactionCardProps {
   faction: string;
+  totalPoints?: number;
 }
 
 export function FactionCard({
   faction,
+  totalPoints,
 }: FactionCardProps): React.ReactElement | null {
   const [factionDetails, setFactionDetails] = useState<FactionDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,9 +61,12 @@ export function FactionCard({
   // Get display values
   const ruleName = factionDetails?.armyRuleName || 'Army Rule';
 
+  // Format points for display
+  const pointsDisplay = totalPoints ? ` (${totalPoints} pts)` : '';
+
   return (
     <div className="faction-section">
-      <div className="section-title">ARMY</div>
+      <div className="section-title">ARMY{pointsDisplay}</div>
       <div className="faction-card">
         <div
           className={`faction-card-header ${contentClassName} ${hasExpandableContent ? 'expandable' : ''}`}

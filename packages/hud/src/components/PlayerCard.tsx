@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { Player, Stratagem, Enhancement } from '../types';
 import { ConfidenceBadge } from './ConfidenceBadge';
 import { FactionCard } from './FactionCard';
@@ -6,6 +6,7 @@ import { DetachmentCard } from './DetachmentCard';
 import { UnitList } from './UnitList';
 import { StratagemList } from './StratagemList';
 import { EnhancementList } from './EnhancementList';
+import { useBattleStore } from '../store/battle-store';
 
 interface PlayerCardProps {
   player: Player;
@@ -26,6 +27,14 @@ export function PlayerCard({
   onOpenDetail,
   onSearchCorrection,
 }: PlayerCardProps): React.ReactElement {
+  // Get units from store and calculate total points for this player
+  const allUnits = useBattleStore((state) => state.report?.units ?? []);
+  const totalPoints = useMemo(() => {
+    return allUnits
+      .filter((unit) => unit.playerIndex === playerIndex)
+      .reduce((sum, unit) => sum + (unit.pointsCost ?? 0), 0);
+  }, [allUnits, playerIndex]);
+
   // Choose a color based on player index
   const playerColors = ['#3b82f6', '#ef4444']; // Blue, Red
   const accentColor = playerColors[playerIndex] || playerColors[0];
@@ -40,7 +49,7 @@ export function PlayerCard({
         <ConfidenceBadge level={player.confidence} />
       </div>
 
-      <FactionCard faction={player.faction} />
+      <FactionCard faction={player.faction} totalPoints={totalPoints || undefined} />
 
       {player.detachment && (
         <DetachmentCard
