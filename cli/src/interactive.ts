@@ -270,10 +270,10 @@ async function mcpMenu(): Promise<void> {
     const reparseAction = await select({
       message: 'Reparse Cached Data',
       choices: [
-        { name: 'Reparse all units (datasheets)', value: 'all' },
-        { name: 'Reparse all factions (army rules, detachments, stratagems)', value: 'factions' },
-        { name: 'Reparse specific faction units', value: 'faction-units' },
-        { name: 'Reparse specific faction data', value: 'faction-data' },
+        { name: 'Reparse ALL data (factions + units)', value: 'all' },
+        { name: 'Reparse factions only (army rules, detachments, stratagems)', value: 'factions' },
+        { name: 'Reparse units only (datasheets)', value: 'units' },
+        { name: 'Reparse specific faction (all data)', value: 'faction-all' },
         { name: '<- Back', value: 'back' },
       ],
     });
@@ -291,7 +291,13 @@ async function mcpMenu(): Promise<void> {
       const args: string[] = [];
       if (dryRun) args.push('--dry-run');
       if (verbose) args.push('--verbose');
+
+      console.log('\n=== Re-parsing all cached data ===\n');
+      console.log('Step 1: Re-parsing faction data...\n');
+      await runMcpScript('reparse-factions.ts', args);
+      console.log('\n\nStep 2: Re-parsing unit datasheets...\n');
       await runMcpScript('reparse-all.ts', args);
+      console.log('\n=== All data re-parsed ===');
     } else if (reparseAction === 'factions') {
       const dryRun = await confirm({
         message: 'Dry run (preview without saving)?',
@@ -305,11 +311,7 @@ async function mcpMenu(): Promise<void> {
       if (dryRun) args.push('--dry-run');
       if (verbose) args.push('--verbose');
       await runMcpScript('reparse-factions.ts', args);
-    } else if (reparseAction === 'faction-units') {
-      const factionId = await input({
-        message: 'Enter faction ID (e.g., tyranids, space-marines):',
-        validate: (v) => v.trim().length > 0 || 'Please enter a faction ID',
-      });
+    } else if (reparseAction === 'units') {
       const dryRun = await confirm({
         message: 'Dry run (preview without saving)?',
         default: true,
@@ -318,11 +320,11 @@ async function mcpMenu(): Promise<void> {
         message: 'Verbose output?',
         default: false,
       });
-      const args = ['--faction', factionId];
+      const args: string[] = [];
       if (dryRun) args.push('--dry-run');
       if (verbose) args.push('--verbose');
       await runMcpScript('reparse-all.ts', args);
-    } else if (reparseAction === 'faction-data') {
+    } else if (reparseAction === 'faction-all') {
       const factionId = await input({
         message: 'Enter faction ID (e.g., tyranids, space-marines):',
         validate: (v) => v.trim().length > 0 || 'Please enter a faction ID',
@@ -338,7 +340,13 @@ async function mcpMenu(): Promise<void> {
       const args = ['--faction', factionId];
       if (dryRun) args.push('--dry-run');
       if (verbose) args.push('--verbose');
+
+      console.log(`\n=== Re-parsing ${factionId} ===\n`);
+      console.log('Step 1: Re-parsing faction data...\n');
       await runMcpScript('reparse-factions.ts', args);
+      console.log('\n\nStep 2: Re-parsing unit datasheets...\n');
+      await runMcpScript('reparse-all.ts', args);
+      console.log(`\n=== ${factionId} re-parsed ===`);
     }
   } else if (action === 'ingest') {
     const ingestAction = await select({
