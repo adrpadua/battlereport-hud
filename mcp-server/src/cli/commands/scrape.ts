@@ -97,7 +97,8 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       const factionResult = await client.scrape(factionUrl);
 
       const factionName = extractFactionName(factionResult.markdown) || factionSlug;
-      const faction = parseFactionPage(factionResult.markdown, factionSlug, factionName, factionResult.url);
+      // Use HTML for faction page parsing (army rules extraction still works with markdown)
+      const faction = parseFactionPage(factionResult.html || factionResult.markdown, factionSlug, factionName, factionResult.url);
 
       const insertResult = await db
         .insert(schema.factions)
@@ -125,7 +126,9 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
         contentHash: factionResult.contentHash,
       });
 
-      const detachments = parseDetachments(factionResult.markdown, factionResult.url);
+      // Use HTML for detachment/stratagem parsing - markdown loses anchor names
+      const factionHtml = factionResult.html || factionResult.markdown;
+      const detachments = parseDetachments(factionHtml, factionResult.url);
       console.log(`  Found ${detachments.length} detachments`);
 
       for (const detachment of detachments) {
@@ -147,7 +150,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
 
         const detachmentId = insertedDetachment!.id;
 
-        const enhancements = parseEnhancements(factionResult.markdown, factionResult.url);
+        const enhancements = parseEnhancements(factionHtml, factionResult.url);
         for (const enhancement of enhancements) {
           await db
             .insert(schema.enhancements)
@@ -156,7 +159,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
         }
       }
 
-      const stratagems = parseStratagems(factionResult.markdown, factionResult.url);
+      const stratagems = parseStratagems(factionHtml, factionResult.url);
       console.log(`  Found ${stratagems.length} stratagems`);
 
       // Delete existing stratagems for this faction and re-insert with fresh data
