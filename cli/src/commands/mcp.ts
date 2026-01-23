@@ -217,6 +217,20 @@ rescrapeCmd
     await runMcpScript('scrape-tau.ts');
   });
 
+rescrapeCmd
+  .command('refresh-html')
+  .description('Re-scrape pages that were cached as Markdown-only to get HTML content')
+  .option('--dry-run', 'Preview which pages would be refreshed (no API calls)')
+  .option('--factions-only', 'Only refresh faction main pages')
+  .option('--verbose, -v', 'Show detailed output')
+  .action(async (options: { dryRun?: boolean; factionsOnly?: boolean; verbose?: boolean }) => {
+    const args: string[] = [];
+    if (options.dryRun) args.push('--dry-run');
+    if (options.factionsOnly) args.push('--factions-only');
+    if (options.verbose) args.push('--verbose');
+    await runMcpScript('refresh-cache-with-html.ts', args);
+  });
+
 // Reparse command group
 const reparseCmd = mcpCommand
   .command('reparse')
@@ -248,4 +262,23 @@ reparseCmd
     if (options.faction) args.push('--faction', options.faction);
     if (options.verbose) args.push('--verbose');
     await runMcpScript('reparse-factions.ts', args);
+  });
+
+// Cache command group
+const cacheCmd = mcpCommand
+  .command('cache')
+  .description('Firecrawl cache operations');
+
+cacheCmd
+  .command('analyze')
+  .description('Analyze which cached pages have HTML vs markdown only')
+  .action(async () => {
+    await runMcpCli('cache', ['analyze']);
+  });
+
+cacheCmd
+  .command('stats')
+  .description('Show cache statistics')
+  .action(async () => {
+    await runMcpCli('cache', ['stats']);
   });
