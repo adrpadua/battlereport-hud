@@ -91,7 +91,7 @@ export class FirecrawlClient {
     const {
       useCache = true,
       forceRefresh = false,
-      includeHtml = false,
+      includeHtml = true,
       extractLinks = true,
       timeout = 30000,
     } = options;

@@ -159,11 +159,13 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       const stratagems = parseStratagems(factionResult.markdown, factionResult.url);
       console.log(`  Found ${stratagems.length} stratagems`);
 
+      // Delete existing stratagems for this faction and re-insert with fresh data
+      await db.delete(schema.stratagems).where(eq(schema.stratagems.factionId, factionId));
+
       for (const stratagem of stratagems) {
         await db
           .insert(schema.stratagems)
-          .values({ ...stratagem, factionId })
-          .onConflictDoNothing();
+          .values({ ...stratagem, factionId });
       }
     } catch (error) {
       console.error(`Failed to scrape faction ${factionSlug}:`, error);
@@ -268,7 +270,7 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
             }
           }
 
-          const units = parseDatasheets(unitResult.markdown, unitResult.url);
+          const units = parseDatasheets(unitResult.html || unitResult.markdown, unitResult.url);
           if (units.length === 0) {
             console.log(`      No unit data parsed, skipping`);
             await db

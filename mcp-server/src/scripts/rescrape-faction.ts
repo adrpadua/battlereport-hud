@@ -39,7 +39,7 @@ async function main() {
 
     try {
       const result = await client.scrape(unitUrl);
-      const parsed = parseDatasheets(result.markdown, result.url);
+      const parsed = parseDatasheets(result.html || result.markdown, result.url);
 
       if (parsed.length === 0) continue;
 

@@ -333,7 +333,7 @@ async function scrapeUnits(factionSlugs: string[], filter: ScrapeFilter = 'all')
           continue;
         }
 
-        const units = parseDatasheets(unitResult.markdown, unitResult.url);
+        const units = parseDatasheets(unitResult.html || unitResult.markdown, unitResult.url);
         if (units.length === 0) {
           console.log('no data');
           await db.update(schema.unitIndex)

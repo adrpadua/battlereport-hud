@@ -82,7 +82,7 @@ async function main() {
         continue;
       }
 
-      const parsed = parseDatasheets(result.markdown, url);
+      const parsed = parseDatasheets(result.html || result.markdown, url);
 
       if (parsed.length === 0) {
         console.log(`  [SKIP] ${unitSlug} - no datasheet parsed`);

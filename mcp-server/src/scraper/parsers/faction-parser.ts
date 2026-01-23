@@ -1,5 +1,84 @@
 import type { NewFaction, NewDetachment, NewStratagem, NewEnhancement } from '../../db/schema.js';
 
+/**
+ * Map of concatenated keywords to their properly spaced form.
+ * Firecrawl's markdown conversion often concatenates Wahapedia's keywords.
+ */
+const KEYWORD_FIXES: Record<string, string> = {
+  // Unit keywords
+  CULTISTMOB: 'CULTIST MOB',
+  DAMNEDCHARACTER: 'DAMNED CHARACTER',
+  HERETICASTARTES: 'HERETIC ASTARTES',
+  ADEPTUSASTARTES: 'ADEPTUS ASTARTES',
+  ADEPTUSCUSTODES: 'ADEPTUS CUSTODES',
+  ADEPTUSMECHANICUS: 'ADEPTUS MECHANICUS',
+  ASTRAMILIT: 'ASTRA MILITARUM',
+  DEATHGUARD: 'DEATH GUARD',
+  THOUSANDSONS: 'THOUSAND SONS',
+  WORLDEATERS: 'WORLD EATERS',
+  GENESTEALERCULTS: 'GENESTEALER CULTS',
+  LEAGUESOFVOTANN: 'LEAGUES OF VOTANN',
+  IMPERIALAGENTS: 'IMPERIAL AGENTS',
+  IMPERIALKNIGHT: 'IMPERIAL KNIGHT',
+  CHAOSKNIGHT: 'CHAOS KNIGHT',
+  GREYKNIGHTS: 'GREY KNIGHTS',
+  BLOODANGELS: 'BLOOD ANGELS',
+  DARKANGELS: 'DARK ANGELS',
+  SPACEWOLVES: 'SPACE WOLVES',
+  BLACKTEMPLARS: 'BLACK TEMPLARS',
+  IMPERIALFISTS: 'IMPERIAL FISTS',
+  IRONHANDS: 'IRON HANDS',
+  WHITESCARS: 'WHITE SCARS',
+  RAVENWING: 'RAVENWING',
+  DEATHWING: 'DEATHWING',
+  EPICHERO: 'EPIC HERO',
+  // Weapon abilities
+  LETHALHITS: 'LETHAL HITS',
+  SUSTAINEDHITS: 'SUSTAINED HITS',
+  SUSTAINEDHITS1: 'SUSTAINED HITS 1',
+  SUSTAINEDHITS2: 'SUSTAINED HITS 2',
+  SUSTAINEDHITSD3: 'SUSTAINED HITS D3',
+  DEVASTATINGWOUNDS: 'DEVASTATING WOUNDS',
+  INDIRECTFIRE: 'INDIRECT FIRE',
+  RAPIDFIRE: 'RAPID FIRE',
+  RAPIDFIRE1: 'RAPID FIRE 1',
+  RAPIDFIRE2: 'RAPID FIRE 2',
+  HEAVYWEAPON: 'HEAVY',
+  ANTITANK: 'ANTI-TANK',
+  ANTIINFANTRY: 'ANTI-INFANTRY',
+  ANTIMONSTER: 'ANTI-MONSTER',
+  ANTIVEHICLE: 'ANTI-VEHICLE',
+  ANTIFLY: 'ANTI-FLY',
+  FEELNOPAIN: 'FEEL NO PAIN',
+  INVULNERABLESAVE: 'INVULNERABLE SAVE',
+  // Core abilities
+  DEEPSTRIKE: 'DEEP STRIKE',
+  DEADLYDESCENT: 'DEADLY DESCENT',
+  FIGHTSFIRST: 'FIGHTS FIRST',
+  LONEOPERATIVE: 'LONE OPERATIVE',
+  SCOUTSMOVE: 'SCOUTS MOVE',
+  // Other common terms
+  ENGAGEMENTRANGE: 'ENGAGEMENT RANGE',
+  MORTALWOUNDS: 'MORTAL WOUNDS',
+  MORTALWOUND: 'MORTAL WOUND',
+  LEADERSHIPTEST: 'LEADERSHIP TEST',
+  BATTLESHOCK: 'BATTLE-SHOCK',
+  BATTLESHOCKED: 'BATTLE-SHOCKED',
+  OBJECTIVECONTROL: 'OBJECTIVE CONTROL',
+};
+
+/**
+ * Normalize concatenated keywords in text by adding proper spacing.
+ */
+function normalizeKeywords(text: string): string {
+  let result = text;
+  for (const [concat, spaced] of Object.entries(KEYWORD_FIXES)) {
+    const pattern = new RegExp(`\\b${concat}\\b`, 'gi');
+    result = result.replace(pattern, spaced);
+  }
+  return result;
+}
+
 interface ParsedFaction {
   faction: NewFaction;
   detachments: Omit<NewDetachment, 'factionId'>[];
@@ -213,14 +292,14 @@ export function parseStratagems(
 
     seen.add(name);
 
-    // Extract WHEN, TARGET, EFFECT
+    // Extract WHEN, TARGET, EFFECT and normalize concatenated keywords
     const whenMatch = content.match(/\*\*WHEN:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
     const targetMatch = content.match(/\*\*TARGET:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
     const effectMatch = content.match(/\*\*EFFECT:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
 
-    const when = whenMatch?.[1]?.trim() || null;
-    const target = targetMatch?.[1]?.trim() || null;
-    const effect = effectMatch?.[1]?.trim() || '';
+    const when = whenMatch?.[1]?.trim() ? normalizeKeywords(whenMatch[1].trim()) : null;
+    const target = targetMatch?.[1]?.trim() ? normalizeKeywords(targetMatch[1].trim()) : null;
+    const effect = effectMatch?.[1]?.trim() ? normalizeKeywords(effectMatch[1].trim()) : '';
 
     // Skip if we didn't find the core effect content
     if (!effect) continue;
