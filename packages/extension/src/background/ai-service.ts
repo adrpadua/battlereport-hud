@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { BattleReportExtractionSchema } from '@/types/ai-response';
+import { BattleReportExtractionSchema, type BattleReportExtraction } from '@/types/ai-response';
 import type { BattleReport, Enhancement } from '@/types/battle-report';
 import type { VideoData, Chapter, TranscriptSegment } from '@/types/youtube';
 import type { LlmPreprocessResult } from '@/types/llm-preprocess';
@@ -16,6 +16,14 @@ import {
 import { getCachedPreprocess, setCachedPreprocess } from './cache-manager';
 import { preprocessWithLlm } from './llm-preprocess-service';
 import { inferFactionsFromText } from '@/utils/faction-loader';
+
+// Chunking configuration for large transcripts
+const MAX_TRANSCRIPT_CHARS_PER_CHUNK = 8000; // Smaller than LLM preprocessing (12K) to leave room for metadata
+const CHUNK_OVERLAP_CHARS = 500; // Overlap for context continuity
+const MAX_SINGLE_REQUEST_CHARS = 10000; // Skip chunking for short transcripts
+const MAX_CONCURRENT_CHUNKS = 3; // Limit concurrent API requests
+const MAX_RETRIES = 3;
+const BASE_RETRY_DELAY_MS = 1000;
 
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
@@ -182,6 +190,73 @@ function buildTranscriptSection(
   );
 }
 
+/**
+ * Split transcript text into chunks for large videos.
+ * Attempts to split at sentence boundaries for better context.
+ */
+function chunkTranscriptText(transcriptText: string): string[] {
+  if (transcriptText.length <= MAX_SINGLE_REQUEST_CHARS) {
+    return [transcriptText];
+  }
+
+  const chunks: string[] = [];
+  let currentPosition = 0;
+
+  while (currentPosition < transcriptText.length) {
+    let endPosition = currentPosition + MAX_TRANSCRIPT_CHARS_PER_CHUNK;
+
+    if (endPosition >= transcriptText.length) {
+      // Last chunk - take the rest
+      chunks.push(transcriptText.slice(currentPosition).trim());
+      break;
+    }
+
+    // Try to find a sentence boundary (. ! ?) near the end
+    let bestBreakPoint = endPosition;
+    const searchStart = Math.max(currentPosition, endPosition - 500);
+
+    // Look for sentence endings within the last 500 chars of the chunk
+    for (let i = endPosition; i > searchStart; i--) {
+      const char = transcriptText[i];
+      if (char === '.' || char === '!' || char === '?') {
+        // Found a sentence boundary
+        bestBreakPoint = i + 1;
+        break;
+      }
+    }
+
+    // If no sentence boundary found, try to break at a space
+    if (bestBreakPoint === endPosition) {
+      for (let i = endPosition; i > searchStart; i--) {
+        if (transcriptText[i] === ' ') {
+          bestBreakPoint = i;
+          break;
+        }
+      }
+    }
+
+    chunks.push(transcriptText.slice(currentPosition, bestBreakPoint).trim());
+
+    // Start next chunk with overlap for context continuity
+    const overlapStart = Math.max(currentPosition, bestBreakPoint - CHUNK_OVERLAP_CHARS);
+    currentPosition = overlapStart < bestBreakPoint ? bestBreakPoint - CHUNK_OVERLAP_CHARS : bestBreakPoint;
+
+    // Make sure we make progress
+    if (currentPosition <= 0 || chunks[chunks.length - 1] === '') {
+      currentPosition = bestBreakPoint;
+    }
+  }
+
+  return chunks.filter(chunk => chunk.length > 0);
+}
+
+/**
+ * Sleep helper for retry delays.
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Static system prompt for better prompt caching (dynamic content moved to user prompt)
 const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, vehicles, and enhancements mentioned in the transcript.
 
@@ -264,10 +339,17 @@ Guidelines:
   - "low": Partial name or uncertain identification
 - For stratagems and enhancements, include the approximate video timestamp (in seconds) when mentioned. The transcript includes timestamps in [Xs] format.`;
 
+interface ChunkOptions {
+  transcriptChunk: string;
+  chunkIndex: number;
+  totalChunks: number;
+}
+
 function buildUserPrompt(
   videoData: VideoData,
   preprocessed?: PreprocessedTranscript,
-  factionUnitNames?: Map<string, string[]>
+  factionUnitNames?: Map<string, string[]>,
+  chunkOptions?: ChunkOptions
 ): string {
   let prompt = `Analyze this Warhammer 40,000 battle report video and extract the army lists and game information.
 
@@ -278,6 +360,13 @@ CHANNEL: ${videoData.channel}
 DESCRIPTION:
 ${videoData.description}
 `;
+
+  // Add chunk metadata if processing in chunks
+  if (chunkOptions) {
+    prompt += `\n\n[PROCESSING CHUNK ${chunkOptions.chunkIndex + 1} OF ${chunkOptions.totalChunks}]
+Note: This is a partial transcript. Extract all units, stratagems, and enhancements you can identify from this section.
+Army lists and player info are typically in the first chunk. Later chunks may contain additional unit mentions during gameplay.`;
+  }
 
   // Add canonical unit names to user prompt (moved from system prompt for better caching)
   if (factionUnitNames && factionUnitNames.size > 0) {
@@ -319,16 +408,21 @@ ${videoData.description}
     }
   }
 
-  // Build transcript section using chapter-aware and keyword-based detection
-  // Pass preprocessed data to use tagged/normalized segments
-  const transcriptText = buildTranscriptSection(videoData, preprocessed);
-  if (transcriptText) {
-    // Limit to ~12000 chars to stay within token limits
-    const limitedTranscript = transcriptText.slice(0, 12000);
-    prompt += `\n\nTRANSCRIPT (with tagged gameplay terms):\n${limitedTranscript}`;
+  // Use chunk transcript if provided, otherwise build from video data
+  if (chunkOptions) {
+    prompt += `\n\nTRANSCRIPT (with tagged gameplay terms):\n${chunkOptions.transcriptChunk}`;
+  } else {
+    // Build transcript section using chapter-aware and keyword-based detection
+    // Pass preprocessed data to use tagged/normalized segments
+    const transcriptText = buildTranscriptSection(videoData, preprocessed);
+    if (transcriptText) {
+      // Limit to ~12000 chars to stay within token limits
+      const limitedTranscript = transcriptText.slice(0, 12000);
+      prompt += `\n\nTRANSCRIPT (with tagged gameplay terms):\n${limitedTranscript}`;
 
-    if (transcriptText.length > 12000) {
-      prompt += `\n\n[Transcript truncated - extract all units you can identify from the text above]`;
+      if (transcriptText.length > 12000) {
+        prompt += `\n\n[Transcript truncated - extract all units you can identify from the text above]`;
+      }
     }
   }
 
@@ -378,6 +472,244 @@ export async function detectFactionsFromVideo(
   return factionUnitNames;
 }
 
+/**
+ * Process a single transcript chunk with the OpenAI API.
+ * Includes retry logic for rate limits and server errors.
+ */
+async function processTranscriptChunk(
+  openai: OpenAI,
+  videoData: VideoData,
+  transcriptChunk: string,
+  chunkIndex: number,
+  totalChunks: number,
+  preprocessed: PreprocessedTranscript,
+  factionUnitNames: Map<string, string[]>
+): Promise<BattleReportExtraction> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-5-mini',
+        max_completion_tokens: 4000,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          {
+            role: 'user',
+            content: buildUserPrompt(videoData, preprocessed, factionUnitNames, {
+              transcriptChunk,
+              chunkIndex,
+              totalChunks,
+            }),
+          },
+        ],
+        response_format: { type: 'json_object' },
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No response from AI');
+      }
+
+      const parsed = JSON.parse(content);
+      return BattleReportExtractionSchema.parse(parsed);
+    } catch (error) {
+      lastError = error as Error;
+
+      // Handle OpenAI-specific errors with retry logic
+      if (error instanceof OpenAI.RateLimitError) {
+        const retryAfter = error.headers?.['retry-after'];
+        const delayMs = retryAfter
+          ? Number(retryAfter) * 1000
+          : BASE_RETRY_DELAY_MS * Math.pow(2, attempt);
+
+        console.warn(`Rate limited on chunk ${chunkIndex + 1}, retrying after ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+        await sleep(delayMs);
+        continue;
+      }
+
+      if (error instanceof OpenAI.APIError) {
+        // Handle 413 Payload Too Large specifically
+        if (error.status === 413) {
+          console.error(`Chunk ${chunkIndex + 1} still too large (413), cannot process`);
+          throw error;
+        }
+
+        // Retry on server errors (5xx)
+        if (error.status && error.status >= 500) {
+          const delayMs = BASE_RETRY_DELAY_MS * Math.pow(2, attempt);
+          console.warn(`Server error on chunk ${chunkIndex + 1}, retrying after ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+          await sleep(delayMs);
+          continue;
+        }
+
+        // Don't retry on other client errors
+        throw error;
+      }
+
+      if (error instanceof OpenAI.APIConnectionError) {
+        const delayMs = BASE_RETRY_DELAY_MS * Math.pow(2, attempt);
+        console.warn(`Connection error on chunk ${chunkIndex + 1}, retrying after ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+        await sleep(delayMs);
+        continue;
+      }
+
+      // For other errors (like Zod validation), don't retry
+      throw error;
+    }
+  }
+
+  throw lastError ?? new Error(`Failed to process chunk ${chunkIndex + 1} after all retries`);
+}
+
+/**
+ * Process chunks with limited concurrency.
+ */
+async function processChunksWithConcurrency(
+  openai: OpenAI,
+  videoData: VideoData,
+  chunks: string[],
+  preprocessed: PreprocessedTranscript,
+  factionUnitNames: Map<string, string[]>
+): Promise<BattleReportExtraction[]> {
+  const results: BattleReportExtraction[] = new Array(chunks.length);
+  let currentIdx = 0;
+
+  async function processNext(): Promise<void> {
+    while (currentIdx < chunks.length) {
+      const idx = currentIdx++;
+      const chunk = chunks[idx];
+      if (!chunk) continue;
+      try {
+        results[idx] = await processTranscriptChunk(
+          openai,
+          videoData,
+          chunk,
+          idx,
+          chunks.length,
+          preprocessed,
+          factionUnitNames
+        );
+        console.log(`Processed chunk ${idx + 1}/${chunks.length}`);
+      } catch (error) {
+        console.error(`Failed to process chunk ${idx + 1}:`, error);
+        // Return empty extraction for failed chunks
+        results[idx] = {
+          players: [],
+          units: [],
+          stratagems: [],
+          enhancements: [],
+          mission: null,
+          pointsLimit: null,
+        };
+      }
+    }
+  }
+
+  // Start concurrent workers
+  const workers = Array(Math.min(MAX_CONCURRENT_CHUNKS, chunks.length))
+    .fill(null)
+    .map(() => processNext());
+
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * Merge multiple extraction results from chunked processing.
+ * - Players: Take from first chunk (army lists typically in intro)
+ * - Units: Dedupe by name+playerIndex, keep highest confidence
+ * - Stratagems: Dedupe by name, keep earliest timestamp
+ * - Enhancements: Dedupe by name+playerIndex
+ * - Mission/Points: Take first non-null value
+ */
+function mergeExtractionResults(results: BattleReportExtraction[]): BattleReportExtraction {
+  if (results.length === 0) {
+    return {
+      players: [],
+      units: [],
+      stratagems: [],
+      enhancements: [],
+      mission: null,
+      pointsLimit: null,
+    };
+  }
+
+  if (results.length === 1) {
+    return results[0]!;
+  }
+
+  // Take players from first chunk (army list is typically at the start)
+  const players = results[0]!.players;
+
+  // Dedupe units by name+playerIndex, keeping highest confidence
+  const confidenceOrder = { high: 3, medium: 2, low: 1 };
+  const unitMap = new Map<string, BattleReportExtraction['units'][0]>();
+  for (const result of results) {
+    for (const unit of result.units) {
+      const key = `${unit.name.toLowerCase()}-${unit.playerIndex}`;
+      const existing = unitMap.get(key);
+      if (!existing || confidenceOrder[unit.confidence] > confidenceOrder[existing.confidence]) {
+        unitMap.set(key, unit);
+      }
+    }
+  }
+
+  // Dedupe stratagems by name, keeping earliest timestamp
+  const stratagemMap = new Map<string, BattleReportExtraction['stratagems'][0]>();
+  for (const result of results) {
+    for (const strat of result.stratagems) {
+      const key = strat.name.toLowerCase();
+      const existing = stratagemMap.get(key);
+      if (!existing) {
+        stratagemMap.set(key, strat);
+      } else if (
+        strat.videoTimestamp !== null &&
+        strat.videoTimestamp !== undefined &&
+        (existing.videoTimestamp === null ||
+          existing.videoTimestamp === undefined ||
+          strat.videoTimestamp < existing.videoTimestamp)
+      ) {
+        stratagemMap.set(key, strat);
+      }
+    }
+  }
+
+  // Dedupe enhancements by name+playerIndex
+  const enhancementMap = new Map<string, NonNullable<BattleReportExtraction['enhancements']>[0]>();
+  for (const result of results) {
+    for (const enh of result.enhancements ?? []) {
+      const key = `${enh.name.toLowerCase()}-${enh.playerIndex ?? 'unknown'}`;
+      const existing = enhancementMap.get(key);
+      if (!existing || confidenceOrder[enh.confidence] > confidenceOrder[existing.confidence]) {
+        enhancementMap.set(key, enh);
+      }
+    }
+  }
+
+  // Take first non-null mission and pointsLimit
+  let mission: string | null = null;
+  let pointsLimit: number | null = null;
+  for (const result of results) {
+    if (mission === null && result.mission) {
+      mission = result.mission;
+    }
+    if (pointsLimit === null && result.pointsLimit) {
+      pointsLimit = result.pointsLimit;
+    }
+    if (mission !== null && pointsLimit !== null) break;
+  }
+
+  return {
+    players,
+    units: [...unitMap.values()],
+    stratagems: [...stratagemMap.values()],
+    enhancements: enhancementMap.size > 0 ? [...enhancementMap.values()] : undefined,
+    mission,
+    pointsLimit,
+  };
+}
+
 export async function extractBattleReport(
   videoData: VideoData,
   apiKey: string
@@ -415,24 +747,87 @@ export async function extractBattleReport(
     preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
   }
 
-  // Use static system prompt for better prompt caching
-  const response = await openai.chat.completions.create({
-    model: 'gpt-5-mini',
-    max_completion_tokens: 4000, // Limit output tokens for cost control
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: buildUserPrompt(videoData, preprocessed, factionUnitNames) },
-    ],
-    response_format: { type: 'json_object' },
-  });
+  // Build full transcript section to check if chunking is needed
+  const transcriptText = buildTranscriptSection(videoData, preprocessed);
 
-  const content = response.choices[0]?.message?.content;
-  if (!content) {
-    throw new Error('No response from AI');
+  let validated: BattleReportExtraction;
+
+  // Determine if we need chunking based on transcript length
+  if (transcriptText.length > MAX_SINGLE_REQUEST_CHARS) {
+    // Split transcript into chunks and process each
+    const chunks = chunkTranscriptText(transcriptText);
+    console.log(`Large transcript detected (${transcriptText.length} chars), splitting into ${chunks.length} chunks`);
+
+    try {
+      const chunkResults = await processChunksWithConcurrency(
+        openai,
+        videoData,
+        chunks,
+        preprocessed,
+        factionUnitNames
+      );
+
+      // Merge results from all chunks
+      validated = mergeExtractionResults(chunkResults);
+      console.log(`Merged ${chunkResults.length} chunk results: ${validated.units.length} units, ${validated.stratagems.length} stratagems`);
+    } catch (error) {
+      // Handle 413 error by trying with smaller chunks
+      if (error instanceof OpenAI.APIError && error.status === 413) {
+        console.warn('Payload still too large, retrying with smaller chunks');
+        // Reduce chunk size by half and retry
+        const smallerChunks = chunkTranscriptText(transcriptText.slice(0, transcriptText.length / 2));
+        const chunkResults = await processChunksWithConcurrency(
+          openai,
+          videoData,
+          smallerChunks,
+          preprocessed,
+          factionUnitNames
+        );
+        validated = mergeExtractionResults(chunkResults);
+      } else {
+        throw error;
+      }
+    }
+  } else {
+    // Single request path for shorter transcripts
+    console.log(`Short transcript (${transcriptText.length} chars), using single request`);
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-5-mini',
+        max_completion_tokens: 4000,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: buildUserPrompt(videoData, preprocessed, factionUnitNames) },
+        ],
+        response_format: { type: 'json_object' },
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No response from AI');
+      }
+
+      const parsed = JSON.parse(content);
+      validated = BattleReportExtractionSchema.parse(parsed);
+    } catch (error) {
+      // Handle 413 error by falling back to chunking
+      if (error instanceof OpenAI.APIError && error.status === 413) {
+        console.warn('Single request too large (413), falling back to chunking');
+        const chunks = chunkTranscriptText(transcriptText);
+        const chunkResults = await processChunksWithConcurrency(
+          openai,
+          videoData,
+          chunks,
+          preprocessed,
+          factionUnitNames
+        );
+        validated = mergeExtractionResults(chunkResults);
+      } else {
+        throw error;
+      }
+    }
   }
-
-  const parsed = JSON.parse(content);
-  const validated = BattleReportExtractionSchema.parse(parsed);
 
   // Convert to BattleReport format (convert null to undefined)
   const extractedStratagems = validated.stratagems.map((s) => ({
