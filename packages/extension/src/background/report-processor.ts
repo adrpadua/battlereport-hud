@@ -4,6 +4,19 @@ import type { FeedbackItem, UserMapping } from '@battlereport/shared/types';
 import { loadFactionByName } from '@/utils/faction-loader';
 import { getBestMatch, validateUnitWithFeedback } from '@/utils/unit-validator';
 
+/**
+ * Clean up entity names that may have type annotations from AI output.
+ * Removes patterns like "(unit)", "(stratagem)", "(enhancement)" that the AI
+ * may have incorrectly included based on the schema examples.
+ */
+export function cleanEntityName(name: string): string {
+  return name
+    .replace(/\s*\(unit\)\s*$/i, '')
+    .replace(/\s*\(stratagem\)\s*$/i, '')
+    .replace(/\s*\(enhancement\)\s*$/i, '')
+    .trim();
+}
+
 export interface EnrichedUnit extends Unit {
   stats?: UnitStats;
   keywords?: string[];
@@ -115,18 +128,22 @@ export async function processBattleReport(
   const enrichedUnits: EnrichedUnit[] = report.units.map((unit) => {
     const playerFaction = factions.get(unit.playerIndex);
 
+    // Clean up any type annotations the AI may have included (e.g., "(unit)")
+    const cleanedName = cleanEntityName(unit.name);
+    const cleanedUnit = { ...unit, name: cleanedName };
+
     // If no faction data, return unit as-is with lower confidence
     if (!playerFaction) {
       return {
-        ...unit,
+        ...cleanedUnit,
         isValidated: false,
-        confidence: lowerConfidence(unit.confidence),
+        confidence: lowerConfidence(cleanedUnit.confidence),
       };
     }
 
     // Check user mappings first (apply learned aliases)
-    const mapping = findUserMapping(unit.name, 'unit', playerFaction.id, userMappings);
-    let unitNameToValidate = unit.name;
+    const mapping = findUserMapping(cleanedName, 'unit', playerFaction.id, userMappings);
+    let unitNameToValidate = cleanedName;
 
     if (mapping) {
       // User has a mapping for this alias - use the canonical name
@@ -140,25 +157,25 @@ export async function processBattleReport(
       {
         videoId,
         transcriptContext,
-        videoTimestamp: unit.videoTimestamp,
-        playerIndex: unit.playerIndex,
+        videoTimestamp: cleanedUnit.videoTimestamp,
+        playerIndex: cleanedUnit.playerIndex,
       }
     );
 
     // Collect feedback for unvalidated units (but not if we already had a mapping)
     if (feedbackItem && !mapping) {
       // Update the original token to the actual input (before mapping was applied)
-      feedbackItem.originalToken = unit.name;
+      feedbackItem.originalToken = cleanedName;
       feedbackItems.push(feedbackItem);
     }
 
     if (validation.isValidated && validation.matchedUnit) {
       // Unit validated - enrich with data
       return {
-        ...unit,
+        ...cleanedUnit,
         name: validation.matchedName,
-        confidence: boostConfidence(unit.confidence, validation.confidence),
-        pointsCost: unit.pointsCost ?? validation.matchedUnit.pointsCost ?? undefined,
+        confidence: boostConfidence(cleanedUnit.confidence, validation.confidence),
+        pointsCost: cleanedUnit.pointsCost ?? validation.matchedUnit.pointsCost ?? undefined,
         stats: validation.matchedUnit.stats ?? undefined,
         keywords: validation.matchedUnit.keywords,
         isValidated: true,
@@ -166,13 +183,13 @@ export async function processBattleReport(
     }
 
     // Unit not validated - get best match as suggestion
-    const bestMatch = getBestMatch(unit.name, playerFaction);
+    const bestMatch = getBestMatch(cleanedName, playerFaction);
 
     const enrichedUnit: EnrichedUnit = {
-      ...unit,
+      ...cleanedUnit,
       isValidated: false,
       // Don't lower confidence if it was already low
-      confidence: unit.confidence === 'low' ? 'low' : lowerConfidence(unit.confidence),
+      confidence: cleanedUnit.confidence === 'low' ? 'low' : lowerConfidence(cleanedUnit.confidence),
     };
 
     // Add suggestion if there's a reasonable match

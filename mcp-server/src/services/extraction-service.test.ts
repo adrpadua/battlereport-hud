@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   isMisclassifiedUnit,
   MISCLASSIFIED_UNIT_PATTERNS,
+  cleanEntityName,
 } from './extraction-service.js';
 
 describe('isMisclassifiedUnit', () => {
@@ -150,5 +151,77 @@ describe('MISCLASSIFIED_UNIT_PATTERNS', () => {
     for (const pattern of MISCLASSIFIED_UNIT_PATTERNS) {
       expect(pattern.flags).toContain('i');
     }
+  });
+});
+
+describe('cleanEntityName', () => {
+  describe('should strip AI type annotations from names', () => {
+    it('removes "(unit)" suffix', () => {
+      expect(cleanEntityName('Eightbound (unit)')).toBe('Eightbound');
+      expect(cleanEntityName('Intercessor Squad (unit)')).toBe('Intercessor Squad');
+    });
+
+    it('removes "(stratagem)" suffix', () => {
+      expect(cleanEntityName('Armour of Contempt (stratagem)')).toBe('Armour of Contempt');
+      expect(cleanEntityName('Insane Bravery (stratagem)')).toBe('Insane Bravery');
+    });
+
+    it('removes "(enhancement)" suffix', () => {
+      expect(cleanEntityName('Artificer Armour (enhancement)')).toBe('Artificer Armour');
+      expect(cleanEntityName('The Honour Vehement (enhancement)')).toBe('The Honour Vehement');
+    });
+
+    it('handles case variations', () => {
+      expect(cleanEntityName('Eightbound (UNIT)')).toBe('Eightbound');
+      expect(cleanEntityName('Eightbound (Unit)')).toBe('Eightbound');
+      expect(cleanEntityName('Test (STRATAGEM)')).toBe('Test');
+      expect(cleanEntityName('Test (Stratagem)')).toBe('Test');
+      expect(cleanEntityName('Test (ENHANCEMENT)')).toBe('Test');
+      expect(cleanEntityName('Test (Enhancement)')).toBe('Test');
+    });
+
+    it('handles extra whitespace', () => {
+      expect(cleanEntityName('Eightbound  (unit)')).toBe('Eightbound');
+      expect(cleanEntityName('Eightbound (unit) ')).toBe('Eightbound');
+      expect(cleanEntityName(' Eightbound (unit) ')).toBe('Eightbound');
+    });
+  });
+
+  describe('should NOT modify valid unit names', () => {
+    const validNames = [
+      'Eightbound',
+      'Exalted Eightbound',
+      'Khârn The Betrayer',
+      'Intercessor Squad',
+      'Space Marines (Primaris)',
+      'Tactical Squad (10 models)',
+      'Achilles Ridgerunners (mortar)',
+      'Achilles Ridgerunners (mining laser)',
+      'Rhino (Transport)',
+    ];
+
+    it.each(validNames)('should NOT modify: %s', (name) => {
+      expect(cleanEntityName(name)).toBe(name);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles empty string', () => {
+      expect(cleanEntityName('')).toBe('');
+    });
+
+    it('handles whitespace only', () => {
+      expect(cleanEntityName('   ')).toBe('');
+    });
+
+    it('only removes suffix, not middle occurrences', () => {
+      // If "(unit)" appears in the middle, it should stay
+      expect(cleanEntityName('Some (unit) Thing')).toBe('Some (unit) Thing');
+    });
+
+    it('handles names with special characters', () => {
+      expect(cleanEntityName("T'au Commander (unit)")).toBe("T'au Commander");
+      expect(cleanEntityName('Khârn The Betrayer (unit)')).toBe('Khârn The Betrayer');
+    });
   });
 });

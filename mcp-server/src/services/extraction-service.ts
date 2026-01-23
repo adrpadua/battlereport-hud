@@ -268,6 +268,19 @@ function buildTranscriptSection(videoData: VideoData): string {
   return formatTranscriptSegments(transcript);
 }
 
+/**
+ * Clean up entity names that may have type annotations from AI output.
+ * Removes patterns like "(unit)", "(stratagem)" that the AI may have
+ * incorrectly included based on the schema examples.
+ */
+export function cleanEntityName(name: string): string {
+  return name
+    .replace(/\s*\(unit\)\s*$/i, '')
+    .replace(/\s*\(stratagem\)\s*$/i, '')
+    .replace(/\s*\(enhancement\)\s*$/i, '')
+    .trim();
+}
+
 // Static system prompt for better prompt caching (dynamic content moved to user prompt)
 const SYSTEM_PROMPT = `You are an expert at analyzing Warhammer 40,000 battle report videos. Your task is to extract ALL units, characters, and vehicles mentioned in the transcript.
 
@@ -276,15 +289,15 @@ You must respond with a valid JSON object matching this schema:
 {
   "players": [
     {
-      "name": "string (player name or identifier)",
-      "faction": "string (e.g., Space Marines, Necrons, Aeldari)",
-      "detachment": "string (REQUIRED - e.g., Gladius Task Force, Awakened Dynasty)",
+      "name": "Player name or identifier",
+      "faction": "e.g., Space Marines, Necrons, Aeldari",
+      "detachment": "REQUIRED - e.g., Gladius Task Force, Awakened Dynasty",
       "confidence": "high" | "medium" | "low"
     }
   ],
   "units": [
     {
-      "name": "string (unit name)",
+      "name": "Exact unit name only, e.g., Intercessor Squad",
       "playerIndex": 0 | 1,
       "confidence": "high" | "medium" | "low",
       "pointsCost": "number or null",
@@ -293,7 +306,7 @@ You must respond with a valid JSON object matching this schema:
   ],
   "stratagems": [
     {
-      "name": "string (stratagem name)",
+      "name": "Exact stratagem name only, e.g., Armour of Contempt",
       "playerIndex": 0 | 1 | null,
       "confidence": "high" | "medium" | "low",
       "videoTimestamp": "number (seconds) or null"
@@ -302,6 +315,8 @@ You must respond with a valid JSON object matching this schema:
   "mission": "string or null",
   "pointsLimit": "number or null"
 }
+
+IMPORTANT: For all "name" fields, output ONLY the exact unit/stratagem name. Do NOT include type annotations like "(unit)" or "(stratagem)" in the name.
 
 Guidelines:
 - Extract player names and their factions accurately
@@ -545,13 +560,13 @@ export async function extractBattleReportWithArtifacts(
       confidence: p.confidence,
     })) as BattleReport['players'],
     units: validated.units.map((u) => ({
-      name: u.name,
+      name: cleanEntityName(u.name),
       playerIndex: u.playerIndex,
       confidence: u.confidence,
       pointsCost: u.pointsCost ?? undefined,
     })),
     stratagems: validated.stratagems.map((s) => ({
-      name: s.name,
+      name: cleanEntityName(s.name),
       playerIndex: s.playerIndex ?? undefined,
       confidence: s.confidence,
       videoTimestamp: s.videoTimestamp ?? undefined,

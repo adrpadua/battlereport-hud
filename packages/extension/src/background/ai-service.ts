@@ -190,15 +190,15 @@ You must respond with a valid JSON object matching this schema:
 {
   "players": [
     {
-      "name": "string (player name or identifier)",
-      "faction": "string (e.g., Space Marines, Necrons, Aeldari)",
-      "detachment": "string (REQUIRED - e.g., Gladius Task Force, Awakened Dynasty)",
+      "name": "Player name or identifier",
+      "faction": "e.g., Space Marines, Necrons, Aeldari",
+      "detachment": "REQUIRED - e.g., Gladius Task Force, Awakened Dynasty",
       "confidence": "high" | "medium" | "low"
     }
   ],
   "units": [
     {
-      "name": "string (unit name)",
+      "name": "Exact unit name only, e.g., Intercessor Squad",
       "playerIndex": 0 | 1,
       "confidence": "high" | "medium" | "low",
       "pointsCost": "number or null",
@@ -207,7 +207,7 @@ You must respond with a valid JSON object matching this schema:
   ],
   "stratagems": [
     {
-      "name": "string (stratagem name)",
+      "name": "Exact stratagem name only, e.g., Armour of Contempt",
       "playerIndex": 0 | 1 | null,
       "confidence": "high" | "medium" | "low",
       "videoTimestamp": "number (seconds) or null"
@@ -215,7 +215,7 @@ You must respond with a valid JSON object matching this schema:
   ],
   "enhancements": [
     {
-      "name": "string (enhancement name)",
+      "name": "Exact enhancement name only, e.g., Artificer Armour",
       "playerIndex": 0 | 1 | null,
       "confidence": "high" | "medium" | "low",
       "pointsCost": "number or null",
@@ -225,6 +225,8 @@ You must respond with a valid JSON object matching this schema:
   "mission": "string or null",
   "pointsLimit": "number or null"
 }
+
+IMPORTANT: For all "name" fields, output ONLY the exact unit/stratagem/enhancement name. Do NOT include type annotations like "(unit)", "(stratagem)", or "(enhancement)" in the name.
 
 TRANSCRIPT FORMAT:
 - The transcript has been pre-processed with tagged gameplay terms
