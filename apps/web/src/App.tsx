@@ -64,14 +64,21 @@ function App(): React.ReactElement {
 
   const handleForceReExtract = useCallback(async () => {
     // Re-extract with cache bypass using current URL and factions
-    if (!currentUrl || !lastFactions || !videoData) return;
+    if (!currentUrl || !videoData) return;
+
+    // Use lastFactions if available, otherwise extract from cached report
+    const factions = lastFactions ?? (report?.players?.length === 2
+      ? [report.players[0].faction, report.players[1].faction] as [string, string]
+      : null);
+
+    if (!factions) return;
 
     try {
-      await extractWithFactions(currentUrl, lastFactions, videoData.transcript, true);
+      await extractWithFactions(currentUrl, factions, videoData.transcript, true);
     } catch {
       // Error is handled in useExtraction
     }
-  }, [currentUrl, lastFactions, videoData, extractWithFactions]);
+  }, [currentUrl, lastFactions, videoData, report, extractWithFactions]);
 
   const handleStartExtraction = useCallback(() => {
     // For web app, this would re-trigger the URL submission

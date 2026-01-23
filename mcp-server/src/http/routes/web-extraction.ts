@@ -18,6 +18,7 @@ import {
   detectFactionNamesFromVideo,
   extractBattleReportWithArtifacts,
   enrichUnitsWithStats,
+  validateDetachments,
   createStageArtifact,
   completeStageArtifact,
   ALL_FACTIONS,
@@ -246,24 +247,29 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
         console.log(`${skipCache ? 'Cache bypassed' : 'Final report cache miss'} for video ${videoId}`);
 
         // Check AI response cache (allows re-running validation without re-calling OpenAI)
+        // Skip this cache too if skipCache is set (user wants a fully fresh extraction)
         let cachedAiResponse: string | undefined;
-        const aiCacheResult = await db
-          .select()
-          .from(aiResponseCache)
-          .where(
-            and(
-              eq(aiResponseCache.videoId, videoId),
-              eq(aiResponseCache.factions, sortedFactions),
-              gt(aiResponseCache.expiresAt, new Date())
+        if (!skipCache) {
+          const aiCacheResult = await db
+            .select()
+            .from(aiResponseCache)
+            .where(
+              and(
+                eq(aiResponseCache.videoId, videoId),
+                eq(aiResponseCache.factions, sortedFactions),
+                gt(aiResponseCache.expiresAt, new Date())
+              )
             )
-          )
-          .limit(1);
+            .limit(1);
 
-        if (aiCacheResult.length > 0) {
-          cachedAiResponse = aiCacheResult[0]!.rawResponse;
-          console.log(`AI response cache hit for video ${videoId} (${cachedAiResponse.length} chars)`);
+          if (aiCacheResult.length > 0) {
+            cachedAiResponse = aiCacheResult[0]!.rawResponse;
+            console.log(`AI response cache hit for video ${videoId} (${cachedAiResponse.length} chars)`);
+          } else {
+            console.log(`AI response cache miss for video ${videoId} - will call OpenAI`);
+          }
         } else {
-          console.log(`AI response cache miss for video ${videoId} - will call OpenAI`);
+          console.log(`AI response cache bypassed for video ${videoId} - will call OpenAI`);
         }
 
         // If transcript not provided, fetch it
@@ -357,9 +363,24 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
           { validatedCount, totalUnits: enrichedUnits.length }
         );
 
+        // Stage 6: Validate detachments against database
+        let stage6: StageArtifact = createStageArtifact(6, 'validate-detachments');
+        const validatedPlayers = await validateDetachments(report.players, db);
+        const detachmentChanges = validatedPlayers.filter(
+          (p, i) => p.detachment !== report.players[i]?.detachment
+        ).length;
+        stage6 = completeStageArtifact(
+          stage6,
+          detachmentChanges > 0
+            ? `${detachmentChanges} detachment(s) corrected`
+            : 'All detachments validated',
+          { correctedCount: detachmentChanges }
+        );
+
         // Build final response
         const finalReport = {
           ...report,
+          players: validatedPlayers as typeof report.players,
           units: enrichedUnits,
         };
 

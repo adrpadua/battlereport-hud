@@ -720,6 +720,66 @@ export function isMisclassifiedUnit(name: string): boolean {
 }
 
 /**
+ * Validates and corrects player detachments against the database.
+ * Ensures each player's detachment belongs to their faction.
+ */
+export async function validateDetachments(
+  players: Player[],
+  db: Database
+): Promise<Player[]> {
+  const validatedPlayers: Player[] = [];
+
+  for (const player of players) {
+    // Find faction in database
+    const faction = await findFaction(db, player.faction);
+
+    if (!faction) {
+      // Faction not found, keep player as-is
+      validatedPlayers.push(player);
+      continue;
+    }
+
+    // Get detachments for this faction
+    const detachments = await db
+      .select({ name: schema.detachments.name })
+      .from(schema.detachments)
+      .where(eq(schema.detachments.factionId, faction.id));
+
+    const detachmentNames = detachments.map((d) => d.name);
+
+    // Check if the detected detachment is valid for this faction
+    const isValidDetachment = detachmentNames.some(
+      (name) => name.toLowerCase() === player.detachment.toLowerCase()
+    );
+
+    if (isValidDetachment) {
+      validatedPlayers.push(player);
+    } else {
+      // Try fuzzy matching
+      const lowerDetachment = player.detachment.toLowerCase();
+      const fuzzyMatch = detachmentNames.find((name) =>
+        name.toLowerCase().includes(lowerDetachment) ||
+        lowerDetachment.includes(name.toLowerCase())
+      );
+
+      if (fuzzyMatch) {
+        console.log(
+          `Corrected detachment for ${player.faction}: "${player.detachment}" -> "${fuzzyMatch}"`
+        );
+        validatedPlayers.push({ ...player, detachment: fuzzyMatch });
+      } else {
+        console.log(
+          `Invalid detachment "${player.detachment}" for ${player.faction}. Valid options: ${detachmentNames.join(', ')}`
+        );
+        validatedPlayers.push({ ...player, detachment: 'Unknown' });
+      }
+    }
+  }
+
+  return validatedPlayers;
+}
+
+/**
  * Enriches units with stats and keywords from the database.
  * Filters out units that don't match the database or are misclassified stratagems/abilities.
  */

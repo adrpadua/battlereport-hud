@@ -1,5 +1,42 @@
 import * as cheerio from 'cheerio';
 import type { NewUnit, NewWeapon, NewAbility } from '../../db/schema.js';
+import {
+  TITLE_UNIT_NAME,
+  MARKDOWN_H1_UNIT_NAME,
+  INLINE_STATS,
+  TABLE_STATS,
+  STAT_MOVEMENT,
+  STAT_TOUGHNESS,
+  STAT_SAVE,
+  STAT_WOUNDS,
+  STAT_LEADERSHIP,
+  STAT_OBJECTIVE_CONTROL,
+  STAT_INVULN,
+  INVULN_SECTION_HEADER,
+  INVULN_HAS_PATTERN,
+  INVULN_GENERIC,
+  STANDALONE_POINTS,
+  TABLE_POINTS_FORMAT,
+  POINTS_WITH_SUFFIX,
+  UNIT_COMPOSITION_SECTION,
+  LEADER_ATTACHMENT_INFO,
+  KEYWORDS_SECTION,
+  BASE_SIZE,
+  BRACKETED_ABILITY,
+  FILTER_UI_TEXT,
+  PIPE_SUFFIX,
+  BRACKET_SUFFIX,
+  WAHAPEDIA_SUFFIX,
+  POINTS_ARTIFACT,
+  CP_COST_MARKER,
+  isHtmlContent,
+} from './regex-patterns.js';
+import {
+  slugify,
+  normalizeText,
+  dedupeKeywords,
+  DeduplicationTracker,
+} from './utils.js';
 
 interface ParsedUnit {
   unit: Omit<NewUnit, 'factionId'>;
@@ -22,14 +59,7 @@ interface UnitStats {
  * Supports both HTML (preferred) and markdown (fallback) input.
  */
 export function parseDatasheets(content: string, sourceUrl: string): ParsedUnit[] {
-  // Detect if content is HTML (starts with < or contains doctype/html tags)
-  const isHtml = content.trim().startsWith('<') ||
-                 content.includes('<!DOCTYPE') ||
-                 content.includes('<html') ||
-                 content.includes('<body') ||
-                 content.includes('<div');
-
-  if (isHtml) {
+  if (isHtmlContent(content)) {
     return parseHtmlDatasheet(content, sourceUrl);
   } else {
     // Fallback to markdown parsing for cached content
@@ -49,19 +79,19 @@ function parseHtmlDatasheet(html: string, sourceUrl: string): ParsedUnit[] {
 
   // Try page title first (format: "Faction – Unit Name" or "Faction - Unit Name")
   const titleText = $('title').text() || $('h1').first().text();
-  const titleMatch = titleText.match(/[–-]\s*([^[\\–-]+)/);
+  const titleMatch = titleText.match(TITLE_UNIT_NAME);
   if (titleMatch && titleMatch[1]) {
     unitName = titleMatch[1].trim();
     // Remove any trailing "wahapedia" or similar
-    unitName = unitName.replace(/\s*[-–].*wahapedia.*/i, '').trim();
+    unitName = unitName.replace(WAHAPEDIA_SUFFIX, '').trim();
   } else {
     // Try finding unit name from h1 or prominent header
     const h1Text = $('h1').first().text().trim();
     if (h1Text) {
       // Remove filter UI text that might be appended
-      unitName = h1Text.replace(/\s*\[?\s*No filter.*$/i, '').trim();
+      unitName = h1Text.replace(FILTER_UI_TEXT, '').trim();
       // Also try to extract from "Faction – Unit" format
-      const h1Match = h1Text.match(/[–-]\s*([^[\\–-]+)/);
+      const h1Match = h1Text.match(TITLE_UNIT_NAME);
       if (h1Match && h1Match[1]) {
         unitName = h1Match[1].trim();
       }
@@ -70,8 +100,8 @@ function parseHtmlDatasheet(html: string, sourceUrl: string): ParsedUnit[] {
 
   // Clean up common artifacts
   unitName = unitName
-    .replace(/\s*\|.*$/, '')  // Remove anything after pipe
-    .replace(/\s*\[.*$/, '')  // Remove anything after bracket
+    .replace(PIPE_SUFFIX, '')
+    .replace(BRACKET_SUFFIX, '')
     .trim();
 
   if (!unitName || unitName.length < 3) {
@@ -186,7 +216,7 @@ function parseUnitStatsFromHtml($: cheerio.CheerioAPI): UnitStats {
   // Alternative: look for inline stats format in text
   if (!stats.toughness) {
     const bodyText = $('body').text();
-    const statsMatch = bodyText.match(/M\s+(\d+"?)\s+T\s+(\d+)\s+Sv\s+(\d+\+?)\s+W\s+(\d+)\s+Ld\s+(\d+\+?)\s+OC\s+(\d+)/);
+    const statsMatch = bodyText.match(INLINE_STATS);
     if (statsMatch) {
       stats.movement = statsMatch[1] ?? undefined;
       stats.toughness = statsMatch[2] ? parseInt(statsMatch[2], 10) : undefined;
@@ -208,7 +238,7 @@ function extractInvulnerableSaveFromHtml($: cheerio.CheerioAPI): string | null {
 
   // Priority 1: Look for the dedicated "INVULNERABLE SAVE" section header followed by value
   // This is the most reliable pattern for the unit's actual invulnerable save
-  const invulnSectionMatch = bodyText.match(/INVULNERABLE SAVE[\s\n]*(\d+\+)/i);
+  const invulnSectionMatch = bodyText.match(INVULN_SECTION_HEADER);
   if (invulnSectionMatch?.[1]) return invulnSectionMatch[1];
 
   // Priority 2: Look for invuln-specific elements with class markers
@@ -220,7 +250,7 @@ function extractInvulnerableSaveFromHtml($: cheerio.CheerioAPI): string | null {
 
   // Priority 3: Look for "has a X+ invulnerable save" pattern (common in ability text)
   // This is less reliable as it may be conditional
-  const hasInvulnMatch = bodyText.match(/has\s+a?\s*(\d+\+)\s*invulnerable save/i);
+  const hasInvulnMatch = bodyText.match(INVULN_HAS_PATTERN);
   if (hasInvulnMatch?.[1]) return hasInvulnMatch[1];
 
   return null;
@@ -244,9 +274,10 @@ function extractPointsCostFromHtml($: cheerio.CheerioAPI): number | null {
         cells.each((_, cell) => {
           const text = $(cell).text().trim();
           // Look for standalone numbers that could be points (typically 50-500)
-          const numMatch = text.match(/^(\d{2,3})$/);
+          const numMatch = text.match(STANDALONE_POINTS);
           if (numMatch?.[1] && !pointsCost) {
             const num = parseInt(numMatch[1], 10);
+            // Points are typically between 20-500 for most units
             if (num >= 20 && num <= 500) {
               pointsCost = num;
             }
@@ -257,10 +288,10 @@ function extractPointsCostFromHtml($: cheerio.CheerioAPI): number | null {
     if (pointsCost) return false;
   });
 
-  // Fallback: search in text
+  // Fallback: search in text for table format
   if (!pointsCost) {
     const bodyText = $('body').text();
-    const match = bodyText.match(/\|\s*\d+\s*model[s]?\s*\|\s*(\d+)\s*\|/i);
+    const match = bodyText.match(TABLE_POINTS_FORMAT);
     if (match?.[1]) {
       pointsCost = parseInt(match[1], 10);
     }
@@ -309,10 +340,11 @@ function extractUnitCompositionFromHtml($: cheerio.CheerioAPI): string | null {
   // Clean up any remaining artifacts
   if (composition) {
     // Remove point cost artifacts
-    composition = composition.replace(/\d{3}\s+\d{3}/g, '').trim();
-    // Remove CP costs
-    if (composition.includes('1CP') || composition.includes('2CP')) {
-      const cpIndex = composition.search(/\d+CP/);
+    composition = composition.replace(POINTS_ARTIFACT, '').trim();
+    // Remove CP costs (indicates we've hit stratagem text)
+    const cpMatch = composition.match(CP_COST_MARKER);
+    if (cpMatch) {
+      const cpIndex = composition.search(CP_COST_MARKER);
       if (cpIndex > 0) {
         composition = composition.slice(0, cpIndex).trim();
       }
@@ -329,16 +361,14 @@ function extractLeaderInfoFromHtml($: cheerio.CheerioAPI): string | null {
   const bodyText = $('body').text();
 
   // Look for LEADER section with attachable units
-  const leaderMatch = bodyText.match(
-    /LEADER[\s\S]*?(?:can be attached to the following unit|can attach to)s?:\s*([\s\S]*?)(?=KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|$)/i
-  );
+  const leaderMatch = bodyText.match(LEADER_ATTACHMENT_INFO);
 
   if (leaderMatch?.[1]) {
     const unitsList = leaderMatch[1]
       .split(/[-•\n]/)
       .map(s => s.trim())
       .filter(s => s.length > 2 && !s.includes('KEYWORDS'))
-      .slice(0, 10) // Limit to 10 units
+      .slice(0, 10) // Limit to prevent runaway parsing
       .join('\n• ');
 
     if (unitsList) {
@@ -354,9 +384,7 @@ function extractLeaderInfoFromHtml($: cheerio.CheerioAPI): string | null {
  */
 function extractKeywordsFromHtml($: cheerio.CheerioAPI): string {
   const bodyText = $('body').text();
-
-  // Look for KEYWORDS section
-  const keywordsMatch = bodyText.match(/KEYWORDS:?\s*([^\n]+)/i);
+  const keywordsMatch = bodyText.match(KEYWORDS_SECTION);
   return keywordsMatch?.[1] || '';
 }
 
@@ -365,7 +393,7 @@ function extractKeywordsFromHtml($: cheerio.CheerioAPI): string {
  */
 function extractBaseSizeFromHtml($: cheerio.CheerioAPI): string | null {
   const bodyText = $('body').text();
-  const match = bodyText.match(/\(⌀(\d+mm(?:\s+oval)?)\)/);
+  const match = bodyText.match(BASE_SIZE);
   return match?.[1] || null;
 }
 
@@ -436,7 +464,7 @@ function extractWeaponNameAndAbilities($: cheerio.CheerioAPI, $cell: cheerio.Che
  */
 function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWeapon[] {
   const weapons: NewWeapon[] = [];
-  const seenWeapons = new Set<string>();
+  const seenWeapons = new DeduplicationTracker();
 
   $('table').each((_, table) => {
     const $table = $(table);
@@ -521,9 +549,7 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       }
 
       // Skip if we've already seen this weapon
-      const normalizedName = weaponName.toLowerCase().trim();
-      if (seenWeapons.has(normalizedName)) return;
-      seenWeapons.add(normalizedName);
+      if (!seenWeapons.addIfNew(weaponName)) return;
 
       // Extract remaining stat columns (range and attacks already extracted above)
       // Standard order: Name, Range, A, BS/WS, S, AP, D
@@ -561,7 +587,7 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
  */
 function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omit<NewAbility, 'factionId'>[] {
   const abilities: Omit<NewAbility, 'factionId'>[] = [];
-  const seenAbilities = new Set<string>();
+  const seenAbilities = new DeduplicationTracker();
 
   // Look for CORE abilities (format: "CORE: Ability1, Ability2")
   $('b, strong').each((_, el) => {
@@ -573,8 +599,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
       const names = normalizedNames.split(',').map(s => s.trim());
       names.forEach(rawName => {
         const name = normalizeText(rawName);
-        if (name && name.length >= 3 && !seenAbilities.has(name.toLowerCase())) {
-          seenAbilities.add(name.toLowerCase());
+        if (name && name.length >= 3 && seenAbilities.addIfNew(name)) {
           abilities.push({
             slug: slugify(name).slice(0, 255),
             name: name.slice(0, 255),
@@ -598,8 +623,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
       const names = normalizedNames.split(',').map(s => s.trim());
       names.forEach(rawName => {
         const name = normalizeText(rawName);
-        if (name && name.length >= 3 && !seenAbilities.has(name.toLowerCase())) {
-          seenAbilities.add(name.toLowerCase());
+        if (name && name.length >= 3 && seenAbilities.addIfNew(name)) {
           abilities.push({
             slug: slugify(name).slice(0, 255),
             name: name.slice(0, 255),
@@ -661,7 +685,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
 
     const name = text.replace(/:$/, '').trim();
     if (!name || name.length < 3 || name.length > 100) return;
-    if (seenAbilities.has(name.toLowerCase())) return;
+    if (seenAbilities.has(name)) return;
 
     // Skip rules reference patterns
     for (const pattern of skipAbilityPatterns) {
@@ -683,7 +707,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
       .trim();
 
     // Fix concatenated keywords from adjacent spans (e.g., "HERETIC ASTARTESHERETIC ASTARTES...")
-    description = dedupeKeywordsInDescription(description);
+    description = dedupeKeywords(description);
     description = description.slice(0, 1000);
 
     // Skip if description is too short or looks like garbage
@@ -691,7 +715,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
     if (/^\|[\s|]*$/.test(description)) return;
     if (description.split('](').length > 3) return; // URL list
 
-    seenAbilities.add(name.toLowerCase());
+    seenAbilities.add(name);
     abilities.push({
       slug: slugify(name).slice(0, 255),
       name: name.slice(0, 255),
@@ -708,98 +732,6 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
 // ============================================================================
 // MARKDOWN FALLBACK PARSING (for cached content)
 // ============================================================================
-
-/**
- * Common concatenated patterns from Firecrawl markdown conversion.
- * Maps concatenated text to properly spaced text.
- */
-const CONCATENATION_FIXES: Record<string, string> = {
-  // Weapon ability combinations
-  'blastpsychic': '[BLAST], [PSYCHIC]',
-  'lethalhitspsychic': '[LETHAL HITS], [PSYCHIC]',
-  'sustainedhitspsychic': '[SUSTAINED HITS], [PSYCHIC]',
-  'devastatingwoundspsychic': '[DEVASTATING WOUNDS], [PSYCHIC]',
-  'psychicblast': '[PSYCHIC], [BLAST]',
-  'psychiclethalhits': '[PSYCHIC], [LETHAL HITS]',
-  'psychicsustained': '[PSYCHIC], [SUSTAINED HITS]',
-  'assaultblast': '[ASSAULT], [BLAST]',
-  'heavyblast': '[HEAVY], [BLAST]',
-  'rapidfireblast': '[RAPID FIRE], [BLAST]',
-  'twinlinkedblast': '[TWIN-LINKED], [BLAST]',
-  'meltahazardous': '[MELTA], [HAZARDOUS]',
-  'torrentignorescover': '[TORRENT], [IGNORES COVER]',
-  'ignorescovertorrent': '[IGNORES COVER], [TORRENT]',
-  // Core abilities
-  'feelnopain': 'Feel No Pain',
-  'feelno pain': 'Feel No Pain',
-  'fightsfirst': 'Fights First',
-  'deepstrike': 'Deep Strike',
-  'loneoperative': 'Lone Operative',
-  'deadlydemise': 'Deadly Demise',
-  'firingdeck': 'Firing Deck',
-  // Faction abilities
-  'pactofblood': 'Pact of Blood',
-  'oathofmoment': 'Oath of Moment',
-  'shadowinthewarp': 'Shadow in the Warp',
-  'synapseshadow': 'Synapse, Shadow',
-  'greatdevourer': 'Great Devourer',
-  'fortheemperor': 'For the Emperor',
-  'powerofthemachine': 'Power of the Machine Spirit',
-  'codeofhonour': 'Code of Honour',
-  'armyofrenown': 'Army of Renown',
-  'blessingsofkhorne': 'Blessings of Khorne',
-  'bloodforthebloodgod': 'Blood for the Blood God',
-  // Game terms
-  'mortalwounds': 'mortal wounds',
-  'mortalwound': 'mortal wound',
-  'invulnerablesave': 'invulnerable save',
-  'battleshock': 'Battle-shock',
-  'battleshocktest': 'Battle-shock test',
-  'battle-shocktest': 'Battle-shock test',
-  'commandpoints': 'Command points',
-  'hitroll': 'Hit roll',
-  'woundroll': 'Wound roll',
-};
-
-/**
- * Normalize text by fixing common concatenation issues from Firecrawl.
- */
-function normalizeText(text: string): string {
-  let result = text;
-
-  for (const [concat, fixed] of Object.entries(CONCATENATION_FIXES)) {
-    const regex = new RegExp(concat, 'gi');
-    result = result.replace(regex, fixed);
-  }
-
-  result = result.replace(/([a-z])([A-Z])/g, '$1 $2');
-  result = result.replace(/\b(in)(the)\b/gi, '$1 $2');
-  result = result.replace(/\b(of)(the)\b/gi, '$1 $2');
-  result = result.replace(/\b(to)(the)\b/gi, '$1 $2');
-  result = result.replace(/\b(from)(the)\b/gi, '$1 $2');
-
-  return result;
-}
-
-/**
- * Deduplicate repeated uppercase keywords in ability descriptions.
- * Handles cases where adjacent <span> elements get concatenated without spaces,
- * e.g., "HERETIC ASTARTESHERETIC ASTARTES..." -> "HERETIC ASTARTES"
- */
-function dedupeKeywordsInDescription(text: string): string {
-  // Pattern to find repeated uppercase phrases (2+ words) that got concatenated
-  // Matches: "WORD1 WORD2WORD1 WORD2WORD1 WORD2..." where words are all uppercase
-  const repeatedKeywordPattern = /\b([A-Z][A-Z'-]+(?:\s+[A-Z][A-Z'-]+)+)(\1)+/g;
-
-  let result = text.replace(repeatedKeywordPattern, '$1');
-
-  // Also fix cases where a single uppercase word is repeated: "KEYWORDKEYWORDKEYWORD"
-  // This handles cases like "INFANTRYINFANTRYINFANTRY"
-  const repeatedWordPattern = /\b([A-Z][A-Z'-]{2,})(\1){2,}/g;
-  result = result.replace(repeatedWordPattern, '$1');
-
-  return result;
-}
 
 /**
  * Fallback markdown parser for cached content
@@ -826,13 +758,13 @@ function parseMarkdownDatasheet(markdown: string, sourceUrl: string): ParsedUnit
 }
 
 function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): ParsedUnit | null {
-  const headerMatch = markdown.match(/^# [^–]+–\s*([^\[\\]+)/m);
+  const headerMatch = markdown.match(MARKDOWN_H1_UNIT_NAME);
   if (!headerMatch) return null;
 
   const rawName = headerMatch[1]?.trim().replace(/\s+$/, '');
   if (!rawName || rawName.length < 3) return null;
 
-  const statsMatch = markdown.match(/M\s+(\d+"?)\s+T\s+(\d+)\s+Sv\s+(\d+\+?)\s+W\s+(\d+)\s+Ld\s+(\d+\+?)\s+OC\s+(\d+)/);
+  const statsMatch = markdown.match(INLINE_STATS);
 
   const stats: UnitStats = {};
   if (statsMatch) {
@@ -844,20 +776,18 @@ function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): Parse
     stats.objectiveControl = parseInt(statsMatch[6]!, 10);
   }
 
-  let invulnMatch = markdown.match(/(\d+\+)\s*invulnerable save/i);
+  let invulnMatch = markdown.match(INVULN_GENERIC);
   if (!invulnMatch) {
-    invulnMatch = markdown.match(/INVULNERABLE SAVE\s*\n+\s*(\d+\+)/i);
+    invulnMatch = markdown.match(INVULN_SECTION_HEADER);
   }
   if (invulnMatch) {
     stats.invulnerableSave = invulnMatch[1];
   }
 
-  const pointsMatch = markdown.match(/\|\s*\d+\s*model[s]?\s*\|\s*(\d+)\s*\|/i);
+  const pointsMatch = markdown.match(TABLE_POINTS_FORMAT);
   const pointsCost = pointsMatch ? parseInt(pointsMatch[1]!, 10) : undefined;
 
-  const compositionMatch = markdown.match(
-    /UNIT COMPOSITION[\s\S]*?\n([\s\S]*?)(?=\n\s*(?:LEADER|KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i
-  );
+  const compositionMatch = markdown.match(UNIT_COMPOSITION_SECTION);
   let unitComposition: string | null = null;
   if (compositionMatch?.[1]) {
     unitComposition = compositionMatch[1]
@@ -880,9 +810,7 @@ function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): Parse
     }
   }
 
-  const leaderMatch = markdown.match(
-    /LEADER[\s\S]*?This model can be attached to the following units?:\s*([\s\S]*?)(?=\n\s*(?:KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|## )|$)/i
-  );
+  const leaderMatch = markdown.match(LEADER_ATTACHMENT_INFO);
   let leaderInfo: string | null = null;
   if (leaderMatch?.[1]) {
     const unitsList = leaderMatch[1]
@@ -899,7 +827,7 @@ function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): Parse
     }
   }
 
-  const keywordsSection = markdown.match(/KEYWORDS:\s*([^\n]+)/i)?.[1] || '';
+  const keywordsSection = markdown.match(KEYWORDS_SECTION)?.[1] || '';
   const isEpicHero = /epic\s*hero/i.test(keywordsSection) || /epic\s*hero/i.test(markdown);
   const isBattleline = /battleline/i.test(markdown);
   const isDedicatedTransport = /dedicated\s*transport/i.test(markdown);
@@ -907,7 +835,7 @@ function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): Parse
   const weapons = extractMarkdownWeapons(markdown, sourceUrl);
   const abilities = extractMarkdownAbilities(markdown, sourceUrl);
 
-  const baseSizeMatch = markdown.match(/\(⌀(\d+mm(?:\s+oval)?)\)/);
+  const baseSizeMatch = markdown.match(BASE_SIZE);
   const baseSize = baseSizeMatch?.[1] || null;
 
   const unit: Omit<NewUnit, 'factionId'> = {
@@ -954,7 +882,7 @@ function parseMarkdownUnitSection(section: string, sourceUrl: string): ParsedUni
     return null;
   }
 
-  const pointsMatch = content.match(/(\d+)\s*(?:pts?|points)/i);
+  const pointsMatch = content.match(POINTS_WITH_SUFFIX);
   const pointsCost = pointsMatch ? parseInt(pointsMatch[1]!, 10) : undefined;
 
   const compositionMatch = content.match(
@@ -1020,9 +948,7 @@ function parseMarkdownUnitSection(section: string, sourceUrl: string): ParsedUni
 function extractMarkdownStats(content: string): UnitStats {
   const stats: UnitStats = {};
 
-  const tableMatch = content.match(
-    /\|\s*(\d+"?)\s*\|\s*(\d+)\s*\|\s*(\d+\+?)\s*\|\s*(\d+)\s*\|\s*(\d+\+?)\s*\|\s*(\d+)\s*\|/
-  );
+  const tableMatch = content.match(TABLE_STATS);
 
   if (tableMatch) {
     stats.movement = tableMatch[1];
@@ -1034,25 +960,25 @@ function extractMarkdownStats(content: string): UnitStats {
     return stats;
   }
 
-  const movementMatch = content.match(/(?:M|Movement)[:\s]*(\d+")/i);
+  const movementMatch = content.match(STAT_MOVEMENT);
   if (movementMatch) stats.movement = movementMatch[1];
 
-  const toughnessMatch = content.match(/(?:T|Toughness)[:\s]*(\d+)/i);
+  const toughnessMatch = content.match(STAT_TOUGHNESS);
   if (toughnessMatch) stats.toughness = parseInt(toughnessMatch[1]!, 10);
 
-  const saveMatch = content.match(/(?:SV|Save)[:\s]*(\d+\+)/i);
+  const saveMatch = content.match(STAT_SAVE);
   if (saveMatch) stats.save = saveMatch[1];
 
-  const woundsMatch = content.match(/(?:W|Wounds)[:\s]*(\d+)/i);
+  const woundsMatch = content.match(STAT_WOUNDS);
   if (woundsMatch) stats.wounds = parseInt(woundsMatch[1]!, 10);
 
-  const leadershipMatch = content.match(/(?:LD|Leadership)[:\s]*(\d+\+?)/i);
+  const leadershipMatch = content.match(STAT_LEADERSHIP);
   if (leadershipMatch) stats.leadership = parseInt(leadershipMatch[1]!, 10);
 
-  const ocMatch = content.match(/(?:OC|Objective Control)[:\s]*(\d+)/i);
+  const ocMatch = content.match(STAT_OBJECTIVE_CONTROL);
   if (ocMatch) stats.objectiveControl = parseInt(ocMatch[1]!, 10);
 
-  const invulnMatch = content.match(/(?:Invulnerable Save|Invuln)[:\s]*(\d+\+)/i);
+  const invulnMatch = content.match(STAT_INVULN);
   if (invulnMatch) stats.invulnerableSave = invulnMatch[1];
 
   return stats;
@@ -1121,12 +1047,14 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
 
   name = normalizeText(name);
 
-  const bracketedPattern = /\[([A-Z][A-Z\s-]+)\]/g;
+  // Extract bracketed abilities like [BLAST], [PSYCHIC]
   let bracketMatch;
+  // Create a new regex each time to reset lastIndex
+  const bracketedPattern = new RegExp(BRACKETED_ABILITY.source, 'g');
   while ((bracketMatch = bracketedPattern.exec(name)) !== null) {
     foundAbilities.push(bracketMatch[0]);
   }
-  name = name.replace(bracketedPattern, '').trim();
+  name = name.replace(BRACKETED_ABILITY, '').trim();
   name = name.replace(/,\s*$/, '').replace(/\s+/g, ' ').trim();
 
   const lowerName = name.toLowerCase();
@@ -1420,13 +1348,6 @@ function isHeaderSection(name: string): boolean {
     lower === 'dedicated transports' ||
     lower === 'fortifications'
   );
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
 }
 
 export { ParsedUnit, UnitStats };
