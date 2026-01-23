@@ -274,9 +274,10 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
         try {
           const unitUrl = WAHAPEDIA_URLS.unitDatasheet(faction.slug, slug);
           console.log(`    Scraping: ${name}`);
-          const unitResult = await client.scrape(unitUrl);
+          const unitResult = await client.scrape(unitUrl, { includeHtml: true });
 
-          const units = parseDatasheets(unitResult.markdown, unitResult.url);
+          // Use HTML parsing for better data quality (markdown has concatenation issues)
+          const units = parseDatasheets(unitResult.html || unitResult.markdown, unitResult.url);
           if (units.length === 0) {
             console.log(`      No unit data parsed, skipping`);
             // Update unit_index status to failed
@@ -393,21 +394,30 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
 /**
  * Extract unit links from the datasheets TOC
  * Format: [Unit Name](https://wahapedia.ru/wh40k10ed/factions/faction-slug/datasheets#Unit-Slug)
+ * Skips Legends and Forge World units (marked with logo images in TOC)
  */
 function extractUnitLinksFromTOC(markdown: string): { name: string; slug: string }[] {
   const units: { name: string; slug: string }[] = [];
   const seen = new Set<string>();
 
   // Match links to datasheets with anchor: [Name](/wh40k10ed/factions/slug/datasheets#Unit-Slug)
-  const linkRegex = /\[([^\]]+)\]\([^)]*\/factions\/[^/]+\/datasheets#([^)]+)\)/g;
+  // Also capture any preceding image marker (Legends/FW logos)
+  const linkRegex = /(?:!\[[^\]]*\]\([^)]*?(Legends_logo|FW_logo)[^)]*\))?\s*\[([^\]]+)\]\([^)]*\/factions\/[^/]+\/datasheets#([^)]+)\)/g;
   let match;
 
   while ((match = linkRegex.exec(markdown)) !== null) {
-    const name = match[1]?.trim();
-    // Convert URL-encoded slug to lowercase kebab-case for the individual page URL
-    const anchorSlug = match[2]?.trim();
+    const logoMarker = match[1]; // Will be "Legends_logo" or "FW_logo" if present
+    const name = match[2]?.trim();
+    const anchorSlug = match[3]?.trim();
 
     if (!name || !anchorSlug || seen.has(anchorSlug)) continue;
+
+    // Skip Legends and Forge World units
+    if (logoMarker) {
+      console.log(`  [Skip] ${name} (${logoMarker.replace('_logo', '')})`);
+      continue;
+    }
+
     seen.add(anchorSlug);
 
     // Keep original casing from anchor (wahapedia requires capitalized slugs)
