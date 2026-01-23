@@ -1,83 +1,36 @@
 import type { NewFaction, NewDetachment, NewStratagem, NewEnhancement } from '../../db/schema.js';
-
-/**
- * Map of concatenated keywords to their properly spaced form.
- * Firecrawl's markdown conversion often concatenates Wahapedia's keywords.
- */
-const KEYWORD_FIXES: Record<string, string> = {
-  // Unit keywords
-  CULTISTMOB: 'CULTIST MOB',
-  DAMNEDCHARACTER: 'DAMNED CHARACTER',
-  HERETICASTARTES: 'HERETIC ASTARTES',
-  ADEPTUSASTARTES: 'ADEPTUS ASTARTES',
-  ADEPTUSCUSTODES: 'ADEPTUS CUSTODES',
-  ADEPTUSMECHANICUS: 'ADEPTUS MECHANICUS',
-  ASTRAMILIT: 'ASTRA MILITARUM',
-  DEATHGUARD: 'DEATH GUARD',
-  THOUSANDSONS: 'THOUSAND SONS',
-  WORLDEATERS: 'WORLD EATERS',
-  GENESTEALERCULTS: 'GENESTEALER CULTS',
-  LEAGUESOFVOTANN: 'LEAGUES OF VOTANN',
-  IMPERIALAGENTS: 'IMPERIAL AGENTS',
-  IMPERIALKNIGHT: 'IMPERIAL KNIGHT',
-  CHAOSKNIGHT: 'CHAOS KNIGHT',
-  GREYKNIGHTS: 'GREY KNIGHTS',
-  BLOODANGELS: 'BLOOD ANGELS',
-  DARKANGELS: 'DARK ANGELS',
-  SPACEWOLVES: 'SPACE WOLVES',
-  BLACKTEMPLARS: 'BLACK TEMPLARS',
-  IMPERIALFISTS: 'IMPERIAL FISTS',
-  IRONHANDS: 'IRON HANDS',
-  WHITESCARS: 'WHITE SCARS',
-  RAVENWING: 'RAVENWING',
-  DEATHWING: 'DEATHWING',
-  EPICHERO: 'EPIC HERO',
-  // Weapon abilities
-  LETHALHITS: 'LETHAL HITS',
-  SUSTAINEDHITS: 'SUSTAINED HITS',
-  SUSTAINEDHITS1: 'SUSTAINED HITS 1',
-  SUSTAINEDHITS2: 'SUSTAINED HITS 2',
-  SUSTAINEDHITSD3: 'SUSTAINED HITS D3',
-  DEVASTATINGWOUNDS: 'DEVASTATING WOUNDS',
-  INDIRECTFIRE: 'INDIRECT FIRE',
-  RAPIDFIRE: 'RAPID FIRE',
-  RAPIDFIRE1: 'RAPID FIRE 1',
-  RAPIDFIRE2: 'RAPID FIRE 2',
-  HEAVYWEAPON: 'HEAVY',
-  ANTITANK: 'ANTI-TANK',
-  ANTIINFANTRY: 'ANTI-INFANTRY',
-  ANTIMONSTER: 'ANTI-MONSTER',
-  ANTIVEHICLE: 'ANTI-VEHICLE',
-  ANTIFLY: 'ANTI-FLY',
-  FEELNOPAIN: 'FEEL NO PAIN',
-  INVULNERABLESAVE: 'INVULNERABLE SAVE',
-  // Core abilities
-  DEEPSTRIKE: 'DEEP STRIKE',
-  DEADLYDESCENT: 'DEADLY DESCENT',
-  FIGHTSFIRST: 'FIGHTS FIRST',
-  LONEOPERATIVE: 'LONE OPERATIVE',
-  SCOUTSMOVE: 'SCOUTS MOVE',
-  // Other common terms
-  ENGAGEMENTRANGE: 'ENGAGEMENT RANGE',
-  MORTALWOUNDS: 'MORTAL WOUNDS',
-  MORTALWOUND: 'MORTAL WOUND',
-  LEADERSHIPTEST: 'LEADERSHIP TEST',
-  BATTLESHOCK: 'BATTLE-SHOCK',
-  BATTLESHOCKED: 'BATTLE-SHOCKED',
-  OBJECTIVECONTROL: 'OBJECTIVE CONTROL',
-};
-
-/**
- * Normalize concatenated keywords in text by adding proper spacing.
- */
-function normalizeKeywords(text: string): string {
-  let result = text;
-  for (const [concat, spaced] of Object.entries(KEYWORD_FIXES)) {
-    const pattern = new RegExp(`\\b${concat}\\b`, 'gi');
-    result = result.replace(pattern, spaced);
-  }
-  return result;
-}
+import {
+  FACTION_LINK,
+  ARMY_RULES_PATTERNS,
+  LORE_SECTION,
+  INTRO_TEXT,
+  SPLIT_H2,
+  DETACHMENT_RULE_NAME,
+  DETACHMENT_RULE_CONTENT,
+  STRATAGEM_BLOCK,
+  STRATAGEM_WHEN,
+  STRATAGEM_TARGET,
+  STRATAGEM_EFFECT,
+  ENHANCEMENT_TABLE_ROW,
+  ENHANCEMENT_NAME_POINTS,
+  ENHANCEMENT_RESTRICTION,
+} from './regex-patterns.js';
+import {
+  slugify,
+  normalizeKeywords,
+  detectPhase,
+  DeduplicationTracker,
+} from './utils.js';
+import {
+  CATEGORY_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+  PATH_MAX_LENGTH,
+  CP_COST_MAX_LENGTH,
+  SHORT_DESCRIPTION_MAX_LENGTH,
+  MEDIUM_DESCRIPTION_MAX_LENGTH,
+  truncateSlug,
+  truncateName,
+} from './constants.js';
 
 interface ParsedFaction {
   faction: NewFaction;
@@ -91,16 +44,17 @@ interface ParsedFaction {
  */
 export function parseFactionIndex(markdown: string, sourceUrl: string): NewFaction[] {
   const factions: NewFaction[] = [];
+  const seen = new DeduplicationTracker();
 
   // Look for faction links in format [Faction Name](/wh40k10ed/factions/faction-slug/)
-  const factionLinkRegex = /\[([^\]]+)\]\(\/wh40k10ed\/factions\/([^/)]+)\/?[^)]*\)/g;
+  const factionLinkRegex = new RegExp(FACTION_LINK.source, 'g');
   let match;
 
   while ((match = factionLinkRegex.exec(markdown)) !== null) {
     const name = match[1]?.trim();
     const slug = match[2]?.trim();
 
-    if (name && slug && !factions.find((f) => f.slug === slug)) {
+    if (name && slug && seen.addIfNew(slug)) {
       factions.push({
         slug,
         name,
@@ -128,18 +82,7 @@ export function parseFactionPage(
 
   // Try to extract army rules section using multiple patterns
   // Wahapedia formats vary - try several heading patterns
-  const armyRulesPatterns = [
-    // Standard ## heading
-    /## Army Rules?\s*([\s\S]*?)(?=\n## (?!###)|$)/i,
-    // # heading (h1)
-    /# Army Rules?\s*([\s\S]*?)(?=\n# (?!##)|$)/i,
-    // ### heading
-    /### Army Rules?\s*([\s\S]*?)(?=\n### (?!####)|$)/i,
-    // Bold text section marker (Firecrawl sometimes converts headings to bold)
-    /\*\*Army Rules?\*\*\s*([\s\S]*?)(?=\n\*\*[A-Z]|\n## |\n# |$)/i,
-  ];
-
-  for (const pattern of armyRulesPatterns) {
+  for (const pattern of ARMY_RULES_PATTERNS) {
     const match = markdown.match(pattern);
     if (match?.[1]?.trim()) {
       armyRules = match[1].trim();
@@ -148,27 +91,25 @@ export function parseFactionPage(
   }
 
   // Try to extract lore/background
-  const loreMatch = markdown.match(
-    /## (?:Background|Lore|About|Introduction)\s*([\s\S]*?)(?=##|$)/i
-  );
+  const loreMatch = markdown.match(LORE_SECTION);
   if (loreMatch?.[1]) {
     lore = loreMatch[1].trim();
   }
 
   // If no explicit lore section, take the intro text before first ##
   if (!lore) {
-    const introMatch = markdown.match(/^([\s\S]*?)(?=##)/);
+    const introMatch = markdown.match(INTRO_TEXT);
     if (introMatch?.[1] && introMatch[1].trim().length > 100) {
       lore = introMatch[1].trim();
     }
   }
 
   return {
-    slug: factionSlug.slice(0, 100),
-    name: factionName.slice(0, 255),
+    slug: factionSlug.slice(0, CATEGORY_MAX_LENGTH),
+    name: factionName.slice(0, NAME_MAX_LENGTH),
     armyRules: armyRules || null,
     lore: lore || null,
-    wahapediaPath: `/wh40k10ed/factions/${factionSlug}/`.slice(0, 255),
+    wahapediaPath: `/wh40k10ed/factions/${factionSlug}/`.slice(0, PATH_MAX_LENGTH),
     sourceUrl,
     dataSource: 'wahapedia' as const,
   };
@@ -194,7 +135,7 @@ export function parseDetachments(
   ];
 
   // Split by ## headers
-  const sections = markdown.split(/^## /m).filter(Boolean);
+  const sections = markdown.split(SPLIT_H2).filter(Boolean);
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]!;
@@ -221,26 +162,26 @@ export function parseDetachments(
 
     // This is a valid detachment!
     // Extract lore from current section
-    const lore = lines.slice(1).join('\n').trim().slice(0, 1000) || null;
+    const lore = lines.slice(1).join('\n').trim().slice(0, SHORT_DESCRIPTION_MAX_LENGTH) || null;
 
     // Get detachment rule from next section
     let detachmentRuleName = '';
     let detachmentRule = '';
 
     const ruleContent = nextSection.split('\n').slice(1).join('\n');
-    const ruleNameMatch = ruleContent.match(/^### ([^\n]+)/m);
+    const ruleNameMatch = ruleContent.match(DETACHMENT_RULE_NAME);
     if (ruleNameMatch?.[1]) {
       detachmentRuleName = ruleNameMatch[1].trim();
     }
-    const ruleTextMatch = ruleContent.match(/### [^\n]+\n([\s\S]*?)(?=## |$)/);
+    const ruleTextMatch = ruleContent.match(DETACHMENT_RULE_CONTENT);
     if (ruleTextMatch?.[1]) {
-      detachmentRule = ruleTextMatch[1].trim().slice(0, 2000);
+      detachmentRule = ruleTextMatch[1].trim().slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH);
     }
 
     detachments.push({
-      slug: slugify(name).slice(0, 255),
-      name: name.slice(0, 255),
-      detachmentRuleName: detachmentRuleName?.slice(0, 255) || null,
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(name),
+      detachmentRuleName: detachmentRuleName?.slice(0, NAME_MAX_LENGTH) || null,
       detachmentRule: detachmentRule || null,
       lore,
       sourceUrl,
@@ -271,12 +212,10 @@ export function parseStratagems(
   sourceUrl: string
 ): Omit<NewStratagem, 'factionId' | 'detachmentId'>[] {
   const stratagems: Omit<NewStratagem, 'factionId' | 'detachmentId'>[] = [];
-  const seen = new Set<string>();
+  const seen = new DeduplicationTracker(true); // Case-sensitive for stratagem names
 
-  // Pattern: ALL CAPS NAME followed by CP cost and "Stratagem" type
-  // Handles blank lines between sections (using \n\n? to match 1-2 newlines)
-  // Example: ARMOUR OF CONTEMPT\n\n1CP\n\nGladius Task Force – Battle Tactic Stratagem
-  const stratagemPattern = /([A-Z][A-Z\s'''-]+)\n\n?(\d+)CP\n\n?([^\n]+Stratagem)\n([\s\S]*?)(?=\n[A-Z][A-Z\s'''-]{3,}\n\n?\d+CP|## |$)/g;
+  // Use centralized pattern for stratagem blocks
+  const stratagemPattern = new RegExp(STRATAGEM_BLOCK.source, 'g');
 
   let match;
   while ((match = stratagemPattern.exec(markdown)) !== null) {
@@ -285,17 +224,15 @@ export function parseStratagems(
     const typeInfo = match[3]?.trim() || '';
     const content = match[4] || '';
 
-    if (!name || seen.has(name)) continue;
+    if (!name || !seen.addIfNew(name)) continue;
 
     // Skip if name is too short or looks like a header
     if (name.length < 4) continue;
 
-    seen.add(name);
-
     // Extract WHEN, TARGET, EFFECT and normalize concatenated keywords
-    const whenMatch = content.match(/\*\*WHEN:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
-    const targetMatch = content.match(/\*\*TARGET:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
-    const effectMatch = content.match(/\*\*EFFECT:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+    const whenMatch = content.match(STRATAGEM_WHEN);
+    const targetMatch = content.match(STRATAGEM_TARGET);
+    const effectMatch = content.match(STRATAGEM_EFFECT);
 
     const when = whenMatch?.[1]?.trim() ? normalizeKeywords(whenMatch[1].trim()) : null;
     const target = targetMatch?.[1]?.trim() ? normalizeKeywords(targetMatch[1].trim()) : null;
@@ -312,13 +249,13 @@ export function parseStratagems(
     void _stratagemType; // Suppress unused variable warning
 
     stratagems.push({
-      slug: slugify(name).slice(0, 255),
-      name: name.slice(0, 255),
-      cpCost: cpCost.slice(0, 10),
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(name),
+      cpCost: cpCost.slice(0, CP_COST_MAX_LENGTH),
       phase: detectPhase(when || ''),
       when,
       target,
-      effect: effect.slice(0, 2000), // Limit length
+      effect: effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
       sourceUrl,
       dataSource: 'wahapedia' as const,
       isCore: false,
@@ -345,11 +282,10 @@ export function parseEnhancements(
   sourceUrl: string
 ): Omit<NewEnhancement, 'detachmentId'>[] {
   const enhancements: Omit<NewEnhancement, 'detachmentId'>[] = [];
-  const seen = new Set<string>();
+  const seen = new DeduplicationTracker();
 
-  // Pattern to match table cell content: | - Name XX pts<br>... |
-  // The format is: | - EnhancementName XX pts<br>Description<br>Restriction. Effect |
-  const tableRowPattern = /\|\s*-\s*([^|]+)\s*\|/g;
+  // Use centralized pattern for table rows
+  const tableRowPattern = new RegExp(ENHANCEMENT_TABLE_ROW.source, 'g');
   let match;
 
   while ((match = tableRowPattern.exec(markdown)) !== null) {
@@ -362,22 +298,20 @@ export function parseEnhancements(
 
     // First part: "Enhancement Name XX pts"
     const firstPart = parts[0]!;
-    const nameMatch = firstPart.match(/^(.+?)(\d+)\s*pts?$/i);
+    const nameMatch = firstPart.match(ENHANCEMENT_NAME_POINTS);
     if (!nameMatch) continue;
 
     const name = nameMatch[1]?.trim();
     const pointsCost = parseInt(nameMatch[2] || '0', 10);
 
-    if (!name || seen.has(name.toLowerCase())) continue;
-    seen.add(name.toLowerCase());
+    if (!name || !seen.addIfNew(name)) continue;
 
     // Combine remaining parts as description
     const descriptionParts = parts.slice(1);
     const fullDescription = descriptionParts.join(' ').trim();
 
-    // Extract restriction (e.g., "THOUSANDSONS model only." or "EXALTEDSORCERER model only.")
-    // Pattern: KEYWORD model(s)? only
-    const restrictionMatch = fullDescription.match(/([A-Z][A-Z\s]*(?:model|models?|INFANTRY|PSYKER)[^.]*only\.?)/i);
+    // Extract restriction (e.g., "THOUSANDSONS model only.")
+    const restrictionMatch = fullDescription.match(ENHANCEMENT_RESTRICTION);
     const restrictions = restrictionMatch?.[1]?.trim() || null;
 
     // Clean description - take lore text (second part usually) or full description
@@ -390,10 +324,10 @@ export function parseEnhancements(
     }
 
     enhancements.push({
-      slug: slugify(name).slice(0, 255),
-      name: name.slice(0, 255),
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(name),
       pointsCost,
-      description: description.slice(0, 2000),
+      description: description.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
       restrictions,
       sourceUrl,
       dataSource: 'wahapedia' as const,
@@ -403,24 +337,8 @@ export function parseEnhancements(
   return enhancements;
 }
 
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-export function detectPhase(text: string): 'command' | 'movement' | 'shooting' | 'charge' | 'fight' | 'any' {
-  const lower = text.toLowerCase();
-
-  if (lower.includes('command')) return 'command';
-  if (lower.includes('movement')) return 'movement';
-  if (lower.includes('shooting')) return 'shooting';
-  if (lower.includes('charge')) return 'charge';
-  if (lower.includes('fight')) return 'fight';
-
-  return 'any';
-}
+// Re-export utilities for backwards compatibility
+export { slugify, detectPhase } from './utils.js';
 
 /**
  * Extract a detachment's section content including its Enhancements section.
@@ -428,7 +346,7 @@ export function detectPhase(text: string): 'command' | 'movement' | 'shooting' |
  */
 export function extractDetachmentSection(markdown: string, detachmentName: string): string | null {
   // Split by ## headers
-  const sections = markdown.split(/^## /m).filter(Boolean);
+  const sections = markdown.split(SPLIT_H2).filter(Boolean);
 
   let collecting = false;
   let detachmentContent: string[] = [];

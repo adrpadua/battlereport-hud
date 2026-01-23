@@ -1,4 +1,11 @@
 import type { NewCoreRule } from '../../db/schema.js';
+import { SPLIT_H2, SPLIT_H3 } from './regex-patterns.js';
+import { slugify, detectRuleCategory } from './utils.js';
+import {
+  SLUG_MAX_LENGTH,
+  TITLE_MAX_LENGTH,
+  CATEGORY_MAX_LENGTH,
+} from './constants.js';
 
 interface ParsedSection {
   slug: string;
@@ -17,7 +24,7 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
   let orderIndex = 0;
 
   // Split by h2 headers (##) to get major sections
-  const majorSections = markdown.split(/^## /m).filter(Boolean);
+  const majorSections = markdown.split(SPLIT_H2).filter(Boolean);
 
   for (const majorSection of majorSections) {
     const lines = majorSection.split('\n');
@@ -26,7 +33,7 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
     const majorContent = lines.slice(1).join('\n').trim();
 
     // Check if this section has subsections (h3 headers)
-    const subsections = majorContent.split(/^### /m);
+    const subsections = majorContent.split(SPLIT_H3);
 
     if (subsections.length > 1) {
       // Has subsections
@@ -37,7 +44,7 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
         sections.push({
           slug: majorSlug,
           title: majorTitle,
-          category: detectCategory(majorTitle),
+          category: detectRuleCategory(majorTitle),
           content: introContent,
           orderIndex: orderIndex++,
         });
@@ -56,7 +63,7 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
           sections.push({
             slug: `${majorSlug}-${slugify(subTitle)}`,
             title: subTitle,
-            category: detectCategory(majorTitle),
+            category: detectRuleCategory(majorTitle),
             subcategory: majorTitle,
             content: subContent,
             orderIndex: orderIndex++,
@@ -69,7 +76,7 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
         sections.push({
           slug: majorSlug,
           title: majorTitle,
-          category: detectCategory(majorTitle),
+          category: detectRuleCategory(majorTitle),
           content: majorContent,
           orderIndex: orderIndex++,
         });
@@ -79,52 +86,15 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
 
   // Convert to database format
   return sections.map((section) => ({
-    slug: section.slug.slice(0, 255),
-    title: section.title.slice(0, 255),
-    category: section.category.slice(0, 100),
-    subcategory: section.subcategory?.slice(0, 100) ?? null,
+    slug: section.slug.slice(0, SLUG_MAX_LENGTH),
+    title: section.title.slice(0, TITLE_MAX_LENGTH),
+    category: section.category.slice(0, CATEGORY_MAX_LENGTH),
+    subcategory: section.subcategory?.slice(0, CATEGORY_MAX_LENGTH) ?? null,
     content: section.content,
     orderIndex: section.orderIndex,
     sourceUrl,
     dataSource: 'wahapedia' as const,
   }));
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function detectCategory(title: string): string {
-  const titleLower = title.toLowerCase();
-
-  // Phase detection
-  if (titleLower.includes('command phase')) return 'command_phase';
-  if (titleLower.includes('movement phase')) return 'movement_phase';
-  if (titleLower.includes('shooting phase')) return 'shooting_phase';
-  if (titleLower.includes('charge phase')) return 'charge_phase';
-  if (titleLower.includes('fight phase')) return 'fight_phase';
-
-  // Combat mechanics
-  if (titleLower.includes('attacks') || titleLower.includes('hit roll') || titleLower.includes('wound roll')) {
-    return 'combat';
-  }
-  if (titleLower.includes('morale') || titleLower.includes('battle-shock')) return 'morale';
-  if (titleLower.includes('transport')) return 'transports';
-  if (titleLower.includes('terrain') || titleLower.includes('cover')) return 'terrain';
-  if (titleLower.includes('psychic') || titleLower.includes('psyker')) return 'psychic';
-  if (titleLower.includes('stratagem')) return 'stratagems';
-  if (titleLower.includes('objective') || titleLower.includes('victory')) return 'objectives';
-  if (titleLower.includes('deployment') || titleLower.includes('reserves')) return 'deployment';
-  if (titleLower.includes('unit') || titleLower.includes('datasheet')) return 'units';
-  if (titleLower.includes('weapon') || titleLower.includes('wargear')) return 'weapons';
-  if (titleLower.includes('ability') || titleLower.includes('abilities')) return 'abilities';
-  if (titleLower.includes('keyword')) return 'keywords';
-  if (titleLower.includes('leader') || titleLower.includes('attached')) return 'leaders';
-
-  return 'general';
 }
 
 /**

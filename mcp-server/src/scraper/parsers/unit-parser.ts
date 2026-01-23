@@ -37,6 +37,16 @@ import {
   dedupeKeywords,
   DeduplicationTracker,
 } from './utils.js';
+import {
+  SLUG_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+  SHORT_DESCRIPTION_MAX_LENGTH,
+  LONG_CONTENT_MAX_LENGTH,
+  MAX_LEADER_ATTACHMENTS,
+  isValidPointsCost,
+  truncateSlug,
+  truncateName,
+} from './constants.js';
 
 interface ParsedUnit {
   unit: Omit<NewUnit, 'factionId'>;
@@ -140,8 +150,8 @@ function parseHtmlDatasheet(html: string, sourceUrl: string): ParsedUnit[] {
   const abilities = extractAbilitiesFromHtml($, sourceUrl);
 
   const unit: Omit<NewUnit, 'factionId'> = {
-    slug: slugify(unitName).slice(0, 255),
-    name: unitName.slice(0, 255),
+    slug: slugify(unitName).slice(0, SLUG_MAX_LENGTH),
+    name: unitName.slice(0, NAME_MAX_LENGTH),
     movement: stats.movement ?? null,
     toughness: stats.toughness ?? null,
     save: stats.save ?? null,
@@ -277,8 +287,7 @@ function extractPointsCostFromHtml($: cheerio.CheerioAPI): number | null {
           const numMatch = text.match(STANDALONE_POINTS);
           if (numMatch?.[1] && !pointsCost) {
             const num = parseInt(numMatch[1], 10);
-            // Points are typically between 20-500 for most units
-            if (num >= 20 && num <= 500) {
+            if (isValidPointsCost(num)) {
               pointsCost = num;
             }
           }
@@ -331,7 +340,7 @@ function extractUnitCompositionFromHtml($: cheerio.CheerioAPI): string | null {
         composition = content
           .replace(/\s+/g, ' ')
           .trim()
-          .slice(0, 1000);
+          .slice(0, SHORT_DESCRIPTION_MAX_LENGTH);
       }
       return false;
     }
@@ -368,7 +377,7 @@ function extractLeaderInfoFromHtml($: cheerio.CheerioAPI): string | null {
       .split(/[-•\n]/)
       .map(s => s.trim())
       .filter(s => s.length > 2 && !s.includes('KEYWORDS'))
-      .slice(0, 10) // Limit to prevent runaway parsing
+      .slice(0, MAX_LEADER_ATTACHMENTS)
       .join('\n• ');
 
     if (unitsList) {
@@ -562,8 +571,8 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       const actualWeaponType: 'ranged' | 'melee' = range?.toLowerCase() === 'melee' ? 'melee' : weaponType;
 
       weapons.push({
-        slug: slugify(weaponName).slice(0, 255),
-        name: weaponName.slice(0, 255),
+        slug: slugify(weaponName).slice(0, SLUG_MAX_LENGTH),
+        name: weaponName.slice(0, NAME_MAX_LENGTH),
         weaponType: actualWeaponType,
         range: range || null,
         attacks: attacks || null,
@@ -601,8 +610,8 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
         const name = normalizeText(rawName);
         if (name && name.length >= 3 && seenAbilities.addIfNew(name)) {
           abilities.push({
-            slug: slugify(name).slice(0, 255),
-            name: name.slice(0, 255),
+            slug: slugify(name).slice(0, SLUG_MAX_LENGTH),
+            name: name.slice(0, NAME_MAX_LENGTH),
             abilityType: 'core',
             description: 'CORE ability',
             sourceUrl,
@@ -625,8 +634,8 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
         const name = normalizeText(rawName);
         if (name && name.length >= 3 && seenAbilities.addIfNew(name)) {
           abilities.push({
-            slug: slugify(name).slice(0, 255),
-            name: name.slice(0, 255),
+            slug: slugify(name).slice(0, SLUG_MAX_LENGTH),
+            name: name.slice(0, NAME_MAX_LENGTH),
             abilityType: 'faction',
             description: 'FACTION ability',
             sourceUrl,
@@ -708,7 +717,7 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
 
     // Fix concatenated keywords from adjacent spans (e.g., "HERETIC ASTARTESHERETIC ASTARTES...")
     description = dedupeKeywords(description);
-    description = description.slice(0, 1000);
+    description = description.slice(0, SHORT_DESCRIPTION_MAX_LENGTH);
 
     // Skip if description is too short or looks like garbage
     if (description.length < 10) return;
@@ -717,8 +726,8 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
 
     seenAbilities.add(name);
     abilities.push({
-      slug: slugify(name).slice(0, 255),
-      name: name.slice(0, 255),
+      slug: slugify(name).slice(0, SLUG_MAX_LENGTH),
+      name: name.slice(0, NAME_MAX_LENGTH),
       abilityType: 'unit',
       description,
       sourceUrl,
@@ -800,7 +809,7 @@ function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): Parse
       .replace(/---\s*\d+(\s+\d+)*/g, '')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 1000);
+      .slice(0, SHORT_DESCRIPTION_MAX_LENGTH);
 
     if (unitComposition.includes('1CP') || unitComposition.includes('2CP')) {
       const cpIndex = unitComposition.search(/\d+CP/);
@@ -839,8 +848,8 @@ function parseIndividualMarkdownUnit(markdown: string, sourceUrl: string): Parse
   const baseSize = baseSizeMatch?.[1] || null;
 
   const unit: Omit<NewUnit, 'factionId'> = {
-    slug: slugify(rawName).slice(0, 255),
-    name: rawName.slice(0, 255),
+    slug: truncateSlug(slugify(rawName)),
+    name: truncateName(rawName),
     movement: stats.movement ?? null,
     toughness: stats.toughness ?? null,
     save: stats.save ?? null,
@@ -919,8 +928,8 @@ function parseMarkdownUnitSection(section: string, sourceUrl: string): ParsedUni
   const abilities = extractMarkdownAbilities(content, sourceUrl);
 
   const unit: Omit<NewUnit, 'factionId'> = {
-    slug: slugify(name).slice(0, 255),
-    name: name.slice(0, 255),
+    slug: truncateSlug(slugify(name)),
+    name: truncateName(name),
     movement: stats.movement ?? null,
     toughness: stats.toughness ?? null,
     save: stats.save ?? null,
@@ -1177,8 +1186,8 @@ function parseMarkdownWeaponTable(
     const { name, abilities } = cleanWeaponName(rawName);
 
     weapons.push({
-      slug: slugify(name).slice(0, 255),
-      name: name.slice(0, 255),
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(name),
       weaponType,
       range: range || null,
       attacks: attacks || null,
@@ -1277,7 +1286,7 @@ function extractMarkdownAbilities(
     }
   }
 
-  abilitiesContent = abilitiesContent.slice(0, 3000);
+  abilitiesContent = abilitiesContent.slice(0, LONG_CONTENT_MAX_LENGTH);
 
   const labeledAbilityPattern = /^(CORE|FACTION):\s*\*\*([^*]+)\*\*/gm;
   let labelMatch;
@@ -1287,8 +1296,8 @@ function extractMarkdownAbilities(
     const name = rawName ? normalizeText(rawName) : '';
     if (name && name.length >= 3) {
       abilities.push({
-        slug: slugify(name).slice(0, 255),
-        name: name.slice(0, 255),
+        slug: truncateSlug(slugify(name)),
+        name: truncateName(name),
         abilityType,
         description: `${abilityType.toUpperCase()} ability`,
         sourceUrl,
@@ -1318,8 +1327,8 @@ function extractMarkdownAbilities(
     if (description.length < 10) continue;
 
     abilities.push({
-      slug: slugify(name).slice(0, 255),
-      name: name.slice(0, 255),
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(name),
       abilityType: 'unit',
       description,
       sourceUrl,

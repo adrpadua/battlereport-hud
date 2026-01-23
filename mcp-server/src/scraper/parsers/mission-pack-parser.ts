@@ -1,4 +1,22 @@
 import type { NewMission, NewSecondaryObjective } from '../../db/schema.js';
+import {
+  PRIMARY_MISSION_DECK,
+  SECONDARY_MISSION_DECK,
+  CHALLENGER_DECK,
+  SPLIT_PRIMARY_MISSION,
+  SPLIT_SECONDARY_MISSION,
+  SPLIT_CHALLENGER,
+  VP_SCORING,
+  isValidMissionName,
+  STRATAGEM_WHEN,
+  STRATAGEM_EFFECT,
+} from './regex-patterns.js';
+import { slugify, toTitleCase } from './utils.js';
+import {
+  FALLBACK_DESCRIPTION_MAX_LENGTH,
+  SHORT_DESCRIPTION_MAX_LENGTH,
+  RULE_CONTENT_MAX_LENGTH,
+} from './constants.js';
 
 export interface ParsedMissionPack {
   missions: NewMission[];
@@ -50,14 +68,13 @@ function parsePrimaryMissions(markdown: string, sourceUrl: string, missionType: 
   const missions: NewMission[] = [];
 
   // Find the Primary Mission deck section
-  const primaryDeckMatch = markdown.match(/## Primary Mission deck([\s\S]*?)(?=## (?:Secondary|Asymmetric|Incursion|Strike)|$)/i);
+  const primaryDeckMatch = markdown.match(PRIMARY_MISSION_DECK);
   if (!primaryDeckMatch) return missions;
 
   const primaryDeckContent = primaryDeckMatch[1] || '';
 
   // Split by "Primary Mission" markers to get individual missions
-  // Pattern: "Primary Mission\n\n" followed by mission name in CAPS
-  const missionBlocks = primaryDeckContent.split(/\nPrimary Mission\n/i).filter(Boolean);
+  const missionBlocks = primaryDeckContent.split(SPLIT_PRIMARY_MISSION).filter(Boolean);
 
   for (const block of missionBlocks) {
     const lines = block.trim().split('\n');
@@ -70,8 +87,8 @@ function parsePrimaryMissions(markdown: string, sourceUrl: string, missionType: 
 
     const name = lines[nameIndex]!.trim();
 
-    // Skip if this doesn't look like a mission name (should be mostly uppercase)
-    if (!name || name.length < 3 || !/^[A-Z\s]+$/.test(name.replace(/[^A-Za-z\s]/g, ''))) continue;
+    // Skip if this doesn't look like a mission name
+    if (!isValidMissionName(name)) continue;
 
     // Get the rest as content
     const content = lines.slice(nameIndex + 1).join('\n').trim();
@@ -110,13 +127,13 @@ function parseSecondaryMissions(markdown: string, sourceUrl: string): NewSeconda
   const objectives: NewSecondaryObjective[] = [];
 
   // Find the Secondary Mission deck section
-  const secondaryDeckMatch = markdown.match(/## Secondary Mission deck([\s\S]*?)(?=## (?:Asymmetric|Challenger|Twist|Deployment|Primary)|$)/i);
+  const secondaryDeckMatch = markdown.match(SECONDARY_MISSION_DECK);
   if (!secondaryDeckMatch) return objectives;
 
   const secondaryDeckContent = secondaryDeckMatch[1] || '';
 
   // Split by "Secondary Mission" markers
-  const missionBlocks = secondaryDeckContent.split(/\nSecondary Mission\n/i).filter(Boolean);
+  const missionBlocks = secondaryDeckContent.split(SPLIT_SECONDARY_MISSION).filter(Boolean);
 
   for (const block of missionBlocks) {
     const lines = block.trim().split('\n');
@@ -130,14 +147,14 @@ function parseSecondaryMissions(markdown: string, sourceUrl: string): NewSeconda
     const name = lines[nameIndex]!.trim();
 
     // Skip if this doesn't look like a mission name
-    if (!name || name.length < 3 || !/^[A-Z\s]+$/.test(name.replace(/[^A-Za-z\s]/g, ''))) continue;
+    if (!isValidMissionName(name)) continue;
 
     // Get the rest as content
     const content = lines.slice(nameIndex + 1).join('\n').trim();
 
     // Extract description (fluff text before **When Drawn:** or scoring table)
     const descMatch = content.match(/^([\s\S]*?)(?=\n(?:\*\*When Drawn|\|.*\|))/i);
-    const description = descMatch ? descMatch[1]?.trim() : content.substring(0, 500);
+    const description = descMatch ? descMatch[1]?.trim() : content.substring(0, FALLBACK_DESCRIPTION_MAX_LENGTH);
 
     // Determine category based on content
     let category = 'tactical'; // default
@@ -147,8 +164,9 @@ function parseSecondaryMissions(markdown: string, sourceUrl: string): NewSeconda
       category = 'fixed';
     }
 
-    // Try to extract max points from content
-    const maxPointsMatch = content.match(/(\d+)VP/g);
+    // Try to extract max points from content - find highest VP value mentioned
+    const vpPattern = new RegExp(VP_SCORING.source, 'g');
+    const maxPointsMatch = content.match(vpPattern);
     const maxPoints = maxPointsMatch
       ? Math.max(...maxPointsMatch.map(m => parseInt(m.replace('VP', ''), 10)))
       : null;
@@ -161,7 +179,7 @@ function parseSecondaryMissions(markdown: string, sourceUrl: string): NewSeconda
       slug: slugify(name),
       name: toTitleCase(name),
       category,
-      description: description || content.substring(0, 1000),
+      description: description || content.substring(0, SHORT_DESCRIPTION_MAX_LENGTH),
       scoringCondition,
       maxPoints,
       factionId: null,
@@ -181,13 +199,13 @@ function parseChallengers(markdown: string): ParsedGambit[] {
   const challengers: ParsedGambit[] = [];
 
   // Find the Challenger deck section
-  const challengerMatch = markdown.match(/## Challenger deck([\s\S]*?)(?=## (?:Twist|Deployment|Primary|Secondary)|$)/i);
+  const challengerMatch = markdown.match(CHALLENGER_DECK);
   if (!challengerMatch) return challengers;
 
   const challengerContent = challengerMatch[1] || '';
 
-  // Split by "Challenger" markers (or similar card patterns)
-  const cardBlocks = challengerContent.split(/\nChallenger\n/i).filter(Boolean);
+  // Split by "Challenger" markers
+  const cardBlocks = challengerContent.split(SPLIT_CHALLENGER).filter(Boolean);
 
   for (const block of cardBlocks) {
     const lines = block.trim().split('\n');
@@ -203,9 +221,9 @@ function parseChallengers(markdown: string): ParsedGambit[] {
 
     const content = lines.slice(nameIndex + 1).join('\n').trim();
 
-    // Extract timing and effect
-    const whenMatch = content.match(/\*\*WHEN:\*\*\s*(.*?)(?:\n|$)/i);
-    const effectMatch = content.match(/\*\*EFFECT:\*\*\s*([\s\S]*?)(?=\n\*\*|$)/i);
+    // Extract timing and effect using shared stratagem patterns
+    const whenMatch = content.match(STRATAGEM_WHEN);
+    const effectMatch = content.match(STRATAGEM_EFFECT);
 
     challengers.push({
       slug: slugify(name),
@@ -253,28 +271,13 @@ function parseMatchedPlayRules(markdown: string): ParsedMatchedPlayRule[] {
           slug: slugify(title),
           title: title.trim(),
           category,
-          content: content.substring(0, 5000), // Limit content size
+          content: content.substring(0, RULE_CONTENT_MAX_LENGTH),
         });
       }
     }
   }
 
   return rules;
-}
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function toTitleCase(text: string): string {
-  return text
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
 }
 
 /**
