@@ -36,3 +36,16 @@ src/data/generated/
 
 # Misc
 *.zip
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Local MCP config
+mcp-server/.mcp.json
+
+# Debug/test scripts
+mcp-server/check-*.ts
+mcp-server/test-*.ts
+
+# Test data
+test-data/
