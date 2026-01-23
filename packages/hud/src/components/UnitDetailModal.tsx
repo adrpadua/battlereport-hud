@@ -272,17 +272,24 @@ function AbilitiesPanel({ abilities }: { abilities: UnitDetailAbility[] }): Reac
         <div className="abilities-group">
           <div className="abilities-group-label">Faction</div>
           <div className="faction-abilities-list">
-            {factionAbilities.map((ability) => {
-              const cleanedName = cleanAbilityName(ability.name);
-              return (
-                <Tooltip
-                  key={ability.name}
-                  content={ability.description}
-                  position="top"
-                >
-                  <span className="faction-ability-badge">{cleanedName}</span>
-                </Tooltip>
-              );
+            {factionAbilities.flatMap((ability) => {
+              // Split comma-separated abilities into individual badges
+              const names = ability.name.split(/,\s*/).map(n => cleanAbilityName(n.trim()));
+              return names.map((name, idx) => {
+                // Try to get description for this specific ability
+                const description = names.length === 1
+                  ? ability.description
+                  : getCachedKeywordDescription(name) ?? ability.description;
+                return (
+                  <Tooltip
+                    key={`${ability.name}-${idx}`}
+                    content={description}
+                    position="top"
+                  >
+                    <span className="faction-ability-badge">{name}</span>
+                  </Tooltip>
+                );
+              });
             })}
           </div>
         </div>
