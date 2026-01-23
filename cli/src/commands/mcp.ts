@@ -216,3 +216,22 @@ rescrapeCmd
   .action(async () => {
     await runMcpScript('scrape-tau.ts');
   });
+
+// Reparse command group
+const reparseCmd = mcpCommand
+  .command('reparse')
+  .description('Re-parse cached data without making API calls');
+
+reparseCmd
+  .command('all')
+  .description('Re-parse all cached unit datasheets and update the database')
+  .option('--dry-run', 'Preview changes without updating the database')
+  .option('--faction <factionId>', 'Only reparse units from a specific faction')
+  .option('--verbose, -v', 'Show detailed output for each unit')
+  .action(async (options: { dryRun?: boolean; faction?: string; verbose?: boolean }) => {
+    const args: string[] = [];
+    if (options.dryRun) args.push('--dry-run');
+    if (options.faction) args.push('--faction', options.faction);
+    if (options.verbose) args.push('--verbose');
+    await runMcpScript('reparse-all.ts', args);
+  });
