@@ -79,12 +79,13 @@ The scraper uses Firecrawl to fetch Wahapedia pages and parse them for structure
 
 ### HTML vs Markdown Parsing
 
-The scraper requests both HTML and markdown from Firecrawl (`includeHtml: true`) but **prefers HTML parsing**:
+The scraper requests both HTML and markdown from Firecrawl (`includeHtml: true`) but **prefers HTML parsing** using [Cheerio](https://cheerio.js.org/) for DOM traversal:
 
 **Why HTML?**
 - Firecrawl's markdown conversion creates artifacts (concatenated text)
 - Example: `'blastpsychic'` instead of `'[BLAST], [PSYCHIC]'`
-- HTML preserves original structure for accurate extraction
+- HTML preserves original DOM structure for accurate extraction
+- Weapon abilities are embedded in `<span class="kwb2">` elements that are lost in markdown
 
 **Smart Format Detection:**
 ```typescript
@@ -97,9 +98,16 @@ if (isHtml) {
 }
 ```
 
+**HTML Parser Functions:**
+- `parseHtmlDatasheet()` - Main entry point for HTML content
+- `parseUnitStatsFromHtml()` - Extracts M/T/SV/W/LD/OC from stat tables
+- `extractWeaponsFromHtml()` - Parses weapon tables, extracting abilities from `span.kwb2`
+- `extractAbilitiesFromHtml()` - Extracts unit abilities with descriptions
+
 **Markdown Fallback:**
 - Used for cached content from before HTML parsing was added
 - Includes `CONCATENATION_FIXES` map for common Firecrawl artifacts
+- Functions prefixed with `parseMarkdown*` or `extractMarkdown*`
 
 ### Scrape Pipeline Stages
 

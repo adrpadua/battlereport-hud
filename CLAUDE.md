@@ -113,7 +113,11 @@ The MCP server populates its database by scraping Wahapedia using Firecrawl:
 - **Unit Parser** (`parsers/unit-parser.ts`) - Dual-format parser preferring HTML over markdown
 - **Run Scraper** (`run-scraper.ts`) - Orchestrates core rules, factions, and unit scraping
 
-**Key Design**: HTML parsing is preferred over markdown because Firecrawl's markdown conversion creates artifacts (e.g., `'blastpsychic'` instead of `'[BLAST], [PSYCHIC]'`). HTML parsing uses Cheerio to extract data directly from DOM structure.
+**Key Design**: HTML parsing (via Cheerio) is preferred over markdown because Firecrawl's markdown conversion creates artifacts (e.g., `'blastpsychic'` instead of `'[BLAST], [PSYCHIC]'`). The parser auto-detects content format and routes to the appropriate parser:
+- `parseHtmlDatasheet()` - Cheerio DOM parsing for HTML content
+- `parseMarkdownDatasheet()` - Regex-based fallback for cached markdown content
+
+**Weapon Ability Extraction**: HTML parsing extracts weapon abilities from `<span class="kwb2">` elements in Wahapedia's HTML structure, preserving proper formatting like `[BLAST], [PSYCHIC]`.
 
 ### Data Flow
 1. YouTube video URL -> Extract transcript, chapters, metadata
