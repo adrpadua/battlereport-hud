@@ -24,7 +24,7 @@ syncCmd
       console.log('Cancelled.');
       return;
     }
-    await runMcpCli('scrape', ['core-rules']);
+    await runMcpCli('scrape', ['core']);
   });
 
 syncCmd
@@ -41,7 +41,7 @@ syncCmd
       console.log('Cancelled.');
       return;
     }
-    await runMcpCli('scrape', ['faction', slug]);
+    await runMcpCli('scrape', ['factions', '-f', slug]);
   });
 
 syncCmd
@@ -58,7 +58,7 @@ syncCmd
       console.log('Cancelled.');
       return;
     }
-    await runMcpCli('scrape', ['all-factions']);
+    await runMcpCli('scrape', ['factions']);
   });
 
 syncCmd
@@ -75,7 +75,7 @@ syncCmd
       console.log('Cancelled.');
       return;
     }
-    await runMcpCli('scrape', ['units', faction]);
+    await runMcpCli('scrape', ['units', '-f', faction]);
   });
 
 syncCmd
@@ -109,7 +109,7 @@ syncCmd
       console.log('Cancelled.');
       return;
     }
-    await runMcpCli('scrape', ['mission-pack', packId]);
+    await runMcpCli('scrape', ['missions', '-m', packId]);
   });
 
 // === PARSE Commands (Re-process cached data → database) ===
