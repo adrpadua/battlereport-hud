@@ -553,6 +553,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  padding: 0;
+  line-height: 1;
 }
 
 .unit-info-button:hover {
