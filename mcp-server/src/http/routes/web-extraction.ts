@@ -312,16 +312,24 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
           };
         }
 
-        // Get unit names for selected factions from the database
+        // Get unit and detachment names for selected factions from the database
         const factionUnitNames = new Map<string, string[]>();
+        const factionDetachmentNames = new Map<string, string[]>();
         for (const faction of typedFactions) {
           try {
             const unitNames = await fetchNamesForCategory(db, 'units', faction);
             factionUnitNames.set(faction, unitNames);
             console.log(`Loaded ${unitNames.length} unit names for faction: ${faction}`);
+
+            const detachmentNames = await fetchNamesForCategory(db, 'detachments', faction);
+            // Filter out placeholder detachment names like "# Not Found"
+            const validDetachments = detachmentNames.filter(name => !name.startsWith('#') && !name.startsWith('!'));
+            factionDetachmentNames.set(faction, validDetachments);
+            console.log(`Loaded ${validDetachments.length} detachment names for faction: ${faction}`);
           } catch (error) {
-            console.error(`Failed to load unit names for faction ${faction}:`, error);
+            console.error(`Failed to load names for faction ${faction}:`, error);
             factionUnitNames.set(faction, []);
+            factionDetachmentNames.set(faction, []);
           }
         }
 
@@ -330,6 +338,7 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
           videoData,
           factions: typedFactions,
           factionUnitNames,
+          factionDetachmentNames,
           apiKey,
           cachedAiResponse,
         });

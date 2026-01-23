@@ -327,11 +327,7 @@ Just output the base unit name like "Intercessor Squad" or "Zoanthropes", not "Z
 Guidelines:
 - Extract player names and their factions accurately
 - IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
-- IMPORTANT: Detachment is REQUIRED for each player. Common detachments include:
-  - Space Marines: Gladius Task Force, Ironstorm Spearhead, Firestorm Assault Force, Vanguard Spearhead, etc.
-  - Aeldari: Battle Host, etc.
-  - Necrons: Awakened Dynasty, Canoptek Court, Hypercrypt Legion, etc.
-  - If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
+- IMPORTANT: Detachment is REQUIRED for each player. Use EXACT names from the CANONICAL DETACHMENT NAMES section when possible. If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
 - Include characters (e.g., Chaplain, Captain, Overlord), infantry squads, vehicles, monsters, and any other units
 - Assign each unit to player 0 or player 1 based on context (who owns/controls it)
@@ -344,7 +340,11 @@ Guidelines:
 /**
  * Build user prompt with video data.
  */
-function buildUserPrompt(videoData: VideoData, factionUnitNames?: Map<string, string[]>): string {
+function buildUserPrompt(
+  videoData: VideoData,
+  factionUnitNames?: Map<string, string[]>,
+  factionDetachmentNames?: Map<string, string[]>
+): string {
   let prompt = `Analyze this Warhammer 40,000 battle report video and extract the army lists and game information.
 
 VIDEO TITLE: ${videoData.title}
@@ -354,6 +354,16 @@ CHANNEL: ${videoData.channel}
 DESCRIPTION:
 ${videoData.description}
 `;
+
+  // Add canonical detachment names to user prompt
+  if (factionDetachmentNames && factionDetachmentNames.size > 0) {
+    prompt += '\n\nCANONICAL DETACHMENT NAMES BY FACTION:';
+    prompt += '\nUse EXACT names from these lists. Each faction has specific detachments - do not use detachments from other factions.';
+
+    for (const [faction, detachments] of factionDetachmentNames) {
+      prompt += `\n\n${faction.toUpperCase()}:\n${detachments.join(', ')}`;
+    }
+  }
 
   // Add canonical unit names to user prompt (moved from system prompt for better caching)
   if (factionUnitNames && factionUnitNames.size > 0) {
@@ -404,6 +414,7 @@ export interface ExtractBattleReportOptions {
   videoData: VideoData;
   factions: [string, string];
   factionUnitNames: Map<string, string[]>;
+  factionDetachmentNames?: Map<string, string[]>;
   apiKey: string;
   onStageComplete?: (artifact: StageArtifact) => void;
   /** If provided, skip OpenAI call and use this cached response */
@@ -416,7 +427,7 @@ export interface ExtractBattleReportOptions {
 export async function extractBattleReportWithArtifacts(
   options: ExtractBattleReportOptions
 ): Promise<ExtractionResultWithArtifacts> {
-  const { videoData, factionUnitNames, apiKey, onStageComplete, cachedAiResponse } = options;
+  const { videoData, factionUnitNames, factionDetachmentNames, apiKey, onStageComplete, cachedAiResponse } = options;
   const startTime = Date.now();
   const artifacts: StageArtifact[] = [];
 
@@ -458,12 +469,16 @@ export async function extractBattleReportWithArtifacts(
       factionUnitNames.size > 0
         ? [...factionUnitNames.values()].reduce((sum, arr) => sum + arr.length, 0)
         : 0;
-    const userPrompt = buildUserPrompt(videoData, factionUnitNames);
+    const detachmentCount =
+      factionDetachmentNames && factionDetachmentNames.size > 0
+        ? [...factionDetachmentNames.values()].reduce((sum, arr) => sum + arr.length, 0)
+        : 0;
+    const userPrompt = buildUserPrompt(videoData, factionUnitNames, factionDetachmentNames);
 
     stage1 = completeStageArtifact(
       stage1,
-      `Prompt prepared with ${unitCount} unit names, ${userPrompt.length} chars`,
-      { promptLength: userPrompt.length, unitCount }
+      `Prompt prepared with ${unitCount} units, ${detachmentCount} detachments, ${userPrompt.length} chars`,
+      { promptLength: userPrompt.length, unitCount, detachmentCount }
     );
     emitArtifact(stage1);
 

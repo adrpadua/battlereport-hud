@@ -321,11 +321,7 @@ TRANSCRIPT FORMAT:
 Guidelines:
 - Extract player names and their factions accurately
 - IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
-- IMPORTANT: Detachment is REQUIRED for each player. Common detachments include:
-  - Space Marines: Gladius Task Force, Ironstorm Spearhead, Firestorm Assault Force, Vanguard Spearhead, etc.
-  - Aeldari: Battle Host, etc.
-  - Necrons: Awakened Dynasty, Canoptek Court, Hypercrypt Legion, etc.
-  - If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
+- IMPORTANT: Detachment is REQUIRED for each player. Use EXACT names from the CANONICAL DETACHMENT NAMES section when available. If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
 - Look for [UNIT:...] tags for pre-identified units with official names
 - Look for [STRAT:...] tags for pre-identified stratagems
@@ -350,6 +346,7 @@ function buildUserPrompt(
   videoData: VideoData,
   preprocessed?: PreprocessedTranscript,
   factionUnitNames?: Map<string, string[]>,
+  factionDetachmentNames?: Map<string, string[]>,
   chunkOptions?: ChunkOptions
 ): string {
   let prompt = `Analyze this Warhammer 40,000 battle report video and extract the army lists and game information.
@@ -367,6 +364,16 @@ ${videoData.description}
     prompt += `\n\n[PROCESSING CHUNK ${chunkOptions.chunkIndex + 1} OF ${chunkOptions.totalChunks}]
 Note: This is a partial transcript. Extract all units, stratagems, and enhancements you can identify from this section.
 Army lists and player info are typically in the first chunk. Later chunks may contain additional unit mentions during gameplay.`;
+  }
+
+  // Add canonical detachment names to user prompt
+  if (factionDetachmentNames && factionDetachmentNames.size > 0) {
+    prompt += '\n\nCANONICAL DETACHMENT NAMES BY FACTION:';
+    prompt += '\nUse EXACT names from these lists. Each faction has specific detachments - do not use detachments from other factions.';
+
+    for (const [faction, detachments] of factionDetachmentNames) {
+      prompt += `\n\n${faction.toUpperCase()}:\n${detachments.join(', ')}`;
+    }
   }
 
   // Add canonical unit names to user prompt (moved from system prompt for better caching)
@@ -497,7 +504,7 @@ async function processTranscriptChunk(
           { role: 'system', content: SYSTEM_PROMPT },
           {
             role: 'user',
-            content: buildUserPrompt(videoData, preprocessed, factionUnitNames, {
+            content: buildUserPrompt(videoData, preprocessed, factionUnitNames, undefined, {
               transcriptChunk,
               chunkIndex,
               totalChunks,
