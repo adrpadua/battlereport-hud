@@ -4,7 +4,7 @@ import { join } from 'path';
 import { parseDatasheets } from '../scraper/parsers/unit-parser.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { ScrapeResult } from '../scraper/firecrawl-client.js';
 
 interface ReparseOptions {
