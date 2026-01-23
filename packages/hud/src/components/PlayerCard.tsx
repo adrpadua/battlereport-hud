@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Player, Stratagem, Enhancement } from '../types';
 import { ConfidenceBadge } from './ConfidenceBadge';
+import { FactionCard } from './FactionCard';
 import { DetachmentCard } from './DetachmentCard';
 import { UnitList } from './UnitList';
 import { StratagemList } from './StratagemList';
@@ -13,6 +14,7 @@ interface PlayerCardProps {
   enhancements?: Enhancement[];
   onSeekToTimestamp?: (seconds: number) => void;
   onOpenDetail?: (unitName: string, faction: string) => void;
+  onSearchCorrection?: (unitName: string, faction: string, unitIndex: number) => void;
 }
 
 export function PlayerCard({
@@ -22,6 +24,7 @@ export function PlayerCard({
   enhancements = [],
   onSeekToTimestamp,
   onOpenDetail,
+  onSearchCorrection,
 }: PlayerCardProps): React.ReactElement {
   // Choose a color based on player index
   const playerColors = ['#3b82f6', '#ef4444']; // Blue, Red
@@ -33,12 +36,11 @@ export function PlayerCard({
       style={{ borderLeft: `3px solid ${accentColor}` }}
     >
       <div className="player-header">
-        <div>
-          <div className="player-name">{player.name}</div>
-          <div className="player-faction">{player.faction}</div>
-        </div>
+        <div className="player-name">{player.name}</div>
         <ConfidenceBadge level={player.confidence} />
       </div>
+
+      <FactionCard faction={player.faction} />
 
       {player.detachment && (
         <DetachmentCard
@@ -47,7 +49,7 @@ export function PlayerCard({
         />
       )}
 
-      <UnitList playerIndex={playerIndex} playerFaction={player.faction} onSeekToTimestamp={onSeekToTimestamp} onOpenDetail={onOpenDetail} />
+      <UnitList playerIndex={playerIndex} playerFaction={player.faction} onSeekToTimestamp={onSeekToTimestamp} onOpenDetail={onOpenDetail} onSearchCorrection={onSearchCorrection} />
       <StratagemList stratagems={stratagems} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
       <EnhancementList enhancements={enhancements} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
     </div>

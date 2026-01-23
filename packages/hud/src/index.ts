@@ -1,6 +1,7 @@
 // Components
 export { HudContainer } from './components/HudContainer';
 export { PlayerCard } from './components/PlayerCard';
+export { FactionCard } from './components/FactionCard';
 export { UnitList } from './components/UnitList';
 export { UnitCell } from './components/UnitCell';
 export { StratagemList } from './components/StratagemList';
@@ -78,6 +79,9 @@ export type {
   BattleActions,
   BattleStore,
   ProgressLogEntry,
+  // Card details types
+  DetachmentDetails,
+  FactionDetails,
   // Unit search types
   UnitSearchResult,
   UnitSearchModalProps,

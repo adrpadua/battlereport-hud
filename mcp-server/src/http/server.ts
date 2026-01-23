@@ -12,6 +12,7 @@ import { registerRulesRoutes } from './routes/rules.js';
 import { registerAbilityRoutes } from './routes/abilities.js';
 import { registerKeywordRoutes } from './routes/keywords.js';
 import { registerDetachmentRoutes } from './routes/detachments.js';
+import { registerFactionRoutes } from './routes/factions.js';
 
 const HTTP_PORT = 40401;
 
@@ -42,6 +43,7 @@ export async function createHttpServer(db: Database) {
   registerAbilityRoutes(fastify, db);
   registerKeywordRoutes(fastify, db);
   registerDetachmentRoutes(fastify, db);
+  registerFactionRoutes(fastify, db);
 
   return fastify;
 }

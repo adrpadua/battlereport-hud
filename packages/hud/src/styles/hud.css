@@ -1,5 +1,7 @@
 /* Import unit detail modal styles */
 @import './unit-detail-modal.css';
+/* Import unit search modal styles */
+@import './unit-search-modal.css';
 
 /* HUD Base Styles */
 .battlereport-hud-root {
@@ -199,6 +201,121 @@
 }
 
 .detachment-error {
+  padding: 6px 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 4px;
+  color: #f87171;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* ============================================
+   Faction Card - Expandable faction/army info
+   ============================================ */
+
+.faction-section {
+  margin-top: 8px;
+}
+
+.faction-section .section-title {
+  margin-top: 0;
+}
+
+.faction-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.faction-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background 0.15s ease, border-radius 0.15s ease;
+}
+
+.faction-card-header.expandable {
+  cursor: pointer;
+}
+
+.faction-card-header.expandable:hover {
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.faction-card-header.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.faction-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.faction-card-name {
+  color: #a78bfa;
+  font-weight: 500;
+}
+
+.faction-rule-label {
+  color: #c4b5fd;
+  font-size: 11px;
+  font-style: italic;
+}
+
+.faction-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.faction-loading {
+  color: #888;
+  font-size: 11px;
+}
+
+.faction-expand-indicator {
+  color: #a78bfa;
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.faction-expand-indicator.expanded {
+  transform: rotate(180deg);
+}
+
+.faction-details {
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-top: none;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: 10px;
+  animation: slideDown 0.2s ease-out;
+}
+
+.faction-rule-text {
+  color: #d1d5db;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.faction-rule-paragraph {
+  margin: 0 0 8px 0;
+}
+
+.faction-rule-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.faction-error {
   padding: 6px 10px;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);

@@ -94,6 +94,12 @@ export interface DetachmentDetails {
   faction: string;
 }
 
+// Faction details for display
+export interface FactionDetails {
+  name: string;
+  armyRule: string | null;
+}
+
 // Complete battle report
 export interface BattleReport {
   players: [Player, Player] | [Player];
@@ -177,3 +183,21 @@ export interface BattleActions {
 
 // Full battle store type
 export type BattleStore = BattleState & BattleActions;
+
+// Unit search result from fuzzy search API
+export interface UnitSearchResult {
+  name: string;
+  category: string;
+  faction?: string;
+  confidence: number;
+}
+
+// Unit search modal props
+export interface UnitSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialQuery: string;
+  faction: string;
+  onSelect: (unitName: string) => void;
+  onSearch: (query: string, faction: string) => Promise<UnitSearchResult[]>;
+}

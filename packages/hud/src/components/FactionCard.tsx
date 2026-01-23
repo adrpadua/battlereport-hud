@@ -1,0 +1,102 @@
+import React, { useState, useEffect } from 'react';
+import type { FactionDetails } from '../types';
+import { RuleText } from './RuleText';
+import { useExpandable } from '../hooks/useExpandable';
+import { stripFluffParagraphs } from '../utils/rule-text-parser';
+
+interface FactionCardProps {
+  faction: string;
+}
+
+export function FactionCard({
+  faction,
+}: FactionCardProps): React.ReactElement | null {
+  const [factionDetails, setFactionDetails] = useState<FactionDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const hasExpandableContent = Boolean(factionDetails?.armyRule);
+  const { isExpanded, headerProps, contentClassName } = useExpandable({ hasContent: hasExpandableContent });
+
+  useEffect(() => {
+    if (!faction) return;
+
+    const fetchFaction = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(
+          `http://localhost:40401/api/factions/${encodeURIComponent(faction)}`
+        );
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            setFactionDetails(null);
+            return;
+          }
+          throw new Error(`Failed to fetch faction: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setFactionDetails(data.faction);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch faction');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFaction();
+  }, [faction]);
+
+  // Don't render if no faction
+  if (!faction) {
+    return null;
+  }
+
+  return (
+    <div className="faction-section">
+      <div className="section-title">ARMY</div>
+      <div className="faction-card">
+        <div
+          className={`faction-card-header ${contentClassName} ${hasExpandableContent ? 'expandable' : ''}`}
+          {...headerProps}
+        >
+          <div className="faction-card-info">
+            <span className="faction-card-name">{factionDetails?.name || faction}</span>
+            {hasExpandableContent && (
+              <span className="faction-rule-label">Army Rule</span>
+            )}
+          </div>
+          <div className="faction-card-actions">
+            {isLoading && <span className="faction-loading">...</span>}
+            {hasExpandableContent && (
+              <span className={`faction-expand-indicator ${isExpanded ? 'expanded' : ''}`}>
+                ▼
+              </span>
+            )}
+          </div>
+        </div>
+
+        {isExpanded && factionDetails?.armyRule && (
+          <div className="faction-details">
+            <div className="faction-rule-text">
+              {stripFluffParagraphs(factionDetails.armyRule).split(/\n\n+/).map((paragraph, index) => (
+                <p key={index} className="faction-rule-paragraph">
+                  <RuleText text={paragraph} />
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="faction-error">
+            Unable to load faction details
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
