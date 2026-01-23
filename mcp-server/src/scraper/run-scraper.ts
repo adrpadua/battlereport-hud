@@ -143,6 +143,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       const detachments = parseDetachments(factionResult.markdown, factionResult.url);
       console.log(`  Found ${detachments.length} detachments`);
 
+      let stratagemCount = 0;
       for (const detachment of detachments) {
         const [insertedDetachment] = await db
           .insert(schema.detachments)
@@ -162,7 +163,7 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
 
         const detachmentId = insertedDetachment!.id;
 
-        // Parse enhancements from this specific detachment's section
+        // Parse enhancements and stratagems from this specific detachment's section
         const detachmentSection = extractDetachmentSection(factionResult.markdown, detachment.name);
         if (detachmentSection) {
           const enhancements = parseEnhancements(detachmentSection, factionResult.url);
@@ -173,19 +174,35 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
               .values({ ...enhancement, detachmentId })
               .onConflictDoNothing();
           }
+
+          // Parse stratagems for this detachment
+          const stratagems = parseStratagems(detachmentSection, factionResult.url);
+          console.log(`    Found ${stratagems.length} stratagems for ${detachment.name}`);
+          stratagemCount += stratagems.length;
+          for (const stratagem of stratagems) {
+            await db
+              .insert(schema.stratagems)
+              .values({ ...stratagem, factionId, detachmentId })
+              .onConflictDoUpdate({
+                target: [schema.stratagems.slug, schema.stratagems.factionId],
+                set: {
+                  detachmentId,
+                  name: stratagem.name,
+                  cpCost: stratagem.cpCost,
+                  phase: stratagem.phase,
+                  when: stratagem.when,
+                  target: stratagem.target,
+                  effect: stratagem.effect,
+                  restrictions: stratagem.restrictions,
+                  sourceUrl: stratagem.sourceUrl,
+                  updatedAt: new Date(),
+                },
+              });
+          }
         }
       }
 
-      // Parse stratagems from main page
-      const stratagems = parseStratagems(factionResult.markdown, factionResult.url);
-      console.log(`  Found ${stratagems.length} stratagems`);
-
-      for (const stratagem of stratagems) {
-        await db
-          .insert(schema.stratagems)
-          .values({ ...stratagem, factionId })
-          .onConflictDoNothing();
-      }
+      console.log(`  Total stratagems: ${stratagemCount}`);
     } catch (error) {
       console.error(`Failed to scrape faction ${factionSlug}:`, error);
 

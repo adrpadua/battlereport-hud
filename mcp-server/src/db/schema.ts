@@ -273,6 +273,7 @@ export const stratagems = pgTable('stratagems', {
   detachmentIdx: index('stratagems_detachment_idx').on(table.detachmentId),
   factionIdx: index('stratagems_faction_idx').on(table.factionId),
   phaseIdx: index('stratagems_phase_idx').on(table.phase),
+  slugFactionUnique: uniqueIndex('stratagems_slug_faction_unique').on(table.slug, table.factionId),
 }));
 
 // ============================================================================
