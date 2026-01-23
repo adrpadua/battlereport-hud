@@ -49,7 +49,7 @@ export const FACTION_SLUGS = [
   'chaos-knights',
   'chaos-space-marines',
   'death-guard',
-  // 'emperors-children', // Not yet on Wahapedia
+  'emperor-s-children',
   'thousand-sons',
   'world-eaters',
 
