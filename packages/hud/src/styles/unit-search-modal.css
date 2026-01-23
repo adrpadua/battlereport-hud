@@ -255,6 +255,29 @@
   border-color: rgba(168, 85, 247, 0.6);
 }
 
+/* Delete Button in UnitCell */
+.unit-delete-button {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 4px;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.unit-delete-button:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
 /* Mobile Responsive */
 @media (max-width: 480px) {
   .unit-search-overlay {

@@ -12,6 +12,7 @@ interface UnitListProps {
 
 export function UnitList({ playerIndex, playerFaction, onSeekToTimestamp, onOpenDetail, onSearchCorrection }: UnitListProps): React.ReactElement | null {
   const acceptSuggestion = useBattleStore((state) => state.acceptSuggestion);
+  const removeUnit = useBattleStore((state) => state.removeUnit);
   const allUnits = useBattleStore((state) => state.report?.units ?? []);
 
   // Filter units for this player, with their original indices
@@ -37,6 +38,7 @@ export function UnitList({ playerIndex, playerFaction, onSeekToTimestamp, onOpen
             onAcceptSuggestion={acceptSuggestion}
             onOpenDetail={onOpenDetail}
             onSearchCorrection={onSearchCorrection}
+            onDelete={removeUnit}
           />
         ))}
       </div>

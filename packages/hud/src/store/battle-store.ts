@@ -50,6 +50,20 @@ export const useBattleStore = create<BattleStore>((set) => ({
       };
     }),
 
+  removeUnit: (unitIndex: number) =>
+    set((state) => {
+      if (!state.report) return state;
+
+      const newUnits = state.report.units.filter((_, index) => index !== unitIndex);
+
+      return {
+        report: {
+          ...state.report,
+          units: newUnits,
+        },
+      };
+    }),
+
   acceptSuggestion: (unitIndex: number) =>
     set((state) => {
       if (!state.report) return state;

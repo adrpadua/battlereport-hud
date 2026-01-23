@@ -100,6 +100,19 @@ export interface FactionDetails {
   armyRule: string | null;
 }
 
+// Stratagem details for display
+export interface StratagemDetails {
+  name: string;
+  cpCost: string;
+  phase: string;
+  when: string | null;
+  target: string | null;
+  effect: string;
+  restrictions: string | null;
+  detachment: string | null;
+  faction: string | null;
+}
+
 // Complete battle report
 export interface BattleReport {
   players: [Player, Player] | [Player];
@@ -170,6 +183,7 @@ export interface BattleActions {
   toggleExpanded: () => void;
   reset: () => void;
   updateUnit: (unitIndex: number, updates: Partial<Unit>) => void;
+  removeUnit: (unitIndex: number) => void;
   acceptSuggestion: (unitIndex: number) => void;
   setPhase: (phase: ExtractionPhase, statusMessage?: string) => void;
   setVideoData: (videoData: VideoData) => void;

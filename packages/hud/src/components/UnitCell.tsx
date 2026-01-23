@@ -12,6 +12,7 @@ interface UnitCellProps {
   onAcceptSuggestion?: (unitIndex: number) => void;
   onOpenDetail?: (unitName: string, faction: string) => void;
   onSearchCorrection?: (unitName: string, faction: string, unitIndex: number) => void;
+  onDelete?: (unitIndex: number) => void;
 }
 
 function formatTimestamp(seconds: number): string {
@@ -97,6 +98,7 @@ export function UnitCell({
   onAcceptSuggestion,
   onOpenDetail,
   onSearchCorrection,
+  onDelete,
 }: UnitCellProps): React.ReactElement {
   const hasExpandableContent = Boolean(unit.stats || (unit.keywords && unit.keywords.length > 0));
   const { isExpanded, headerProps, contentClassName } = useExpandable({ hasContent: hasExpandableContent });
@@ -128,6 +130,13 @@ export function UnitCell({
     }
   };
 
+  const handleDeleteClick = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(unitIndex);
+    }
+  };
+
   return (
     <div className="unit-cell">
       <div
@@ -153,6 +162,15 @@ export function UnitCell({
               title="Correct unit name"
             >
               &#x270E;
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={handleDeleteClick}
+              className="unit-delete-button"
+              title="Remove unit from list"
+            >
+              ✕
             </button>
           )}
           {unit.isValidated && onOpenDetail && playerFaction && (
