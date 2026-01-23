@@ -324,7 +324,7 @@ Guidelines:
 - SUBFACTION is OPTIONAL - only include if explicitly mentioned or clearly identifiable:
   - Space Marines: subfaction = chapter (Blood Angels, Dark Angels, Space Wolves, Deathwatch, Black Templars, Ultramarines, Imperial Fists, etc.). All SM chapters share the same detachments.
   - Aeldari: subfaction = Craftworld (Ulthwé, Biel-Tan, Saim-Hann, Iyanden, etc.)
-  - Chaos Daemons: subfaction = Chaos God (Khorne, Nurgle, Tzeentch, Slaanesh) or "Undivided" for mixed daemon armies
+  - Chaos Daemons: subfaction = Chaos God (Khorne, Nurgle, Tzeentch, Slaanesh) ONLY if running mono-god. Mixed daemon armies have no subfaction.
   - If no subfaction is mentioned or identifiable, leave it as null
 - IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
 - IMPORTANT: Detachment is REQUIRED for each player. Use EXACT names from the CANONICAL DETACHMENT NAMES section when available. If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
