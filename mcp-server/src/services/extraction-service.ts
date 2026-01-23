@@ -764,6 +764,8 @@ export async function enrichUnitsWithStats(
 
       enrichedUnits.push({
         ...unit,
+        // Use database points cost, falling back to AI-extracted value
+        pointsCost: dbUnit.pointsCost ?? unit.pointsCost,
         stats: {
           movement: dbUnit.movement ?? '-',
           toughness: dbUnit.toughness ?? 0,
