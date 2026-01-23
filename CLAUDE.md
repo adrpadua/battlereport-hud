@@ -120,6 +120,8 @@ The MCP server populates its database by scraping Wahapedia using Firecrawl:
 
 **Weapon Ability Extraction**: HTML parsing extracts weapon abilities from `<span class="kwb2">` elements in Wahapedia's HTML structure, preserving proper formatting like `[BLAST], [PSYCHIC]`.
 
+**Parser Development Best Practice**: When modifying parsers (e.g., `unit-parser.ts`, `faction-parser.ts`), always favor re-parsing cached Firecrawl data rather than re-scraping from Wahapedia. The source HTML/markdown doesn't change—only our parsing logic does. This saves Firecrawl token usage and API calls. If you notice database discrepancies after parser changes, re-run the scraper with cached data (it will use the cache automatically) to apply the new parsing logic to existing content.
+
 ### Data Flow
 1. YouTube video URL -> Extract transcript, chapters, metadata
 2. Detect factions from title/description -> Load faction-specific unit names
