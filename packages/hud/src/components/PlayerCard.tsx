@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Player, Stratagem, Enhancement } from '../types';
 import { ConfidenceBadge } from './ConfidenceBadge';
+import { DetachmentCard } from './DetachmentCard';
 import { UnitList } from './UnitList';
 import { StratagemList } from './StratagemList';
 import { EnhancementList } from './EnhancementList';
@@ -35,12 +36,16 @@ export function PlayerCard({
         <div>
           <div className="player-name">{player.name}</div>
           <div className="player-faction">{player.faction}</div>
-          {player.detachment && (
-            <div className="player-detachment">{player.detachment}</div>
-          )}
         </div>
         <ConfidenceBadge level={player.confidence} />
       </div>
+
+      {player.detachment && (
+        <DetachmentCard
+          detachmentName={player.detachment}
+          faction={player.faction}
+        />
+      )}
 
       <UnitList playerIndex={playerIndex} playerFaction={player.faction} onSeekToTimestamp={onSeekToTimestamp} onOpenDetail={onOpenDetail} />
       <StratagemList stratagems={stratagems} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />

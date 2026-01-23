@@ -86,6 +86,14 @@ export interface Enhancement {
   videoTimestamp?: number; // seconds in video when mentioned
 }
 
+// Detachment details for display
+export interface DetachmentDetails {
+  name: string;
+  ruleName: string | null;
+  rule: string | null;
+  faction: string;
+}
+
 // Complete battle report
 export interface BattleReport {
   players: [Player, Player] | [Player];
