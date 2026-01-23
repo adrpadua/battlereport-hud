@@ -42,6 +42,7 @@ export interface WeaponProfile {
 export interface Player {
   name: string;
   faction: string;
+  subfaction?: string;  // e.g., "Blood Angels" for Space Marines, "Ulthwé" for Aeldari
   detachment: string;
   confidence: ConfidenceLevel;
 }

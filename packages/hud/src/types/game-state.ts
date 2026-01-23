@@ -46,6 +46,7 @@ export interface PlayerGameState {
   index: PlayerIndex;
   name: string;
   faction: string;
+  subfaction?: string;  // e.g., "Blood Angels" for Space Marines
   detachment: string;
   commandPoints: number;
   victoryPoints: number;

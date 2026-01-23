@@ -267,7 +267,8 @@ You must respond with a valid JSON object matching this schema:
   "players": [
     {
       "name": "Player name or identifier",
-      "faction": "e.g., Space Marines, Necrons, Aeldari",
+      "faction": "Parent faction - e.g., Space Marines, Necrons, Aeldari",
+      "subfaction": "Chapter/Craftworld/etc. - e.g., Blood Angels, Ultramarines, Ulthwé (null if not applicable)",
       "detachment": "REQUIRED - e.g., Gladius Task Force, Awakened Dynasty",
       "confidence": "high" | "medium" | "low"
     }
@@ -320,6 +321,8 @@ TRANSCRIPT FORMAT:
 
 Guidelines:
 - Extract player names and their factions accurately
+- IMPORTANT: For Space Marines, use "Space Marines" as faction and the specific chapter (Blood Angels, Dark Angels, Space Wolves, Deathwatch, Black Templars, Ultramarines, Imperial Fists, etc.) as subfaction. All SM chapters share the same detachments.
+- IMPORTANT: For Aeldari, use "Aeldari" as faction and the specific Craftworld (Ulthwé, Biel-Tan, Saim-Hann, etc.) as subfaction if mentioned.
 - IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
 - IMPORTANT: Detachment is REQUIRED for each player. Use EXACT names from the CANONICAL DETACHMENT NAMES section when available. If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section

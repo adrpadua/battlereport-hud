@@ -49,7 +49,7 @@ export function PlayerCard({
         <ConfidenceBadge level={player.confidence} />
       </div>
 
-      <FactionCard faction={player.faction} totalPoints={totalPoints || undefined} />
+      <FactionCard faction={player.faction} subfaction={player.subfaction} totalPoints={totalPoints || undefined} />
 
       {player.detachment && (
         <DetachmentCard

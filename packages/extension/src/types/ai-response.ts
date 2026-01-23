@@ -4,7 +4,8 @@ export const ConfidenceLevelSchema = z.enum(['high', 'medium', 'low']);
 
 export const PlayerSchema = z.object({
   name: z.string().describe('Player name or identifier'),
-  faction: z.string().describe('Warhammer 40k faction (e.g., Space Marines, Orks, Aeldari)'),
+  faction: z.string().describe('Parent Warhammer 40k faction (e.g., Space Marines, Orks, Aeldari)'),
+  subfaction: z.string().nullable().optional().describe('Chapter/Craftworld/etc. (e.g., Blood Angels, Ultramarines, Ulthwé)'),
   detachment: z.string().describe('Army detachment (e.g., Gladius Task Force, Ironstorm Spearhead). REQUIRED - infer from units/stratagems if not explicitly stated'),
   confidence: ConfidenceLevelSchema.describe('How confident we are in this extraction'),
 });

@@ -94,6 +94,7 @@ export type ConfidenceLevel = 'high' | 'medium' | 'low';
 export interface Player {
   name: string;
   faction: string;
+  subfaction?: string;  // e.g., "Blood Angels" for Space Marines, "Ulthwé" for Aeldari
   detachment: string;
   confidence: ConfidenceLevel;
 }
@@ -140,6 +141,7 @@ const ConfidenceLevelSchema = z.enum(['high', 'medium', 'low']);
 const PlayerSchema = z.object({
   name: z.string(),
   faction: z.string(),
+  subfaction: z.string().nullable().optional(),
   detachment: z.string(),
   confidence: ConfidenceLevelSchema,
 });
@@ -290,7 +292,8 @@ You must respond with a valid JSON object matching this schema:
   "players": [
     {
       "name": "Player name or identifier",
-      "faction": "e.g., Space Marines, Necrons, Aeldari",
+      "faction": "Parent faction - e.g., Space Marines, Necrons, Aeldari",
+      "subfaction": "Chapter/Craftworld/etc. - e.g., Blood Angels, Ultramarines, Ulthwé (null if not applicable)",
       "detachment": "REQUIRED - e.g., Gladius Task Force, Awakened Dynasty",
       "confidence": "high" | "medium" | "low"
     }
@@ -326,6 +329,8 @@ Just output the base unit name like "Intercessor Squad" or "Zoanthropes", not "Z
 
 Guidelines:
 - Extract player names and their factions accurately
+- IMPORTANT: For Space Marines, use "Space Marines" as faction and the specific chapter (Blood Angels, Dark Angels, Space Wolves, Deathwatch, Black Templars, Ultramarines, Imperial Fists, etc.) as subfaction. All SM chapters share the same detachments.
+- IMPORTANT: For Aeldari, use "Aeldari" as faction and the specific Craftworld (Ulthwé, Biel-Tan, Saim-Hann, etc.) as subfaction if mentioned.
 - IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
 - IMPORTANT: Detachment is REQUIRED for each player. Use EXACT names from the CANONICAL DETACHMENT NAMES section when possible. If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
@@ -577,6 +582,7 @@ export async function extractBattleReportWithArtifacts(
     players: validated.players.map((p) => ({
       name: p.name,
       faction: p.faction,
+      subfaction: p.subfaction ?? undefined,
       detachment: p.detachment ?? undefined,
       confidence: p.confidence,
     })) as BattleReport['players'],
@@ -734,9 +740,49 @@ export function isMisclassifiedUnit(name: string): boolean {
   return MISCLASSIFIED_UNIT_PATTERNS.some((pattern) => pattern.test(name));
 }
 
+// Space Marine chapters that use the parent "Space Marines" detachments
+const SPACE_MARINE_CHAPTERS = [
+  'Blood Angels',
+  'Dark Angels',
+  'Space Wolves',
+  'Deathwatch',
+  'Black Templars',
+  'Ultramarines',
+  'Imperial Fists',
+  'White Scars',
+  'Raven Guard',
+  'Salamanders',
+  'Iron Hands',
+];
+
+/**
+ * Normalize faction and subfaction for Space Marines.
+ * If AI put chapter name in faction field, move it to subfaction.
+ */
+function normalizeSpaceMarineFaction(player: Player): Player {
+  const factionLower = player.faction.toLowerCase();
+
+  // Check if faction is actually a chapter name
+  const isChapterInFaction = SPACE_MARINE_CHAPTERS.some(
+    (chapter) => factionLower === chapter.toLowerCase()
+  );
+
+  if (isChapterInFaction) {
+    // Move chapter from faction to subfaction
+    return {
+      ...player,
+      faction: 'Space Marines',
+      subfaction: player.faction,
+    };
+  }
+
+  return player;
+}
+
 /**
  * Validates and corrects player detachments against the database.
  * Ensures each player's detachment belongs to their faction.
+ * Handles subfactions (e.g., Space Marine chapters use parent faction's detachments).
  */
 export async function validateDetachments(
   players: Player[],
@@ -744,9 +790,16 @@ export async function validateDetachments(
 ): Promise<Player[]> {
   const validatedPlayers: Player[] = [];
 
-  for (const player of players) {
+  for (let player of players) {
+    // Normalize Space Marines faction/subfaction
+    player = normalizeSpaceMarineFaction(player);
+
+    // For detachment lookup, use the parent faction
+    // (e.g., "Space Marines" for all SM chapters)
+    const factionForDetachments = player.faction;
+
     // Find faction in database
-    const faction = await findFaction(db, player.faction);
+    const faction = await findFaction(db, factionForDetachments);
 
     if (!faction) {
       // Faction not found, keep player as-is
@@ -779,7 +832,7 @@ export async function validateDetachments(
 
       if (fuzzyMatch) {
         console.log(
-          `Corrected detachment for ${player.faction}: "${player.detachment}" -> "${fuzzyMatch}"`
+          `Corrected detachment for ${player.faction}${player.subfaction ? ` (${player.subfaction})` : ''}: "${player.detachment}" -> "${fuzzyMatch}"`
         );
         validatedPlayers.push({ ...player, detachment: fuzzyMatch });
       } else {

@@ -139,6 +139,7 @@ export interface ObjectivesApiResponse {
 export interface PlayerInfo {
   name: string;
   faction: string;
+  subfaction?: string;  // e.g., "Blood Angels" for Space Marines
   factionId?: string;
   detachment: string;
   confidence: 'high' | 'medium' | 'low';
