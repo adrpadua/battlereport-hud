@@ -77,16 +77,15 @@ function parseArmyRules(markdown: string | null): ParsedArmyRule {
     result.lore = paragraphs.slice(0, firstRulesIdx).join('\n\n').trim();
   }
 
-  // Find effect text (rules paragraphs before tables)
+  // Find effect text (all paragraphs from first rules paragraph until tables)
   const effectParagraphs: string[] = [];
   for (let i = Math.max(0, firstRulesIdx); i < paragraphs.length; i++) {
     const p = paragraphs[i];
     if (!p) continue;
     // Stop when we hit a table
     if (p.startsWith('|')) break;
-    if (isRulesParagraph(p) || (firstRulesIdx === -1 && i === 0)) {
-      effectParagraphs.push(p);
-    }
+    // Include all paragraphs, not just those matching rules keywords
+    effectParagraphs.push(p);
   }
   if (effectParagraphs.length > 0) {
     result.effect = effectParagraphs.join('\n\n').trim();

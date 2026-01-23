@@ -207,6 +207,7 @@ async function mcpMenu(): Promise<void> {
     choices: [
       { name: 'Database operations', value: 'db' },
       { name: 'Scrape game data', value: 'scrape' },
+      { name: 'Reparse cached data', value: 'reparse' },
       { name: 'Ingest data', value: 'ingest' },
       { name: 'Index management', value: 'index' },
       { name: 'Query database', value: 'query' },
@@ -264,6 +265,48 @@ async function mcpMenu(): Promise<void> {
         validate: (v) => v.trim().length > 0 || 'Please enter a faction ID',
       });
       await runMcpCli('scrape', ['units', factionId]);
+    }
+  } else if (action === 'reparse') {
+    const reparseAction = await select({
+      message: 'Reparse Cached Data',
+      choices: [
+        { name: 'Reparse all units (uses cache only, no API calls)', value: 'all' },
+        { name: 'Reparse specific faction', value: 'faction' },
+        { name: '<- Back', value: 'back' },
+      ],
+    });
+    if (reparseAction === 'back') return;
+
+    if (reparseAction === 'all') {
+      const dryRun = await confirm({
+        message: 'Dry run (preview without saving)?',
+        default: true,
+      });
+      const verbose = await confirm({
+        message: 'Verbose output?',
+        default: false,
+      });
+      const args: string[] = [];
+      if (dryRun) args.push('--dry-run');
+      if (verbose) args.push('--verbose');
+      await runMcpScript('reparse-all.ts', args);
+    } else if (reparseAction === 'faction') {
+      const factionId = await input({
+        message: 'Enter faction ID (e.g., tyranids, space-marines):',
+        validate: (v) => v.trim().length > 0 || 'Please enter a faction ID',
+      });
+      const dryRun = await confirm({
+        message: 'Dry run (preview without saving)?',
+        default: true,
+      });
+      const verbose = await confirm({
+        message: 'Verbose output?',
+        default: false,
+      });
+      const args = ['--faction', factionId];
+      if (dryRun) args.push('--dry-run');
+      if (verbose) args.push('--verbose');
+      await runMcpScript('reparse-all.ts', args);
     }
   } else if (action === 'ingest') {
     const ingestAction = await select({
