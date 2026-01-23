@@ -8,34 +8,99 @@ BattleReport HUD is a monorepo for a Warhammer 40,000 battle report analysis too
 
 ## Commands
 
-### Development
-```bash
-npm run dev              # Run all packages in dev mode (turbo)
-npm run dev:extension    # Dev mode for browser extension only
-npm run dev:mcp          # Dev mode for MCP server only
-npm run dev:web          # Dev mode for web app only
-npm run dev:docs         # Dev mode for Docusaurus docs (port 3001)
-```
-
-### Building & Type Checking
-```bash
-npm run build            # Build all packages
-npm run typecheck        # Type check all packages
-```
-
 ### CLI (Unified Interface)
+
+The CLI uses consistent terminology:
+- `sync` - Fetch from external API (costs credits)
+- `parse` - Re-process cached data (no network)
+- `import` - Load local files into database
+
 ```bash
 npm run cli              # Interactive mode
-npm run cli video extract <youtube-url>      # Extract transcript
-npm run cli video preprocess <videoId>       # Test preprocessing
-npm run cli video narrate <videoId>          # Generate narration
-npm run cli generate factions                # Generate faction data from BSData
-npm run cli generate stratagems              # Generate stratagem data
-npm run cli generate aliases [faction]       # Generate unit aliases via LLM
-npm run cli mcp server                       # Start MCP HTTP server
-npm run cli mcp db migrate                   # Run database migrations
-npm run cli mcp scrape faction <factionId>   # Scrape faction from Wahapedia
-npm run cli mcp scrape unit <faction> <unit> # Scrape individual unit (e.g., tyranids Hive-Tyrant)
+```
+
+#### Wahapedia Operations
+```bash
+# Sync from Wahapedia (uses Firecrawl credits - prompts for confirmation)
+npm run cli wahapedia sync rules                    # Sync core rules
+npm run cli wahapedia sync faction <slug>           # Sync specific faction
+npm run cli wahapedia sync factions                 # Sync all factions
+npm run cli wahapedia sync units <faction>          # Sync units for faction
+npm run cli wahapedia sync unit <faction> <unit>    # Sync specific unit
+npm run cli wahapedia sync faction tyranids --yes   # Skip confirmation with -y/--yes
+
+# Parse cached data (no API calls)
+npm run cli wahapedia parse all                     # Parse all cached data
+npm run cli wahapedia parse factions                # Parse faction pages only
+npm run cli wahapedia parse units                   # Parse unit datasheets only
+npm run cli wahapedia parse all --dry-run           # Preview without saving
+
+# Cache management
+npm run cli wahapedia cache stats                   # Show cache statistics
+npm run cli wahapedia cache analyze                 # Analyze HTML vs Markdown coverage
+npm run cli wahapedia cache refresh                 # Re-fetch Markdown-only pages
+```
+
+#### BSData Operations
+```bash
+npm run cli bsdata fetch                # Download BSData XML from GitHub
+npm run cli bsdata parse                # Parse XML files
+npm run cli bsdata import               # Import into database
+npm run cli bsdata all                  # Run full pipeline
+```
+
+#### Database Operations
+```bash
+npm run cli db migrate                  # Run database migrations
+npm run cli db seed                     # Seed initial data
+npm run cli db export                   # Export database to file
+npm run cli db cleanup duplicates       # Clean up duplicate entries
+npm run cli db clear abilities          # Clear abilities table
+npm run cli db clear cache [videoId]    # Clear extraction cache
+npm run cli db show faction-counts      # Show unit counts per faction
+npm run cli db show unit <name>         # Debug unit data
+npm run cli db query <unitName>         # Query a specific unit
+npm run cli db validate                 # Validate ingested data
+```
+
+#### Code Generation
+```bash
+npm run cli codegen factions            # Generate faction constants
+npm run cli codegen stratagems          # Generate stratagem constants
+npm run cli codegen detachments         # Generate detachment constants
+npm run cli codegen aliases [faction]   # Generate unit aliases (uses OpenAI - prompts)
+npm run cli codegen all                 # Run all (excludes aliases)
+```
+
+#### Search Index
+```bash
+npm run cli search build                # Build search index
+npm run cli search check                # Check index status
+npm run cli search validate             # Validate search results
+```
+
+#### Video Processing
+```bash
+npm run cli video extract <url>         # Extract transcript from YouTube
+npm run cli video preprocess <videoId>  # Test preprocessing
+npm run cli video narrate <videoId>     # Generate narration
+npm run cli video chapters <videoId>    # Test chapter detection
+npm run cli video pipeline <url>        # Run E2E pipeline
+```
+
+#### Development Servers
+```bash
+npm run cli serve api                   # Start HTTP API server (port 40401)
+npm run cli serve web                   # Start web app dev server
+npm run cli serve extension             # Start browser extension dev server
+npm run cli serve docs                  # Start documentation site
+npm run cli serve all                   # Start all dev servers
+```
+
+#### Build Operations
+```bash
+npm run cli build all                   # Build all packages
+npm run cli build typecheck             # Typecheck all packages
 ```
 
 ### MCP Server Tests
@@ -43,13 +108,6 @@ npm run cli mcp scrape unit <faction> <unit> # Scrape individual unit (e.g., tyr
 cd mcp-server && npm test           # Run all tests
 cd mcp-server && npm run test:run   # Run tests once (no watch)
 cd mcp-server && npm test -- <pattern>  # Run specific test file
-```
-
-### Data Generation
-```bash
-npm run generate:factions    # Generate faction data from BSData XML
-npm run generate:stratagems  # Generate stratagem constants from DB
-npm run generate:aliases     # Generate unit aliases via LLM
 ```
 
 ## Architecture
@@ -120,7 +178,7 @@ The MCP server populates its database by scraping Wahapedia using Firecrawl:
 
 **Weapon Ability Extraction**: HTML parsing extracts weapon abilities from `<span class="kwb2">` elements in Wahapedia's HTML structure, preserving proper formatting like `[BLAST], [PSYCHIC]`.
 
-**Parser Development Best Practice**: When modifying parsers (e.g., `unit-parser.ts`, `faction-parser.ts`), always favor re-parsing cached Firecrawl data rather than re-scraping from Wahapedia. The source HTML/markdown doesn't change—only our parsing logic does. This saves Firecrawl token usage and API calls. If you notice database discrepancies after parser changes, re-run the scraper with cached data (it will use the cache automatically) to apply the new parsing logic to existing content.
+**Parser Development Best Practice**: When modifying parsers (e.g., `unit-parser.ts`, `faction-parser.ts`), always favor re-parsing cached Firecrawl data rather than re-scraping from Wahapedia. The source HTML/markdown doesn't change—only our parsing logic does. This saves Firecrawl token usage and API calls. If you notice database discrepancies after parser changes, use `npm run cli wahapedia parse all` to apply the new parsing logic to existing cached content.
 
 ### Data Flow
 1. YouTube video URL -> Extract transcript, chapters, metadata
@@ -158,19 +216,18 @@ npm run cli video llm-preprocess <videoId>
 ## MCP Database Setup
 
 ```bash
-cd mcp-server
-npm run db:migrate       # Run migrations
-npm run scrape:core      # Scrape core rules
-npm run scrape:factions  # Scrape all factions
-npm run ingest:bsdata    # Ingest BSData files
+npm run cli db migrate                  # Run migrations
+npm run cli wahapedia sync rules        # Scrape core rules
+npm run cli wahapedia sync factions     # Scrape all factions
+npm run cli bsdata import               # Import BSData files
 ```
 
-### Scraping Individual Units
-To scrape a specific unit without re-scraping an entire faction:
+### Syncing Individual Units
+To sync a specific unit without re-syncing an entire faction:
 ```bash
-npm run cli mcp scrape unit <faction-slug> <unit-slug>
-npm run cli mcp scrape unit space-marines Intercessor-Squad
-npm run cli mcp scrape unit tyranids Hive-Tyrant --force  # Overwrite existing
+npm run cli wahapedia sync unit <faction-slug> <unit-slug>
+npm run cli wahapedia sync unit space-marines Intercessor-Squad
+npm run cli wahapedia sync unit tyranids Hive-Tyrant
 ```
 
 Unit slugs use Wahapedia URL format (capitalized with hyphens). Uses cached Firecrawl results when available.

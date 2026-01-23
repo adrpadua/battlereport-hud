@@ -1,19 +1,17 @@
 import { Command } from 'commander';
 import { runTurbo } from '../utils/runner.js';
 
-export const turboCommand = new Command('turbo')
-  .description('Turbo shortcut commands');
+export const buildCommand = new Command('build')
+  .description('Build operations');
 
-// Build all
-turboCommand
-  .command('build')
+buildCommand
+  .command('all')
   .description('Build all packages')
   .action(async () => {
     await runTurbo('build');
   });
 
-// Typecheck all
-turboCommand
+buildCommand
   .command('typecheck')
   .description('Typecheck all packages')
   .action(async () => {

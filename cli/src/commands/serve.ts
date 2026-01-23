@@ -1,15 +1,14 @@
 import { Command } from 'commander';
 import { runMcpServer, runTurboDev } from '../utils/runner.js';
 
-export const serverCommand = new Command('server')
-  .description('Server management commands');
+export const serveCommand = new Command('serve')
+  .description('Start development servers');
 
-// Start MCP HTTP API server
-serverCommand
+serveCommand
   .command('api')
-  .description('Start the MCP HTTP API server (REST endpoints)')
+  .description('Start the HTTP API server (REST endpoints at http://localhost:40401)')
   .action(async () => {
-    console.log('\n=== Starting MCP HTTP API Server ===\n');
+    console.log('\n=== Starting HTTP API Server ===\n');
     console.log('Endpoints will be available at http://localhost:40401');
     console.log('  - GET /api/units');
     console.log('  - GET /api/stratagems');
@@ -20,34 +19,30 @@ serverCommand
     await runMcpServer();
   });
 
-// Start all dev servers
-serverCommand
-  .command('dev')
-  .description('Start all development servers (web, extension, mcp, docs)')
-  .action(async () => {
-    await runTurboDev();
-  });
-
-// Alias for dev:web
-serverCommand
+serveCommand
   .command('web')
   .description('Start web app development server')
   .action(async () => {
     await runTurboDev('@battlereport/web');
   });
 
-// Alias for dev:extension
-serverCommand
+serveCommand
   .command('extension')
   .description('Start browser extension development server')
   .action(async () => {
     await runTurboDev('@battlereport/extension');
   });
 
-// Alias for dev:docs
-serverCommand
+serveCommand
   .command('docs')
   .description('Start documentation site development server')
   .action(async () => {
     await runTurboDev('@battlereport/docs');
+  });
+
+serveCommand
+  .command('all')
+  .description('Start all development servers (web, extension, api, docs)')
+  .action(async () => {
+    await runTurboDev();
   });
