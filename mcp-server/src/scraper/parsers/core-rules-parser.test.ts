@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { parseCoreRules, extractKeyRules } from './core-rules-parser.js';
 
+const sourceUrl = 'https://wahapedia.ru/wh40k10ed/the-rules/core-rules/';
+
 describe('parseCoreRules', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/the-rules/core-rules/';
-
   it('parses h2 sections without subsections', () => {
-    const markdown = `## Movement Phase
+    const html = `
+      <h2>Movement Phase</h2>
+      <p>When a unit moves, it can travel up to its Move characteristic in inches.</p>
+      <p>Each model in the unit must end its move within 2" of another model.</p>
+    `;
 
-When a unit moves, it can travel up to its Move characteristic in inches.
-
-Each model in the unit must end its move within 2" of another model.`;
-
-    const result = parseCoreRules(markdown, sourceUrl);
+    const result = parseCoreRules(html, sourceUrl);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -27,73 +27,62 @@ Each model in the unit must end its move within 2" of another model.`;
   });
 
   it('parses h2 sections with h3 subsections', () => {
-    const markdown = `## Shooting Phase
+    const html = `
+      <h2>Shooting Phase</h2>
+      <p>The shooting phase is where ranged attacks are resolved. This is intro text that should be included.</p>
+      <h3>Selecting Targets</h3>
+      <p>When a unit shoots, you must select a target for each weapon.</p>
+      <h3>Making Hit Rolls</h3>
+      <p>Roll a D6 for each attack.</p>
+    `;
 
-The shooting phase is where ranged attacks are resolved.
-
-This is intro text that should be included since it's over 50 characters long for the main section.
-
-### Selecting Targets
-
-When a unit shoots, you must select a target for each weapon.
-
-### Making Hit Rolls
-
-Roll a D6 for each attack.`;
-
-    const result = parseCoreRules(markdown, sourceUrl);
+    const result = parseCoreRules(html, sourceUrl);
 
     expect(result.length).toBeGreaterThanOrEqual(2);
 
     // Should have main section with intro
-    const mainSection = result.find(r => r.slug === 'shooting-phase');
+    const mainSection = result.find((r) => r.slug === 'shooting-phase');
     expect(mainSection).toBeDefined();
     expect(mainSection?.category).toBe('shooting_phase');
 
     // Should have subsections
-    const selectingTargets = result.find(r => r.slug === 'shooting-phase-selecting-targets');
+    const selectingTargets = result.find((r) => r.slug === 'shooting-phase-selecting-targets');
     expect(selectingTargets).toBeDefined();
     expect(selectingTargets?.subcategory).toBe('Shooting Phase');
     expect(selectingTargets?.content).toContain('select a target');
 
-    const hitRolls = result.find(r => r.slug === 'shooting-phase-making-hit-rolls');
+    const hitRolls = result.find((r) => r.slug === 'shooting-phase-making-hit-rolls');
     expect(hitRolls).toBeDefined();
     expect(hitRolls?.content).toContain('Roll a D6');
   });
 
   it('skips sections with minimal content (<10 chars)', () => {
-    const markdown = `## Valid Section
+    const html = `
+      <h2>Valid Section</h2>
+      <p>This section has enough content to be included in the output.</p>
+      <h2>Empty Section</h2>
+      <p>Short</p>
+      <h2>Another Valid</h2>
+      <p>This section also has enough content to pass the minimum threshold.</p>
+    `;
 
-This section has enough content to be included in the output.
-
-## Empty Section
-
-Short
-
-## Another Valid
-
-This section also has enough content to pass the minimum threshold.`;
-
-    const result = parseCoreRules(markdown, sourceUrl);
+    const result = parseCoreRules(html, sourceUrl);
 
     expect(result).toHaveLength(2);
-    expect(result.map(r => r.title)).toEqual(['Valid Section', 'Another Valid']);
+    expect(result.map((r) => r.title)).toEqual(['Valid Section', 'Another Valid']);
   });
 
   it('correctly assigns orderIndex', () => {
-    const markdown = `## First Section
+    const html = `
+      <h2>First Section</h2>
+      <p>Content for first section that is long enough to be included.</p>
+      <h2>Second Section</h2>
+      <p>Content for second section that is long enough to be included.</p>
+      <h2>Third Section</h2>
+      <p>Content for third section that is long enough to be included.</p>
+    `;
 
-Content for first section.
-
-## Second Section
-
-Content for second section.
-
-## Third Section
-
-Content for third section.`;
-
-    const result = parseCoreRules(markdown, sourceUrl);
+    const result = parseCoreRules(html, sourceUrl);
 
     expect(result).toHaveLength(3);
     expect(result[0]?.orderIndex).toBe(0);
@@ -103,11 +92,12 @@ Content for third section.`;
 
   it('truncates slug and title to 255 chars', () => {
     const longTitle = 'A'.repeat(300);
-    const markdown = `## ${longTitle}
+    const html = `
+      <h2>${longTitle}</h2>
+      <p>Content for the long titled section that needs enough text.</p>
+    `;
 
-Content for the long titled section.`;
-
-    const result = parseCoreRules(markdown, sourceUrl);
+    const result = parseCoreRules(html, sourceUrl);
 
     expect(result).toHaveLength(1);
     expect(result[0]?.slug.length).toBeLessThanOrEqual(255);
@@ -118,54 +108,106 @@ Content for the long titled section.`;
     expect(parseCoreRules('', sourceUrl)).toEqual([]);
   });
 
-  it('handles markdown with only short content', () => {
-    // Content must be >10 chars to be included
-    const markdown = `## Short
+  it('handles HTML with only short content', () => {
+    // Content must be >50 chars for main sections
+    const html = '<h2>Short</h2><p>Tiny</p>';
 
-Tiny`;
-
-    const result = parseCoreRules(markdown, sourceUrl);
+    const result = parseCoreRules(html, sourceUrl);
 
     // Content "Tiny" is only 4 chars, should be skipped
     expect(result).toHaveLength(0);
   });
 
+  it('parses alternative anchor-based structure when no h2 found', () => {
+    const html = `
+      <a name="Movement-Rules"></a>
+      <p>This section describes how units move on the battlefield during your turn.</p>
+      <p>Units can move, advance, or fall back depending on the situation.</p>
+    `;
+
+    const result = parseCoreRules(html, sourceUrl);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.title).toBe('Movement Rules');
+    expect(result[0]?.content).toContain('units move');
+  });
+
+  it('handles lists correctly', () => {
+    const html = `
+      <h2>Unit Types</h2>
+      <p>Units in Warhammer 40,000 can be one of the following types:</p>
+      <ul>
+        <li>Infantry</li>
+        <li>Vehicle</li>
+        <li>Monster</li>
+      </ul>
+    `;
+
+    const result = parseCoreRules(html, sourceUrl);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.content).toContain('Infantry');
+    expect(result[0]?.content).toContain('Vehicle');
+  });
+
+  it('handles tables correctly', () => {
+    const html = `
+      <h2>Weapon Characteristics</h2>
+      <p>Weapons have the following characteristics shown in tables:</p>
+      <table>
+        <tr><th>Weapon</th><th>Range</th><th>Strength</th></tr>
+        <tr><td>Bolter</td><td>24"</td><td>4</td></tr>
+        <tr><td>Lascannon</td><td>48"</td><td>12</td></tr>
+      </table>
+    `;
+
+    const result = parseCoreRules(html, sourceUrl);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.content).toContain('Bolter');
+    expect(result[0]?.content).toContain('Lascannon');
+  });
+
   describe('slugify (via parseCoreRules)', () => {
     it('converts text to lowercase', () => {
-      const markdown = `## Space Marines Rules
+      const html = `
+        <h2>Space Marines Rules</h2>
+        <p>Content here that is long enough for the section to be included.</p>
+      `;
 
-Content here.`;
-
-      const result = parseCoreRules(markdown, sourceUrl);
+      const result = parseCoreRules(html, sourceUrl);
       expect(result[0]?.slug).toBe('space-marines-rules');
     });
 
     it('replaces special characters with hyphens', () => {
-      const markdown = `## T'au Empire's Rules & Regulations
+      const html = `
+        <h2>T'au Empire's Rules & Regulations</h2>
+        <p>Content here for testing special characters in title slugification.</p>
+      `;
 
-Content here for testing special characters.`;
-
-      const result = parseCoreRules(markdown, sourceUrl);
+      const result = parseCoreRules(html, sourceUrl);
       expect(result[0]?.slug).toBe('t-au-empire-s-rules-regulations');
     });
 
     it('removes leading and trailing hyphens', () => {
-      const markdown = `## ---Test Section---
+      const html = `
+        <h2>---Test Section---</h2>
+        <p>Content here that is long enough for the section to be included.</p>
+      `;
 
-Content here.`;
-
-      const result = parseCoreRules(markdown, sourceUrl);
+      const result = parseCoreRules(html, sourceUrl);
       expect(result[0]?.slug).toBe('test-section');
     });
   });
 
   describe('detectCategory (via parseCoreRules)', () => {
     const testCategory = (title: string, expectedCategory: string) => {
-      const markdown = `## ${title}
+      const html = `
+        <h2>${title}</h2>
+        <p>Content for this section must be long enough to pass validation checks.</p>
+      `;
 
-Content for this section must be long enough to pass validation.`;
-
-      const result = parseCoreRules(markdown, sourceUrl);
+      const result = parseCoreRules(html, sourceUrl);
       expect(result[0]?.category).toBe(expectedCategory);
     };
 
@@ -283,6 +325,39 @@ Content for this section must be long enough to pass validation.`;
 
     it('defaults to general for unknown categories', () => {
       testCategory('Random Section Title', 'general');
+    });
+  });
+
+  describe('edge cases', () => {
+    it('handles malformed HTML gracefully', () => {
+      const html = '<h2>Broken<p>Unclosed tags but with enough content for parsing';
+
+      const result = parseCoreRules(html, sourceUrl);
+
+      // Cheerio handles malformed HTML, should not throw
+      expect(result).toBeDefined();
+    });
+
+    it('handles HTML with no h2 or anchors', () => {
+      const html = '<p>Just some random content without any sections.</p>';
+
+      const result = parseCoreRules(html, sourceUrl);
+
+      expect(result).toEqual([]);
+    });
+
+    it('skips empty title h2 elements', () => {
+      const html = `
+        <h2></h2>
+        <p>Content without a proper title should be skipped.</p>
+        <h2>Valid Title</h2>
+        <p>This content has a valid title and should be included.</p>
+      `;
+
+      const result = parseCoreRules(html, sourceUrl);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.title).toBe('Valid Title');
     });
   });
 });

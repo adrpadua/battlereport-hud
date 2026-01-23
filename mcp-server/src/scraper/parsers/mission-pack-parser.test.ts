@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { parseMissionPack, detectMissionPackType } from './mission-pack-parser.js';
 
+const sourceUrl = 'https://wahapedia.ru/wh40k10ed/chapter-approved/';
+
 describe('detectMissionPackType', () => {
   it('detects chapter_approved_2025 from URL', () => {
     expect(detectMissionPackType('https://wahapedia.ru/wh40k10ed/chapter-approved-2025-26/missions/')).toBe('chapter_approved_2025');
@@ -25,395 +27,575 @@ describe('detectMissionPackType', () => {
   it('handles empty URL', () => {
     expect(detectMissionPackType('')).toBe('matched_play');
   });
+
+  it('prioritizes chapter_approved_2025 over chapter_approved', () => {
+    const url = 'https://wahapedia.ru/wh40k10ed/chapter-approved-2025-26/missions/';
+    expect(detectMissionPackType(url)).toBe('chapter_approved_2025');
+  });
 });
 
 describe('parseMissionPack', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/chapter-approved/missions/';
-
   describe('parsePrimaryMissions (via parseMissionPack)', () => {
-    it('extracts mission name from CAPS format', () => {
-      const markdown = `## Primary Mission deck
+    it('extracts mission from div with mission class', () => {
+      const html = `
+        <div class="mission-card">
+          <h3>TAKE AND HOLD</h3>
+          <p>Secure the objectives and hold them against the enemy.</p>
+          <p>SECOND BATTLE ROUND ONWARDS</p>
+          <p>Score 4VP if you control one objective.</p>
+        </div>
+      `;
 
-Primary Mission
-
-TAKE AND HOLD
-
-Secure the objectives and hold them against the enemy.
-
-SECOND BATTLE ROUND ONWARDS
-Score 4VP if you control one objective.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.missions).toHaveLength(1);
       expect(result.missions[0]?.name).toBe('Take And Hold');
       expect(result.missions[0]?.slug).toBe('take-and-hold');
+      expect(result.missions[0]?.missionType).toBe('chapter_approved');
+      expect(result.missions[0]?.dataSource).toBe('wahapedia');
     });
 
-    it('extracts description and scoring rules', () => {
-      const markdown = `## Primary Mission deck
+    it('extracts mission from div with Mission in class name', () => {
+      const html = `
+        <div class="PrimaryMission">
+          <h4>BATTLEFIELD SUPREMACY</h4>
+          <p>Control the battlefield through superior tactics.</p>
+          <p>Score 4VP if you control more objectives than your opponent.</p>
+        </div>
+      `;
 
-Primary Mission
-
-BATTLEFIELD SUPREMACY
-
-Control the battlefield through superior tactics.
-
-SECOND BATTLE ROUND ONWARDS
-Score 4VP if you control more objectives than your opponent.
-
-ANY BATTLE ROUND
-Score 2VP if you control at least two objectives.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.missions).toHaveLength(1);
-      expect(result.missions[0]?.primaryObjective).toContain('SECOND BATTLE ROUND');
-      expect(result.missions[0]?.primaryObjective).toContain('ANY BATTLE ROUND');
+      expect(result.missions[0]?.name).toBe('Battlefield Supremacy');
+    });
+
+    it('extracts VP scoring rules', () => {
+      const html = `
+        <div class="mission">
+          <b>RECOVER ASSETS</b>
+          <p>Score 4VP if you control one objective at end of turn.</p>
+          <p>Score 8VP if you control three or more objectives.</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.missions).toHaveLength(1);
+      expect(result.missions[0]?.primaryObjective).toContain('4VP');
+      expect(result.missions[0]?.primaryObjective).toContain('8VP');
     });
 
     it('handles action definitions', () => {
-      const markdown = `## Primary Mission deck
+      const html = `
+        <div class="mission">
+          <b>SECURE INTEL</b>
+          <p>Recover vital intelligence from the battlefield.</p>
+          <p>(ACTION) One unit can perform this action while within range of an objective.</p>
+          <p>Score 3VP per completed action.</p>
+        </div>
+      `;
 
-Primary Mission
-
-SECURE INTEL
-
-Recover vital intelligence from the battlefield.
-
-(ACTION) One unit can perform this action while within range of an objective.
-
-SECOND BATTLE ROUND ONWARDS
-Score 3VP per completed action.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.missions).toHaveLength(1);
       expect(result.missions[0]?.missionRule).toContain('ACTION');
     });
 
-    it('returns empty array when no Primary Mission deck section', () => {
-      const markdown = `## Some Other Section
+    it('extracts missions from list items with Primary Mission', () => {
+      const html = `
+        <ul>
+          <li class="primary-mission">
+            <b>DEFEND STRONGHOLD</b>
+            <p>Score 4VP if you control one or more objective markers in your deployment zone.</p>
+          </li>
+        </ul>
+      `;
 
-Just some content here without any missions.`;
+      const result = parseMissionPack(html, sourceUrl);
 
-      const result = parseMissionPack(markdown, sourceUrl);
+      expect(result.missions).toHaveLength(1);
+      expect(result.missions[0]?.name).toBe('Defend Stronghold');
+    });
+
+    it('deduplicates missions with same name', () => {
+      const html = `
+        <div class="mission">
+          <h3>RECOVER ASSETS</h3>
+          <p>First version of the mission with some content here.</p>
+        </div>
+        <div class="mission">
+          <h3>RECOVER ASSETS</h3>
+          <p>Duplicate that should be skipped from parsing.</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.missions).toHaveLength(1);
+    });
+
+    it('skips cards with content shorter than 20 characters', () => {
+      // Use compact HTML to avoid whitespace padding the length
+      const html = '<div class="mission"><h3>SHORT</h3><p>Tiny</p></div>';
+
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.missions).toHaveLength(0);
     });
 
-    it('skips entries that do not look like mission names', () => {
-      const markdown = `## Primary Mission deck
+    it('uses custom missionType when provided', () => {
+      const html = `
+        <div class="mission">
+          <h3>AREA DENIAL</h3>
+          <p>Score 5VP if no enemy models are within range of any objective markers.</p>
+        </div>
+      `;
 
-Primary Mission
+      const result = parseMissionPack(html, sourceUrl, 'pariah_nexus');
 
-some lowercase text that should not be a mission
+      expect(result.missions[0]?.missionType).toBe('pariah_nexus');
+    });
 
-Primary Mission
+    it('returns empty array when no mission cards found', () => {
+      const html = `
+        <div class="some-other-content">
+          <p>No mission cards here.</p>
+        </div>
+      `;
 
-VALID MISSION NAME
+      const result = parseMissionPack(html, sourceUrl);
 
-This is a valid mission with proper content.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      // Should only parse the valid uppercase mission
-      expect(result.missions).toHaveLength(1);
-      expect(result.missions[0]?.name).toBe('Valid Mission Name');
+      expect(result.missions).toHaveLength(0);
     });
   });
 
   describe('parseSecondaryMissions (via parseMissionPack)', () => {
-    it('extracts secondary objectives', () => {
-      const markdown = `## Secondary Mission deck
+    it('extracts secondary objectives from div elements', () => {
+      const html = `
+        <div class="secondary-mission">
+          <h3>ASSASSINATION</h3>
+          <p>Eliminate the enemy's leaders.</p>
+          <p>Score 4VP each time an enemy CHARACTER model is destroyed.</p>
+          <p>Maximum: 12VP</p>
+        </div>
+      `;
 
-Secondary Mission
-
-ASSASSINATION
-
-Eliminate the enemy's leaders.
-
-**When Drawn:** At the end of the battle, score 5VP if the enemy Warlord is destroyed.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.secondaryObjectives).toHaveLength(1);
       expect(result.secondaryObjectives[0]?.name).toBe('Assassination');
       expect(result.secondaryObjectives[0]?.slug).toBe('assassination');
+      expect(result.secondaryObjectives[0]?.maxPoints).toBe(12);
+    });
+
+    it('extracts secondary from div with Secondary in class', () => {
+      const html = `
+        <div class="SecondaryCard">
+          <b>DEPLOY TELEPORT HOMERS</b>
+          <p>Score 2VP each time a model completes a Deploy Teleport Homer action.</p>
+          <p>Maximum: 8VP</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.secondaryObjectives).toHaveLength(1);
+      expect(result.secondaryObjectives[0]?.name).toBe('Deploy Teleport Homers');
+      expect(result.secondaryObjectives[0]?.maxPoints).toBe(8);
     });
 
     it('detects tactical category by default', () => {
-      const markdown = `## Secondary Mission deck
+      const html = `
+        <div class="secondary">
+          <h3>ENGAGE ON ALL FRONTS</h3>
+          <p>Spread your forces across the battlefield.</p>
+          <p>Score 3VP if you have units in three or more table quarters.</p>
+        </div>
+      `;
 
-Secondary Mission
-
-ENGAGE ON ALL FRONTS
-
-Spread your forces across the battlefield.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.secondaryObjectives).toHaveLength(1);
       expect(result.secondaryObjectives[0]?.category).toBe('tactical');
     });
 
     it('detects fixed category', () => {
-      const markdown = `## Secondary Mission deck
+      const html = `
+        <div class="secondary">
+          <h3>FIXED OBJECTIVE</h3>
+          <p>This is a Fixed Mission that can only be used in certain ways.</p>
+          <p>Score 5VP for completing the fixed objective.</p>
+        </div>
+      `;
 
-Secondary Mission
-
-FIXED OBJECTIVE
-
-This is a Fixed Mission that can only be used in certain ways.
-
-Fixed Mission requirements apply here.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.secondaryObjectives).toHaveLength(1);
       expect(result.secondaryObjectives[0]?.category).toBe('fixed');
     });
 
     it('detects both category when FIXED and TACTICAL present', () => {
-      const markdown = `## Secondary Mission deck
+      const html = `
+        <div class="secondary">
+          <h4>FLEXIBLE MISSION</h4>
+          <p>This can be used as FIXED or TACTICAL depending on the situation.</p>
+          <p>Score 5VP for completing this objective.</p>
+        </div>
+      `;
 
-Secondary Mission
-
-FLEXIBLE MISSION
-
-This can be used as FIXED or TACTICAL depending on the situation.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.secondaryObjectives).toHaveLength(1);
       expect(result.secondaryObjectives[0]?.category).toBe('both');
     });
 
-    it('extracts max points from VP patterns', () => {
-      const markdown = `## Secondary Mission deck
+    it('extracts scoring condition when WHEN marker present', () => {
+      const html = `
+        <div class="secondary">
+          <b>ENGAGE ON ALL FRONTS</b>
+          <p><b>WHEN:</b> At the end of your turn</p>
+          <p>Score 3VP if you have units in 3+ table quarters.</p>
+        </div>
+      `;
 
-Secondary Mission
+      const result = parseMissionPack(html, sourceUrl);
 
-HIGH VALUE TARGET
+      expect(result.secondaryObjectives).toHaveLength(1);
+      expect(result.secondaryObjectives[0]?.scoringCondition).toContain('At the end of your turn');
+    });
 
-Destroy enemy units worth the most points.
+    it('extracts max points from highest VP value', () => {
+      const html = `
+        <div class="secondary">
+          <h4>HIGH VALUE TARGET</h4>
+          <p>Destroy enemy units worth the most points.</p>
+          <p>Score 5VP for each destroyed vehicle.</p>
+          <p>Score up to 15VP for destroying expensive units.</p>
+        </div>
+      `;
 
-Score up to 15VP for destroying expensive units.
-At least 5VP minimum.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.secondaryObjectives).toHaveLength(1);
       expect(result.secondaryObjectives[0]?.maxPoints).toBe(15);
     });
 
-    it('returns empty array when no Secondary Mission deck section', () => {
-      const markdown = `## Primary Mission deck
+    it('deduplicates secondary objectives by name', () => {
+      const html = `
+        <div class="secondary">
+          <h3>ASSASSINATION</h3>
+          <p>Score 4VP per CHARACTER destroyed that you kill.</p>
+        </div>
+        <div class="secondary">
+          <h3>ASSASSINATION</h3>
+          <p>Duplicate entry that should be skipped from parsing.</p>
+        </div>
+      `;
 
-Primary Mission
+      const result = parseMissionPack(html, sourceUrl);
 
-SOME MISSION
+      expect(result.secondaryObjectives).toHaveLength(1);
+    });
 
-Content here.`;
+    it('returns empty array when no secondary cards found', () => {
+      const html = `
+        <div class="primary-mission">
+          <h3>PRIMARY ONLY</h3>
+          <p>This is not a secondary objective so should not parse.</p>
+        </div>
+      `;
 
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.secondaryObjectives).toHaveLength(0);
     });
   });
 
-  describe('parseChallengers (via parseMissionPack)', () => {
-    it('extracts challenger cards with timing and effect', () => {
-      const markdown = `## Challenger deck
+  describe('parseChallengers/gambits (via parseMissionPack)', () => {
+    it('extracts gambit cards from challenger elements', () => {
+      const html = `
+        <div class="challenger-card">
+          <h3>Risk It All</h3>
+          <p><b>WHEN:</b> Start of the battle round</p>
+          <p><b>EFFECT:</b> Double VP scored this turn, but lose 5VP if objective not achieved.</p>
+        </div>
+      `;
 
-Challenger
-
-BOLD ADVANCE
-
-Push forward aggressively.
-
-**WHEN:** Start of your Movement phase.
-
-**EFFECT:** One unit can make a Normal move of up to 6" before the phase begins.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.gambits).toHaveLength(1);
-      expect(result.gambits[0]?.name).toBe('Bold Advance');
-      expect(result.gambits[0]?.slug).toBe('bold-advance');
-      expect(result.gambits[0]?.timing).toBe('Start of your Movement phase.');
-      expect(result.gambits[0]?.effect).toContain('Normal move');
+      expect(result.gambits[0]?.name).toBe('Risk It All');
+      expect(result.gambits[0]?.timing).toContain('Start of the battle round');
+      expect(result.gambits[0]?.effect).toContain('Double VP');
+    });
+
+    it('extracts gambit from .gambit class elements', () => {
+      const html = `
+        <div class="gambit">
+          <b>Double Down</b>
+          <p><b>WHEN:</b> Command phase</p>
+          <p><b>EFFECT:</b> Your primary objective scores double this turn.</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.gambits).toHaveLength(1);
+      expect(result.gambits[0]?.name).toBe('Double Down');
+    });
+
+    it('extracts timing from WHEN marker', () => {
+      const html = `
+        <div class="Challenger">
+          <h4>Bold Advance</h4>
+          <p><b>WHEN:</b> Start of your Movement phase</p>
+          <p><b>EFFECT:</b> One unit can move up to 6 inches before the phase begins.</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.gambits).toHaveLength(1);
+      expect(result.gambits[0]?.timing).toContain('Start of your Movement phase');
+    });
+
+    it('extracts effect from EFFECT marker', () => {
+      const html = `
+        <div class="challenger">
+          <h4>Daring Strike</h4>
+          <p><b>WHEN:</b> Charge phase</p>
+          <p><b>EFFECT:</b> One unit can declare a charge even if it Advanced this turn.</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.gambits).toHaveLength(1);
+      expect(result.gambits[0]?.effect).toContain('declare a charge');
     });
 
     it('handles challengers without explicit WHEN/EFFECT format', () => {
-      const markdown = `## Challenger deck
+      const html = `
+        <div class="challenger">
+          <h4>Simple Card</h4>
+          <p>A straightforward effect that just does something useful.</p>
+        </div>
+      `;
 
-Challenger
-
-SIMPLE CARD
-
-A straightforward effect that just does something.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.gambits).toHaveLength(1);
       expect(result.gambits[0]?.name).toBe('Simple Card');
       expect(result.gambits[0]?.timing).toBe('');
-      expect(result.gambits[0]?.effect).toContain('straightforward effect');
     });
 
-    it('returns empty array when no Challenger deck section', () => {
-      const markdown = `## Primary Mission deck
+    it('deduplicates gambits by name', () => {
+      const html = `
+        <div class="challenger">
+          <h3>Risk It All</h3>
+          <p>First version of the gambit card with content.</p>
+        </div>
+        <div class="challenger">
+          <h3>Risk It All</h3>
+          <p>Duplicate that should be skipped from the parsing.</p>
+        </div>
+      `;
 
-Primary Mission
+      const result = parseMissionPack(html, sourceUrl);
 
-SOME MISSION
+      expect(result.gambits).toHaveLength(1);
+    });
 
-Content here.`;
+    it('returns empty array when no challenger cards found', () => {
+      const html = `
+        <div class="mission">
+          <h3>MISSION CARD</h3>
+          <p>This is not a challenger card so should not be parsed.</p>
+        </div>
+      `;
 
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.gambits).toHaveLength(0);
     });
   });
 
   describe('parseMatchedPlayRules (via parseMissionPack)', () => {
-    it('extracts Chapter Approved Battles rules', () => {
-      const markdown = `### Chapter Approved Battles
+    it('extracts rules from anchor-based sections', () => {
+      const html = `
+        <div>
+          <a name="Muster-Armies"></a>
+          <p>Each player must bring an army with a Power Level of 100 or less.</p>
+          <p>Army construction follows standard Matched Play rules with modifications.</p>
+          <p>Additional rule text here to meet minimum length requirements.</p>
+        </div>
+      `;
 
-Chapter Approved battles use the following sequence of steps to set up and play a game of Warhammer 40,000.
+      const result = parseMissionPack(html, sourceUrl);
 
-This section explains how to prepare for battle.`;
+      expect(result.rules).toHaveLength(1);
+      expect(result.rules[0]?.title).toBe('Muster Armies');
+      expect(result.rules[0]?.category).toBe('army_construction');
+      expect(result.rules[0]?.content).toContain('Power Level');
+    });
 
-      const result = parseMissionPack(markdown, sourceUrl);
+    it('extracts rules from heading-based sections', () => {
+      const html = `
+        <div>
+          <h3>Chapter Approved Battles</h3>
+          <p>This section details how to play a Chapter Approved mission. Follow these steps in order.</p>
+          <p>Additional content to ensure minimum content length is met for extraction.</p>
+        </div>
+      `;
 
-      const battleSequenceRule = result.rules.find(r => r.category === 'battle_sequence');
-      expect(battleSequenceRule).toBeDefined();
-      expect(battleSequenceRule?.content).toContain('sequence of steps');
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.rules).toHaveLength(1);
+      expect(result.rules[0]?.category).toBe('battle_sequence');
+    });
+
+    it('extracts multiple rule sections', () => {
+      const html = `
+        <div>
+          <a name="Muster-Armies"></a>
+          <p>Muster your armies following these guidelines. Each player brings an army of 2000 points.</p>
+          <p>Additional army construction content here to meet length.</p>
+        </div>
+        <div>
+          <a name="Deploy-Armies"></a>
+          <p>Deploy your armies in your deployment zone. The Attacker deploys first unless specified.</p>
+          <p>Additional deployment content here to meet length requirement.</p>
+        </div>
+      `;
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.rules).toHaveLength(2);
+      expect(result.rules.map((r) => r.category)).toContain('army_construction');
+      expect(result.rules.map((r) => r.category)).toContain('deployment');
     });
 
     it('extracts Set Mission Parameters rules', () => {
-      const markdown = `### Set Mission Parameters
+      const html = `
+        <div>
+          <a name="Set-Mission-Parameters"></a>
+          <p>Both players agree on the battle size and mission parameters before selecting armies.</p>
+          <p>Points limit is typically 2000 for Strike Force games in matched play.</p>
+        </div>
+      `;
 
-Both players agree on the battle size and mission parameters before selecting armies.
+      const result = parseMissionPack(html, sourceUrl);
 
-Points limit is typically 2000 for Strike Force games.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      const missionParamsRule = result.rules.find(r => r.category === 'mission_parameters');
+      const missionParamsRule = result.rules.find((r) => r.category === 'mission_parameters');
       expect(missionParamsRule).toBeDefined();
-      expect(missionParamsRule?.content).toContain('battle size');
-    });
-
-    it('extracts Muster Armies rules', () => {
-      const markdown = `### Muster Armies
-
-Players select their armies according to the agreed points limit.
-
-Each army must be battle-forged and follow all army construction rules.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      const armyRule = result.rules.find(r => r.category === 'army_construction');
-      expect(armyRule).toBeDefined();
-      expect(armyRule?.content).toContain('points limit');
-    });
-
-    it('extracts Deploy Armies rules', () => {
-      const markdown = `### Deploy Armies
-
-Players alternate deploying units in their deployment zones.
-
-The player who finishes first chooses whether to go first or second.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      const deployRule = result.rules.find(r => r.category === 'deployment');
-      expect(deployRule).toBeDefined();
-      expect(deployRule?.content).toContain('deployment zones');
+      expect(missionParamsRule?.title).toBe('Set Mission Parameters');
     });
 
     it('extracts Terrain Layouts rules', () => {
-      const markdown = `### Terrain Layouts
+      const html = `
+        <div>
+          <a name="Terrain-Layout"></a>
+          <p>Use the terrain layout maps provided for competitive play and tournament settings.</p>
+          <p>Each layout is designed for balanced gameplay and fair competition.</p>
+        </div>
+      `;
 
-Use the terrain layout maps provided for competitive play.
+      const result = parseMissionPack(html, sourceUrl);
 
-Each layout is designed for balanced gameplay.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      const terrainRule = result.rules.find(r => r.category === 'terrain_layouts');
+      const terrainRule = result.rules.find((r) => r.category === 'terrain_layouts');
       expect(terrainRule).toBeDefined();
       expect(terrainRule?.content).toContain('terrain layout');
     });
 
     it('skips rules with content under 50 characters', () => {
-      const markdown = `### Short Section
+      const html = `
+        <div>
+          <a name="Muster-Armies"></a>
+          <p>Short.</p>
+        </div>
+      `;
 
-Tiny.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
+      const result = parseMissionPack(html, sourceUrl);
 
       expect(result.rules).toHaveLength(0);
     });
 
-    it('truncates content to 5000 characters', () => {
-      const longContent = 'A'.repeat(6000);
-      const markdown = `### Chapter Approved Battles
+    it('returns empty array when no rule sections found', () => {
+      const html = `
+        <div>
+          <p>Some random content without any rule anchors or headings.</p>
+        </div>
+      `;
 
-${longContent}`;
+      const result = parseMissionPack(html, sourceUrl);
 
-      const result = parseMissionPack(markdown, sourceUrl);
+      expect(result.rules).toHaveLength(0);
+    });
+  });
 
-      const rule = result.rules.find(r => r.category === 'battle_sequence');
-      expect(rule).toBeDefined();
-      expect(rule!.content.length).toBeLessThanOrEqual(5000);
+  describe('edge cases', () => {
+    it('handles empty HTML gracefully', () => {
+      const result = parseMissionPack('', sourceUrl);
+
+      expect(result.missions).toHaveLength(0);
+      expect(result.secondaryObjectives).toHaveLength(0);
+      expect(result.gambits).toHaveLength(0);
+      expect(result.rules).toHaveLength(0);
+    });
+
+    it('handles HTML with no relevant content', () => {
+      const html = '<html><body><p>Some random content</p></body></html>';
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      expect(result.missions).toHaveLength(0);
+      expect(result.secondaryObjectives).toHaveLength(0);
+      expect(result.gambits).toHaveLength(0);
+      expect(result.rules).toHaveLength(0);
+    });
+
+    it('handles malformed HTML gracefully', () => {
+      const html = '<div class="mission"><h3>BROKEN<p>Unclosed tags and broken structure';
+
+      const result = parseMissionPack(html, sourceUrl);
+
+      // Cheerio handles malformed HTML, should not throw
+      expect(result).toBeDefined();
     });
   });
 
   describe('integration', () => {
     it('parses a complete mission pack with all sections', () => {
-      const markdown = `# Chapter Approved 2024
+      const html = `
+        <html>
+        <body>
+          <div class="mission">
+            <h3>CONTROL THE CENTER</h3>
+            <p>Dominate the middle of the battlefield for strategic advantage.</p>
+            <p>Score 4VP if you control the center objective at end of turn.</p>
+          </div>
 
-## Primary Mission deck
+          <div class="secondary">
+            <h3>BEHIND ENEMY LINES</h3>
+            <p>Get units into the enemy deployment zone for tactical advantage.</p>
+            <p>Score 4VP at end of turn if one unit is wholly within enemy zone.</p>
+          </div>
 
-Primary Mission
+          <div class="challenger">
+            <h4>Daring Strike</h4>
+            <p><b>WHEN:</b> Start of your Charge phase</p>
+            <p><b>EFFECT:</b> One unit can declare a charge even if it Advanced this turn.</p>
+          </div>
 
-CONTROL THE CENTER
+          <a name="Chapter-Approved-Battles"></a>
+          <p>This section explains the rules for Chapter Approved battles including setup.</p>
+          <p>Victory conditions and scoring are detailed in the following sections.</p>
+        </body>
+        </html>
+      `;
 
-Dominate the middle of the battlefield.
-
-SECOND BATTLE ROUND ONWARDS
-Score 4VP if you control the center objective.
-
-## Secondary Mission deck
-
-Secondary Mission
-
-BEHIND ENEMY LINES
-
-Get units into the enemy deployment zone.
-
-Score 4VP at end of turn if one unit is wholly within enemy zone.
-
-## Challenger deck
-
-Challenger
-
-DARING STRIKE
-
-Launch a bold assault.
-
-**WHEN:** Start of your Charge phase.
-
-**EFFECT:** One unit can declare a charge even if it Advanced.
-
-### Chapter Approved Battles
-
-This section explains the rules for Chapter Approved battles including setup and victory conditions.`;
-
-      const result = parseMissionPack(markdown, sourceUrl, 'chapter_approved');
+      const result = parseMissionPack(html, sourceUrl, 'chapter_approved');
 
       expect(result.missions).toHaveLength(1);
       expect(result.secondaryObjectives).toHaveLength(1);
@@ -423,59 +605,6 @@ This section explains the rules for Chapter Approved battles including setup and
       expect(result.missions[0]?.name).toBe('Control The Center');
       expect(result.secondaryObjectives[0]?.name).toBe('Behind Enemy Lines');
       expect(result.gambits[0]?.name).toBe('Daring Strike');
-    });
-
-    it('handles empty markdown', () => {
-      const result = parseMissionPack('', sourceUrl);
-
-      expect(result.missions).toHaveLength(0);
-      expect(result.secondaryObjectives).toHaveLength(0);
-      expect(result.gambits).toHaveLength(0);
-      expect(result.rules).toHaveLength(0);
-    });
-  });
-
-  describe('slugify and toTitleCase (via parseMissionPack)', () => {
-    it('converts mission name to slug', () => {
-      const markdown = `## Primary Mission deck
-
-Primary Mission
-
-THE RITUAL
-
-A mission about performing a ritual.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      expect(result.missions[0]?.slug).toBe('the-ritual');
-    });
-
-    it('converts CAPS to title case', () => {
-      const markdown = `## Primary Mission deck
-
-Primary Mission
-
-PRIORITY TARGETS
-
-Destroy key enemy assets.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      expect(result.missions[0]?.name).toBe('Priority Targets');
-    });
-
-    it('handles special characters in slugify', () => {
-      const markdown = `## Secondary Mission deck
-
-Secondary Mission
-
-AREA DENIAL
-
-Control areas of the battlefield.`;
-
-      const result = parseMissionPack(markdown, sourceUrl);
-
-      expect(result.secondaryObjectives[0]?.slug).toBe('area-denial');
     });
   });
 });

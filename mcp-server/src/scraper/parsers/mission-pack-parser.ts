@@ -1,21 +1,12 @@
+import * as cheerio from 'cheerio';
 import type { NewMission, NewSecondaryObjective } from '../../db/schema.js';
-import {
-  PRIMARY_MISSION_DECK,
-  SECONDARY_MISSION_DECK,
-  CHALLENGER_DECK,
-  SPLIT_PRIMARY_MISSION,
-  SPLIT_SECONDARY_MISSION,
-  SPLIT_CHALLENGER,
-  VP_SCORING,
-  isValidMissionName,
-  STRATAGEM_WHEN,
-  STRATAGEM_EFFECT,
-} from './regex-patterns.js';
-import { slugify, toTitleCase } from './utils.js';
+import { slugify, toTitleCase, DeduplicationTracker } from './utils.js';
 import {
   FALLBACK_DESCRIPTION_MAX_LENGTH,
   SHORT_DESCRIPTION_MAX_LENGTH,
   RULE_CONTENT_MAX_LENGTH,
+  truncateSlug,
+  truncateName,
 } from './constants.js';
 
 export interface ParsedMissionPack {
@@ -41,9 +32,13 @@ export interface ParsedMatchedPlayRule {
 }
 
 /**
- * Parses Chapter Approved / Mission Pack markdown from Wahapedia
+ * Parses Chapter Approved / Mission Pack HTML from Wahapedia
  */
-export function parseMissionPack(markdown: string, sourceUrl: string, missionType: string = 'chapter_approved'): ParsedMissionPack {
+export function parseMissionPack(
+  html: string,
+  sourceUrl: string,
+  missionType: string = 'chapter_approved'
+): ParsedMissionPack {
   const result: ParsedMissionPack = {
     missions: [],
     secondaryObjectives: [],
@@ -52,229 +47,325 @@ export function parseMissionPack(markdown: string, sourceUrl: string, missionTyp
   };
 
   // Parse different sections
-  result.missions = parsePrimaryMissions(markdown, sourceUrl, missionType);
-  result.secondaryObjectives = parseSecondaryMissions(markdown, sourceUrl);
-  result.gambits = parseChallengers(markdown);
-  result.rules = parseMatchedPlayRules(markdown);
+  result.missions = parsePrimaryMissions(html, sourceUrl, missionType);
+  result.secondaryObjectives = parseSecondaryMissions(html, sourceUrl);
+  result.gambits = parseChallengers(html);
+  result.rules = parseMatchedPlayRules(html);
 
   return result;
 }
 
 /**
- * Parse primary mission cards from the "## Primary Mission deck" section
- * Format: "Primary Mission\n\nMISSION_NAME\n\nDescription..."
+ * Check if a string looks like a valid mission name (mostly uppercase)
  */
-function parsePrimaryMissions(markdown: string, sourceUrl: string, missionType: string): NewMission[] {
+function isValidMissionName(name: string): boolean {
+  if (!name || name.length < 3) return false;
+  const lettersOnly = name.replace(/[^A-Za-z\s]/g, '');
+  return /^[A-Z\s]+$/.test(lettersOnly);
+}
+
+/**
+ * Parse primary mission cards from HTML.
+ * Looks for mission card structures following "Primary Mission deck" section.
+ */
+function parsePrimaryMissions(
+  html: string,
+  sourceUrl: string,
+  missionType: string
+): NewMission[] {
+  const $ = cheerio.load(html);
   const missions: NewMission[] = [];
+  const seen = new DeduplicationTracker();
 
-  // Find the Primary Mission deck section
-  const primaryDeckMatch = markdown.match(PRIMARY_MISSION_DECK);
-  if (!primaryDeckMatch) return missions;
+  // Find mission card elements - Wahapedia may use various class patterns
+  // Look for mission cards that follow the primary missions section
+  $('div[class*="mission"], div[class*="Mission"], .card').each((_, el) => {
+    const $card = $(el);
+    const cardText = $card.text().trim();
 
-  const primaryDeckContent = primaryDeckMatch[1] || '';
+    // Skip if this doesn't look like a mission card
+    if (cardText.length < 20) return;
 
-  // Split by "Primary Mission" markers to get individual missions
-  const missionBlocks = primaryDeckContent.split(SPLIT_PRIMARY_MISSION).filter(Boolean);
+    // Look for mission name (usually in h3, h4, or emphasized text)
+    let name = '';
+    const $title = $card.find('h3, h4, .mission-title, b:first').first();
+    if ($title.length) {
+      name = $title.text().trim();
+    }
 
-  for (const block of missionBlocks) {
-    const lines = block.trim().split('\n');
-    if (lines.length < 2) continue;
+    // Fallback: look for uppercase text at the start
+    if (!name || !isValidMissionName(name)) {
+      const firstLine = cardText.split('\n')[0]?.trim() || '';
+      if (isValidMissionName(firstLine)) {
+        name = firstLine;
+      }
+    }
 
-    // First non-empty line should be the mission name (in CAPS)
-    let nameIndex = 0;
-    while (nameIndex < lines.length && !lines[nameIndex]?.trim()) nameIndex++;
-    if (nameIndex >= lines.length) continue;
+    if (!name || !seen.addIfNew(name)) return;
 
-    const name = lines[nameIndex]!.trim();
+    // Extract description and scoring rules
+    const content = cardText.replace(name, '').trim();
+    const description = content.slice(0, FALLBACK_DESCRIPTION_MAX_LENGTH);
 
-    // Skip if this doesn't look like a mission name
-    if (!isValidMissionName(name)) continue;
+    // Look for scoring patterns (VP mentions)
+    const vpMatch = content.match(/(\d+)VP/g);
+    const scoringRules = vpMatch ? content : null;
 
-    // Get the rest as content
-    const content = lines.slice(nameIndex + 1).join('\n').trim();
-
-    // Extract description (text before the first **WHEN:** or scoring section)
-    const descMatch = content.match(/^([\s\S]*?)(?=\n(?:SECOND|ANY|FIRST|START|\*\*WHEN|\|))/i);
-    const description = descMatch ? descMatch[1]?.trim() : '';
-
-    // Extract scoring rules (everything after description)
-    const scoringRules = content.replace(description ?? '', '').trim();
-
-    // Check for action definitions
-    const actionMatch = content.match(/\(ACTION\)([\s\S]*?)(?=\n(?:SECOND|ANY|FIRST|START OF THE BATTLE|\*\*WHEN))/i);
-    const missionRule = actionMatch ? actionMatch[0]?.trim() : null;
+    // Look for action markers
+    const hasAction = content.includes('(ACTION)') || content.includes('Action:');
+    const missionRule = hasAction ? content : description;
 
     missions.push({
-      slug: slugify(name),
-      name: toTitleCase(name),
+      slug: truncateSlug(slugify(name)),
+      name: truncateName(toTitleCase(name)),
       missionType,
-      primaryObjective: scoringRules || content,
+      primaryObjective: scoringRules || content.slice(0, RULE_CONTENT_MAX_LENGTH),
       deployment: null,
-      missionRule: missionRule || (description || null),
+      missionRule: missionRule.slice(0, RULE_CONTENT_MAX_LENGTH) || null,
       sourceUrl,
       dataSource: 'wahapedia',
     });
-  }
+  });
+
+  // Alternative: parse from structured list items
+  $('li:contains("Primary Mission"), .primary-mission').each((_, el) => {
+    const $item = $(el);
+    const text = $item.text().trim();
+
+    // Skip very short items
+    if (text.length < 20) return;
+
+    // Extract name from the beginning (usually in caps)
+    const lines = text.split('\n');
+    const nameLine = lines[0]?.trim() || '';
+
+    if (!nameLine || !isValidMissionName(nameLine)) return;
+    if (!seen.addIfNew(nameLine)) return;
+
+    const content = lines.slice(1).join('\n').trim();
+
+    missions.push({
+      slug: truncateSlug(slugify(nameLine)),
+      name: truncateName(toTitleCase(nameLine)),
+      missionType,
+      primaryObjective: content.slice(0, RULE_CONTENT_MAX_LENGTH) || null,
+      deployment: null,
+      missionRule: content.slice(0, RULE_CONTENT_MAX_LENGTH) || null,
+      sourceUrl,
+      dataSource: 'wahapedia',
+    });
+  });
 
   return missions;
 }
 
 /**
- * Parse secondary mission cards from the "## Secondary Mission deck" section
- * Format: "Secondary Mission\n\nMISSION_NAME\n\nDescription..."
+ * Parse secondary mission cards from HTML.
  */
-function parseSecondaryMissions(markdown: string, sourceUrl: string): NewSecondaryObjective[] {
+function parseSecondaryMissions(
+  html: string,
+  sourceUrl: string
+): NewSecondaryObjective[] {
+  const $ = cheerio.load(html);
   const objectives: NewSecondaryObjective[] = [];
+  const seen = new DeduplicationTracker();
 
-  // Find the Secondary Mission deck section
-  const secondaryDeckMatch = markdown.match(SECONDARY_MISSION_DECK);
-  if (!secondaryDeckMatch) return objectives;
+  // Find secondary mission cards
+  $('div[class*="secondary"], div[class*="Secondary"], .secondary-mission').each(
+    (_, el) => {
+      const $card = $(el);
+      const cardText = $card.text().trim();
 
-  const secondaryDeckContent = secondaryDeckMatch[1] || '';
+      if (cardText.length < 20) return;
 
-  // Split by "Secondary Mission" markers
-  const missionBlocks = secondaryDeckContent.split(SPLIT_SECONDARY_MISSION).filter(Boolean);
+      // Extract name
+      let name = '';
+      const $title = $card.find('h3, h4, .mission-title, b:first').first();
+      if ($title.length) {
+        name = $title.text().trim();
+      }
 
-  for (const block of missionBlocks) {
-    const lines = block.trim().split('\n');
-    if (lines.length < 2) continue;
+      if (!name || !isValidMissionName(name)) {
+        const firstLine = cardText.split('\n')[0]?.trim() || '';
+        if (isValidMissionName(firstLine)) {
+          name = firstLine;
+        }
+      }
 
-    // First non-empty line should be the mission name (in CAPS)
-    let nameIndex = 0;
-    while (nameIndex < lines.length && !lines[nameIndex]?.trim()) nameIndex++;
-    if (nameIndex >= lines.length) continue;
+      if (!name || !seen.addIfNew(name)) return;
 
-    const name = lines[nameIndex]!.trim();
+      const content = cardText.replace(name, '').trim();
 
-    // Skip if this doesn't look like a mission name
-    if (!isValidMissionName(name)) continue;
+      // Determine category
+      let category = 'tactical';
+      if (content.includes('FIXED') && content.includes('TACTICAL')) {
+        category = 'both';
+      } else if (content.includes('Fixed Mission')) {
+        category = 'fixed';
+      }
 
-    // Get the rest as content
-    const content = lines.slice(nameIndex + 1).join('\n').trim();
+      // Extract max points
+      const vpMatches = content.match(/(\d+)VP/g);
+      const maxPoints = vpMatches
+        ? Math.max(...vpMatches.map((m) => parseInt(m.replace('VP', ''), 10)))
+        : null;
 
-    // Extract description (fluff text before **When Drawn:** or scoring table)
-    const descMatch = content.match(/^([\s\S]*?)(?=\n(?:\*\*When Drawn|\|.*\|))/i);
-    const description = descMatch ? descMatch[1]?.trim() : content.substring(0, FALLBACK_DESCRIPTION_MAX_LENGTH);
+      // Extract scoring condition
+      let scoringCondition: string | null = null;
+      const $when = $card.find('b:contains("WHEN:"), .when');
+      if ($when.length) {
+        scoringCondition = $when.parent().text().trim();
+      }
 
-    // Determine category based on content
-    let category = 'tactical'; // default
-    if (content.includes('FIXED') && content.includes('TACTICAL')) {
-      category = 'both'; // can be used as either
-    } else if (content.includes('Fixed Mission')) {
-      category = 'fixed';
+      objectives.push({
+        slug: truncateSlug(slugify(name)),
+        name: truncateName(toTitleCase(name)),
+        category,
+        description: content.slice(0, SHORT_DESCRIPTION_MAX_LENGTH),
+        scoringCondition,
+        maxPoints,
+        factionId: null,
+        sourceUrl,
+        dataSource: 'wahapedia',
+      });
     }
+  );
 
-    // Try to extract max points from content - find highest VP value mentioned
-    const vpPattern = new RegExp(VP_SCORING.source, 'g');
-    const maxPointsMatch = content.match(vpPattern);
-    const maxPoints = maxPointsMatch
-      ? Math.max(...maxPointsMatch.map(m => parseInt(m.replace('VP', ''), 10)))
-      : null;
+  // Alternative: parse from list items
+  $('li:contains("Secondary Mission"), .secondary-objective').each((_, el) => {
+    const $item = $(el);
+    const text = $item.text().trim();
 
-    // Extract scoring condition
-    const scoringMatch = content.match(/\*\*WHEN:\*\*[^|]*([\s\S]*?)(?=\n\||\n\n\*\*|$)/i);
-    const scoringCondition = scoringMatch ? scoringMatch[0]?.trim() : null;
+    if (text.length < 20) return;
+
+    const lines = text.split('\n');
+    const nameLine = lines[0]?.trim() || '';
+
+    if (!nameLine || !isValidMissionName(nameLine)) return;
+    if (!seen.addIfNew(nameLine)) return;
+
+    const content = lines.slice(1).join('\n').trim();
 
     objectives.push({
-      slug: slugify(name),
-      name: toTitleCase(name),
-      category,
-      description: description || content.substring(0, SHORT_DESCRIPTION_MAX_LENGTH),
-      scoringCondition,
-      maxPoints,
+      slug: truncateSlug(slugify(nameLine)),
+      name: truncateName(toTitleCase(nameLine)),
+      category: 'tactical',
+      description: content.slice(0, SHORT_DESCRIPTION_MAX_LENGTH) || nameLine,
+      scoringCondition: null,
+      maxPoints: null,
       factionId: null,
       sourceUrl,
       dataSource: 'wahapedia',
     });
-  }
+  });
 
   return objectives;
 }
 
 /**
- * Parse Challenger cards (similar to gambits)
- * These appear in the ## Challenger deck section
+ * Parse Challenger/Gambit cards from HTML.
  */
-function parseChallengers(markdown: string): ParsedGambit[] {
+function parseChallengers(html: string): ParsedGambit[] {
+  const $ = cheerio.load(html);
   const challengers: ParsedGambit[] = [];
+  const seen = new DeduplicationTracker();
 
-  // Find the Challenger deck section
-  const challengerMatch = markdown.match(CHALLENGER_DECK);
-  if (!challengerMatch) return challengers;
+  // Find challenger cards
+  $('div[class*="challenger"], div[class*="Challenger"], .gambit').each(
+    (_, el) => {
+      const $card = $(el);
+      const cardText = $card.text().trim();
 
-  const challengerContent = challengerMatch[1] || '';
+      if (cardText.length < 20) return;
 
-  // Split by "Challenger" markers
-  const cardBlocks = challengerContent.split(SPLIT_CHALLENGER).filter(Boolean);
+      // Extract name
+      let name = '';
+      const $title = $card.find('h3, h4, .title, b:first').first();
+      if ($title.length) {
+        name = $title.text().trim();
+      }
 
-  for (const block of cardBlocks) {
-    const lines = block.trim().split('\n');
-    if (lines.length < 2) continue;
+      if (!name || name.length < 3) return;
+      if (!seen.addIfNew(name)) return;
 
-    // First non-empty line should be the card name
-    let nameIndex = 0;
-    while (nameIndex < lines.length && !lines[nameIndex]?.trim()) nameIndex++;
-    if (nameIndex >= lines.length) continue;
+      const content = cardText.replace(name, '').trim();
 
-    const name = lines[nameIndex]!.trim();
-    if (!name || name.length < 3) continue;
+      // Extract timing
+      let timing = '';
+      const $when = $card.find('b:contains("WHEN:"), .when');
+      if ($when.length) {
+        timing = $when.next().text().trim() || $when.parent().text().replace('WHEN:', '').trim();
+      }
 
-    const content = lines.slice(nameIndex + 1).join('\n').trim();
+      // Extract effect
+      let effect = content;
+      const $effect = $card.find('b:contains("EFFECT:"), .effect');
+      if ($effect.length) {
+        effect = $effect.next().text().trim() || $effect.parent().text().replace('EFFECT:', '').trim();
+      }
 
-    // Extract timing and effect using shared stratagem patterns
-    const whenMatch = content.match(STRATAGEM_WHEN);
-    const effectMatch = content.match(STRATAGEM_EFFECT);
-
-    challengers.push({
-      slug: slugify(name),
-      name: toTitleCase(name),
-      description: content,
-      timing: whenMatch ? whenMatch[1]?.trim() || '' : '',
-      effect: effectMatch ? effectMatch[1]?.trim() || '' : content,
-    });
-  }
+      challengers.push({
+        slug: truncateSlug(slugify(name)),
+        name: truncateName(toTitleCase(name)),
+        description: content.slice(0, RULE_CONTENT_MAX_LENGTH),
+        timing,
+        effect: effect.slice(0, RULE_CONTENT_MAX_LENGTH),
+      });
+    }
+  );
 
   return challengers;
 }
 
 /**
- * Parse general matched play rules from various sections
+ * Parse general matched play rules from HTML sections.
  */
-function parseMatchedPlayRules(markdown: string): ParsedMatchedPlayRule[] {
+function parseMatchedPlayRules(html: string): ParsedMatchedPlayRule[] {
+  const $ = cheerio.load(html);
   const rules: ParsedMatchedPlayRule[] = [];
 
-  // Define sections to extract
-  const rulePatterns: { pattern: RegExp; category: string }[] = [
-    { pattern: /### Chapter Approved Battles([\s\S]*?)(?=###|## |$)/i, category: 'battle_sequence' },
-    { pattern: /### Set Mission Parameters([\s\S]*?)(?=###|## |$)/i, category: 'mission_parameters' },
-    { pattern: /### Muster Armies([\s\S]*?)(?=###|## |$)/i, category: 'army_construction' },
-    { pattern: /### Determine Mission([\s\S]*?)(?=###|## |$)/i, category: 'determine_mission' },
-    { pattern: /### Place Objective Markers([\s\S]*?)(?=###|## |$)/i, category: 'objectives' },
-    { pattern: /### Create The Battlefield([\s\S]*?)(?=###|## |$)/i, category: 'terrain' },
-    { pattern: /### Select Secondary Missions([\s\S]*?)(?=###|## |$)/i, category: 'secondary_selection' },
-    { pattern: /### Deploy Armies([\s\S]*?)(?=###|## |$)/i, category: 'deployment' },
-    { pattern: /### Challenger Cards([\s\S]*?)(?=###|## |$)/i, category: 'challengers' },
-    { pattern: /### Determine Victor([\s\S]*?)(?=###|## |$)/i, category: 'victory_conditions' },
-    { pattern: /### Terrain Layouts?([\s\S]*?)(?=###|## |$)/i, category: 'terrain_layouts' },
+  // Define rule sections to look for
+  const ruleSections: { selector: string; category: string; titleOverride?: string }[] = [
+    { selector: 'a[name*="Chapter-Approved-Battles"], h3:contains("Chapter Approved Battles")', category: 'battle_sequence', titleOverride: 'Chapter Approved Battles' },
+    { selector: 'a[name*="Set-Mission-Parameters"], h3:contains("Set Mission Parameters")', category: 'mission_parameters', titleOverride: 'Set Mission Parameters' },
+    { selector: 'a[name*="Muster-Armies"], h3:contains("Muster Armies")', category: 'army_construction', titleOverride: 'Muster Armies' },
+    { selector: 'a[name*="Determine-Mission"], h3:contains("Determine Mission")', category: 'determine_mission', titleOverride: 'Determine Mission' },
+    { selector: 'a[name*="Place-Objective"], h3:contains("Place Objective")', category: 'objectives', titleOverride: 'Place Objective Markers' },
+    { selector: 'a[name*="Create-The-Battlefield"], h3:contains("Create The Battlefield")', category: 'terrain', titleOverride: 'Create The Battlefield' },
+    { selector: 'a[name*="Select-Secondary"], h3:contains("Select Secondary")', category: 'secondary_selection', titleOverride: 'Select Secondary Missions' },
+    { selector: 'a[name*="Deploy-Armies"], h3:contains("Deploy Armies")', category: 'deployment', titleOverride: 'Deploy Armies' },
+    { selector: 'a[name*="Challenger-Cards"], h3:contains("Challenger Cards")', category: 'challengers', titleOverride: 'Challenger Cards' },
+    { selector: 'a[name*="Determine-Victor"], h3:contains("Determine Victor")', category: 'victory_conditions', titleOverride: 'Determine Victor' },
+    { selector: 'a[name*="Terrain-Layout"], h3:contains("Terrain Layout")', category: 'terrain_layouts', titleOverride: 'Terrain Layouts' },
   ];
 
-  for (const { pattern, category } of rulePatterns) {
-    const match = markdown.match(pattern);
-    if (match && match[1]) {
-      const content = match[1].trim();
-      if (content.length > 50) {
-        // Extract title from the pattern
-        const titleMatch = pattern.source.match(/### ([^(]+)/);
-        const title = titleMatch ? titleMatch[1]?.replace(/\\/g, '') || category : category;
+  for (const { selector, category, titleOverride } of ruleSections) {
+    const $section = $(selector).first();
+    if (!$section.length) continue;
 
-        rules.push({
-          slug: slugify(title),
-          title: title.trim(),
-          category,
-          content: content.substring(0, RULE_CONTENT_MAX_LENGTH),
-        });
-      }
+    // Get content from the section
+    const $parent = $section.parent();
+    let content = '';
+
+    // Try to get content from following siblings until next section
+    const $nextElements = $section.nextAll().slice(0, 10);
+    content = $nextElements.map((_, el) => $(el).text().trim()).get().join('\n').trim();
+
+    if (!content || content.length < 50) {
+      // Fallback: get parent's text content
+      content = $parent.text().trim();
     }
+
+    if (content.length < 50) continue;
+
+    const title = titleOverride || category;
+
+    rules.push({
+      slug: truncateSlug(slugify(title)),
+      title: truncateName(title),
+      category,
+      content: content.slice(0, RULE_CONTENT_MAX_LENGTH),
+    });
   }
 
   return rules;

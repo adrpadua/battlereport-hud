@@ -5,10 +5,14 @@ import {
   parseDetachments,
   parseStratagems,
   parseEnhancements,
+  parseStratagemsByDetachment,
+  parseEnhancementsByDetachment,
+  extractDetachmentSection,
   slugify,
   detectPhase,
 } from './faction-parser.js';
 
+// Re-exported utilities tests
 describe('slugify', () => {
   it('converts text to lowercase', () => {
     expect(slugify('Space Marines')).toBe('space-marines');
@@ -65,616 +69,563 @@ describe('detectPhase', () => {
   });
 });
 
+// HTML Parser tests
+const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/test-faction/';
+
 describe('parseFactionIndex', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/the-rules/';
+  it('extracts faction links from HTML', () => {
+    const html = `
+      <html>
+        <body>
+          <a href="/wh40k10ed/factions/space-marines/">Space Marines</a>
+          <a href="/wh40k10ed/factions/tyranids/">Tyranids</a>
+          <a href="/wh40k10ed/factions/necrons/">Necrons</a>
+        </body>
+      </html>
+    `;
 
-  it('parses a single faction link', () => {
-    const markdown = '[Space Marines](/wh40k10ed/factions/space-marines/)';
-    const result = parseFactionIndex(markdown, sourceUrl);
+    const factions = parseFactionIndex(html, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
+    expect(factions).toHaveLength(3);
+    expect(factions[0]).toMatchObject({
       slug: 'space-marines',
       name: 'Space Marines',
       wahapediaPath: '/wh40k10ed/factions/space-marines/',
-      sourceUrl,
       dataSource: 'wahapedia',
+    });
+    expect(factions[1]).toMatchObject({
+      slug: 'tyranids',
+      name: 'Tyranids',
+    });
+    expect(factions[2]).toMatchObject({
+      slug: 'necrons',
+      name: 'Necrons',
     });
   });
 
-  it('parses multiple faction links', () => {
-    const markdown = `
-[Space Marines](/wh40k10ed/factions/space-marines/)
-[Orks](/wh40k10ed/factions/orks/)
-[Aeldari](/wh40k10ed/factions/aeldari/)
+  it('deduplicates faction links', () => {
+    const html = `
+      <html>
+        <body>
+          <a href="/wh40k10ed/factions/space-marines/">Space Marines</a>
+          <a href="/wh40k10ed/factions/space-marines/">Space Marines Again</a>
+          <a href="/wh40k10ed/factions/tyranids/">Tyranids</a>
+        </body>
+      </html>
     `;
-    const result = parseFactionIndex(markdown, sourceUrl);
 
-    expect(result).toHaveLength(3);
-    expect(result.map((f) => f.slug)).toEqual(['space-marines', 'orks', 'aeldari']);
+    const factions = parseFactionIndex(html, sourceUrl);
+
+    expect(factions).toHaveLength(2);
   });
 
-  it('deduplicates factions with same slug', () => {
-    const markdown = `
-[Space Marines](/wh40k10ed/factions/space-marines/)
-[Space Marines](/wh40k10ed/factions/space-marines/)
+  it('filters out unit page links', () => {
+    const html = `
+      <html>
+        <body>
+          <a href="/wh40k10ed/factions/space-marines/">Space Marines</a>
+          <a href="/wh40k10ed/factions/space-marines/Intercessor-Squad">Intercessor Squad</a>
+          <a href="/wh40k10ed/factions/space-marines/datasheets.html">Datasheets</a>
+        </body>
+      </html>
     `;
-    const result = parseFactionIndex(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
+    const factions = parseFactionIndex(html, sourceUrl);
+
+    expect(factions).toHaveLength(1);
+    expect(factions[0]?.slug).toBe('space-marines');
   });
 
-  it('returns empty array for empty input', () => {
-    expect(parseFactionIndex('', sourceUrl)).toEqual([]);
-  });
+  it('returns empty array for non-faction content', () => {
+    const html = '<html><body>No factions here</body></html>';
 
-  it('ignores non-faction links', () => {
-    const markdown = `
-[The Rules](/wh40k10ed/the-rules/core-rules/)
-[Space Marines](/wh40k10ed/factions/space-marines/)
-[FAQ](/wh40k10ed/faq/)
-    `;
-    const result = parseFactionIndex(markdown, sourceUrl);
+    const factions = parseFactionIndex(html, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]?.slug).toBe('space-marines');
+    expect(factions).toHaveLength(0);
   });
 
   it('handles special characters in faction names', () => {
-    const markdown = "[T'au Empire](/wh40k10ed/factions/tau-empire/)";
-    const result = parseFactionIndex(markdown, sourceUrl);
+    const html = `<a href="/wh40k10ed/factions/t-au-empire/">T'au Empire</a>`;
 
-    expect(result).toHaveLength(1);
-    expect(result[0]?.name).toBe("T'au Empire");
-  });
+    const factions = parseFactionIndex(html, sourceUrl);
 
-  it('handles trailing slash variants', () => {
-    const markdown = `
-[Space Marines](/wh40k10ed/factions/space-marines/)
-[Orks](/wh40k10ed/factions/orks)
-    `;
-    const result = parseFactionIndex(markdown, sourceUrl);
-
-    expect(result).toHaveLength(2);
-    expect(result.map((f) => f.slug)).toEqual(['space-marines', 'orks']);
+    expect(factions).toHaveLength(1);
+    expect(factions[0]?.name).toBe("T'au Empire");
   });
 });
 
 describe('parseFactionPage', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/space-marines/';
-
-  it('extracts army rules section', () => {
-    const markdown = `
-# Space Marines
-
-Some intro text.
-
-## Army Rules
-
-The Adeptus Astartes are the Emperor's finest warriors.
-
-They have many special rules.
-
-## Detachments
+  it('extracts army rules from Army-Rules anchor', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Army-Rules"></a>
+          <h2>Army Rules</h2>
+          <div>For the Greater Good</div>
+          <p>This is the army rule description with detailed mechanics.</p>
+        </body>
+      </html>
     `;
-    const result = parseFactionPage(markdown, 'space-marines', 'Space Marines', sourceUrl);
 
-    expect(result.armyRules).toContain("Emperor's finest warriors");
-    expect(result.armyRules).toContain('special rules');
+    const faction = parseFactionPage(html, 'tau-empire', "T'au Empire", sourceUrl);
+
+    expect(faction.slug).toBe('tau-empire');
+    expect(faction.name).toBe("T'au Empire");
+    expect(faction.armyRules).toContain('For the Greater Good');
+    expect(faction.dataSource).toBe('wahapedia');
   });
 
-  it('extracts lore from Background section', () => {
-    const markdown = `
-# Space Marines
-
-## Background
-
-The Space Marines are genetically enhanced super soldiers.
-
-## Army Rules
+  it('extracts lore from Introduction anchor', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Introduction"></a>
+          <div>
+            <p>Short intro</p>
+          </div>
+          <div class="BreakInsideAvoid">
+            This is a longer lore description that tells the story of the faction and their place in the galaxy.
+            It should be over 100 characters to be captured as lore content for the faction page.
+          </div>
+        </body>
+      </html>
     `;
-    const result = parseFactionPage(markdown, 'space-marines', 'Space Marines', sourceUrl);
 
-    expect(result.lore).toContain('genetically enhanced');
+    const faction = parseFactionPage(html, 'space-marines', 'Space Marines', sourceUrl);
+
+    expect(faction.lore).toContain('longer lore description');
   });
 
-  it('extracts lore from Lore section', () => {
-    const markdown = `
-## Lore
+  it('returns null for missing optional fields', () => {
+    const html = '<html><body>Minimal content</body></html>';
 
-Ancient warriors of the Imperium.
+    const faction = parseFactionPage(html, 'test-faction', 'Test Faction', sourceUrl);
 
-## Army Rules
-    `;
-    const result = parseFactionPage(markdown, 'space-marines', 'Space Marines', sourceUrl);
-
-    expect(result.lore).toContain('Ancient warriors');
+    expect(faction.armyRules).toBeNull();
+    expect(faction.lore).toBeNull();
   });
 
-  it('uses intro text as lore if no explicit section and >100 chars', () => {
-    const markdown = `
-The Space Marines are the Imperium's greatest warriors. They are genetically engineered super soldiers who fight across the galaxy in defense of humanity. Each Space Marine is worth a hundred normal soldiers.
+  it('returns proper structure with empty HTML', () => {
+    const faction = parseFactionPage('', 'test', 'Test', sourceUrl);
 
-## Army Rules
-
-Combat Doctrines.
-    `;
-    const result = parseFactionPage(markdown, 'space-marines', 'Space Marines', sourceUrl);
-
-    expect(result.lore).toContain("Imperium's greatest warriors");
-  });
-
-  it('returns null for missing armyRules', () => {
-    const markdown = `
-# Space Marines
-
-Some content without army rules.
-
-## Detachments
-    `;
-    const result = parseFactionPage(markdown, 'space-marines', 'Space Marines', sourceUrl);
-
-    expect(result.armyRules).toBeNull();
-  });
-
-  it('returns null for missing lore when intro is too short', () => {
-    const markdown = `
-Short intro.
-
-## Army Rules
-
-Combat Doctrines.
-    `;
-    const result = parseFactionPage(markdown, 'space-marines', 'Space Marines', sourceUrl);
-
-    expect(result.lore).toBeNull();
-  });
-
-  it('returns faction with null fields for empty input', () => {
-    const result = parseFactionPage('', 'space-marines', 'Space Marines', sourceUrl);
-
-    expect(result).toMatchObject({
-      slug: 'space-marines',
-      name: 'Space Marines',
-      armyRules: null,
-      lore: null,
-      wahapediaPath: '/wh40k10ed/factions/space-marines/',
-      sourceUrl,
+    expect(faction).toMatchObject({
+      slug: 'test',
+      name: 'Test',
+      wahapediaPath: '/wh40k10ed/factions/test/',
       dataSource: 'wahapedia',
     });
   });
 });
 
 describe('parseDetachments', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/space-marines/';
+  it('extracts detachments from anchor structure', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Gladius-Task-Force"></a>
+          <div>
+            <h2 class="outline_header">Gladius Task Force</h2>
+            <p class="ShowFluff">The Gladius Task Force is a combined arms formation.</p>
+          </div>
 
-  it('parses a valid detachment', () => {
-    const markdown = `
-## Gladius Task Force
+          <a name="Detachment-Rule"></a>
+          <div>
+            <h2>Detachment Rule</h2>
+            <h3 class="dsColorBgSM font-white padLeft8">Oath of Moment</h3>
+            <p>At the start of your Command phase, select one enemy unit.</p>
+          </div>
 
-The most common Space Marine formation.
+          <a name="Enhancements"></a>
+          <h2>Enhancements</h2>
 
-## Detachment Rule
-
-### Oath of Moment
-
-At the start of the battle round, select one enemy unit...
-
-## Enhancements
+          <a name="Stratagems"></a>
+          <h2>Stratagems</h2>
+        </body>
+      </html>
     `;
-    const result = parseDetachments(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
+    const detachments = parseDetachments(html, sourceUrl);
+
+    expect(detachments).toHaveLength(1);
+    expect(detachments[0]).toMatchObject({
       name: 'Gladius Task Force',
-      slug: 'gladius-task-force',
-      detachmentRuleName: 'Oath of Moment',
       dataSource: 'wahapedia',
     });
+    expect(detachments[0]?.lore).toContain('combined arms formation');
   });
 
-  it('extracts detachment rule name and content', () => {
-    const markdown = `
-## Vanguard Spearhead
+  it('returns empty array when no detachments found', () => {
+    const html = '<html><body>No detachments</body></html>';
 
-Fast attack formation.
+    const detachments = parseDetachments(html, sourceUrl);
 
-## Detachment Rule
-
-### Lightning Assault
-
-Units can advance and charge.
-
-## Stratagems
-    `;
-    const result = parseDetachments(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.detachmentRuleName).toBe('Lightning Assault');
-    expect(result[0]?.detachmentRule).toContain('advance and charge');
+    expect(detachments).toHaveLength(0);
   });
 
-  it('skips system sections', () => {
-    const markdown = `
-## Army Rules
-
-Army wide rules.
-
-## Gladius Task Force
-
-Formation lore.
-
-## Detachment Rule
-
-### Some Rule
-
-Rule text.
-
-## Enhancements
-
-Enhancement content.
-
-## Stratagems
-
-Stratagem content.
+  it('filters out system sections', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Introduction"></a>
+          <h2>Introduction</h2>
+          <a name="Army-Rules"></a>
+          <h2>Army Rules</h2>
+          <a name="Books"></a>
+          <h2>Books</h2>
+        </body>
+      </html>
     `;
-    const result = parseDetachments(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]?.name).toBe('Gladius Task Force');
+    const detachments = parseDetachments(html, sourceUrl);
+
+    expect(detachments).toHaveLength(0);
   });
 
-  it('does not treat section without following Detachment Rule as detachment', () => {
-    const markdown = `
-## Random Section
-
-Some content.
-
-## Another Section
-
-More content.
+  it('parses multiple detachments when present', () => {
+    // In Wahapedia HTML, each detachment has a sequence of anchors:
+    // DetachmentName -> Detachment-Rule -> Enhancements -> Stratagems
+    // The parser detects detachment names by checking if the NEXT anchor is "Detachment-Rule"
+    const html = `
+      <html>
+        <body>
+          <a name="Alpha-Formation"></a>
+          <div><h2>Alpha Formation</h2></div>
+          <a name="Detachment-Rule"></a>
+          <div><h2>Detachment Rule</h2></div>
+        </body>
+      </html>
     `;
-    const result = parseDetachments(markdown, sourceUrl);
 
-    expect(result).toHaveLength(0);
-  });
+    const detachments = parseDetachments(html, sourceUrl);
 
-  it('truncates lore at 1000 characters', () => {
-    const longLore = 'A'.repeat(1500);
-    const markdown = `
-## Test Detachment
-
-${longLore}
-
-## Detachment Rule
-
-### Rule Name
-
-Rule content.
-    `;
-    const result = parseDetachments(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.lore?.length).toBeLessThanOrEqual(1000);
-  });
-
-  it('truncates detachment rule at 2000 characters', () => {
-    const longRule = 'B'.repeat(2500);
-    const markdown = `
-## Test Detachment
-
-Lore.
-
-## Detachment Rule
-
-### Rule Name
-
-${longRule}
-    `;
-    const result = parseDetachments(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.detachmentRule?.length).toBeLessThanOrEqual(2000);
-  });
-
-  it('handles detachment without lore content', () => {
-    const markdown = `
-## Minimalist Detachment
-
-## Detachment Rule
-
-### Simple Rule
-
-Does something.
-
-## Enhancements
-    `;
-    const result = parseDetachments(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.lore).toBe(null);
+    // This tests that the basic detection mechanism works
+    expect(detachments).toHaveLength(1);
+    expect(detachments[0]?.name).toBe('Alpha Formation');
   });
 });
 
 describe('parseStratagems', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/space-marines/';
-
-  it('parses a complete stratagem', () => {
-    const markdown = `
-RAPID REDEPLOYMENT
-1CP
-Gladius Task Force – Strategic Ploy Stratagem
-
-**WHEN:** Your Movement phase.
-
-**TARGET:** One unit from your army.
-
-**EFFECT:** That unit can make a Normal move of up to 6".
+  it('extracts stratagems from str10Border elements', () => {
+    const html = `
+      <html>
+        <body>
+          <div class="str10Border">
+            <div class="str10Diamond">
+              <div class="str10CP">1CP</div>
+            </div>
+            <div class="str10Type">Gladius Task Force – Battle Tactic Stratagem</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Your Shooting phase.<br><br>
+              <b>TARGET:</b> One Space Marines unit from your army.<br><br>
+              <b>EFFECT:</b> Until the end of the phase, improve the AP of that unit's weapons by 1.
+            </div>
+          </div>
+        </body>
+      </html>
     `;
-    const result = parseStratagems(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
-      name: 'RAPID REDEPLOYMENT',
+    const stratagems = parseStratagems(html, sourceUrl);
+
+    expect(stratagems).toHaveLength(1);
+    expect(stratagems[0]).toMatchObject({
       cpCost: '1',
-      phase: 'movement',
-      when: 'Your Movement phase.',
-      target: 'One unit from your army.',
+      phase: 'shooting',
+      when: 'Your Shooting phase.',
+      dataSource: 'wahapedia',
+      isCore: false,
     });
-    expect(result[0]?.effect).toContain('Normal move');
+    expect(stratagems[0]?.target).toContain('Space Marines');
+    expect(stratagems[0]?.effect).toContain('improve the AP');
   });
 
-  it('detects shooting phase', () => {
-    const markdown = `
-HEAVY FIRE
-2CP
-Test – Battle Tactic Stratagem
-
-**WHEN:** Your Shooting phase.
-
-**TARGET:** One unit.
-
-**EFFECT:** Re-roll hits.
+  it('extracts 2CP stratagems correctly', () => {
+    const html = `
+      <html>
+        <body>
+          <div class="str10Border">
+            <div class="str10CP">2CP</div>
+            <div class="str10Type">Test – Strategic Ploy Stratagem</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Your opponent's Movement phase.<br><br>
+              <b>TARGET:</b> One Infantry unit.<br><br>
+              <b>EFFECT:</b> Your unit can move up to 6".
+            </div>
+          </div>
+        </body>
+      </html>
     `;
-    const result = parseStratagems(markdown, sourceUrl);
 
-    expect(result[0]?.phase).toBe('shooting');
+    const stratagems = parseStratagems(html, sourceUrl);
+
+    expect(stratagems).toHaveLength(1);
+    expect(stratagems[0]?.cpCost).toBe('2');
   });
 
-  it('deduplicates stratagems with same name', () => {
-    const markdown = `
-RAPID FIRE
-1CP
-Test – Stratagem
+  it('returns empty array when no stratagems found', () => {
+    const html = '<html><body>No stratagems here</body></html>';
 
-**WHEN:** Shooting phase.
+    const stratagems = parseStratagems(html, sourceUrl);
 
-**TARGET:** Unit.
-
-**EFFECT:** Effect 1.
-
-RAPID FIRE
-1CP
-Test – Stratagem
-
-**WHEN:** Shooting phase.
-
-**TARGET:** Unit.
-
-**EFFECT:** Effect 2.
-    `;
-    const result = parseStratagems(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
+    expect(stratagems).toHaveLength(0);
   });
 
-  it('skips stratagems without EFFECT field', () => {
-    // Real Wahapedia stratagems always have structured WHEN/TARGET/EFFECT fields
-    // Stratagems without EFFECT should be skipped
-    const markdown = `
-SIMPLE STRATAGEM
-1CP
-Test – Wargear Stratagem
-
-Just a description without structured fields.
+  it('detects fight phase from WHEN clause', () => {
+    const html = `
+      <html>
+        <body>
+          <div class="str10Border">
+            <div class="str10CP">1CP</div>
+            <div class="str10Type">Test – Battle Tactic Stratagem</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Fight phase.<br><br>
+              <b>TARGET:</b> One unit.<br><br>
+              <b>EFFECT:</b> Add 1 to hit rolls.
+            </div>
+          </div>
+        </body>
+      </html>
     `;
-    const result = parseStratagems(markdown, sourceUrl);
 
-    expect(result).toHaveLength(0);
+    const stratagems = parseStratagems(html, sourceUrl);
+
+    expect(stratagems[0]?.phase).toBe('fight');
   });
 
-  it('handles missing WHEN/TARGET but has EFFECT', () => {
-    const markdown = `
-SIMPLE STRATAGEM
-1CP
-Test – Wargear Stratagem
-
-**EFFECT:** Just an effect without when/target.
+  it('skips stratagems without EFFECT', () => {
+    const html = `
+      <html>
+        <body>
+          <div class="str10Border">
+            <div class="str10CP">1CP</div>
+            <div class="str10Type">Test – Stratagem</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Shooting phase.<br><br>
+              <b>TARGET:</b> One unit.
+            </div>
+          </div>
+        </body>
+      </html>
     `;
-    const result = parseStratagems(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]?.when).toBeNull();
-    expect(result[0]?.target).toBeNull();
+    const stratagems = parseStratagems(html, sourceUrl);
+
+    expect(stratagems).toHaveLength(0);
   });
 
-  it('truncates effect at 2000 characters', () => {
-    const longEffect = 'E'.repeat(2500);
-    const markdown = `
-LONG EFFECT
-1CP
-Test – Stratagem
-
-**WHEN:** Phase.
-
-**TARGET:** Unit.
-
-**EFFECT:** ${longEffect}
+  it('parses multiple stratagems', () => {
+    const html = `
+      <html>
+        <body>
+          <div class="str10Border">
+            <div class="str10CP">1CP</div>
+            <div class="str10Type">Test – Battle Tactic Stratagem</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Shooting phase.<br><br>
+              <b>TARGET:</b> Unit one.<br><br>
+              <b>EFFECT:</b> Effect one.
+            </div>
+          </div>
+          <div class="str10Border">
+            <div class="str10CP">2CP</div>
+            <div class="str10Type">Test – Strategic Ploy Stratagem</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Movement phase.<br><br>
+              <b>TARGET:</b> Unit two.<br><br>
+              <b>EFFECT:</b> Effect two.
+            </div>
+          </div>
+        </body>
+      </html>
     `;
-    const result = parseStratagems(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]?.effect?.length).toBeLessThanOrEqual(2000);
-  });
+    const stratagems = parseStratagems(html, sourceUrl);
 
-  it('detects Battle Tactic stratagem type', () => {
-    const markdown = `
-TACTIC
-1CP
-Detachment – Battle Tactic Stratagem
-
-**WHEN:** Phase.
-
-**TARGET:** Unit.
-
-**EFFECT:** Effect.
-    `;
-    const result = parseStratagems(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-  });
-
-  it('returns empty array for no stratagems', () => {
-    const markdown = `
-## Some Section
-
-No stratagems here.
-    `;
-    const result = parseStratagems(markdown, sourceUrl);
-
-    expect(result).toEqual([]);
+    expect(stratagems).toHaveLength(2);
   });
 });
 
 describe('parseEnhancements', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/space-marines/';
+  it('extracts enhancements from EnhancementsPts elements', () => {
+    const html = `
+      <html>
+        <body>
+          <ul class="EnhancementsPts">
+            <span>Adept of the Codex</span>
+            <span>20 pts</span>
+          </ul>
+          <div>ADEPTUS ASTARTES model only. Once per battle, you can re-roll a Hit roll.</div>
 
-  it('parses enhancement from Wahapedia table format', () => {
-    const markdown = `
-## Enhancements
-
-|     |
-| --- |
-| - Artificer Armour 20 pts<br>A finely crafted set of armour.<br>SPACEMARINES model only. The bearer has a 2+ Save. |
+          <ul class="EnhancementsPts">
+            <span>Artificer Armour</span>
+            <span>15 pts</span>
+          </ul>
+          <div>Model has a 2+ Save.</div>
+        </body>
+      </html>
     `;
-    const result = parseEnhancements(markdown, sourceUrl);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
-      name: 'Artificer Armour',
+    const enhancements = parseEnhancements(html, sourceUrl);
+
+    expect(enhancements).toHaveLength(2);
+    expect(enhancements[0]).toMatchObject({
+      name: 'Adept of the Codex',
       pointsCost: 20,
-      slug: 'artificer-armour',
       dataSource: 'wahapedia',
     });
-    expect(result[0]?.description).toContain('A finely crafted set of armour');
+    expect(enhancements[1]).toMatchObject({
+      name: 'Artificer Armour',
+      pointsCost: 15,
+    });
   });
 
-  it('handles pts format', () => {
-    const markdown = `
-|     |
-| --- |
-| - Storm Shield 15 pts<br>Defensive gear.<br>Effect text here. |
+  it('handles enhancements without pts suffix', () => {
+    const html = `
+      <html>
+        <body>
+          <ul class="EnhancementsPts">
+            <span>Test Enhancement</span>
+            <span>25pts</span>
+          </ul>
+        </body>
+      </html>
     `;
-    const result = parseEnhancements(markdown, sourceUrl);
 
-    expect(result[0]?.pointsCost).toBe(15);
+    const enhancements = parseEnhancements(html, sourceUrl);
+
+    expect(enhancements[0]?.pointsCost).toBe(25);
   });
 
-  it('handles pt format (singular)', () => {
-    const markdown = `
-|     |
-| --- |
-| - Minor Relic 1 pt<br>A small bonus. |
+  it('deduplicates enhancements by name', () => {
+    const html = `
+      <html>
+        <body>
+          <ul class="EnhancementsPts">
+            <span>Duplicate Enhancement</span>
+            <span>20 pts</span>
+          </ul>
+          <ul class="EnhancementsPts">
+            <span>Duplicate Enhancement</span>
+            <span>20 pts</span>
+          </ul>
+        </body>
+      </html>
     `;
-    const result = parseEnhancements(markdown, sourceUrl);
 
-    expect(result[0]?.pointsCost).toBe(1);
+    const enhancements = parseEnhancements(html, sourceUrl);
+
+    expect(enhancements).toHaveLength(1);
   });
 
-  it('extracts restrictions from model only pattern', () => {
-    const markdown = `
-|     |
-| --- |
-| - Chapter Master Relic 30 pts<br>A sacred weapon.<br>CAPTAIN model only. Grants rerolls. |
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
+  it('returns empty array when no enhancements found', () => {
+    const html = '<html><body>No enhancements</body></html>';
 
-    expect(result[0]?.restrictions).toContain('CAPTAIN model only');
+    const enhancements = parseEnhancements(html, sourceUrl);
+
+    expect(enhancements).toHaveLength(0);
   });
 
-  it('extracts restrictions with INFANTRY pattern', () => {
-    const markdown = `
-|     |
-| --- |
-| - Psyker Staff 25 pts<br>Psychic enhancement.<br>PSYKER INFANTRY model only. Add 1 to psychic tests. |
+  it('handles malformed enhancement HTML', () => {
+    const html = `
+      <html>
+        <body>
+          <ul class="EnhancementsPts">
+            <span>Only Name</span>
+          </ul>
+        </body>
+      </html>
     `;
-    const result = parseEnhancements(markdown, sourceUrl);
 
-    expect(result[0]?.restrictions).toContain('PSYKER INFANTRY model only');
+    const enhancements = parseEnhancements(html, sourceUrl);
+
+    expect(enhancements).toHaveLength(0);
+  });
+});
+
+describe('parseStratagemsByDetachment', () => {
+  it('groups stratagems by their parent detachment', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Gladius-Task-Force"></a>
+          <h2>Gladius Task Force</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Stratagems"></a>
+          <h2>Stratagems</h2>
+          <div class="str10Border">
+            <div class="str10CP">1CP</div>
+            <div class="str10Type">Gladius – Battle Tactic</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Shooting phase.<br><br>
+              <b>TARGET:</b> One unit.<br><br>
+              <b>EFFECT:</b> Re-roll hits.
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const stratagemsByDetachment = parseStratagemsByDetachment(html, sourceUrl);
+
+    expect(stratagemsByDetachment.size).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('parseEnhancementsByDetachment', () => {
+  it('groups enhancements by their parent detachment', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Gladius-Task-Force"></a>
+          <h2>Gladius Task Force</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Enhancements"></a>
+          <h2>Enhancements</h2>
+          <div>
+            <ul class="EnhancementsPts">
+              <span>Test Enhancement</span>
+              <span>20 pts</span>
+            </ul>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const enhancementsByDetachment = parseEnhancementsByDetachment(html, sourceUrl);
+
+    expect(enhancementsByDetachment.size).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('extractDetachmentSection', () => {
+  it('extracts section content for a named detachment', () => {
+    const html = `
+      <html>
+        <body>
+          <div>
+            <a name="Gladius-Task-Force"></a>
+            <h2>Gladius Task Force</h2>
+            <p>This is the Gladius content.</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const section = extractDetachmentSection(html, 'Gladius Task Force');
+
+    expect(section).toContain('Gladius');
   });
 
-  it('parses multiple enhancements in table format', () => {
-    const markdown = `
-## Enhancements
+  it('returns null when detachment not found', () => {
+    const html = '<html><body>No such detachment</body></html>';
 
-|     |
-| --- |
-| - First 10 pts<br>Description one. |
+    const section = extractDetachmentSection(html, 'Missing Detachment');
 
-|     |
-| --- |
-| - Second 20 pts<br>Description two. |
-
-|     |
-| --- |
-| - Third 30 pts<br>Description three. |
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
-
-    expect(result).toHaveLength(3);
-    expect(result.map((e) => e.name)).toEqual(['First', 'Second', 'Third']);
-  });
-
-  it('returns empty array for no enhancements', () => {
-    const markdown = `
-## Some Section
-
-No enhancements here.
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
-
-    expect(result).toEqual([]);
-  });
-
-  it('deduplicates enhancements with same name', () => {
-    const markdown = `
-|     |
-| --- |
-| - Duplicate 10 pts<br>First instance. |
-
-|     |
-| --- |
-| - Duplicate 10 pts<br>Second instance. |
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-  });
-
-  it('parses real Wahapedia format', () => {
-    // Real example from Thousand Sons
-    const markdown = `
-## Enhancements
-
-|     |
-| --- |
-| - Lord of Forbidden Lore 20 pts<br>This Sorcerer has committed many a grimoire and unholy tome to memory.<br>THOUSANDSONS model only. Each time the bearer manifests a Ritual, add 6" to its range. |
-    `;
-    const result = parseEnhancements(markdown, sourceUrl);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.name).toBe('Lord of Forbidden Lore');
-    expect(result[0]?.pointsCost).toBe(20);
-    expect(result[0]?.restrictions).toContain('THOUSANDSONS model only');
+    expect(section).toBeNull();
   });
 });

@@ -1,5 +1,5 @@
+import * as cheerio from 'cheerio';
 import type { NewCoreRule } from '../../db/schema.js';
-import { SPLIT_H2, SPLIT_H3 } from './regex-patterns.js';
 import { slugify, detectRuleCategory } from './utils.js';
 import {
   SLUG_MAX_LENGTH,
@@ -17,71 +17,89 @@ interface ParsedSection {
 }
 
 /**
- * Parses the core rules markdown from Wahapedia into structured sections
+ * Parses the core rules HTML from Wahapedia into structured sections
  */
-export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule[] {
+export function parseCoreRules(html: string, sourceUrl: string): NewCoreRule[] {
+  const $ = cheerio.load(html);
   const sections: ParsedSection[] = [];
   let orderIndex = 0;
 
-  // Split by h2 headers (##) to get major sections
-  const majorSections = markdown.split(SPLIT_H2).filter(Boolean);
+  // Find all h2 elements (major sections)
+  const $h2Elements = $('h2');
 
-  for (const majorSection of majorSections) {
-    const lines = majorSection.split('\n');
-    const majorTitle = lines[0]?.trim() || 'Unknown';
+  $h2Elements.each((_, h2El) => {
+    const $h2 = $(h2El);
+    const majorTitle = $h2.text().trim();
+
+    if (!majorTitle || majorTitle.length < 2) return;
+
     const majorSlug = slugify(majorTitle);
-    const majorContent = lines.slice(1).join('\n').trim();
+    const majorCategory = detectRuleCategory(majorTitle);
 
-    // Check if this section has subsections (h3 headers)
-    const subsections = majorContent.split(SPLIT_H3);
+    // Collect content until next h2
+    let content = '';
+    const subsections: { title: string; content: string }[] = [];
+    let currentSubsection: { title: string; content: string } | null = null;
 
-    if (subsections.length > 1) {
-      // Has subsections
-      const introContent = subsections[0]?.trim();
-
-      // Add the intro as the main section if it has content
-      if (introContent && introContent.length > 50) {
-        sections.push({
-          slug: majorSlug,
-          title: majorTitle,
-          category: detectRuleCategory(majorTitle),
-          content: introContent,
-          orderIndex: orderIndex++,
-        });
-      }
-
-      // Process each subsection
-      for (let i = 1; i < subsections.length; i++) {
-        const subsection = subsections[i];
-        if (!subsection) continue;
-
-        const subLines = subsection.split('\n');
-        const subTitle = subLines[0]?.trim() || 'Unknown';
-        const subContent = subLines.slice(1).join('\n').trim();
-
-        if (subContent.length > 10) {
-          sections.push({
-            slug: `${majorSlug}-${slugify(subTitle)}`,
-            title: subTitle,
-            category: detectRuleCategory(majorTitle),
-            subcategory: majorTitle,
-            content: subContent,
-            orderIndex: orderIndex++,
-          });
+    // Iterate through siblings until next h2
+    let $current = $h2.next();
+    while ($current.length && !$current.is('h2')) {
+      if ($current.is('h3')) {
+        // Start new subsection
+        if (currentSubsection && currentSubsection.content.trim().length > 10) {
+          subsections.push(currentSubsection);
         }
+        currentSubsection = {
+          title: $current.text().trim(),
+          content: '',
+        };
+      } else if (currentSubsection) {
+        // Add to current subsection
+        currentSubsection.content += getElementText($, $current) + '\n';
+      } else {
+        // Add to main section content (before any h3)
+        content += getElementText($, $current) + '\n';
       }
-    } else {
-      // No subsections, add as single section
-      if (majorContent.length > 10) {
+
+      $current = $current.next();
+    }
+
+    // Don't forget the last subsection
+    if (currentSubsection && currentSubsection.content.trim().length > 10) {
+      subsections.push(currentSubsection);
+    }
+
+    content = content.trim();
+
+    // Add main section if it has enough content
+    if (content.length > 50) {
+      sections.push({
+        slug: majorSlug,
+        title: majorTitle,
+        category: majorCategory,
+        content,
+        orderIndex: orderIndex++,
+      });
+    }
+
+    // Add subsections
+    for (const sub of subsections) {
+      if (sub.content.trim().length > 10) {
         sections.push({
-          slug: majorSlug,
-          title: majorTitle,
-          category: detectRuleCategory(majorTitle),
-          content: majorContent,
+          slug: `${majorSlug}-${slugify(sub.title)}`,
+          title: sub.title,
+          category: majorCategory,
+          subcategory: majorTitle,
+          content: sub.content.trim(),
           orderIndex: orderIndex++,
         });
       }
     }
+  });
+
+  // If no h2 sections found, try alternative structure with anchors
+  if (sections.length === 0) {
+    parseByAnchors($, sections, orderIndex);
   }
 
   // Convert to database format
@@ -95,6 +113,98 @@ export function parseCoreRules(markdown: string, sourceUrl: string): NewCoreRule
     sourceUrl,
     dataSource: 'wahapedia' as const,
   }));
+}
+
+/**
+ * Get text content from an element, handling various element types
+ */
+function getElementText($: cheerio.CheerioAPI, $el: cheerio.Cheerio<cheerio.Element>): string {
+  // Skip script and style tags
+  if ($el.is('script, style')) return '';
+
+  // Get text content, preserving some structure
+  const text = $el.text().trim();
+
+  // For lists, add bullet points
+  if ($el.is('ul, ol')) {
+    return $el
+      .find('li')
+      .map((_, li) => `• ${$(li).text().trim()}`)
+      .get()
+      .join('\n');
+  }
+
+  // For tables, try to preserve structure
+  if ($el.is('table')) {
+    const rows: string[] = [];
+    $el.find('tr').each((_, tr) => {
+      const cells = $(tr)
+        .find('td, th')
+        .map((__, cell) => $(cell).text().trim())
+        .get();
+      rows.push(cells.join(' | '));
+    });
+    return rows.join('\n');
+  }
+
+  return text;
+}
+
+/**
+ * Alternative parsing using anchor elements for section identification
+ */
+function parseByAnchors(
+  $: cheerio.CheerioAPI,
+  sections: ParsedSection[],
+  orderIndex: number
+): void {
+  // Look for anchors that might indicate section starts
+  const $anchors = $('a[name]');
+
+  $anchors.each((_, anchorEl) => {
+    const $anchor = $(anchorEl);
+    const anchorName = $anchor.attr('name') || '';
+
+    // Skip if not a meaningful anchor
+    if (!anchorName || anchorName.length < 3) return;
+
+    // Try to get the title from the anchor name
+    const title = anchorName.replace(/-/g, ' ').trim();
+    if (title.length < 3) return;
+
+    // Collect content from following siblings
+    let content = '';
+    let $current = $anchor.next();
+
+    // Stop at next anchor or h2/h3
+    while ($current.length && !$current.is('a[name], h2, h3')) {
+      content += getElementText($, $current) + '\n';
+      $current = $current.next();
+    }
+
+    content = content.trim();
+
+    if (content.length > 50) {
+      sections.push({
+        slug: slugify(title),
+        title: toTitleCase(title),
+        category: detectRuleCategory(title),
+        content,
+        orderIndex: orderIndex++,
+      });
+    }
+  });
+}
+
+/**
+ * Convert string to title case
+ */
+function toTitleCase(str: string): string {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
 /**
