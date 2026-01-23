@@ -168,7 +168,8 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       for (const stratagem of stratagems) {
         await db
           .insert(schema.stratagems)
-          .values({ ...stratagem, factionId });
+          .values({ ...stratagem, factionId })
+          .onConflictDoNothing(); // Skip duplicates (parser may generate non-unique slugs)
       }
     } catch (error) {
       console.error(`Failed to scrape faction ${factionSlug}:`, error);
@@ -565,6 +566,7 @@ async function runScrape(options: { target?: ScrapeTarget; faction?: string; ref
 
 export const scrapeCommand = new Command('scrape')
   .description('Scrape Wahapedia data')
+  .passThroughOptions()
   .option('-t, --target <target>', 'Scrape target: core, factions, units, missions, all', 'all')
   .option('-f, --faction <slug>', 'Scrape only a specific faction')
   .option('-m, --mission-pack <pack>', 'Scrape specific mission pack: chapter-approved, pariah-nexus, leviathan')
@@ -587,8 +589,9 @@ scrapeCommand
   .command('factions')
   .description('Scrape factions only')
   .option('-f, --faction <slug>', 'Scrape only a specific faction')
-  .action(async (options) => {
-    await runScrape({ target: 'factions', faction: options.faction });
+  .action(async (options, command) => {
+    const opts = command.opts();
+    await runScrape({ target: 'factions', faction: opts.faction });
   });
 
 scrapeCommand
@@ -599,14 +602,16 @@ scrapeCommand
   .option('--only-pending', 'Only scrape units with pending status (minimizes API usage)')
   .option('--only-failed', 'Only retry units that previously failed to scrape')
   .option('--skip-unchanged', 'Skip processing if cached content matches last successful scrape')
-  .action(async (options) => {
-    await runScrape({ target: 'units', faction: options.faction, refreshIndex: options.refreshIndex, onlyPending: options.onlyPending, onlyFailed: options.onlyFailed, skipUnchanged: options.skipUnchanged });
+  .action(async (options, command) => {
+    const opts = command.opts();
+    await runScrape({ target: 'units', faction: opts.faction, refreshIndex: opts.refreshIndex, onlyPending: opts.onlyPending, onlyFailed: opts.onlyFailed, skipUnchanged: opts.skipUnchanged });
   });
 
 scrapeCommand
   .command('missions')
   .description('Scrape mission packs (Chapter Approved, Pariah Nexus, Leviathan)')
   .option('-m, --mission-pack <pack>', 'Scrape specific pack: chapter-approved, pariah-nexus, leviathan')
-  .action(async (options) => {
-    await runScrape({ target: 'missions', missionPack: options.missionPack });
+  .action(async (options, command) => {
+    const opts = command.opts();
+    await runScrape({ target: 'missions', missionPack: opts.missionPack });
   });

@@ -14,7 +14,8 @@ const program = new Command();
 program
   .name('wh40k')
   .description('WH40K Rules MCP Server CLI')
-  .version('1.0.0');
+  .version('1.0.0')
+  .enablePositionalOptions(); // Allow subcommands to define their own options
 
 program.addCommand(indexCommand);
 program.addCommand(scrapeCommand);
