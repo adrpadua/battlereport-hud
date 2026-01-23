@@ -38,6 +38,7 @@ export {
   useCommandPoints,
   useVictoryPoints,
 } from './hooks/useGameState';
+export { useExpandable } from './hooks/useExpandable';
 
 // Utilities
 export {
@@ -77,6 +78,9 @@ export type {
   BattleActions,
   BattleStore,
   ProgressLogEntry,
+  // Unit search types
+  UnitSearchResult,
+  UnitSearchModalProps,
   // Unit detail types
   UnitDetailResponse,
   UnitDetailUnit,

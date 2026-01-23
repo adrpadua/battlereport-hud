@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ConfidenceBadge } from './ConfidenceBadge';
 import { stripUnitNameParentheses } from '../utils/text-parser';
+import { useExpandable } from '../hooks/useExpandable';
 import type { Unit, UnitStats } from '../types';
 
 interface UnitCellProps {
@@ -10,6 +11,7 @@ interface UnitCellProps {
   onSeekToTimestamp?: (seconds: number) => void;
   onAcceptSuggestion?: (unitIndex: number) => void;
   onOpenDetail?: (unitName: string, faction: string) => void;
+  onSearchCorrection?: (unitName: string, faction: string, unitIndex: number) => void;
 }
 
 function formatTimestamp(seconds: number): string {
@@ -94,23 +96,10 @@ export function UnitCell({
   onSeekToTimestamp,
   onAcceptSuggestion,
   onOpenDetail,
+  onSearchCorrection,
 }: UnitCellProps): React.ReactElement {
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const hasExpandableContent = Boolean(unit.stats || (unit.keywords && unit.keywords.length > 0));
-
-  const handleHeaderClick = (): void => {
-    if (hasExpandableContent) {
-      setIsExpanded(!isExpanded);
-    }
-  };
-
-  const handleHeaderKeyDown = (e: React.KeyboardEvent): void => {
-    if (hasExpandableContent && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault();
-      setIsExpanded(!isExpanded);
-    }
-  };
+  const { isExpanded, headerProps, contentClassName } = useExpandable({ hasContent: hasExpandableContent });
 
   const handleTimestampClick = (e: React.MouseEvent): void => {
     e.stopPropagation();
@@ -132,15 +121,18 @@ export function UnitCell({
     }
   };
 
+  const handleSearchClick = (e: React.MouseEvent): void => {
+    e.stopPropagation();
+    if (onSearchCorrection && playerFaction) {
+      onSearchCorrection(unit.name, playerFaction, unitIndex);
+    }
+  };
+
   return (
     <div className="unit-cell">
       <div
-        className={`unit-cell-header ${isExpanded ? 'expanded' : ''} ${hasExpandableContent ? 'expandable' : ''}`}
-        onClick={handleHeaderClick}
-        onKeyDown={handleHeaderKeyDown}
-        role={hasExpandableContent ? 'button' : undefined}
-        tabIndex={hasExpandableContent ? 0 : undefined}
-        aria-expanded={hasExpandableContent ? isExpanded : undefined}
+        className={`unit-cell-header ${contentClassName} ${hasExpandableContent ? 'expandable' : ''}`}
+        {...headerProps}
       >
         <span className="unit-name">
           {stripUnitNameParentheses(unit.name)}
@@ -154,6 +146,15 @@ export function UnitCell({
           )}
         </span>
         <div className="unit-cell-actions">
+          {onSearchCorrection && playerFaction && (
+            <button
+              onClick={handleSearchClick}
+              className="unit-search-button"
+              title="Correct unit name"
+            >
+              &#x270E;
+            </button>
+          )}
           {unit.isValidated && onOpenDetail && playerFaction && (
             <button
               onClick={handleInfoClick}

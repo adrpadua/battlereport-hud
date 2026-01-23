@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { DetachmentDetails } from '../types';
 import { RuleText } from './RuleText';
+import { useExpandable } from '../hooks/useExpandable';
 import {
   stripBattleSizeSuffix,
   stripFluffParagraphs,
@@ -15,10 +16,12 @@ export function DetachmentCard({
   detachmentName,
   faction,
 }: DetachmentCardProps): React.ReactElement | null {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [detachment, setDetachment] = useState<DetachmentDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const hasExpandableContent = Boolean(detachment?.rule);
+  const { isExpanded, headerProps, contentClassName } = useExpandable({ hasContent: hasExpandableContent });
 
   useEffect(() => {
     if (!detachmentName || !faction) return;
@@ -60,32 +63,13 @@ export function DetachmentCard({
     return null;
   }
 
-  const handleHeaderClick = (): void => {
-    if (detachment?.rule) {
-      setIsExpanded(!isExpanded);
-    }
-  };
-
-  const handleHeaderKeyDown = (e: React.KeyboardEvent): void => {
-    if (detachment?.rule && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault();
-      setIsExpanded(!isExpanded);
-    }
-  };
-
-  const hasExpandableContent = Boolean(detachment?.rule);
-
   return (
     <div className="detachment-section">
       <div className="section-title">DETACHMENT</div>
       <div className="detachment-card">
         <div
-          className={`detachment-card-header ${isExpanded ? 'expanded' : ''} ${hasExpandableContent ? 'expandable' : ''}`}
-          onClick={handleHeaderClick}
-          onKeyDown={handleHeaderKeyDown}
-          role={hasExpandableContent ? 'button' : undefined}
-          tabIndex={hasExpandableContent ? 0 : undefined}
-          aria-expanded={hasExpandableContent ? isExpanded : undefined}
+          className={`detachment-card-header ${contentClassName} ${hasExpandableContent ? 'expandable' : ''}`}
+          {...headerProps}
         >
           <div className="detachment-card-info">
             <span className="detachment-name">{detachmentName}</span>
