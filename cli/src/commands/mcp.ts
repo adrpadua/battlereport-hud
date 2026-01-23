@@ -235,3 +235,17 @@ reparseCmd
     if (options.verbose) args.push('--verbose');
     await runMcpScript('reparse-all.ts', args);
   });
+
+reparseCmd
+  .command('factions')
+  .description('Re-parse cached faction pages (army rules, detachments, stratagems, enhancements)')
+  .option('--dry-run', 'Preview changes without updating the database')
+  .option('--faction <factionId>', 'Only reparse a specific faction')
+  .option('--verbose, -v', 'Show detailed output')
+  .action(async (options: { dryRun?: boolean; faction?: string; verbose?: boolean }) => {
+    const args: string[] = [];
+    if (options.dryRun) args.push('--dry-run');
+    if (options.faction) args.push('--faction', options.faction);
+    if (options.verbose) args.push('--verbose');
+    await runMcpScript('reparse-factions.ts', args);
+  });

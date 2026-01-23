@@ -680,8 +680,11 @@ function extractAbilitiesFromHtml($: cheerio.CheerioAPI, sourceUrl: string): Omi
     description = description
       .replace(/^\s*:\s*/, '') // Remove leading colon
       .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 1000);
+      .trim();
+
+    // Fix concatenated keywords from adjacent spans (e.g., "HERETIC ASTARTESHERETIC ASTARTES...")
+    description = dedupeKeywordsInDescription(description);
+    description = description.slice(0, 1000);
 
     // Skip if description is too short or looks like garbage
     if (description.length < 10) return;
@@ -774,6 +777,26 @@ function normalizeText(text: string): string {
   result = result.replace(/\b(of)(the)\b/gi, '$1 $2');
   result = result.replace(/\b(to)(the)\b/gi, '$1 $2');
   result = result.replace(/\b(from)(the)\b/gi, '$1 $2');
+
+  return result;
+}
+
+/**
+ * Deduplicate repeated uppercase keywords in ability descriptions.
+ * Handles cases where adjacent <span> elements get concatenated without spaces,
+ * e.g., "HERETIC ASTARTESHERETIC ASTARTES..." -> "HERETIC ASTARTES"
+ */
+function dedupeKeywordsInDescription(text: string): string {
+  // Pattern to find repeated uppercase phrases (2+ words) that got concatenated
+  // Matches: "WORD1 WORD2WORD1 WORD2WORD1 WORD2..." where words are all uppercase
+  const repeatedKeywordPattern = /\b([A-Z][A-Z'-]+(?:\s+[A-Z][A-Z'-]+)+)(\1)+/g;
+
+  let result = text.replace(repeatedKeywordPattern, '$1');
+
+  // Also fix cases where a single uppercase word is repeated: "KEYWORDKEYWORDKEYWORD"
+  // This handles cases like "INFANTRYINFANTRYINFANTRY"
+  const repeatedWordPattern = /\b([A-Z][A-Z'-]{2,})(\1){2,}/g;
+  result = result.replace(repeatedWordPattern, '$1');
 
   return result;
 }
