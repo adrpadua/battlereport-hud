@@ -482,8 +482,20 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       // Skip header rows that might have slipped through
       const upperName = weaponName.toUpperCase();
       if (upperName === 'RANGED WEAPONS' || upperName === 'MELEE WEAPONS' ||
+          upperName.includes('RANGED WEAPON') || upperName.includes('MELEE WEAPON') ||
           upperName === 'RANGE' || upperName === 'WEAPON' ||
           upperName.includes('DEED') || upperName.includes('VOW')) {
+        return;
+      }
+
+      // Extract stat columns early to check for header rows
+      const range = cells.length > nameCellIdx + 1 ? $(cells[nameCellIdx + 1]).text().trim() : null;
+      const attacks = cells.length > nameCellIdx + 2 ? $(cells[nameCellIdx + 2]).text().trim() : null;
+
+      // Skip if range/attacks columns contain header text (indicates this is a header row)
+      const upperRange = range?.toUpperCase() ?? '';
+      const upperAttacks = attacks?.toUpperCase() ?? '';
+      if (upperRange === 'RANGE' || upperAttacks === 'A' || upperAttacks === 'ATTACKS') {
         return;
       }
 
@@ -492,10 +504,8 @@ function extractWeaponsFromHtml($: cheerio.CheerioAPI, sourceUrl: string): NewWe
       if (seenWeapons.has(normalizedName)) return;
       seenWeapons.add(normalizedName);
 
-      // Extract stat columns (after the name cell)
+      // Extract remaining stat columns (range and attacks already extracted above)
       // Standard order: Name, Range, A, BS/WS, S, AP, D
-      const range = cells.length > nameCellIdx + 1 ? $(cells[nameCellIdx + 1]).text().trim() : null;
-      const attacks = cells.length > nameCellIdx + 2 ? $(cells[nameCellIdx + 2]).text().trim() : null;
       const skill = cells.length > nameCellIdx + 3 ? $(cells[nameCellIdx + 3]).text().trim() : null;
       const strength = cells.length > nameCellIdx + 4 ? $(cells[nameCellIdx + 4]).text().trim() : null;
       const ap = cells.length > nameCellIdx + 5 ? $(cells[nameCellIdx + 5]).text().trim() : null;
