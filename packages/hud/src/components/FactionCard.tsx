@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import type { FactionDetails } from '../types';
 import { RuleText } from './RuleText';
 import { useExpandable } from '../hooks/useExpandable';
-import { stripFluffParagraphs } from '../utils/rule-text-parser';
 
 interface FactionCardProps {
   faction: string;
@@ -15,7 +14,9 @@ export function FactionCard({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hasExpandableContent = Boolean(factionDetails?.armyRule);
+  const hasExpandableContent = Boolean(
+    factionDetails?.armyRuleEffect || factionDetails?.armyRule
+  );
   const { isExpanded, headerProps, contentClassName } = useExpandable({ hasContent: hasExpandableContent });
 
   useEffect(() => {
@@ -55,6 +56,9 @@ export function FactionCard({
     return null;
   }
 
+  // Get display values
+  const ruleName = factionDetails?.armyRuleName || 'Army Rule';
+
   return (
     <div className="faction-section">
       <div className="section-title">ARMY</div>
@@ -66,7 +70,7 @@ export function FactionCard({
           <div className="faction-card-info">
             <span className="faction-card-name">{factionDetails?.name || faction}</span>
             {hasExpandableContent && (
-              <span className="faction-rule-label">Army Rule</span>
+              <span className="faction-rule-label">{ruleName}</span>
             )}
           </div>
           <div className="faction-card-actions">
@@ -79,15 +83,48 @@ export function FactionCard({
           </div>
         </div>
 
-        {isExpanded && factionDetails?.armyRule && (
+        {isExpanded && hasExpandableContent && (
           <div className="faction-details">
-            <div className="faction-rule-text">
-              {stripFluffParagraphs(factionDetails.armyRule).split(/\n\n+/).map((paragraph, index) => (
-                <p key={index} className="faction-rule-paragraph">
-                  <RuleText text={paragraph} />
-                </p>
-              ))}
-            </div>
+            {/* Lore text (italicized) */}
+            {factionDetails?.armyRuleLore && (
+              <div className="faction-rule-lore">
+                {factionDetails.armyRuleLore.split(/\n\n+/).map((paragraph, index) => (
+                  <p key={index} className="faction-lore-paragraph">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {/* Main rule effect */}
+            {factionDetails?.armyRuleEffect && (
+              <div className="faction-rule-text">
+                {factionDetails.armyRuleEffect.split(/\n\n+/).map((paragraph, index) => (
+                  <p key={index} className="faction-rule-paragraph">
+                    <RuleText text={paragraph} />
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {/* Sub-abilities (e.g., Ka'tah Stances) */}
+            {factionDetails?.armyRuleSubAbilities && factionDetails.armyRuleSubAbilities.length > 0 && (
+              <div className="faction-sub-abilities">
+                {factionDetails.armyRuleSubAbilities.map((subAbility, index) => (
+                  <div key={index} className="faction-sub-ability">
+                    <div className="sub-ability-name">{subAbility.name}</div>
+                    {subAbility.lore && (
+                      <div className="sub-ability-lore">{subAbility.lore}</div>
+                    )}
+                    {subAbility.effect && (
+                      <div className="sub-ability-effect">
+                        <RuleText text={subAbility.effect} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

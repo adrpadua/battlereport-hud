@@ -6,6 +6,7 @@ import { useExpandable } from '../hooks/useExpandable';
 
 interface StratagemCardProps {
   stratagem: Stratagem;
+  timestamps?: number[];
   faction?: string;
   onSeekToTimestamp?: (seconds: number) => void;
 }
@@ -18,6 +19,7 @@ function formatTimestamp(seconds: number): string {
 
 export function StratagemCard({
   stratagem,
+  timestamps = [],
   faction,
   onSeekToTimestamp,
 }: StratagemCardProps): React.ReactElement {
@@ -76,12 +78,19 @@ export function StratagemCard({
     fetchDetails();
   }, [stratagem.name, faction, hasPrevalidatedData]);
 
-  const handleSeek = (e: React.MouseEvent): void => {
+  const handleSeek = (e: React.MouseEvent, timestamp: number): void => {
     e.stopPropagation();
-    if (onSeekToTimestamp && stratagem.videoTimestamp !== undefined) {
-      onSeekToTimestamp(stratagem.videoTimestamp);
+    if (onSeekToTimestamp) {
+      onSeekToTimestamp(timestamp);
     }
   };
+
+  // Use provided timestamps array, or fall back to single timestamp from stratagem
+  const displayTimestamps = timestamps.length > 0
+    ? timestamps
+    : stratagem.videoTimestamp !== undefined
+      ? [stratagem.videoTimestamp]
+      : [];
 
   return (
     <div className="stratagem-card">
@@ -99,14 +108,19 @@ export function StratagemCard({
           )}
         </div>
         <div className="stratagem-card-actions">
-          {stratagem.videoTimestamp !== undefined && onSeekToTimestamp && (
-            <button
-              onClick={handleSeek}
-              className="timestamp-button"
-              title="Jump to this moment in the video"
-            >
-              {formatTimestamp(stratagem.videoTimestamp)}
-            </button>
+          {displayTimestamps.length > 0 && onSeekToTimestamp && (
+            <div className="timestamp-badges">
+              {displayTimestamps.map((timestamp) => (
+                <button
+                  key={timestamp}
+                  onClick={(e) => handleSeek(e, timestamp)}
+                  className="timestamp-button"
+                  title="Jump to this moment in the video"
+                >
+                  {formatTimestamp(timestamp)}
+                </button>
+              ))}
+            </div>
           )}
           <ConfidenceBadge level={stratagem.confidence} />
           {isLoading && <span className="stratagem-loading">...</span>}

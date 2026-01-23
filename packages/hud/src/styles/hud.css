@@ -315,6 +315,59 @@
   margin-bottom: 0;
 }
 
+.faction-rule-lore {
+  color: #9ca3af;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.faction-lore-paragraph {
+  margin: 0 0 8px 0;
+}
+
+.faction-lore-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.faction-sub-abilities {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.faction-sub-ability {
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.sub-ability-name {
+  color: #c4b5fd;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.sub-ability-lore {
+  color: #9ca3af;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.sub-ability-effect {
+  color: #d1d5db;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .faction-error {
   padding: 6px 10px;
   background: rgba(239, 68, 68, 0.1);
@@ -831,6 +884,13 @@
 .timestamp-button:hover {
   background: rgba(168, 85, 247, 0.3);
   border-color: rgba(168, 85, 247, 0.6);
+}
+
+/* Multiple timestamp badges container */
+.timestamp-badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 
 /* Scrollbar styles */
