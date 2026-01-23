@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { runScript } from '../utils/runner.js';
+import { runScript, runMcpScript } from '../utils/runner.js';
 
 export const generateCommand = new Command('generate')
   .description('Data generation commands');
@@ -18,6 +18,14 @@ generateCommand
   .description('Generate stratagem data from database')
   .action(async () => {
     await runScript('generate-stratagem-data.ts');
+  });
+
+// Generate detachment data from database
+generateCommand
+  .command('detachments')
+  .description('Generate detachment data from database')
+  .action(async () => {
+    await runMcpScript('generate-detachment-data.ts');
   });
 
 // Generate unit aliases via LLM
@@ -61,6 +69,9 @@ generateCommand
 
     console.log('\nStep 2: Generating stratagem data...');
     await runScript('generate-stratagem-data.ts');
+
+    console.log('\nStep 3: Generating detachment data...');
+    await runMcpScript('generate-detachment-data.ts');
 
     console.log('\n=== All Data Generation Complete ===\n');
   });
