@@ -9,6 +9,23 @@ import {
   preloadStratagemsForFactions,
   type StratagemSuggestion,
 } from '@/utils/stratagem-validator';
+import {
+  FALLBACK_SECONDARY_OBJECTIVES,
+  FALLBACK_PRIMARY_OBJECTIVES,
+} from '@/data/constants';
+
+// Build a set of objective names (lowercase) to filter out from stratagems
+const OBJECTIVE_NAMES_SET = new Set([
+  ...FALLBACK_SECONDARY_OBJECTIVES.map((o) => o.toLowerCase()),
+  ...FALLBACK_PRIMARY_OBJECTIVES.map((o) => o.toLowerCase()),
+]);
+
+/**
+ * Check if a name is a secondary/primary objective (not a stratagem).
+ */
+function isObjective(name: string): boolean {
+  return OBJECTIVE_NAMES_SET.has(name.toLowerCase().trim());
+}
 
 /**
  * Clean up entity names that may have annotations from AI output.
@@ -226,9 +243,19 @@ export async function processBattleReport(
   const factionNames = report.players.map((p) => p.faction).filter(Boolean);
   await preloadStratagemsForFactions(factionNames);
 
+  // Filter out secondary/primary objectives that were incorrectly extracted as stratagems
+  const actualStratagems = report.stratagems.filter((stratagem) => {
+    const cleanedName = cleanEntityName(stratagem.name);
+    if (isObjective(cleanedName)) {
+      console.log(`Filtering out objective "${cleanedName}" from stratagems list`);
+      return false;
+    }
+    return true;
+  });
+
   // Process each stratagem
   const enrichedStratagems: EnrichedStratagem[] = await Promise.all(
-    report.stratagems.map(async (stratagem) => {
+    actualStratagems.map(async (stratagem) => {
       // Clean up any type annotations the AI may have included
       const cleanedName = cleanEntityName(stratagem.name);
       const cleanedStratagem = { ...stratagem, name: cleanedName };
