@@ -109,9 +109,21 @@ export interface DetachmentDetails {
   faction: string;
 }
 
+// Sub-ability within an army rule (e.g., Ka'tah Stances)
+export interface ArmyRuleSubAbility {
+  name: string;
+  lore: string | null;
+  effect: string;
+}
+
 // Faction details for display
 export interface FactionDetails {
   name: string;
+  armyRuleName: string | null;
+  armyRuleLore: string | null;
+  armyRuleEffect: string | null;
+  armyRuleSubAbilities: ArmyRuleSubAbility[];
+  // Legacy field for backwards compatibility
   armyRule: string | null;
 }
 
