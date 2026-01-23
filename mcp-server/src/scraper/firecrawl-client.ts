@@ -15,6 +15,75 @@ export interface ScrapeResult {
   fromCache: boolean;
 }
 
+/**
+ * Wahapedia content filter settings.
+ *
+ * NOTE: These settings correspond to Wahapedia's localStorage-based visibility toggles.
+ * However, Firecrawl extracts raw HTML/markdown regardless of CSS visibility rules,
+ * so these settings must be applied during HTML parsing (not scraping).
+ *
+ * The CSS classes used by Wahapedia for content visibility:
+ * - ShowFluff: Lore/flavor text
+ * - ShowLegendaryDatasheets: Legends units (marked with Legends logo)
+ * - ShowForgeWorldDatasheets: Forge World units
+ * - ShowCrusadeRules: Crusade-specific rules
+ * - ShowBoardingActions / sShowBoardingActions: Boarding Actions content
+ * - ShowBaseSize: Base size info (⌀60mm etc)
+ * - ShowCoreStratagems: Core stratagems section
+ * - ShowDatasheetFeatures: Datasheet-specific stratagems/enhancements
+ */
+export interface WahapediaSettings {
+  /** Show fluff/lore text (CSS class: ShowFluff) */
+  showFluff?: boolean;
+  /** Show Legends and not recommended rules/datasheets (CSS class: ShowLegendaryDatasheets) */
+  showLegendaryDatasheets?: boolean;
+  /** Show Forge World datasheets (CSS class: ShowForgeWorldDatasheets) */
+  showForgeWorldDatasheets?: boolean;
+  /** Show Crusade Rules (CSS class: ShowCrusadeRules) */
+  showCrusadeRules?: boolean;
+  /** Show Boarding Actions rules (CSS classes: ShowBoardingActions, sShowBoardingActions) */
+  showBoardingActions?: boolean;
+  /** Show base size information (CSS class: ShowBaseSize) */
+  showBaseSize?: boolean;
+  /** Show Core Stratagems (CSS class: ShowCoreStratagems) */
+  showCoreStratagems?: boolean;
+  /** Show datasheet features like Stratagems, Enhancements (CSS class: ShowDatasheetFeatures) */
+  showDatasheetFeatures?: boolean;
+}
+
+/**
+ * Default Wahapedia settings optimized for data extraction:
+ * - Hides fluff text to reduce noise
+ * - Hides Legends, Forge World, Crusade, Boarding Actions (non-standard content)
+ * - Shows base size and core stratagems (useful data)
+ * - Hides datasheet features to focus on unit data
+ */
+export const DEFAULT_WAHAPEDIA_SETTINGS: WahapediaSettings = {
+  showFluff: false,
+  showLegendaryDatasheets: false,
+  showForgeWorldDatasheets: false,
+  showCrusadeRules: false,
+  showBoardingActions: false,
+  showBaseSize: true,
+  showCoreStratagems: true,
+  showDatasheetFeatures: false,
+};
+
+/**
+ * CSS class selectors to remove from HTML when filtering Wahapedia content.
+ * Maps setting names to their CSS class selectors.
+ */
+export const WAHAPEDIA_CSS_SELECTORS: Record<keyof WahapediaSettings, string[]> = {
+  showFluff: ['.ShowFluff'],
+  showLegendaryDatasheets: ['.ShowLegendaryDatasheets'],
+  showForgeWorldDatasheets: ['.ShowForgeWorldDatasheets'],
+  showCrusadeRules: ['.ShowCrusadeRules'],
+  showBoardingActions: ['.ShowBoardingActions', '.sShowBoardingActions'],
+  showBaseSize: ['.ShowBaseSize'],
+  showCoreStratagems: ['.ShowCoreStratagems'],
+  showDatasheetFeatures: ['.ShowDatasheetFeatures'],
+};
+
 export interface ScrapeOptions {
   useCache?: boolean;
   forceRefresh?: boolean;

@@ -31,11 +31,21 @@ import {
   MAX_LEADER_ATTACHMENTS,
   isValidPointsCost,
 } from './constants.js';
+import {
+  type WahapediaSettings,
+  DEFAULT_WAHAPEDIA_SETTINGS,
+  WAHAPEDIA_CSS_SELECTORS,
+} from '../firecrawl-client.js';
 
 interface ParsedUnit {
   unit: Omit<NewUnit, 'factionId'>;
   weapons: NewWeapon[];
   abilities: Omit<NewAbility, 'factionId'>[];
+}
+
+interface ParseOptions {
+  /** Wahapedia content filter settings. Default: DEFAULT_WAHAPEDIA_SETTINGS */
+  wahapediaSettings?: WahapediaSettings;
 }
 
 interface UnitStats {
@@ -49,17 +59,50 @@ interface UnitStats {
 }
 
 /**
+ * Remove elements from the DOM that match Wahapedia's visibility CSS classes.
+ * This filters out content like fluff text, Legends, Forge World, etc.
+ */
+function applyWahapediaFilters($: cheerio.CheerioAPI, settings: WahapediaSettings): void {
+  const merged = { ...DEFAULT_WAHAPEDIA_SETTINGS, ...settings };
+
+  // For each setting that is false (hide content), remove matching elements
+  for (const [key, show] of Object.entries(merged)) {
+    if (show) continue; // Don't remove if we want to show this content
+
+    const selectors = WAHAPEDIA_CSS_SELECTORS[key as keyof WahapediaSettings];
+    if (!selectors) continue;
+
+    for (const selector of selectors) {
+      $(selector).remove();
+    }
+  }
+}
+
+/**
  * Parse datasheets page to extract unit data from HTML content.
  */
-export function parseDatasheets(content: string, sourceUrl: string): ParsedUnit[] {
-  return parseHtmlDatasheet(content, sourceUrl);
+export function parseDatasheets(
+  content: string,
+  sourceUrl: string,
+  options: ParseOptions = {}
+): ParsedUnit[] {
+  return parseHtmlDatasheet(content, sourceUrl, options);
 }
 
 /**
  * Parse HTML datasheet using cheerio
  */
-function parseHtmlDatasheet(html: string, sourceUrl: string): ParsedUnit[] {
+function parseHtmlDatasheet(
+  html: string,
+  sourceUrl: string,
+  options: ParseOptions = {}
+): ParsedUnit[] {
   const $ = cheerio.load(html);
+
+  // Apply Wahapedia content filters (removes fluff, Legends, etc.)
+  const settings = options.wahapediaSettings ?? DEFAULT_WAHAPEDIA_SETTINGS;
+  applyWahapediaFilters($, settings);
+
   const units: ParsedUnit[] = [];
 
   // Extract unit name from title or h1
@@ -848,4 +891,4 @@ export function cleanWeaponName(rawName: string): { name: string; abilities: str
   };
 }
 
-export { ParsedUnit, UnitStats };
+export { ParsedUnit, UnitStats, ParseOptions };
