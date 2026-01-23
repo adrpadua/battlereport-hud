@@ -5,7 +5,7 @@ import { cleanAbilityName, parseWeaponAbilities, normalizeKeyword } from '../uti
 import { KeywordBadge } from './KeywordBadge';
 import { Tooltip } from './Tooltip';
 import { AbilityDescription } from './AbilityDescription';
-import { getCachedKeywordDescription } from '../hooks/useKeywordDescription';
+import { getCachedKeywordDescription, useKeywordDescriptions } from '../hooks/useKeywordDescription';
 
 interface UnitDetailModalProps {
   unitName: string;
@@ -174,7 +174,6 @@ function WeaponTable({
 }): React.ReactElement {
   const title = type === 'ranged' ? 'Ranged Weapons' : 'Melee Weapons';
   const skillHeader = type === 'ranged' ? 'BS' : 'WS';
-  const hasAnyAbilities = weapons.some(w => w.abilities);
 
   return (
     <div className="unit-detail-weapons-section">
@@ -189,26 +188,25 @@ function WeaponTable({
             <th>S</th>
             <th>AP</th>
             <th>D</th>
-            {hasAnyAbilities && <th>Abilities</th>}
           </tr>
         </thead>
         <tbody>
           {weapons.map((weapon, index) => (
             <tr key={`${weapon.name}-${index}`}>
-              <td className="weapon-name">{weapon.name}</td>
+              <td className="weapon-name-cell">
+                <span className="weapon-name">{weapon.name}</span>
+                {weapon.abilities && (
+                  <span className="weapon-abilities-inline">
+                    <WeaponAbilitiesBadges abilities={weapon.abilities} />
+                  </span>
+                )}
+              </td>
               <td>{weapon.range ?? '-'}</td>
               <td>{weapon.attacks ?? '-'}</td>
               <td>{weapon.skill ?? '-'}</td>
               <td>{weapon.strength ?? '-'}</td>
               <td>{weapon.ap ?? '-'}</td>
               <td>{weapon.damage ?? '-'}</td>
-              {hasAnyAbilities && (
-                <td className="weapon-abilities">
-                  {weapon.abilities ? (
-                    <WeaponAbilitiesBadges abilities={weapon.abilities} />
-                  ) : '-'}
-                </td>
-              )}
             </tr>
           ))}
         </tbody>
@@ -225,6 +223,14 @@ function AbilitiesPanel({ abilities }: { abilities: UnitDetailAbility[] }): Reac
   const factionAbilities = filteredAbilities.filter(a => a.type === 'faction');
   const unitAbilities = filteredAbilities.filter(a => a.type === 'unit');
   const wargearAbilities = filteredAbilities.filter(a => a.type === 'wargear');
+
+  // Extract individual faction ability names (splitting comma-separated values)
+  const factionAbilityNames = factionAbilities.flatMap((ability) =>
+    ability.name.split(/,\s*/).map(n => cleanAbilityName(n.trim()))
+  );
+
+  // Fetch descriptions for all faction abilities
+  const { descriptions: factionDescriptions } = useKeywordDescriptions(factionAbilityNames);
 
   // Render an ability item with cleaned name and parsed description
   const renderAbilityItem = (ability: UnitDetailAbility) => {
@@ -276,10 +282,8 @@ function AbilitiesPanel({ abilities }: { abilities: UnitDetailAbility[] }): Reac
               // Split comma-separated abilities into individual badges
               const names = ability.name.split(/,\s*/).map(n => cleanAbilityName(n.trim()));
               return names.map((name, idx) => {
-                // Try to get description for this specific ability
-                const description = names.length === 1
-                  ? ability.description
-                  : getCachedKeywordDescription(name) ?? ability.description;
+                // Get description from hook results, or fall back to cached
+                const description = factionDescriptions[name] ?? getCachedKeywordDescription(name);
                 return (
                   <Tooltip
                     key={`${ability.name}-${idx}`}
@@ -344,6 +348,82 @@ function cleanCompositionText(text: string): { composition: string; extractedLea
   return { composition: cleaned, extractedLeader };
 }
 
+/**
+ * Parse leader info into structured data for display.
+ * Handles concatenated unit names and separates the additional note.
+ */
+function parseLeaderInfo(text: string): { intro: string; units: string[]; note: string | null } {
+  // Extract the intro text (e.g., "This model can be attached to:")
+  let intro = 'This model can be attached to the following units:';
+  let remaining = text;
+
+  const introMatch = text.match(/^(This model can be attached to[^:]*:?)\s*/i);
+  if (introMatch) {
+    intro = introMatch[1].replace(/:$/, '') + ':';
+    remaining = text.slice(introMatch[0].length);
+  }
+
+  // Check if already has bullet points or line breaks
+  if (remaining.includes('•') || remaining.includes('\n')) {
+    const lines = remaining.split(/[•\n]/).map(s => s.trim()).filter(s => s.length > 0);
+    // Check if last line looks like additional note (starts with "You can" or contains "WARLORD")
+    const noteIndex = lines.findIndex(line =>
+      line.match(/^You can attach/i) || line.includes('WARLORD')
+    );
+    if (noteIndex !== -1) {
+      const units = lines.slice(0, noteIndex);
+      const note = lines.slice(noteIndex).join(' ');
+      return { intro, units, note };
+    }
+    return { intro, units: lines, note: null };
+  }
+
+  let note: string | null = null;
+
+  // First, extract the "You can attach..." note if present
+  const noteMatch = remaining.match(/(You can attach[^]*$)/i);
+  if (noteMatch) {
+    note = noteMatch[1];
+    remaining = remaining.slice(0, noteMatch.index).trim();
+  }
+
+  // Split concatenated unit names on camelCase boundaries (lowercase followed by uppercase)
+  // e.g., "NeurogauntsTyrant GuardZoanthropes" → ["Neurogaunts", "Tyrant Guard", "Zoanthropes"]
+  const splitOnCamelCase = remaining.replace(/([a-z])([A-Z])/g, '$1\n$2');
+  const units = splitOnCamelCase
+    .split('\n')
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
+  return { intro, units, note };
+}
+
+/**
+ * Leader section with Wahapedia-style formatting.
+ */
+function LeaderSection({ leaderInfo }: { leaderInfo: string }): React.ReactElement {
+  const { intro, units, note } = parseLeaderInfo(leaderInfo);
+
+  return (
+    <div className="unit-detail-leader-section">
+      <div className="unit-detail-section-title">Leader</div>
+      <div className="leader-content">
+        <p className="leader-intro">{intro}</p>
+        {units.length > 0 && (
+          <ul className="leader-units-list">
+            {units.map((unit, idx) => (
+              <li key={idx} className="leader-unit-item">{unit}</li>
+            ))}
+          </ul>
+        )}
+        {note && (
+          <p className="leader-note">{note}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CompositionSection({ unit }: { unit: UnitDetailUnit }): React.ReactElement | null {
   if (!unit.composition && !unit.wargearOptions && !unit.leaderInfo && !unit.ledBy) {
     return null;
@@ -374,10 +454,7 @@ function CompositionSection({ unit }: { unit: UnitDetailUnit }): React.ReactElem
       )}
 
       {displayLeaderInfo && (
-        <div className="composition-group">
-          <div className="composition-label">Leader</div>
-          <pre className="composition-text leader-list">{displayLeaderInfo}</pre>
-        </div>
+        <LeaderSection leaderInfo={displayLeaderInfo} />
       )}
 
       {unit.ledBy && (
@@ -484,8 +561,16 @@ export function UnitDetailModal({
     };
   }, []);
 
-  const rangedWeapons = data?.weapons.filter(w => w.type === 'ranged') ?? [];
-  const meleeWeapons = data?.weapons.filter(w => w.type === 'melee') ?? [];
+  // Filter out header rows that may have slipped through parsing
+  const isValidWeapon = (w: { name: string }) => {
+    const upperName = w.name.toUpperCase();
+    return !['RANGED WEAPONS', 'MELEE WEAPONS', 'WEAPON', 'WEAPONS', 'RANGE'].includes(upperName) &&
+           !upperName.includes('RANGED WEAPON') &&
+           !upperName.includes('MELEE WEAPON');
+  };
+
+  const rangedWeapons = data?.weapons.filter(w => w.type === 'ranged' && isValidWeapon(w)) ?? [];
+  const meleeWeapons = data?.weapons.filter(w => w.type === 'melee' && isValidWeapon(w)) ?? [];
 
   const modalContent = (
     <div

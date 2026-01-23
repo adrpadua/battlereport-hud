@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ConfidenceBadge } from './ConfidenceBadge';
+import { stripUnitNameParentheses } from '../utils/text-parser';
 import type { Unit, UnitStats } from '../types';
 
 interface UnitCellProps {
@@ -142,7 +143,7 @@ export function UnitCell({
         aria-expanded={hasExpandableContent ? isExpanded : undefined}
       >
         <span className="unit-name">
-          {unit.name}
+          {stripUnitNameParentheses(unit.name)}
           {unit.pointsCost && (
             <span className="unit-points">({unit.pointsCost}pts)</span>
           )}

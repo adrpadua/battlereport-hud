@@ -5,14 +5,66 @@
  * Handles markdown links, keyword brackets, and concatenated ability names.
  */
 
+/**
+ * Strip parenthetical content from unit names for display.
+ * Removes suffixes like "(unit 1)", "(15)", "(unit 2, deep strike)", etc.
+ *
+ * @example
+ * stripUnitNameParentheses("Gargoyles (unit 1)") // "Gargoyles"
+ * stripUnitNameParentheses("Hormagaunts (15)") // "Hormagaunts"
+ * stripUnitNameParentheses("Raveners (unit 2, deep strike)") // "Raveners"
+ */
+export function stripUnitNameParentheses(name: string): string {
+  if (!name) return '';
+  return name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+}
+
 export type DescriptionSegment =
   | { type: 'text'; content: string }
   | { type: 'keyword'; content: string; normalized: string }
+  | { type: 'unit-keyword'; content: string }
   | { type: 'link'; text: string; url: string };
 
 /**
+ * Parse plain text to extract ALL-CAPS unit keywords (like TYRANIDS, INFANTRY).
+ * Returns segments with text and unit-keyword types.
+ */
+function parseUnitKeywordsInText(text: string): DescriptionSegment[] {
+  if (!text) return [];
+
+  const segments: DescriptionSegment[] = [];
+
+  // Pattern to match ALL-CAPS words (2+ chars, may include hyphens)
+  // Matches: TYRANIDS, INFANTRY, SPACE MARINES (as separate words), BATTLE-SHOCKED
+  // Does not match: single letters, numbers, or mixed case
+  const unitKeywordPattern = /\b([A-Z][A-Z-]+(?:\s+[A-Z][A-Z-]+)*)\b/g;
+
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = unitKeywordPattern.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', content: text.slice(lastIndex, match.index) });
+    }
+
+    // Add the unit keyword
+    segments.push({ type: 'unit-keyword', content: match[1] });
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    segments.push({ type: 'text', content: text.slice(lastIndex) });
+  }
+
+  return segments;
+}
+
+/**
  * Parse ability description text into segments for rendering.
- * Extracts markdown links and keyword brackets.
+ * Extracts markdown links, keyword brackets, and ALL-CAPS unit keywords.
  *
  * @example
  * parseAbilityDescription("Each time this model makes an attack with [LETHAL HITS]...")
@@ -20,6 +72,14 @@ export type DescriptionSegment =
  * //   { type: 'text', content: 'Each time this model makes an attack with ' },
  * //   { type: 'keyword', content: 'LETHAL HITS', normalized: 'LETHAL HITS' },
  * //   { type: 'text', content: '...' }
+ * // ]
+ *
+ * @example
+ * parseAbilityDescription("Friendly TYRANIDS units within 6\"...")
+ * // Returns: [
+ * //   { type: 'text', content: 'Friendly ' },
+ * //   { type: 'unit-keyword', content: 'TYRANIDS' },
+ * //   { type: 'text', content: ' units within 6\"...' }
  * // ]
  */
 export function parseAbilityDescription(text: string): DescriptionSegment[] {
@@ -35,11 +95,11 @@ export function parseAbilityDescription(text: string): DescriptionSegment[] {
   let match: RegExpExecArray | null;
 
   while ((match = combinedPattern.exec(remaining)) !== null) {
-    // Add text before the match
+    // Add text before the match (parse for unit keywords)
     if (match.index > lastIndex) {
       const textContent = remaining.slice(lastIndex, match.index);
       if (textContent) {
-        segments.push({ type: 'text', content: textContent });
+        segments.push(...parseUnitKeywordsInText(textContent));
       }
     }
 
@@ -63,9 +123,9 @@ export function parseAbilityDescription(text: string): DescriptionSegment[] {
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text
+  // Add remaining text (parse for unit keywords)
   if (lastIndex < remaining.length) {
-    segments.push({ type: 'text', content: remaining.slice(lastIndex) });
+    segments.push(...parseUnitKeywordsInText(remaining.slice(lastIndex)));
   }
 
   return segments;

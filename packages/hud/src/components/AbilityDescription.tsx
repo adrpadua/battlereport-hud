@@ -46,6 +46,14 @@ export function AbilityDescription({
             );
           }
 
+          case 'unit-keyword':
+            // Render ALL-CAPS unit keywords as bold text
+            return (
+              <strong key={index} className="ability-unit-keyword">
+                {segment.content}
+              </strong>
+            );
+
           case 'link':
             // Render link text styled, without the actual URL
             // For wahapedia links, we just show the text

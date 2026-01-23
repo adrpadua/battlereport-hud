@@ -251,24 +251,18 @@
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
 }
 
+.unit-detail-weapons-table .weapon-name-cell {
+  text-align: left;
+}
+
 .unit-detail-weapons-table .weapon-name {
   font-weight: 500;
   color: #fff;
 }
 
-.unit-detail-weapons-table th:last-child,
-.unit-detail-weapons-table td.weapon-abilities {
-  text-align: left;
-  width: auto;
-  min-width: 80px;
-  max-width: 140px;
-  font-family: inherit;
-}
-
-.unit-detail-weapons-table .weapon-abilities {
-  color: #60a5fa;
-  font-size: 11px;
-  font-weight: 500;
+.unit-detail-weapons-table .weapon-abilities-inline {
+  margin-left: 6px;
+  display: inline;
 }
 
 .unit-detail-weapons-table tbody tr:last-child td {
@@ -360,6 +354,54 @@
   background: #242424;
   border-radius: 8px;
   padding: 12px;
+}
+
+/* Leader Section - styled like weapons/abilities */
+.unit-detail-leader-section {
+  background: #242424;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.unit-detail-leader-section .leader-content {
+  padding: 12px;
+}
+
+.leader-intro {
+  margin: 0 0 8px 0;
+  color: #ccc;
+  font-size: 12px;
+}
+
+.leader-units-list {
+  margin: 0 0 12px 0;
+  padding-left: 8px;
+  list-style: none;
+}
+
+.leader-unit-item {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 4px;
+  color: #60a5fa;
+  font-size: 12px;
+}
+
+.leader-unit-item::before {
+  content: '■';
+  position: absolute;
+  left: 0;
+  color: #60a5fa;
+  font-size: 8px;
+  top: 3px;
+}
+
+.leader-note {
+  margin: 0;
+  color: #aaa;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.5;
 }
 
 .composition-group {
@@ -720,6 +762,12 @@
 
 .ability-link-text:hover {
   text-decoration: underline;
+}
+
+/* Bold unit keywords in ability descriptions (ALL-CAPS words like TYRANIDS, INFANTRY) */
+.ability-unit-keyword {
+  font-weight: 700;
+  color: #fff;
 }
 
 /* Tablet Responsive - Single Column */
