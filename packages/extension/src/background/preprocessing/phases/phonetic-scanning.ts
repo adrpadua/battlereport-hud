@@ -10,6 +10,33 @@ import { MATCHING_THRESHOLDS } from '@/data/constants';
 import { categorizeTermType } from './term-detection';
 
 /**
+ * Common English words that should NOT be phonetically matched.
+ * These words often produce false positives due to phonetic algorithm limitations.
+ * e.g., "will" phonetically matches "Aleya" because both produce 'AL' codes.
+ */
+const PHONETIC_EXCLUSIONS = new Set([
+  // Common verbs and words - these often produce false phonetic matches
+  'will', 'well', 'would', 'could', 'should', 'have', 'been', 'being', 'were',
+  'what', 'with', 'that', 'this', 'they', 'them', 'then', 'than', 'when',
+  'where', 'here', 'there', 'their', 'your', 'more', 'most', 'some', 'come',
+  'came', 'make', 'made', 'take', 'took', 'give', 'gave', 'just', 'only',
+  'also', 'like', 'want', 'need', 'know', 'knew', 'think', 'very', 'much',
+  'such', 'each', 'both', 'into', 'over', 'from', 'back', 'down', 'still',
+  'really', 'actually', 'going', 'doing', 'getting', 'putting', 'looking',
+  // Game-related common words that aren't unit names
+  'turn', 'roll', 'dice', 'move', 'shot', 'hits', 'wound', 'save', 'fail',
+  'pass', 'dead', 'kill', 'left', 'right', 'side', 'front', 'rear', 'half',
+  'full', 'free', 'fast', 'slow', 'good', 'best', 'next', 'last', 'first',
+  'unit', 'units', 'army', 'game', 'play', 'turn', 'round', 'phase', 'point',
+  // Brand names and other common words in battle reports
+  'weasel', 'white', 'studio', 'studios', 'channel', 'video', 'sponsor',
+  'today', 'hello', 'guys', 'welcome', 'thanks', 'check', 'link', 'below',
+  // Short words that phonetically match character names (produce 'AL' codes)
+  'wall', 'all', 'call', 'fall', 'hall', 'tall', 'ball', 'small',
+  'able', 'table', 'label', 'allow', 'ally', 'alley', 'always',
+]);
+
+/**
  * Extract word n-grams from text for phonetic matching.
  * Returns 1-gram, 2-gram, and 3-gram sequences.
  */
@@ -79,6 +106,16 @@ export function scanForPhoneticMatches(
 
     // Skip very short phrases (likely noise)
     if (ngram.phrase.length < 4) continue;
+
+    // Skip common English words that produce false phonetic matches
+    // Strip punctuation for comparison since ngrams may include trailing punctuation
+    const phraseNormalized = ngram.phrase.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+    if (PHONETIC_EXCLUSIONS.has(phraseNormalized)) continue;
+
+    // For single words, require minimum 5 characters to reduce false positives
+    // Common 4-letter English words often phonetically match unit names
+    const wordCount = phraseNormalized.split(/\s+/).filter(w => w.length > 0).length;
+    if (wordCount === 1 && phraseNormalized.length < 5) continue;
 
     // Try to find a phonetic match
     const matches = findPhoneticMatches(ngram.phrase, phoneticIndex, 1, minConfidence);

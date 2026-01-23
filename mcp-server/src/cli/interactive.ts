@@ -14,6 +14,7 @@ import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements 
 import { parseDatasheets } from '../scraper/parsers/unit-parser.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { getPool } from '../db/connection.js';
+import { showCacheAnalysis, showCacheStats } from './commands/cache.js';
 
 async function showStatus(): Promise<void> {
   const db = getDb();
@@ -690,6 +691,25 @@ async function validationMenu(): Promise<void> {
   }
 }
 
+async function cacheMenu(): Promise<void> {
+  const action = await select({
+    message: 'Cache operations:',
+    choices: [
+      { name: 'Analyze Formats (HTML vs Markdown)', value: 'analyze' },
+      { name: 'Show Statistics', value: 'stats' },
+      { name: '← Back', value: 'back' },
+    ],
+  });
+
+  if (action === 'back') return;
+
+  if (action === 'analyze') {
+    await showCacheAnalysis();
+  } else if (action === 'stats') {
+    await showCacheStats();
+  }
+}
+
 async function mainMenu(): Promise<boolean> {
   console.log('\n');
   const action = await select({
@@ -698,6 +718,7 @@ async function mainMenu(): Promise<boolean> {
       { name: '📊 Show Status', value: 'status' },
       { name: '✓ Validate Terms', value: 'validate' },
       { name: '🔍 Scrape Data', value: 'scrape' },
+      { name: '📦 Cache', value: 'cache' },
       { name: '🗄️  Database', value: 'database' },
       { name: '❌ Exit', value: 'exit' },
     ],
@@ -713,6 +734,8 @@ async function mainMenu(): Promise<boolean> {
     await validationMenu();
   } else if (action === 'scrape') {
     await scrapeMenu();
+  } else if (action === 'cache') {
+    await cacheMenu();
   } else if (action === 'database') {
     await databaseMenu();
   }
