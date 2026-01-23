@@ -5,6 +5,7 @@ export { FactionCard } from './components/FactionCard';
 export { UnitList } from './components/UnitList';
 export { UnitCell } from './components/UnitCell';
 export { StratagemList } from './components/StratagemList';
+export { StratagemCard } from './components/StratagemCard';
 export { EnhancementList } from './components/EnhancementList';
 export { FactionSelector } from './components/FactionSelector';
 export { ConfidenceBadge } from './components/ConfidenceBadge';
@@ -69,6 +70,7 @@ export type {
   UnitSuggestion,
   Unit,
   Stratagem,
+  StratagemSuggestion,
   Enhancement,
   BattleReport,
   Chapter,
@@ -82,6 +84,7 @@ export type {
   // Card details types
   DetachmentDetails,
   FactionDetails,
+  StratagemDetails,
   // Unit search types
   UnitSearchResult,
   UnitSearchModalProps,

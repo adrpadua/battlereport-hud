@@ -1,8 +1,14 @@
-import type { BattleReport, Unit, ConfidenceLevel, UnitSuggestion } from '@/types/battle-report';
+import type { BattleReport, Unit, Stratagem, ConfidenceLevel, UnitSuggestion } from '@/types/battle-report';
 import type { FactionData, UnitStats } from '@/types/bsdata';
 import type { FeedbackItem, UserMapping } from '@battlereport/shared/types';
 import { loadFactionByName } from '@/utils/faction-loader';
 import { getBestMatch, validateUnitWithFeedback } from '@/utils/unit-validator';
+import {
+  validateStratagem,
+  getBestStratagemMatch,
+  preloadStratagemsForFactions,
+  type StratagemSuggestion,
+} from '@/utils/stratagem-validator';
 
 /**
  * Clean up entity names that may have annotations from AI output.
@@ -24,8 +30,18 @@ export interface EnrichedUnit extends Unit {
   suggestedMatch?: UnitSuggestion;
 }
 
-export interface ProcessedBattleReport extends Omit<BattleReport, 'units'> {
+export interface EnrichedStratagem extends Stratagem {
+  cpCost?: string;
+  phase?: string;
+  effect?: string;
+  detachment?: string;
+  isValidated?: boolean;
+  suggestedMatch?: StratagemSuggestion;
+}
+
+export interface ProcessedBattleReport extends Omit<BattleReport, 'units' | 'stratagems'> {
   units: EnrichedUnit[];
+  stratagems: EnrichedStratagem[];
   feedbackItems: FeedbackItem[];
 }
 
@@ -206,9 +222,101 @@ export async function processBattleReport(
     return enrichedUnit;
   });
 
+  // Preload stratagems for both factions
+  const factionNames = report.players.map((p) => p.faction).filter(Boolean);
+  await preloadStratagemsForFactions(factionNames);
+
+  // Process each stratagem
+  const enrichedStratagems: EnrichedStratagem[] = await Promise.all(
+    report.stratagems.map(async (stratagem) => {
+      // Clean up any type annotations the AI may have included
+      const cleanedName = cleanEntityName(stratagem.name);
+      const cleanedStratagem = { ...stratagem, name: cleanedName };
+
+      // Determine which faction to validate against
+      // Use the player's faction if assigned, otherwise try both factions
+      let factionToValidate: string | null = null;
+      if (cleanedStratagem.playerIndex !== undefined) {
+        const player = report.players[cleanedStratagem.playerIndex];
+        if (player) {
+          factionToValidate = player.faction;
+        }
+      }
+
+      // If no faction assigned, try the first player's faction as a default
+      if (!factionToValidate && report.players.length > 0) {
+        factionToValidate = report.players[0].faction;
+      }
+
+      if (!factionToValidate) {
+        // No faction to validate against
+        return {
+          ...cleanedStratagem,
+          isValidated: false,
+          confidence: lowerConfidence(cleanedStratagem.confidence),
+        };
+      }
+
+      // Check user mappings first (apply learned aliases)
+      const playerFaction = factions.get(cleanedStratagem.playerIndex ?? 0);
+      const mapping = findUserMapping(
+        cleanedName,
+        'stratagem',
+        playerFaction?.id,
+        userMappings
+      );
+      let stratagemNameToValidate = cleanedName;
+
+      if (mapping) {
+        // User has a mapping for this alias - use the canonical name
+        stratagemNameToValidate = mapping.canonicalName;
+      }
+
+      // Validate stratagem against faction
+      const validation = await validateStratagem(stratagemNameToValidate, factionToValidate);
+
+      if (validation.isValidated && validation.matchedStratagem) {
+        // Stratagem validated - enrich with data
+        return {
+          ...cleanedStratagem,
+          name: validation.matchedName,
+          confidence: boostConfidence(cleanedStratagem.confidence, validation.confidence),
+          cpCost: validation.matchedStratagem.cpCost,
+          phase: validation.matchedStratagem.phase,
+          effect: validation.matchedStratagem.effect,
+          detachment: validation.matchedStratagem.detachment ?? undefined,
+          isValidated: true,
+        };
+      }
+
+      // Stratagem not validated - get best match as suggestion
+      const bestMatch = await getBestStratagemMatch(cleanedName, factionToValidate);
+
+      const enrichedStratagem: EnrichedStratagem = {
+        ...cleanedStratagem,
+        isValidated: false,
+        // Don't lower confidence if it was already low
+        confidence: cleanedStratagem.confidence === 'low' ? 'low' : lowerConfidence(cleanedStratagem.confidence),
+      };
+
+      // Add suggestion if there's a reasonable match
+      if (bestMatch && bestMatch.confidence >= 0.3 && bestMatch.matchedStratagem) {
+        enrichedStratagem.suggestedMatch = {
+          name: bestMatch.matchedName,
+          confidence: bestMatch.confidence,
+          cpCost: bestMatch.matchedStratagem.cpCost,
+          phase: bestMatch.matchedStratagem.phase,
+        };
+      }
+
+      return enrichedStratagem;
+    })
+  );
+
   return {
     ...report,
     units: enrichedUnits,
+    stratagems: enrichedStratagems,
     feedbackItems,
   };
 }

@@ -325,6 +325,192 @@
   margin-top: 4px;
 }
 
+/* ============================================
+   Stratagem Card - Expandable stratagem info
+   ============================================ */
+
+.stratagem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stratagem-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.stratagem-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background 0.15s ease, border-radius 0.15s ease;
+}
+
+.stratagem-card-header.expandable {
+  cursor: pointer;
+}
+
+.stratagem-card-header.expandable:hover {
+  background: rgba(168, 85, 247, 0.15);
+}
+
+.stratagem-card-header.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.stratagem-card-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stratagem-name {
+  color: #a855f7;
+  font-weight: 500;
+}
+
+.stratagem-validated {
+  color: #4ade80;
+  font-size: 11px;
+}
+
+.stratagem-cp-cost {
+  color: #c084fc;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 5px;
+  background: rgba(168, 85, 247, 0.2);
+  border-radius: 3px;
+}
+
+.stratagem-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stratagem-loading {
+  color: #888;
+  font-size: 11px;
+}
+
+.stratagem-expand-indicator {
+  color: #a855f7;
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.stratagem-expand-indicator.expanded {
+  transform: rotate(180deg);
+}
+
+.stratagem-details {
+  background: rgba(168, 85, 247, 0.05);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-top: none;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: slideDown 0.2s ease-out;
+}
+
+.stratagem-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.stratagem-phase {
+  color: #c084fc;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stratagem-detachment {
+  color: #888;
+  font-style: italic;
+}
+
+.stratagem-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stratagem-section-label {
+  color: #888;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stratagem-section-text {
+  color: #d1d5db;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.stratagem-restrictions {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.stratagem-restrictions .stratagem-section-text {
+  color: #f87171;
+  font-style: italic;
+}
+
+.stratagem-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-top: none;
+  font-size: 11px;
+}
+
+.stratagem-suggestion .suggestion-label {
+  color: #888;
+}
+
+.stratagem-suggestion .suggestion-name {
+  color: #eab308;
+  font-weight: 500;
+}
+
+.stratagem-suggestion .suggestion-confidence {
+  color: #666;
+}
+
+.stratagem-error {
+  padding: 6px 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 4px;
+  color: #f87171;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
 /* Section Title */
 .section-title {
   font-size: 12px;

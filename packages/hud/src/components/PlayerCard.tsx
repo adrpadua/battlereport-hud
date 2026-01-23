@@ -50,7 +50,7 @@ export function PlayerCard({
       )}
 
       <UnitList playerIndex={playerIndex} playerFaction={player.faction} onSeekToTimestamp={onSeekToTimestamp} onOpenDetail={onOpenDetail} onSearchCorrection={onSearchCorrection} />
-      <StratagemList stratagems={stratagems} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
+      <StratagemList stratagems={stratagems} playerIndex={playerIndex} faction={player.faction} onSeekToTimestamp={onSeekToTimestamp} />
       <EnhancementList enhancements={enhancements} playerIndex={playerIndex} onSeekToTimestamp={onSeekToTimestamp} />
     </div>
   );

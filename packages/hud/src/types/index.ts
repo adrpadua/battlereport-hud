@@ -68,12 +68,27 @@ export interface Unit {
   videoTimestamp?: number; // seconds in video when first mentioned
 }
 
+// Stratagem suggestion for fuzzy matching
+export interface StratagemSuggestion {
+  name: string;
+  confidence: number; // 0-1 fuzzy match score
+  cpCost?: string;
+  phase?: string;
+}
+
 // Stratagem in a battle report
 export interface Stratagem {
   name: string;
   playerIndex?: number;
   confidence: ConfidenceLevel;
   videoTimestamp?: number; // seconds in video when used
+  // Validation fields (populated by report-processor)
+  cpCost?: string;
+  phase?: string;
+  effect?: string;
+  detachment?: string;
+  isValidated?: boolean;
+  suggestedMatch?: StratagemSuggestion;
 }
 
 // Enhancement in a battle report

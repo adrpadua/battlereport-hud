@@ -5,6 +5,7 @@ import { LoadingState } from './LoadingState';
 import { FactionSelector } from './FactionSelector';
 import { UnitDetailModal } from './UnitDetailModal';
 import { UnitSearchModal } from './UnitSearchModal';
+import { StratagemList } from './StratagemList';
 import { saveCorrection } from '../utils/user-corrections';
 import type { UnitDetailResponse } from '../types/unit-detail';
 import type { UnitSearchResult } from '../types';
@@ -230,28 +231,10 @@ export function HudContainer({
             {report.stratagems.filter((s) => s.playerIndex === undefined)
               .length > 0 && (
               <div className="player-card">
-                <div className="section-title">Other Stratagems Mentioned</div>
-                <div className="unit-list">
-                  {report.stratagems
-                    .filter((s) => s.playerIndex === undefined)
-                    .map((stratagem, index) => (
-                      <div
-                        key={`strat-${index}`}
-                        className="unit-item"
-                      >
-                        <span style={{ color: '#a855f7' }}>{stratagem.name}</span>
-                        {stratagem.videoTimestamp !== undefined && onSeekToTimestamp && (
-                          <button
-                            className="timestamp-button"
-                            onClick={() => handleSeek(stratagem.videoTimestamp!)}
-                            title="Jump to this moment in the video"
-                          >
-                            {formatTimestamp(stratagem.videoTimestamp)}
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                </div>
+                <StratagemList
+                  stratagems={report.stratagems.filter((s) => s.playerIndex === undefined)}
+                  onSeekToTimestamp={onSeekToTimestamp}
+                />
               </div>
             )}
 
