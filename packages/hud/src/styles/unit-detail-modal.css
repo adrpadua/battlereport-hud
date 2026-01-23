@@ -764,8 +764,8 @@
   text-decoration: underline;
 }
 
-/* Bold unit keywords in ability descriptions (ALL-CAPS words like TYRANIDS, INFANTRY) */
-.ability-unit-keyword {
+/* Bold unit keywords in rule text (ALL-CAPS words like TYRANIDS, INFANTRY) */
+.rule-unit-keyword {
   font-weight: 700;
   color: #fff;
 }

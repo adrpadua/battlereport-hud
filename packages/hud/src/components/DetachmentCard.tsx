@@ -1,41 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { DetachmentDetails } from '../types';
-import { KeywordBadge } from './KeywordBadge';
-import { getCachedKeywordDescription } from '../hooks/useKeywordDescription';
+import { RuleText } from './RuleText';
 import {
   stripBattleSizeSuffix,
   stripFluffParagraphs,
-  parseRuleText,
 } from '../utils/rule-text-parser';
 
 interface DetachmentCardProps {
   detachmentName: string;
   faction: string;
-}
-
-// Component to render parsed rule text with keyword tooltips
-function RuleText({ text }: { text: string }): React.ReactElement {
-  const segments = useMemo(() => parseRuleText(text), [text]);
-
-  return (
-    <>
-      {segments.map((segment, index) => {
-        if (segment.type === 'text') {
-          return <span key={index}>{segment.content}</span>;
-        } else {
-          const desc = getCachedKeywordDescription(segment.keyword);
-          return (
-            <KeywordBadge
-              key={index}
-              keyword={segment.keyword}
-              description={desc}
-              inline
-            />
-          );
-        }
-      })}
-    </>
-  );
 }
 
 export function DetachmentCard({
