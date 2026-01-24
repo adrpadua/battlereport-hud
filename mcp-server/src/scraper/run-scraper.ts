@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { FirecrawlClient } from './firecrawl-client.js';
 import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
-import { parseFactionPage, parseDetachments, parseStratagems, parseEnhancements, extractDetachmentSection } from './parsers/faction-parser.js';
+import { parseFactionPage, parseDetachments, parseStratagemsByDetachment, parseEnhancementsByDetachment } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
@@ -107,10 +107,13 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
       const factionUrl = WAHAPEDIA_URLS.factionBase(factionSlug);
       const factionResult = await client.scrape(factionUrl);
 
-      // Extract faction name from markdown
+      // Use HTML for parsing since parsers use CSS selectors, fall back to markdown if not available
+      const factionHtml = factionResult.html || factionResult.markdown;
+
+      // Extract faction name from markdown (uses regex, not CSS selectors)
       const factionName = extractFactionName(factionResult.markdown) || factionSlug;
 
-      const faction = parseFactionPage(factionResult.markdown, factionSlug, factionName, factionResult.url);
+      const faction = parseFactionPage(factionHtml, factionSlug, factionName, factionResult.url);
 
       // Insert/update faction
       const [insertedFaction] = await db
@@ -139,11 +142,17 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
         contentHash: factionResult.contentHash,
       });
 
-      // Parse detachments and stratagems from main faction page (no separate URLs)
-      const detachments = parseDetachments(factionResult.markdown, factionResult.url);
+      // Parse detachments from main faction page
+      const detachments = parseDetachments(factionHtml, factionResult.url);
       console.log(`  Found ${detachments.length} detachments`);
 
+      // Parse enhancements and stratagems grouped by detachment anchor name
+      const enhancementsByDetachment = parseEnhancementsByDetachment(factionHtml, factionResult.url);
+      const stratagemsByDetachment = parseStratagemsByDetachment(factionHtml, factionResult.url);
+
       let stratagemCount = 0;
+      let enhancementCount = 0;
+
       for (const detachment of detachments) {
         const [insertedDetachment] = await db
           .insert(schema.detachments)
@@ -163,46 +172,61 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
 
         const detachmentId = insertedDetachment!.id;
 
-        // Parse enhancements and stratagems from this specific detachment's section
-        const detachmentSection = extractDetachmentSection(factionResult.markdown, detachment.name);
-        if (detachmentSection) {
-          const enhancements = parseEnhancements(detachmentSection, factionResult.url);
-          console.log(`    Found ${enhancements.length} enhancements for ${detachment.name}`);
-          for (const enhancement of enhancements) {
-            await db
-              .insert(schema.enhancements)
-              .values({ ...enhancement, detachmentId })
-              .onConflictDoNothing();
-          }
+        // Find enhancements for this detachment (try exact match and anchor-name-style match)
+        const detachmentAnchorName = detachment.name.replace(/\s+/g, '-');
+        const enhancements = enhancementsByDetachment.get(detachment.name)
+          || enhancementsByDetachment.get(detachmentAnchorName)
+          || [];
 
-          // Parse stratagems for this detachment
-          const stratagems = parseStratagems(detachmentSection, factionResult.url);
-          console.log(`    Found ${stratagems.length} stratagems for ${detachment.name}`);
-          stratagemCount += stratagems.length;
-          for (const stratagem of stratagems) {
-            await db
-              .insert(schema.stratagems)
-              .values({ ...stratagem, factionId, detachmentId })
-              .onConflictDoUpdate({
-                target: [schema.stratagems.slug, schema.stratagems.factionId],
-                set: {
-                  detachmentId,
-                  name: stratagem.name,
-                  cpCost: stratagem.cpCost,
-                  phase: stratagem.phase,
-                  when: stratagem.when,
-                  target: stratagem.target,
-                  effect: stratagem.effect,
-                  restrictions: stratagem.restrictions,
-                  sourceUrl: stratagem.sourceUrl,
-                  updatedAt: new Date(),
-                },
-              });
-          }
+        console.log(`    Found ${enhancements.length} enhancements for ${detachment.name}`);
+        enhancementCount += enhancements.length;
+        for (const enhancement of enhancements) {
+          await db
+            .insert(schema.enhancements)
+            .values({ ...enhancement, detachmentId })
+            .onConflictDoUpdate({
+              target: [schema.enhancements.slug, schema.enhancements.detachmentId],
+              set: {
+                name: enhancement.name,
+                pointsCost: enhancement.pointsCost,
+                description: enhancement.description,
+                restrictions: enhancement.restrictions,
+                sourceUrl: enhancement.sourceUrl,
+                updatedAt: new Date(),
+              },
+            });
+        }
+
+        // Find stratagems for this detachment
+        const stratagems = stratagemsByDetachment.get(detachment.name)
+          || stratagemsByDetachment.get(detachmentAnchorName)
+          || [];
+
+        console.log(`    Found ${stratagems.length} stratagems for ${detachment.name}`);
+        stratagemCount += stratagems.length;
+        for (const stratagem of stratagems) {
+          await db
+            .insert(schema.stratagems)
+            .values({ ...stratagem, factionId, detachmentId })
+            .onConflictDoUpdate({
+              target: [schema.stratagems.slug, schema.stratagems.factionId],
+              set: {
+                detachmentId,
+                name: stratagem.name,
+                cpCost: stratagem.cpCost,
+                phase: stratagem.phase,
+                when: stratagem.when,
+                target: stratagem.target,
+                effect: stratagem.effect,
+                restrictions: stratagem.restrictions,
+                sourceUrl: stratagem.sourceUrl,
+                updatedAt: new Date(),
+              },
+            });
         }
       }
 
-      console.log(`  Total stratagems: ${stratagemCount}`);
+      console.log(`  Total: ${enhancementCount} enhancements, ${stratagemCount} stratagems`);
     } catch (error) {
       console.error(`Failed to scrape faction ${factionSlug}:`, error);
 
