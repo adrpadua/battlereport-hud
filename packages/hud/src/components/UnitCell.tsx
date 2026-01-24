@@ -166,7 +166,7 @@ export function UnitCell({
               className="unit-search-button"
               title="Correct unit name"
             >
-              🔍
+              🔄
             </button>
           )}
           {onDelete && (
