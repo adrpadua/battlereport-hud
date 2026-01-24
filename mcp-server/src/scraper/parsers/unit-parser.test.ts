@@ -2,13 +2,457 @@ import { describe, it, expect } from 'vitest';
 import { parseDatasheets, cleanWeaponName, WEAPON_ABILITY_KEYWORDS } from './unit-parser.js';
 
 describe('parseDatasheets', () => {
-  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/leagues-of-votann/Arkanyst-Evaluator';
+  const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/space-marines/Intercessor-Squad';
 
-  it('returns empty array for non-unit content', () => {
-    const nonUnitContent = '<html><body>Some non-unit content</body></html>';
-    const result = parseDatasheets(nonUnitContent, sourceUrl);
+  describe('unit name extraction', () => {
+    it('extracts unit name from page title with dash separator', () => {
+      const html = `
+        <html>
+          <head><title>Space Marines – Intercessor Squad</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
 
-    expect(result).toHaveLength(0);
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.unit.name).toBe('Intercessor Squad');
+      expect(result[0]?.unit.slug).toBe('intercessor-squad');
+    });
+
+    it('extracts unit name from h1 when title unavailable', () => {
+      const html = `
+        <html>
+          <body>
+            <h1>Hive Tyrant</h1>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>8"</td><td>10</td><td>2+</td><td>10</td><td>7+</td><td>4</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.unit.name).toBe('Hive Tyrant');
+    });
+
+    it('removes Wahapedia suffix from title', () => {
+      const html = `
+        <html>
+          <head><title>Tyranids – Hive Tyrant – Wahapedia</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>8"</td><td>10</td><td>2+</td><td>10</td><td>7+</td><td>4</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.name).toBe('Hive Tyrant');
+    });
+
+    it('returns empty array for names shorter than 3 characters', () => {
+      const html = `
+        <html>
+          <head><title>Test – AB</title></head>
+          <body>Content</body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('unit stats extraction', () => {
+    it('extracts stats from table with standard headers', () => {
+      const html = `
+        <html>
+          <head><title>Space Marines – Intercessor Squad</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.movement).toBe('6"');
+      expect(result[0]?.unit.toughness).toBe(4);
+      expect(result[0]?.unit.save).toBe('3+');
+      expect(result[0]?.unit.wounds).toBe(2);
+      expect(result[0]?.unit.leadership).toBe(6);
+      expect(result[0]?.unit.objectiveControl).toBe(2);
+    });
+
+    it('extracts stats with SAVE header variation', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SAVE</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>10"</td><td>6</td><td>2+</td><td>12</td><td>7+</td><td>5</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.toughness).toBe(6);
+      expect(result[0]?.unit.wounds).toBe(12);
+    });
+  });
+
+  describe('invulnerable save extraction', () => {
+    it('extracts invulnerable save from dedicated section', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <div>INVULNERABLE SAVE 4+</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.invulnerableSave).toBe('4+');
+    });
+
+    it('extracts invulnerable save from ability text', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <div>This model has a 5+ invulnerable save.</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.invulnerableSave).toBe('5+');
+    });
+
+    it('returns null when no invulnerable save present', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.invulnerableSave).toBeNull();
+    });
+  });
+
+  describe('points cost extraction', () => {
+    it('extracts points from table with model count', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <table>
+              <tr><td>5 models</td><td>90</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.pointsCost).toBe(90);
+    });
+
+    it('ignores invalid points costs outside valid range', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <table>
+              <tr><td>1 model</td><td>10</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      // 10 is below MIN_POINTS_COST (20), so should be null
+      expect(result[0]?.unit.pointsCost).toBeNull();
+    });
+  });
+
+  describe('keyword detection', () => {
+    it('detects Epic Hero keyword', () => {
+      const html = `
+        <html>
+          <head><title>Test – Marneus Calgar</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>6</td><td>2+</td><td>6</td><td>6+</td><td>1</td></tr>
+            </table>
+            <div>KEYWORDS: Infantry, Character, Epic Hero, Imperium</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.isEpicHero).toBe(true);
+    });
+
+    it('detects Battleline keyword', () => {
+      const html = `
+        <html>
+          <head><title>Test – Intercessor Squad</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <div>KEYWORDS: Infantry, Battleline, Imperium</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.isBattleline).toBe(true);
+    });
+
+    it('detects Dedicated Transport keyword', () => {
+      const html = `
+        <html>
+          <head><title>Test – Rhino</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>12"</td><td>9</td><td>3+</td><td>10</td><td>6+</td><td>2</td></tr>
+            </table>
+            <div>KEYWORDS: Vehicle, Dedicated Transport, Smoke</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.isDedicatedTransport).toBe(true);
+    });
+
+    it('returns false for keywords not present', () => {
+      const html = `
+        <html>
+          <head><title>Test – Basic Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <div>KEYWORDS: Infantry, Imperium</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.unit.isEpicHero).toBe(false);
+      expect(result[0]?.unit.isBattleline).toBe(false);
+      expect(result[0]?.unit.isDedicatedTransport).toBe(false);
+    });
+  });
+
+  describe('weapons extraction', () => {
+    it('extracts ranged weapons from table', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <table>
+              <tr><th>RANGED WEAPONS</th><th>RANGE</th><th>A</th><th>BS</th><th>S</th><th>AP</th><th>D</th></tr>
+              <tr><td>Bolt rifle</td><td>24"</td><td>2</td><td>3+</td><td>4</td><td>-1</td><td>1</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.weapons).toHaveLength(1);
+      expect(result[0]?.weapons[0]).toMatchObject({
+        name: 'Bolt rifle',
+        weaponType: 'ranged',
+        range: '24"',
+        attacks: '2',
+        skill: '3+',
+        strength: '4',
+        armorPenetration: '-1',
+        damage: '1',
+      });
+    });
+
+    it('extracts melee weapons from table', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <table>
+              <tr><th>MELEE WEAPONS</th><th>RANGE</th><th>A</th><th>WS</th><th>S</th><th>AP</th><th>D</th></tr>
+              <tr><td>Power sword</td><td>Melee</td><td>4</td><td>3+</td><td>5</td><td>-2</td><td>1</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.weapons).toHaveLength(1);
+      expect(result[0]?.weapons[0]).toMatchObject({
+        name: 'Power sword',
+        weaponType: 'melee',
+        range: 'Melee',
+      });
+    });
+
+    it('deduplicates weapons by name', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <table>
+              <tr><th>RANGED WEAPONS</th><th>RANGE</th><th>A</th><th>BS</th><th>S</th><th>AP</th><th>D</th></tr>
+              <tr><td>Bolt rifle</td><td>24"</td><td>2</td><td>3+</td><td>4</td><td>-1</td><td>1</td></tr>
+              <tr><td>Bolt rifle</td><td>24"</td><td>2</td><td>3+</td><td>4</td><td>-1</td><td>1</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.weapons).toHaveLength(1);
+    });
+  });
+
+  describe('abilities extraction', () => {
+    it('extracts CORE abilities', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <b>CORE: Leader, Deep Strike</b>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.abilities.length).toBeGreaterThan(0);
+      const coreAbilities = result[0]?.abilities.filter((a) => a.abilityType === 'core');
+      expect(coreAbilities?.some((a) => a.name === 'Leader')).toBe(true);
+      expect(coreAbilities?.some((a) => a.name === 'Deep Strike')).toBe(true);
+    });
+
+    it('extracts FACTION abilities', () => {
+      const html = `
+        <html>
+          <head><title>Test – Test Unit</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>6"</td><td>4</td><td>3+</td><td>2</td><td>6+</td><td>2</td></tr>
+            </table>
+            <b>FACTION: Oath of Moment</b>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      const factionAbilities = result[0]?.abilities.filter((a) => a.abilityType === 'faction');
+      expect(factionAbilities?.some((a) => a.name === 'Oath of Moment')).toBe(true);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('returns empty array for non-unit content', () => {
+      const html = '<html><body>Some non-unit content</body></html>';
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('handles malformed HTML gracefully', () => {
+      const html = '<html><head><title>Test – Unit Name</title><body><table><tr><th>M<td>6"';
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      // Cheerio handles malformed HTML, should not throw
+      expect(result).toBeDefined();
+    });
+
+    it('handles empty HTML', () => {
+      const result = parseDatasheets('', sourceUrl);
+
+      expect(result).toHaveLength(0);
+    });
   });
 });
 

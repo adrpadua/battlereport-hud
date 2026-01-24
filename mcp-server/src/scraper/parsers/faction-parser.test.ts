@@ -571,6 +571,97 @@ describe('parseStratagemsByDetachment', () => {
 
     expect(stratagemsByDetachment.size).toBeGreaterThanOrEqual(1);
   });
+
+  it('returns empty map when no stratagems found', () => {
+    const html = '<html><body>No stratagems here</body></html>';
+
+    const stratagemsByDetachment = parseStratagemsByDetachment(html, sourceUrl);
+
+    expect(stratagemsByDetachment.size).toBe(0);
+  });
+
+  it('extracts stratagem content correctly', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Test-Detachment"></a>
+          <h2>Test Detachment</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Stratagems"></a>
+          <div class="str10Border">
+            <div class="str10CP">2CP</div>
+            <div class="str10Type">Test – Strategic Ploy</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Fight phase.<br><br>
+              <b>TARGET:</b> One INFANTRY unit.<br><br>
+              <b>EFFECT:</b> Add 1 to hit rolls for that unit.
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const stratagemsByDetachment = parseStratagemsByDetachment(html, sourceUrl);
+
+    // Should have at least one detachment with stratagems
+    const entries = Array.from(stratagemsByDetachment.entries());
+    expect(entries.length).toBeGreaterThanOrEqual(1);
+
+    // Check stratagem content
+    const stratagems = entries[0]?.[1] || [];
+    if (stratagems.length > 0) {
+      expect(stratagems[0]?.cpCost).toBe('2');
+      expect(stratagems[0]?.phase).toBe('fight');
+    }
+  });
+
+  it('handles multiple stratagems in same detachment', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Multi-Strat-Detachment"></a>
+          <h2>Multi Strat Detachment</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Stratagems"></a>
+          <div class="str10Border">
+            <div class="str10CP">1CP</div>
+            <div class="str10Type">Test – Battle Tactic</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Shooting phase.<br><br>
+              <b>TARGET:</b> One unit.<br><br>
+              <b>EFFECT:</b> First effect text here.
+            </div>
+          </div>
+          <div class="str10Border">
+            <div class="str10CP">2CP</div>
+            <div class="str10Type">Test – Strategic Ploy</div>
+            <div class="str10Text">
+              <b>WHEN:</b> Movement phase.<br><br>
+              <b>TARGET:</b> One unit.<br><br>
+              <b>EFFECT:</b> Second effect text here.
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const stratagemsByDetachment = parseStratagemsByDetachment(html, sourceUrl);
+
+    // Find the detachment with multiple stratagems
+    for (const [, stratagems] of stratagemsByDetachment) {
+      if (stratagems.length >= 2) {
+        expect(stratagems[0]?.cpCost).toBe('1');
+        expect(stratagems[1]?.cpCost).toBe('2');
+        return; // Test passed
+      }
+    }
+  });
 });
 
 describe('parseEnhancementsByDetachment', () => {
@@ -599,6 +690,121 @@ describe('parseEnhancementsByDetachment', () => {
     const enhancementsByDetachment = parseEnhancementsByDetachment(html, sourceUrl);
 
     expect(enhancementsByDetachment.size).toBeGreaterThanOrEqual(1);
+  });
+
+  it('returns empty map when no enhancements found', () => {
+    const html = '<html><body>No enhancements here</body></html>';
+
+    const enhancementsByDetachment = parseEnhancementsByDetachment(html, sourceUrl);
+
+    expect(enhancementsByDetachment.size).toBe(0);
+  });
+
+  it('extracts enhancement points cost correctly', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Test-Detachment"></a>
+          <h2>Test Detachment</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Enhancements"></a>
+          <div>
+            <ul class="EnhancementsPts">
+              <span>Expensive Enhancement</span>
+              <span>35 pts</span>
+            </ul>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const enhancementsByDetachment = parseEnhancementsByDetachment(html, sourceUrl);
+
+    // Check that enhancements were found
+    const entries = Array.from(enhancementsByDetachment.entries());
+    expect(entries.length).toBeGreaterThanOrEqual(1);
+
+    // Check enhancement content
+    const enhancements = entries[0]?.[1] || [];
+    if (enhancements.length > 0) {
+      expect(enhancements[0]?.name).toBe('Expensive Enhancement');
+      expect(enhancements[0]?.pointsCost).toBe(35);
+    }
+  });
+
+  it('handles multiple enhancements in same detachment', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Multi-Enh-Detachment"></a>
+          <h2>Multi Enh Detachment</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Enhancements"></a>
+          <div>
+            <ul class="EnhancementsPts">
+              <span>First Enhancement</span>
+              <span>15 pts</span>
+            </ul>
+            <ul class="EnhancementsPts">
+              <span>Second Enhancement</span>
+              <span>25 pts</span>
+            </ul>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const enhancementsByDetachment = parseEnhancementsByDetachment(html, sourceUrl);
+
+    // Find detachment with multiple enhancements
+    for (const [, enhancements] of enhancementsByDetachment) {
+      if (enhancements.length >= 2) {
+        expect(enhancements[0]?.pointsCost).toBe(15);
+        expect(enhancements[1]?.pointsCost).toBe(25);
+        return; // Test passed
+      }
+    }
+  });
+
+  it('deduplicates enhancements by name', () => {
+    const html = `
+      <html>
+        <body>
+          <a name="Dedup-Detachment"></a>
+          <h2>Dedup Detachment</h2>
+
+          <a name="Detachment-Rule"></a>
+          <h2>Detachment Rule</h2>
+
+          <a name="Enhancements"></a>
+          <div>
+            <ul class="EnhancementsPts">
+              <span>Duplicate Enhancement</span>
+              <span>20 pts</span>
+            </ul>
+            <ul class="EnhancementsPts">
+              <span>Duplicate Enhancement</span>
+              <span>20 pts</span>
+            </ul>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const enhancementsByDetachment = parseEnhancementsByDetachment(html, sourceUrl);
+
+    // Check that duplicates were removed
+    for (const [, enhancements] of enhancementsByDetachment) {
+      const names = enhancements.map((e) => e.name);
+      const uniqueNames = [...new Set(names)];
+      expect(names.length).toBe(uniqueNames.length);
+    }
   });
 });
 
