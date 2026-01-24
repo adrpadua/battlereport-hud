@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseCoreRules, extractKeyRules } from './core-rules-parser.js';
+import { parseCoreRules } from './core-rules-parser.js';
 
 const sourceUrl = 'https://wahapedia.ru/wh40k10ed/the-rules/core-rules/';
 
@@ -359,76 +359,5 @@ describe('parseCoreRules', () => {
       expect(result).toHaveLength(1);
       expect(result[0]?.title).toBe('Valid Title');
     });
-  });
-});
-
-describe('extractKeyRules', () => {
-  it('groups rules by category correctly', () => {
-    const rules = [
-      {
-        slug: 'movement-basic',
-        title: 'Basic Movement',
-        category: 'movement_phase',
-        subcategory: null,
-        content: 'Movement content',
-        orderIndex: 0,
-        sourceUrl: 'test',
-        dataSource: 'wahapedia' as const,
-      },
-      {
-        slug: 'movement-advance',
-        title: 'Advancing',
-        category: 'movement_phase',
-        subcategory: null,
-        content: 'Advance content',
-        orderIndex: 1,
-        sourceUrl: 'test',
-        dataSource: 'wahapedia' as const,
-      },
-      {
-        slug: 'shooting-basic',
-        title: 'Basic Shooting',
-        category: 'shooting_phase',
-        subcategory: null,
-        content: 'Shooting content',
-        orderIndex: 2,
-        sourceUrl: 'test',
-        dataSource: 'wahapedia' as const,
-      },
-    ];
-
-    const grouped = extractKeyRules(rules);
-
-    expect(Object.keys(grouped)).toHaveLength(2);
-    expect(grouped.movement_phase).toHaveLength(2);
-    expect(grouped.shooting_phase).toHaveLength(1);
-    expect(grouped.movement_phase![0]?.title).toBe('Basic Movement');
-    expect(grouped.movement_phase![1]?.title).toBe('Advancing');
-  });
-
-  it('handles empty input', () => {
-    const grouped = extractKeyRules([]);
-
-    expect(Object.keys(grouped)).toHaveLength(0);
-  });
-
-  it('handles single rule', () => {
-    const rules = [
-      {
-        slug: 'test-rule',
-        title: 'Test Rule',
-        category: 'general',
-        subcategory: null,
-        content: 'Test content',
-        orderIndex: 0,
-        sourceUrl: 'test',
-        dataSource: 'wahapedia' as const,
-      },
-    ];
-
-    const grouped = extractKeyRules(rules);
-
-    expect(Object.keys(grouped)).toHaveLength(1);
-    expect(grouped.general).toHaveLength(1);
   });
 });

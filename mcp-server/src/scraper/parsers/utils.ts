@@ -58,7 +58,7 @@ export function toTitleCase(text: string): string {
  * Map of concatenated text patterns to properly spaced text.
  * Firecrawl's markdown conversion often concatenates Wahapedia's keywords.
  */
-export const CONCATENATION_FIXES: Record<string, string> = {
+const CONCATENATION_FIXES: Record<string, string> = {
   // Weapon ability combinations
   'blastpsychic': '[BLAST], [PSYCHIC]',
   'lethalhitspsychic': '[LETHAL HITS], [PSYCHIC]',
@@ -110,7 +110,7 @@ export const CONCATENATION_FIXES: Record<string, string> = {
  * Map of concatenated keywords to properly spaced form.
  * Used for faction names and other keywords.
  */
-export const KEYWORD_FIXES: Record<string, string> = {
+const KEYWORD_FIXES: Record<string, string> = {
   // Unit keywords
   CULTISTMOB: 'CULTIST MOB',
   DAMNEDCHARACTER: 'DAMNED CHARACTER',
@@ -295,7 +295,7 @@ export class DeduplicationTracker {
 /**
  * Game phases for stratagems and abilities.
  */
-export type GamePhase = 'command' | 'movement' | 'shooting' | 'charge' | 'fight' | 'any';
+type GamePhase = 'command' | 'movement' | 'shooting' | 'charge' | 'fight' | 'any';
 
 /**
  * Detect game phase from text content.
@@ -349,4 +349,65 @@ export function detectRuleCategory(title: string): string {
   if (titleLower.includes('leader') || titleLower.includes('attached')) return 'leaders';
 
   return 'general';
+}
+
+// =============================================================================
+// HTML TO READABLE TEXT
+// =============================================================================
+
+/**
+ * Convert HTML content to readable plain text with proper formatting.
+ * Preserves paragraph structure by adding line breaks where appropriate.
+ *
+ * @param html - Raw HTML string
+ * @returns Formatted plain text with proper line breaks
+ */
+export function htmlToReadableText(html: string): string {
+  // Add double newlines before block elements (headers, paragraphs)
+  let text = html
+    // Add newlines before headers
+    .replace(/<h[1-6][^>]*>/gi, '\n\n')
+    .replace(/<\/h[1-6]>/gi, '\n\n')
+    // Add newlines before/after paragraphs
+    .replace(/<p[^>]*>/gi, '\n\n')
+    .replace(/<\/p>/gi, '\n')
+    // Convert <br> to newlines
+    .replace(/<br\s*\/?>/gi, '\n')
+    // Add newlines before divs with class containing "BreakInside"
+    .replace(/<div[^>]*class="[^"]*BreakInside[^"]*"[^>]*>/gi, '\n\n')
+    // Add newlines before tables
+    .replace(/<table[^>]*>/gi, '\n\n')
+    .replace(/<\/table>/gi, '\n')
+    // Add newlines after table rows
+    .replace(/<\/tr>/gi, '\n')
+    // Add newlines before list items
+    .replace(/<li[^>]*>/gi, '\n• ')
+    .replace(/<\/li>/gi, '')
+    // Remove all other HTML tags
+    .replace(/<[^>]+>/g, '')
+    // Decode HTML entities
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&mdash;/g, '—')
+    .replace(/&ndash;/g, '–')
+    // Normalize whitespace
+    .replace(/[ \t]+/g, ' ')
+    // Normalize multiple newlines to max 2
+    .replace(/\n{3,}/g, '\n\n')
+    // Trim lines
+    .split('\n')
+    .map(line => line.trim())
+    .join('\n')
+    // Final trim
+    .trim();
+
+  return text;
 }

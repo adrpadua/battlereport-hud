@@ -2,13 +2,11 @@ import { describe, it, expect } from 'vitest';
 import {
   SLUG_MAX_LENGTH,
   NAME_MAX_LENGTH,
-  TITLE_MAX_LENGTH,
   CATEGORY_MAX_LENGTH,
   CP_COST_MAX_LENGTH,
   PATH_MAX_LENGTH,
   SHORT_DESCRIPTION_MAX_LENGTH,
   MEDIUM_DESCRIPTION_MAX_LENGTH,
-  LONG_CONTENT_MAX_LENGTH,
   RULE_CONTENT_MAX_LENGTH,
   FALLBACK_DESCRIPTION_MAX_LENGTH,
   MAX_LEADER_ATTACHMENTS,
@@ -16,11 +14,8 @@ import {
   MAX_POINTS_COST,
   isValidPointsCost,
   truncate,
-  truncateOrNull,
   truncateSlug,
   truncateName,
-  truncateShortDescription,
-  truncateMediumDescription,
 } from './constants.js';
 
 describe('constants', () => {
@@ -28,7 +23,6 @@ describe('constants', () => {
     it('defines standard VARCHAR limits', () => {
       expect(SLUG_MAX_LENGTH).toBe(255);
       expect(NAME_MAX_LENGTH).toBe(255);
-      expect(TITLE_MAX_LENGTH).toBe(255);
       expect(PATH_MAX_LENGTH).toBe(255);
     });
 
@@ -46,7 +40,6 @@ describe('constants', () => {
       expect(FALLBACK_DESCRIPTION_MAX_LENGTH).toBe(500);
       expect(SHORT_DESCRIPTION_MAX_LENGTH).toBe(1000);
       expect(MEDIUM_DESCRIPTION_MAX_LENGTH).toBe(2000);
-      expect(LONG_CONTENT_MAX_LENGTH).toBe(3000);
       expect(RULE_CONTENT_MAX_LENGTH).toBe(5000);
     });
   });
@@ -119,36 +112,6 @@ describe('truncate', () => {
   });
 });
 
-describe('truncateOrNull', () => {
-  it('returns truncated string for valid input', () => {
-    expect(truncateOrNull('test string', 4)).toBe('test');
-  });
-
-  it('returns null for empty string', () => {
-    expect(truncateOrNull('', 10)).toBeNull();
-  });
-
-  it('returns null for whitespace-only string', () => {
-    expect(truncateOrNull('   ', 10)).toBeNull();
-  });
-
-  it('returns null for undefined', () => {
-    expect(truncateOrNull(undefined, 10)).toBeNull();
-  });
-
-  it('returns null for null', () => {
-    expect(truncateOrNull(null, 10)).toBeNull();
-  });
-
-  it('trims whitespace before checking', () => {
-    expect(truncateOrNull('  test  ', 10)).toBe('test');
-  });
-
-  it('truncates after trimming', () => {
-    expect(truncateOrNull('  longer text  ', 6)).toBe('longer');
-  });
-});
-
 describe('truncateSlug', () => {
   it('truncates to SLUG_MAX_LENGTH', () => {
     const longSlug = 'a'.repeat(300);
@@ -176,29 +139,5 @@ describe('truncateName', () => {
 
   it('handles empty string', () => {
     expect(truncateName('')).toBe('');
-  });
-});
-
-describe('truncateShortDescription', () => {
-  it('truncates to SHORT_DESCRIPTION_MAX_LENGTH', () => {
-    const longDesc = 'A'.repeat(1500);
-    expect(truncateShortDescription(longDesc).length).toBe(SHORT_DESCRIPTION_MAX_LENGTH);
-  });
-
-  it('preserves short descriptions', () => {
-    const shortDesc = 'This is a short description.';
-    expect(truncateShortDescription(shortDesc)).toBe(shortDesc);
-  });
-});
-
-describe('truncateMediumDescription', () => {
-  it('truncates to MEDIUM_DESCRIPTION_MAX_LENGTH', () => {
-    const longDesc = 'A'.repeat(2500);
-    expect(truncateMediumDescription(longDesc).length).toBe(MEDIUM_DESCRIPTION_MAX_LENGTH);
-  });
-
-  it('preserves medium descriptions', () => {
-    const medDesc = 'This is a medium-length description that fits within limits.';
-    expect(truncateMediumDescription(medDesc)).toBe(medDesc);
   });
 });

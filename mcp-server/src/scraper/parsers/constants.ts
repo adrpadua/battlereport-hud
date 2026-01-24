@@ -25,12 +25,6 @@ export const SLUG_MAX_LENGTH = 255;
 export const NAME_MAX_LENGTH = 255;
 
 /**
- * Title field limit (VARCHAR(255)).
- * Used for rule titles, section headers.
- */
-export const TITLE_MAX_LENGTH = 255;
-
-/**
  * Category/subcategory field limit (VARCHAR(100)).
  * Used for rule categories and faction slugs in some contexts.
  */
@@ -65,12 +59,6 @@ export const SHORT_DESCRIPTION_MAX_LENGTH = 1000;
  * Used for: detachment rules, stratagem effects, enhancement descriptions.
  */
 export const MEDIUM_DESCRIPTION_MAX_LENGTH = 2000;
-
-/**
- * Long content limit (3000 chars).
- * Used for: abilities section content during parsing.
- */
-export const LONG_CONTENT_MAX_LENGTH = 3000;
 
 /**
  * Full rule content limit (5000 chars).
@@ -133,16 +121,6 @@ export function truncate(text: string, maxLength: number): string {
 }
 
 /**
- * Truncate a string or return null if empty.
- */
-export function truncateOrNull(text: string | undefined | null, maxLength: number): string | null {
-  if (!text) return null;
-  const trimmed = text.trim();
-  if (!trimmed) return null;
-  return truncate(trimmed, maxLength);
-}
-
-/**
  * Truncate slug to standard limit.
  */
 export function truncateSlug(text: string): string {
@@ -154,18 +132,4 @@ export function truncateSlug(text: string): string {
  */
 export function truncateName(text: string): string {
   return truncate(text, NAME_MAX_LENGTH);
-}
-
-/**
- * Truncate description to short limit.
- */
-export function truncateShortDescription(text: string): string {
-  return truncate(text, SHORT_DESCRIPTION_MAX_LENGTH);
-}
-
-/**
- * Truncate description to medium limit.
- */
-export function truncateMediumDescription(text: string): string {
-  return truncate(text, MEDIUM_DESCRIPTION_MAX_LENGTH);
 }

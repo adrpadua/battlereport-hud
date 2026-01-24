@@ -8,8 +8,6 @@ import {
   DeduplicationTracker,
   detectPhase,
   detectRuleCategory,
-  CONCATENATION_FIXES,
-  KEYWORD_FIXES,
 } from './utils.js';
 
 describe('slugify', () => {
@@ -392,25 +390,5 @@ describe('detectRuleCategory', () => {
       expect(detectRuleCategory('Random Section Title')).toBe('general');
       expect(detectRuleCategory('Introduction')).toBe('general');
     });
-  });
-});
-
-describe('CONCATENATION_FIXES constant', () => {
-  it('contains weapon ability fixes', () => {
-    expect(CONCATENATION_FIXES['blastpsychic']).toBe('[BLAST], [PSYCHIC]');
-  });
-
-  it('contains core ability fixes', () => {
-    expect(CONCATENATION_FIXES['deepstrike']).toBe('Deep Strike');
-  });
-});
-
-describe('KEYWORD_FIXES constant', () => {
-  it('contains faction keyword fixes', () => {
-    expect(KEYWORD_FIXES['HERETICASTARTES']).toBe('HERETIC ASTARTES');
-  });
-
-  it('contains weapon ability fixes', () => {
-    expect(KEYWORD_FIXES['LETHALHITS']).toBe('LETHAL HITS');
   });
 });

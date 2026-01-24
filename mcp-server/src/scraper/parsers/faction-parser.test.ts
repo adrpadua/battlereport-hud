@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import {
-  parseFactionIndex,
   parseFactionPage,
   parseDetachments,
   parseStratagems,
@@ -71,88 +70,6 @@ describe('detectPhase', () => {
 
 // HTML Parser tests
 const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/test-faction/';
-
-describe('parseFactionIndex', () => {
-  it('extracts faction links from HTML', () => {
-    const html = `
-      <html>
-        <body>
-          <a href="/wh40k10ed/factions/space-marines/">Space Marines</a>
-          <a href="/wh40k10ed/factions/tyranids/">Tyranids</a>
-          <a href="/wh40k10ed/factions/necrons/">Necrons</a>
-        </body>
-      </html>
-    `;
-
-    const factions = parseFactionIndex(html, sourceUrl);
-
-    expect(factions).toHaveLength(3);
-    expect(factions[0]).toMatchObject({
-      slug: 'space-marines',
-      name: 'Space Marines',
-      wahapediaPath: '/wh40k10ed/factions/space-marines/',
-      dataSource: 'wahapedia',
-    });
-    expect(factions[1]).toMatchObject({
-      slug: 'tyranids',
-      name: 'Tyranids',
-    });
-    expect(factions[2]).toMatchObject({
-      slug: 'necrons',
-      name: 'Necrons',
-    });
-  });
-
-  it('deduplicates faction links', () => {
-    const html = `
-      <html>
-        <body>
-          <a href="/wh40k10ed/factions/space-marines/">Space Marines</a>
-          <a href="/wh40k10ed/factions/space-marines/">Space Marines Again</a>
-          <a href="/wh40k10ed/factions/tyranids/">Tyranids</a>
-        </body>
-      </html>
-    `;
-
-    const factions = parseFactionIndex(html, sourceUrl);
-
-    expect(factions).toHaveLength(2);
-  });
-
-  it('filters out unit page links', () => {
-    const html = `
-      <html>
-        <body>
-          <a href="/wh40k10ed/factions/space-marines/">Space Marines</a>
-          <a href="/wh40k10ed/factions/space-marines/Intercessor-Squad">Intercessor Squad</a>
-          <a href="/wh40k10ed/factions/space-marines/datasheets.html">Datasheets</a>
-        </body>
-      </html>
-    `;
-
-    const factions = parseFactionIndex(html, sourceUrl);
-
-    expect(factions).toHaveLength(1);
-    expect(factions[0]?.slug).toBe('space-marines');
-  });
-
-  it('returns empty array for non-faction content', () => {
-    const html = '<html><body>No factions here</body></html>';
-
-    const factions = parseFactionIndex(html, sourceUrl);
-
-    expect(factions).toHaveLength(0);
-  });
-
-  it('handles special characters in faction names', () => {
-    const html = `<a href="/wh40k10ed/factions/t-au-empire/">T'au Empire</a>`;
-
-    const factions = parseFactionIndex(html, sourceUrl);
-
-    expect(factions).toHaveLength(1);
-    expect(factions[0]?.name).toBe("T'au Empire");
-  });
-});
 
 describe('parseFactionPage', () => {
   it('extracts army rules from Army-Rules anchor', () => {

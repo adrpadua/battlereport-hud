@@ -195,19 +195,3 @@ function parseByAnchors(
     }
   });
 }
-
-/**
- * Extract specific rules sections for quick reference
- */
-export function extractKeyRules(rules: NewCoreRule[]): Record<string, NewCoreRule[]> {
-  const grouped: Record<string, NewCoreRule[]> = {};
-
-  for (const rule of rules) {
-    if (!grouped[rule.category]) {
-      grouped[rule.category] = [];
-    }
-    grouped[rule.category]!.push(rule);
-  }
-
-  return grouped;
-}

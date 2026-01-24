@@ -5,6 +5,7 @@ import {
   normalizeKeywords,
   detectPhase,
   DeduplicationTracker,
+  htmlToReadableText,
 } from './utils.js';
 import {
   CATEGORY_MAX_LENGTH,
@@ -25,46 +26,6 @@ interface ParsedFaction {
 }
 
 /**
- * Parse faction index page to get list of all factions from HTML.
- * Looks for faction links in format: <a href="/wh40k10ed/factions/faction-slug/">Faction Name</a>
- */
-export function parseFactionIndex(html: string, sourceUrl: string): NewFaction[] {
-  const $ = cheerio.load(html);
-  const factions: NewFaction[] = [];
-  const seen = new DeduplicationTracker();
-
-  // Find all faction links
-  $('a[href*="/wh40k10ed/factions/"]').each((_, el) => {
-    const $link = $(el);
-    const href = $link.attr('href') || '';
-    const name = $link.text().trim();
-
-    // Extract faction slug from href
-    const slugMatch = href.match(/\/wh40k10ed\/factions\/([^/]+)\/?/);
-    if (!slugMatch) return;
-
-    const slug = slugMatch[1];
-    if (!slug || !name) return;
-
-    // Skip non-faction pages (datasheets, specific units, etc.)
-    if (href.includes('/datasheets') || href.includes('.html')) return;
-
-    // Skip if we've already seen this faction
-    if (!seen.addIfNew(slug)) return;
-
-    factions.push({
-      slug,
-      name,
-      wahapediaPath: `/wh40k10ed/factions/${slug}/`,
-      sourceUrl,
-      dataSource: 'wahapedia' as const,
-    });
-  });
-
-  return factions;
-}
-
-/**
  * Parse a faction's main page for army rules and lore from HTML.
  */
 export function parseFactionPage(
@@ -80,13 +41,11 @@ export function parseFactionPage(
   // Find Army Rules section by anchor name
   const armyRulesAnchor = $('a[name="Army-Rules"]');
   if (armyRulesAnchor.length) {
-    // Get content after the anchor until next major section
+    // Get the content container after the anchor (typically a div.Columns2)
     const $section = armyRulesAnchor.nextAll().slice(0, 10);
-    armyRules = $section
-      .map((_, el) => $(el).text().trim())
-      .get()
-      .join('\n')
-      .trim();
+    // Get the raw HTML and convert to readable text with proper formatting
+    const sectionHtml = $section.map((_, el) => $.html(el)).get().join('');
+    armyRules = htmlToReadableText(sectionHtml);
   }
 
   // Try to find specific army rule (e.g., "For the Greater Good")
