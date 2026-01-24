@@ -238,12 +238,41 @@ export function parseDetachments(
     let detachmentRuleName = '';
     let detachmentRule = '';
 
-    // Rule name is typically in an h3 with dsColorBg* styling
-    const $ruleH3 = $ruleAnchor.parent().find('h3[class*="dsColorBg"]').first();
+    // The rule anchor and rule h3 may be in sibling divs within a Columns2 container
+    // Structure: <div class="Columns2"><div><a name="Detachment-Rule-X">...</div><div><a name="Rule-Name"><h3>...</div></div>
+    // Try multiple approaches to find the h3 with the rule name
+
+    // Approach 1: Look in the parent's next sibling for h3 with dsColorBg*
+    let $ruleH3 = $ruleAnchor.parent().next().find('h3[class*="dsColorBg"]').first();
+
+    // Approach 2: Look in parent for the h3 (original approach)
+    if (!$ruleH3.length) {
+      $ruleH3 = $ruleAnchor.parent().find('h3[class*="dsColorBg"]').first();
+    }
+
+    // Approach 3: Look for h3 anywhere after the rule anchor within the same container
+    if (!$ruleH3.length) {
+      const $container = $ruleAnchor.closest('.Columns2');
+      if ($container.length) {
+        $ruleH3 = $container.find('h3[class*="dsColorBg"]').first();
+      }
+    }
+
     if ($ruleH3.length) {
       detachmentRuleName = $ruleH3.text().trim();
-      // Rule content is everything after the h3
-      detachmentRule = $ruleH3.nextAll().map((_, el) => $(el).text().trim()).get().join('\n').trim();
+      // Rule content is everything after the h3 until the next section (h2/h3)
+      // First, get the containing div for the rule
+      const $ruleContainer = $ruleH3.parent();
+      // Clone and remove problematic elements before extracting text
+      const $clone = $ruleContainer.clone();
+      $clone.find('h3[class*="dsColorBg"]').remove(); // Remove the rule name header
+      $clone.find('[data-tooltip-content]').each((_, el) => {
+        // Keep the visible text in tooltip triggers but remove duplicate spans
+        const $el = $(el);
+        const text = $el.text().trim();
+        $el.replaceWith(text);
+      });
+      detachmentRule = $clone.text().trim();
     } else {
       // Fallback: look for h3 in next sibling elements
       const $siblingH3 = $ruleAnchor.nextAll('h3').first();
