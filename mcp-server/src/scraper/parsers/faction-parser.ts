@@ -75,7 +75,10 @@ export function parseFactionPage(
     }
 
     if ($armyRuleDiv.length) {
-      const sectionHtml = $.html($armyRuleDiv);
+      // Clone to avoid modifying original, then strip fluff/lore text
+      const $clone = $armyRuleDiv.clone();
+      $clone.find('.ShowFluff, .legend, .legend2, p.ShowFluff').remove();
+      const sectionHtml = $.html($clone);
       armyRules = htmlToReadableText(sectionHtml);
     }
   }
