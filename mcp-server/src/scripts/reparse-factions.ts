@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
+import * as cheerio from 'cheerio';
 import {
   parseFactionPage,
   parseDetachments,
@@ -76,16 +77,33 @@ function extractFactionSlugFromUrl(url: string): string | null {
   return match?.[1] || null;
 }
 
-function extractFactionName(markdown: string): string | null {
-  // Try to find faction name from h1 header
-  const h1Match = markdown.match(/^#\s+(.+)$/m);
-  if (h1Match?.[1]) {
-    let name = h1Match[1].trim();
-    // Clean up common scraping artifacts
-    name = name.replace(/\s*\[?\s*No filter.*$/i, '');
-    name = name.replace(/\s*\\\[?\s*No filter.*$/i, '');
-    name = name.replace(/\s*[\[\(\\].*$/, '');
-    return name.trim() || null;
+function extractFactionName(content: string): string | null {
+  // Check if content is HTML (contains common HTML tags)
+  const isHtml = /<(?:html|head|body|div|span|h1|h2|p)\b/i.test(content);
+
+  if (isHtml) {
+    // Parse HTML to extract faction name from h1
+    const $ = cheerio.load(content);
+    const h1Text = $('h1').first().text().trim();
+    if (h1Text) {
+      // Clean up common scraping artifacts
+      let name = h1Text
+        .replace(/\s*\[?\s*No filter.*$/i, '')
+        .replace(/\s*[\[\(\\].*$/, '')
+        .trim();
+      return name || null;
+    }
+  } else {
+    // Fallback to markdown pattern matching
+    const h1Match = content.match(/^#\s+(.+)$/m);
+    if (h1Match?.[1]) {
+      let name = h1Match[1].trim();
+      // Clean up common scraping artifacts
+      name = name.replace(/\s*\[?\s*No filter.*$/i, '');
+      name = name.replace(/\s*\\\[?\s*No filter.*$/i, '');
+      name = name.replace(/\s*[\[\(\\].*$/, '');
+      return name.trim() || null;
+    }
   }
   return null;
 }
@@ -126,17 +144,18 @@ async function reparseFaction(
     return { success: false, error: 'Could not extract faction slug from URL' };
   }
 
-  const markdown = cached.markdown;
-  if (!markdown) {
-    return { success: false, error: 'No markdown content in cache' };
+  // Prefer HTML over markdown - parsers use Cheerio for HTML structure
+  const html = cached.html || cached.markdown;
+  if (!html) {
+    return { success: false, error: 'No HTML or markdown content in cache' };
   }
 
-  const factionName = extractFactionName(markdown) || factionSlug;
+  const factionName = extractFactionName(html) || factionSlug;
 
-  // Parse faction data
-  const faction = parseFactionPage(markdown, factionSlug, factionName, cached.url);
-  const detachments = parseDetachments(markdown, cached.url);
-  const stratagems = parseStratagems(markdown, cached.url);
+  // Parse faction data using HTML
+  const faction = parseFactionPage(html, factionSlug, factionName, cached.url);
+  const detachments = parseDetachments(html, cached.url);
+  const stratagems = parseStratagems(html, cached.url);
 
   if (options.verbose) {
     console.log(`  Faction: ${faction.name}`);
@@ -151,7 +170,7 @@ async function reparseFaction(
   if (options.dryRun) {
     // Count enhancements in dry-run mode
     for (const detachment of detachments) {
-      const detachmentSection = extractDetachmentSection(markdown, detachment.name);
+      const detachmentSection = extractDetachmentSection(html, detachment.name);
       if (detachmentSection) {
         const enhancements = parseEnhancements(detachmentSection, cached.url);
         stats.enhancements += enhancements.length;
@@ -203,7 +222,7 @@ async function reparseFaction(
     const detachmentId = insertedDetachment!.id;
 
     // Parse and insert enhancements for this detachment
-    const detachmentSection = extractDetachmentSection(markdown, detachment.name);
+    const detachmentSection = extractDetachmentSection(html, detachment.name);
     if (detachmentSection) {
       const enhancements = parseEnhancements(detachmentSection, cached.url);
       stats.enhancements += enhancements.length;

@@ -305,19 +305,22 @@ describe('parseDetachments', () => {
 });
 
 describe('parseStratagems', () => {
-  it('extracts stratagems from str10Border elements', () => {
+  it('extracts stratagems from str10Wrap elements with str10Name', () => {
     const html = `
       <html>
         <body>
-          <div class="str10Border">
-            <div class="str10Diamond">
-              <div class="str10CP">1CP</div>
-            </div>
-            <div class="str10Type">Gladius Task Force – Battle Tactic Stratagem</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Your Shooting phase.<br><br>
-              <b>TARGET:</b> One Space Marines unit from your army.<br><br>
-              <b>EFFECT:</b> Until the end of the phase, improve the AP of that unit's weapons by 1.
+          <div class="str10Wrap">
+            <div class="str10Name">ARMOUR OF CONTEMPT</div>
+            <div class="str10Border">
+              <div class="str10Diamond">
+                <div class="str10CP">1CP</div>
+              </div>
+              <div class="str10Type">Gladius Task Force – Battle Tactic Stratagem</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Your Shooting phase.<br><br>
+                <b>TARGET:</b> One Space Marines unit from your army.<br><br>
+                <b>EFFECT:</b> Until the end of the phase, improve the AP of that unit's weapons by 1.
+              </div>
             </div>
           </div>
         </body>
@@ -328,6 +331,7 @@ describe('parseStratagems', () => {
 
     expect(stratagems).toHaveLength(1);
     expect(stratagems[0]).toMatchObject({
+      name: 'ARMOUR OF CONTEMPT',
       cpCost: '1',
       phase: 'shooting',
       when: 'Your Shooting phase.',
@@ -342,13 +346,16 @@ describe('parseStratagems', () => {
     const html = `
       <html>
         <body>
-          <div class="str10Border">
-            <div class="str10CP">2CP</div>
-            <div class="str10Type">Test – Strategic Ploy Stratagem</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Your opponent's Movement phase.<br><br>
-              <b>TARGET:</b> One Infantry unit.<br><br>
-              <b>EFFECT:</b> Your unit can move up to 6".
+          <div class="str10Wrap">
+            <div class="str10Name">TACTICAL RETREAT</div>
+            <div class="str10Border">
+              <div class="str10CP">2CP</div>
+              <div class="str10Type">Test – Strategic Ploy Stratagem</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Your opponent's Movement phase.<br><br>
+                <b>TARGET:</b> One Infantry unit.<br><br>
+                <b>EFFECT:</b> Your unit can move up to 6".
+              </div>
             </div>
           </div>
         </body>
@@ -373,13 +380,16 @@ describe('parseStratagems', () => {
     const html = `
       <html>
         <body>
-          <div class="str10Border">
-            <div class="str10CP">1CP</div>
-            <div class="str10Type">Test – Battle Tactic Stratagem</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Fight phase.<br><br>
-              <b>TARGET:</b> One unit.<br><br>
-              <b>EFFECT:</b> Add 1 to hit rolls.
+          <div class="str10Wrap">
+            <div class="str10Name">HONOUR THE CHAPTER</div>
+            <div class="str10Border">
+              <div class="str10CP">1CP</div>
+              <div class="str10Type">Test – Battle Tactic Stratagem</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Fight phase.<br><br>
+                <b>TARGET:</b> One unit.<br><br>
+                <b>EFFECT:</b> Add 1 to hit rolls.
+              </div>
             </div>
           </div>
         </body>
@@ -395,12 +405,15 @@ describe('parseStratagems', () => {
     const html = `
       <html>
         <body>
-          <div class="str10Border">
-            <div class="str10CP">1CP</div>
-            <div class="str10Type">Test – Stratagem</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Shooting phase.<br><br>
-              <b>TARGET:</b> One unit.
+          <div class="str10Wrap">
+            <div class="str10Name">INCOMPLETE STRATAGEM</div>
+            <div class="str10Border">
+              <div class="str10CP">1CP</div>
+              <div class="str10Type">Test – Stratagem</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Shooting phase.<br><br>
+                <b>TARGET:</b> One unit.
+              </div>
             </div>
           </div>
         </body>
@@ -416,22 +429,28 @@ describe('parseStratagems', () => {
     const html = `
       <html>
         <body>
-          <div class="str10Border">
-            <div class="str10CP">1CP</div>
-            <div class="str10Type">Test – Battle Tactic Stratagem</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Shooting phase.<br><br>
-              <b>TARGET:</b> Unit one.<br><br>
-              <b>EFFECT:</b> Effect one.
+          <div class="str10Wrap">
+            <div class="str10Name">FIRST STRATAGEM</div>
+            <div class="str10Border">
+              <div class="str10CP">1CP</div>
+              <div class="str10Type">Test – Battle Tactic Stratagem</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Shooting phase.<br><br>
+                <b>TARGET:</b> Unit one.<br><br>
+                <b>EFFECT:</b> Effect one.
+              </div>
             </div>
           </div>
-          <div class="str10Border">
-            <div class="str10CP">2CP</div>
-            <div class="str10Type">Test – Strategic Ploy Stratagem</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Movement phase.<br><br>
-              <b>TARGET:</b> Unit two.<br><br>
-              <b>EFFECT:</b> Effect two.
+          <div class="str10Wrap">
+            <div class="str10Name">SECOND STRATAGEM</div>
+            <div class="str10Border">
+              <div class="str10CP">2CP</div>
+              <div class="str10Type">Test – Strategic Ploy Stratagem</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Movement phase.<br><br>
+                <b>TARGET:</b> Unit two.<br><br>
+                <b>EFFECT:</b> Effect two.
+              </div>
             </div>
           </div>
         </body>
@@ -554,13 +573,16 @@ describe('parseStratagemsByDetachment', () => {
 
           <a name="Stratagems"></a>
           <h2>Stratagems</h2>
-          <div class="str10Border">
-            <div class="str10CP">1CP</div>
-            <div class="str10Type">Gladius – Battle Tactic</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Shooting phase.<br><br>
-              <b>TARGET:</b> One unit.<br><br>
-              <b>EFFECT:</b> Re-roll hits.
+          <div class="str10Wrap">
+            <div class="str10Name">ARMOUR OF CONTEMPT</div>
+            <div class="str10Border">
+              <div class="str10CP">1CP</div>
+              <div class="str10Type">Gladius – Battle Tactic</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Shooting phase.<br><br>
+                <b>TARGET:</b> One unit.<br><br>
+                <b>EFFECT:</b> Re-roll hits.
+              </div>
             </div>
           </div>
         </body>
@@ -591,13 +613,16 @@ describe('parseStratagemsByDetachment', () => {
           <h2>Detachment Rule</h2>
 
           <a name="Stratagems"></a>
-          <div class="str10Border">
-            <div class="str10CP">2CP</div>
-            <div class="str10Type">Test – Strategic Ploy</div>
-            <div class="str10Text">
-              <b>WHEN:</b> Fight phase.<br><br>
-              <b>TARGET:</b> One INFANTRY unit.<br><br>
-              <b>EFFECT:</b> Add 1 to hit rolls for that unit.
+          <div class="str10Wrap">
+            <div class="str10Name">TEST STRATAGEM</div>
+            <div class="str10Border">
+              <div class="str10CP">2CP</div>
+              <div class="str10Type">Test – Strategic Ploy</div>
+              <div class="str10Text">
+                <b>WHEN:</b> Fight phase.<br><br>
+                <b>TARGET:</b> One INFANTRY unit.<br><br>
+                <b>EFFECT:</b> Add 1 to hit rolls for that unit.
+              </div>
             </div>
           </div>
         </body>
@@ -615,6 +640,7 @@ describe('parseStratagemsByDetachment', () => {
     if (stratagems.length > 0) {
       expect(stratagems[0]?.cpCost).toBe('2');
       expect(stratagems[0]?.phase).toBe('fight');
+      expect(stratagems[0]?.name).toBe('TEST STRATAGEM');
     }
   });
 

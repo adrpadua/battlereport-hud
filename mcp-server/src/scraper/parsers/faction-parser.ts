@@ -140,6 +140,32 @@ function extractBaseSectionName(anchorName: string): string {
 }
 
 /**
+ * Clean up detachment name by removing markdown artifacts and invalid content.
+ */
+function cleanDetachmentName(name: string): string | null {
+  let cleaned = name
+    // Remove markdown image syntax
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+    // Remove any remaining URLs
+    .replace(/https?:\/\/[^\s]+/g, '')
+    // Remove # Not Found markers
+    .replace(/#+\s*Not\s*Found/gi, '')
+    // Clean up whitespace
+    .trim();
+
+  // Skip if the result is empty or still contains invalid content
+  if (!cleaned ||
+      cleaned.toLowerCase().includes('not found') ||
+      cleaned.includes('![') ||
+      cleaned.startsWith('#') ||
+      cleaned.length < 2) {
+    return null;
+  }
+
+  return cleaned;
+}
+
+/**
  * Parse detachments from faction main page HTML.
  * Looks for anchor names that are followed by "Detachment-Rule" anchors.
  */
@@ -183,18 +209,34 @@ export function parseDetachments(
 
     // This is a detachment!
     const $anchor = $(`a[name="${anchorName}"]`);
-    const $section = $anchor.parent();
 
-    // Get detachment name from h2 following the anchor
-    const $h2 = $section.find('h2').first().length
-      ? $section.find('h2').first()
-      : $anchor.nextAll('h2').first();
+    // Get detachment name from h2.outline_header following the anchor
+    // The h2 may contain images, so we extract only text content
+    let $h2 = $anchor.next('h2.outline_header');
+    if (!$h2.length) {
+      // Try finding in parent or nearby
+      $h2 = $anchor.parent().find('h2.outline_header').first();
+    }
+    if (!$h2.length) {
+      $h2 = $anchor.nextAll('h2').first();
+    }
 
-    const detachmentName = $h2.text().trim() || anchorName.replace(/-/g, ' ');
+    // Extract text only (this strips any img elements)
+    let rawName = $h2.text().trim();
+    if (!rawName) {
+      // Fallback to anchor name converted to readable format
+      rawName = anchorName.replace(/-/g, ' ');
+    }
+
+    // Clean up the name
+    const detachmentName = cleanDetachmentName(rawName);
+    if (!detachmentName) continue;
+
     if (!seen.addIfNew(detachmentName.toLowerCase())) continue;
 
-    // Get lore (usually in a paragraph or ShowFluff element after the name)
-    const $lore = $section.find('.ShowFluff, .legend2, p').first();
+    // Get lore (usually in a paragraph or ShowFluff element after the h2)
+    const $section = $anchor.parent();
+    const $lore = $section.find('.ShowFluff.legend, p.ShowFluff').first();
     const lore = $lore.text().trim().slice(0, SHORT_DESCRIPTION_MAX_LENGTH) || null;
 
     // Find detachment rule
@@ -202,7 +244,7 @@ export function parseDetachments(
     let detachmentRuleName = '';
     let detachmentRule = '';
 
-    // Rule name is typically in an h3 with specific styling
+    // Rule name is typically in an h3 with dsColorBg* styling
     const $ruleH3 = $ruleAnchor.parent().find('h3[class*="dsColorBg"]').first();
     if ($ruleH3.length) {
       detachmentRuleName = $ruleH3.text().trim();
@@ -243,21 +285,27 @@ export function parseStratagems(
   const stratagems: Omit<NewStratagem, 'factionId' | 'detachmentId'>[] = [];
   const seen = new DeduplicationTracker(true); // Case-sensitive
 
-  // Each stratagem is in a div.str10Border
-  $('div.str10Border').each((_, el) => {
-    const $strat = $(el);
+  // Each stratagem is wrapped in div.str10Wrap which contains:
+  // - div.str10Name (the stratagem name)
+  // - div.str10Border (the card content with CP, type, effect)
+  $('div.str10Wrap').each((_, el) => {
+    const $wrap = $(el);
+
+    // Extract stratagem name from div.str10Name
+    const name = $wrap.find('.str10Name').text().trim();
+    if (!name || !seen.addIfNew(name)) return;
+
+    // Get the card content
+    const $strat = $wrap.find('.str10Border');
+    if (!$strat.length) return;
 
     // Extract CP cost from div.str10CP
     const cpText = $strat.find('.str10CP').text().trim();
     const cpMatch = cpText.match(/(\d+)CP/i);
     const cpCost = cpMatch ? cpMatch[1] : '1';
 
-    // Extract type info from div.str10Type (e.g., "Kauyon – Battle Tactic Stratagem")
+    // Extract type info from div.str10Type (e.g., "Gladius Task Force – Battle Tactic Stratagem")
     const typeInfo = $strat.find('.str10Type').text().trim();
-
-    // Extract name from type info (before the dash)
-    // Type format: "DetachmentName – Stratagem Type"
-    let name = '';
 
     // Get the stratagem content
     const $content = $strat.find('.str10Text');
@@ -267,11 +315,13 @@ export function parseStratagems(
     let when: string | null = null;
     let target: string | null = null;
     let effect = '';
+    let restrictions: string | null = null;
 
     // Parse HTML to extract labeled sections
     const whenMatch = contentHtml.match(/<b>WHEN:<\/b>\s*([^<]*)/i);
-    const targetMatch = contentHtml.match(/<b>TARGET:<\/b>\s*([\s\S]*?)(?=<br><br><[^b]|<b>EFFECT:|$)/i);
+    const targetMatch = contentHtml.match(/<b>TARGET:<\/b>\s*([\s\S]*?)(?=<br><br>|<b>EFFECT:|$)/i);
     const effectMatch = contentHtml.match(/<b>EFFECT:<\/b>\s*([\s\S]*?)(?=<br><br><b>RESTRICTIONS:|$)/i);
+    const restrictionsMatch = contentHtml.match(/<b>RESTRICTIONS:<\/b>\s*([\s\S]*?)$/i);
 
     if (whenMatch?.[1]) {
       when = normalizeKeywords(whenMatch[1].replace(/<[^>]+>/g, '').trim());
@@ -282,41 +332,12 @@ export function parseStratagems(
     if (effectMatch?.[1]) {
       effect = normalizeKeywords(effectMatch[1].replace(/<[^>]+>/g, '').trim());
     }
-
-    // Try to extract name from content or infer from type
-    // Wahapedia doesn't have a dedicated name element for stratagems
-    // The name would typically come from a parent section header
-    // For now, generate from type info
-    const typeMatch = typeInfo.match(/([^–-]+)\s*[–-]\s*(.+)/);
-    if (typeMatch) {
-      // Name isn't directly in the stratagem card - we'll use an index approach
-      // or derive from surrounding context
-      name = ''; // Will be populated from context
+    if (restrictionsMatch?.[1]) {
+      restrictions = normalizeKeywords(restrictionsMatch[1].replace(/<[^>]+>/g, '').trim());
     }
 
     // Skip if no effect extracted
     if (!effect) return;
-
-    // Use surrounding context or position to determine name
-    // For now, track by hash of effect to avoid duplicates
-    const effectHash = effect.slice(0, 50);
-    if (!seen.addIfNew(effectHash)) return;
-
-    // Create unique name from type and position if no explicit name
-    if (!name) {
-      // Determine stratagem type for naming
-      const stratagemType = typeInfo.includes('Battle Tactic')
-        ? 'Battle Tactic'
-        : typeInfo.includes('Strategic Ploy')
-          ? 'Strategic Ploy'
-          : typeInfo.includes('Wargear')
-            ? 'Wargear'
-            : 'Stratagem';
-
-      // We'll need the parent detachment context to properly name this
-      // For now, create a placeholder
-      name = `${stratagemType} - ${effectHash.slice(0, 20)}`;
-    }
 
     stratagems.push({
       slug: truncateSlug(slugify(name)),
@@ -326,6 +347,7 @@ export function parseStratagems(
       when,
       target,
       effect: effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
+      restrictions,
       sourceUrl,
       dataSource: 'wahapedia' as const,
       isCore: false,
@@ -384,48 +406,45 @@ export function parseStratagemsByDetachment(
     const stratagems: Omit<NewStratagem, 'factionId' | 'detachmentId'>[] = [];
     const seen = new DeduplicationTracker(true);
 
-    // Find stratagem cards that follow this anchor
+    // Find stratagem wrappers that follow this anchor
+    // Each stratagem is in div.str10Wrap with div.str10Name and div.str10Border
     const $section = $anchor.parent();
-    const $stratCards = $section.find('.str10Border');
+    let $stratWraps = $section.find('.str10Wrap');
 
-    // Also check siblings if no cards in parent
-    const $siblingCards = $stratCards.length ? $stratCards : $anchor.nextUntil('a[name]', '.str10Border');
+    // Also check siblings if no wrappers in parent
+    if (!$stratWraps.length) {
+      $stratWraps = $anchor.nextUntil('a[name]', '.str10Wrap');
+    }
 
-    $siblingCards.each((idx, el) => {
-      const $strat = $(el);
+    $stratWraps.each((_, el) => {
+      const $wrap = $(el);
+
+      // Extract stratagem name from div.str10Name
+      const name = $wrap.find('.str10Name').text().trim();
+      if (!name || !seen.addIfNew(name)) return;
+
+      const $strat = $wrap.find('.str10Border');
+      if (!$strat.length) return;
 
       const cpText = $strat.find('.str10CP').text().trim();
       const cpMatch = cpText.match(/(\d+)CP/i);
       const cpCost = cpMatch ? cpMatch[1] : '1';
 
-      const typeInfo = $strat.find('.str10Type').text().trim();
       const $content = $strat.find('.str10Text');
       const contentHtml = $content.html() || '';
 
-      // Parse WHEN, TARGET, EFFECT
+      // Parse WHEN, TARGET, EFFECT, RESTRICTIONS
       const whenMatch = contentHtml.match(/<b>WHEN:<\/b>\s*([^<]*)/i);
       const targetMatch = contentHtml.match(/<b>TARGET:<\/b>\s*([\s\S]*?)(?=<br><br>|<b>EFFECT:|$)/i);
-      const effectMatch = contentHtml.match(/<b>EFFECT:<\/b>\s*([\s\S]*?)(?=<br><br><b>|$)/i);
+      const effectMatch = contentHtml.match(/<b>EFFECT:<\/b>\s*([\s\S]*?)(?=<br><br><b>RESTRICTIONS:|$)/i);
+      const restrictionsMatch = contentHtml.match(/<b>RESTRICTIONS:<\/b>\s*([\s\S]*?)$/i);
 
       const when = whenMatch?.[1] ? normalizeKeywords(whenMatch[1].replace(/<[^>]+>/g, '').trim()) : null;
       const target = targetMatch?.[1] ? normalizeKeywords(targetMatch[1].replace(/<[^>]+>/g, '').trim()) : null;
       const effect = effectMatch?.[1] ? normalizeKeywords(effectMatch[1].replace(/<[^>]+>/g, '').trim()) : '';
+      const restrictions = restrictionsMatch?.[1] ? normalizeKeywords(restrictionsMatch[1].replace(/<[^>]+>/g, '').trim()) : null;
 
       if (!effect) return;
-
-      // Generate name from detachment and index
-      const effectHash = effect.slice(0, 50);
-      if (!seen.addIfNew(effectHash)) return;
-
-      const stratagemType = typeInfo.includes('Battle Tactic')
-        ? 'Battle Tactic'
-        : typeInfo.includes('Strategic Ploy')
-          ? 'Strategic Ploy'
-          : typeInfo.includes('Wargear')
-            ? 'Wargear'
-            : 'Stratagem';
-
-      const name = `${detachmentName} ${stratagemType} ${idx + 1}`;
 
       stratagems.push({
         slug: truncateSlug(slugify(name)),
@@ -435,6 +454,7 @@ export function parseStratagemsByDetachment(
         when,
         target,
         effect: effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
+        restrictions,
         sourceUrl,
         dataSource: 'wahapedia' as const,
         isCore: false,
