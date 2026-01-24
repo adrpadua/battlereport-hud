@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowLeftRight } from 'lucide-react';
 import { ConfidenceBadge } from './ConfidenceBadge';
 import { stripUnitNameParentheses } from '../utils/text-parser';
 import { useExpandable } from '../hooks/useExpandable';
@@ -166,7 +167,7 @@ export function UnitCell({
               className="unit-search-button"
               title="Correct unit name"
             >
-              🔄
+              <ArrowLeftRight size={14} />
             </button>
           )}
           {onDelete && (
