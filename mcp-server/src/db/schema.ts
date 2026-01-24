@@ -149,23 +149,6 @@ export const units = pgTable('units', {
   slugFactionIdx: uniqueIndex('units_slug_faction_idx').on(table.slug, table.factionId),
 }));
 
-// Unit profiles for units with multiple stat lines (e.g., damaged profiles)
-export const unitProfiles = pgTable('unit_profiles', {
-  id: serial('id').primaryKey(),
-  unitId: integer('unit_id').references(() => units.id).notNull(),
-  profileName: varchar('profile_name', { length: 255 }).notNull(),
-  condition: varchar('condition', { length: 255 }), // e.g., "1-4 wounds remaining"
-  movement: varchar('movement', { length: 20 }),
-  toughness: integer('toughness'),
-  save: varchar('save', { length: 50 }),
-  wounds: integer('wounds'),
-  leadership: integer('leadership'),
-  objectiveControl: integer('objective_control'),
-  orderIndex: integer('order_index').default(0),
-}, (table) => ({
-  unitIdx: index('unit_profiles_unit_idx').on(table.unitId),
-}));
-
 // ============================================================================
 // WEAPONS
 // ============================================================================
@@ -274,36 +257,6 @@ export const stratagems = pgTable('stratagems', {
   factionIdx: index('stratagems_faction_idx').on(table.factionId),
   phaseIdx: index('stratagems_phase_idx').on(table.phase),
   slugFactionUnique: uniqueIndex('stratagems_slug_faction_unique').on(table.slug, table.factionId),
-}));
-
-// ============================================================================
-// DETACHMENT UNIT RESTRICTIONS
-// ============================================================================
-
-// Junction table for detachment-specific unit availability
-// This tracks which units are explicitly allowed/excluded in a detachment
-export const detachmentUnits = pgTable('detachment_units', {
-  id: serial('id').primaryKey(),
-  detachmentId: integer('detachment_id').references(() => detachments.id).notNull(),
-  unitId: integer('unit_id').references(() => units.id).notNull(),
-  isAllowed: boolean('is_allowed').default(true), // true = allowed, false = excluded
-}, (table) => ({
-  detachmentIdx: index('detachment_units_detachment_idx').on(table.detachmentId),
-  unitIdx: index('detachment_units_unit_idx').on(table.unitId),
-  uniqueIdx: uniqueIndex('detachment_units_unique_idx').on(table.detachmentId, table.unitId),
-}));
-
-// Keyword-based restrictions for detachments
-// e.g., "Only INFANTRY and MOUNTED units" or "No VEHICLE units"
-export const detachmentKeywordRestrictions = pgTable('detachment_keyword_restrictions', {
-  id: serial('id').primaryKey(),
-  detachmentId: integer('detachment_id').references(() => detachments.id).notNull(),
-  keywordId: integer('keyword_id').references(() => keywords.id).notNull(),
-  restrictionType: varchar('restriction_type', { length: 20 }).notNull(), // 'required', 'allowed', 'excluded'
-  description: text('description'), // Human-readable explanation
-}, (table) => ({
-  detachmentIdx: index('detachment_keyword_restrictions_detachment_idx').on(table.detachmentId),
-  keywordIdx: index('detachment_keyword_restrictions_keyword_idx').on(table.keywordId),
 }));
 
 // ============================================================================
@@ -564,12 +517,6 @@ export type NewSecondaryObjective = typeof secondaryObjectives.$inferInsert;
 
 export type UnitIndex = typeof unitIndex.$inferSelect;
 export type NewUnitIndex = typeof unitIndex.$inferInsert;
-
-export type DetachmentUnit = typeof detachmentUnits.$inferSelect;
-export type NewDetachmentUnit = typeof detachmentUnits.$inferInsert;
-
-export type DetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferSelect;
-export type NewDetachmentKeywordRestriction = typeof detachmentKeywordRestrictions.$inferInsert;
 
 export type AiResponseCache = typeof aiResponseCache.$inferSelect;
 export type NewAiResponseCache = typeof aiResponseCache.$inferInsert;
