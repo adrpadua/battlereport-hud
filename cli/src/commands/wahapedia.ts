@@ -112,6 +112,31 @@ syncCmd
     await runMcpCli('scrape', ['missions', '-m', packId]);
   });
 
+syncCmd
+  .command('faqs')
+  .description('Sync FAQs from Wahapedia')
+  .option('-y, --yes', 'Skip confirmation prompt')
+  .option('--force', 'Bypass cache and re-fetch from Wahapedia')
+  .option('--dry-run', 'Preview FAQs without saving to database')
+  .action(async (options: { yes?: boolean; force?: boolean; dryRun?: boolean }) => {
+    // Dry run doesn't need confirmation
+    if (!options.dryRun) {
+      const confirmed = await confirmApiUsage(options, {
+        service: 'Firecrawl',
+        action: 'fetch FAQs from Wahapedia',
+        estimate: '~1 API call',
+      });
+      if (!confirmed) {
+        console.log('Cancelled.');
+        return;
+      }
+    }
+    const args: string[] = [];
+    if (options.force) args.push('--force');
+    if (options.dryRun) args.push('--dry-run');
+    await runMcpScraper('scrape-faqs.ts', args);
+  });
+
 // === PARSE Commands (Re-process cached data → database) ===
 const parseCmd = wahapediaCommand
   .command('parse')

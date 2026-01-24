@@ -312,7 +312,7 @@ export const unitKeywords = pgTable('unit_keywords', {
 
 export const faqs = pgTable('faqs', {
   id: serial('id').primaryKey(),
-  slug: varchar('slug', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
   title: varchar('title', { length: 255 }).notNull(),
   category: varchar('category', { length: 100 }).notNull(), // 'core', 'faction', 'codex'
   factionId: integer('faction_id').references(() => factions.id),
@@ -329,6 +329,7 @@ export const faqs = pgTable('faqs', {
 }, (table) => ({
   categoryIdx: index('faqs_category_idx').on(table.category),
   factionIdx: index('faqs_faction_idx').on(table.factionId),
+  slugIdx: uniqueIndex('faqs_slug_idx').on(table.slug),
 }));
 
 // ============================================================================
