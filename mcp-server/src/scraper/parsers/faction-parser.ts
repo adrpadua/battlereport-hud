@@ -41,11 +41,43 @@ export function parseFactionPage(
   // Find Army Rules section by anchor name
   const armyRulesAnchor = $('a[name="Army-Rules"]');
   if (armyRulesAnchor.length) {
-    // Get the content container after the anchor (typically a div.Columns2)
-    const $section = armyRulesAnchor.nextAll().slice(0, 10);
-    // Get the raw HTML and convert to readable text with proper formatting
-    const sectionHtml = $section.map((_, el) => $.html(el)).get().join('');
-    armyRules = htmlToReadableText(sectionHtml);
+    // The army rule content is in a div.Columns2 that follows the Army-Rules anchor
+    // Structure: <a name="Army-Rules"> <h2>Army Rules</h2> <div class="Columns2">...content...</div>
+    // Detachments are in separate div.clFl elements after this
+
+    // Find the Columns2 div that contains the actual army rule
+    // It should be a sibling of the h2 header, not inside a clFl div
+    const $header = armyRulesAnchor.next('h2');
+    let $armyRuleDiv = $header.next('div.Columns2');
+
+    if (!$armyRuleDiv.length) {
+      // Try finding it as a sibling of the anchor
+      $armyRuleDiv = armyRulesAnchor.siblings('div.Columns2').first();
+    }
+
+    if (!$armyRuleDiv.length) {
+      // Last resort: find first Columns2 that contains the army rule anchor
+      $armyRuleDiv = $('div.Columns2').filter((_, el) => {
+        const $el = $(el);
+        // Must contain an army rule anchor (not a detachment rule)
+        const hasArmyRuleAnchor = $el.find('a[name]').filter((_, a) => {
+          const name = $(a).attr('name') || '';
+          // Skip detachment-related anchors
+          return !name.toLowerCase().includes('detachment') &&
+                 !name.toLowerCase().includes('enhancement') &&
+                 !name.toLowerCase().includes('stratagem') &&
+                 name !== 'Army-Rules';
+        }).length > 0;
+        // Must not be inside a clFl div (which indicates a detachment)
+        const isInDetachment = $el.closest('div.clFl').length > 0;
+        return hasArmyRuleAnchor && !isInDetachment;
+      }).first();
+    }
+
+    if ($armyRuleDiv.length) {
+      const sectionHtml = $.html($armyRuleDiv);
+      armyRules = htmlToReadableText(sectionHtml);
+    }
   }
 
   // Try to find specific army rule (e.g., "For the Greater Good")
