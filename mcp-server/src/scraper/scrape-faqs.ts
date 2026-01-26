@@ -46,7 +46,7 @@ async function main() {
 
     // Scrape the FAQ page
     const result = await client.scrape(faqUrl, {
-      includeHtml: true,
+      
       forceRefresh,
     });
 

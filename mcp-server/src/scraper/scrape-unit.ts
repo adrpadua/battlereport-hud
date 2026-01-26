@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { FirecrawlClient } from './firecrawl-client.js';
 import { WAHAPEDIA_URLS } from './config.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
+import { saveUnitKeywords, clearUnitKeywords } from './save-keywords.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { eq, and } from 'drizzle-orm';
@@ -64,7 +65,7 @@ async function main() {
 
     // Scrape the unit page (use cache if --reparse, bypass cache only if --force)
     const result = await client.scrape(unitUrl, {
-      includeHtml: true,
+      
       forceRefresh: forceRefresh && !reparseOnly // --reparse uses cache
     });
 
@@ -81,7 +82,7 @@ async function main() {
       process.exit(1);
     }
 
-    const { unit, weapons, abilities } = units[0]!;
+    const { unit, weapons, abilities, keywords } = units[0]!;
 
     console.log(`\nParsed: ${unit.name}`);
     console.log(`  Movement: ${unit.movement}`);
@@ -91,6 +92,7 @@ async function main() {
     console.log(`  Wounds: ${unit.wounds}`);
     console.log(`  Weapons: ${weapons.length}`);
     console.log(`  Abilities: ${abilities.length}`);
+    console.log(`  Keywords: ${keywords.length} (${keywords.slice(0, 5).join(', ')}${keywords.length > 5 ? '...' : ''})`);
 
     // Check if unit already exists
     const existingUnit = await db
@@ -139,10 +141,11 @@ async function main() {
 
     const unitId = insertedUnit!.id;
 
-    // Clear existing weapon/ability links if updating
+    // Clear existing weapon/ability/keyword links if updating
     if (existingUnit.length > 0) {
       await db.delete(schema.unitWeapons).where(eq(schema.unitWeapons.unitId, unitId));
       await db.delete(schema.unitAbilities).where(eq(schema.unitAbilities.unitId, unitId));
+      await clearUnitKeywords(db, unitId);
     }
 
     // Insert weapons
@@ -175,6 +178,12 @@ async function main() {
           .values({ unitId, abilityId: insertedAbility.id })
           .onConflictDoNothing();
       }
+    }
+
+    // Insert keywords (e.g., INFANTRY, BLOOD ANGELS, IMPERIUM)
+    if (keywords.length > 0) {
+      await saveUnitKeywords(db, unitId, keywords);
+      console.log(`  Saved ${keywords.length} keywords`);
     }
 
     // Update unit_index

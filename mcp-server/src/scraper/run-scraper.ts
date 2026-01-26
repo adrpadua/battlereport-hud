@@ -4,6 +4,7 @@ import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagemsByDetachment, parseEnhancementsByDetachment } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
+import { saveUnitKeywords } from './save-keywords.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { eq } from 'drizzle-orm';
@@ -315,7 +316,7 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
         try {
           const unitUrl = WAHAPEDIA_URLS.unitDatasheet(faction.slug, slug);
           console.log(`    Scraping: ${name}`);
-          const unitResult = await client.scrape(unitUrl, { includeHtml: true });
+          const unitResult = await client.scrape(unitUrl);
 
           // Use HTML parsing for better data quality (markdown has concatenation issues)
           const units = parseDatasheets(unitResult.html || unitResult.markdown, unitResult.url);
@@ -331,7 +332,7 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
           }
 
           // Use the first parsed unit (should only be one per page)
-          const { unit, weapons, abilities } = units[0]!;
+          const { unit, weapons, abilities, keywords } = units[0]!;
 
           // Insert unit
           const [insertedUnit] = await db
@@ -396,6 +397,11 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
                 .values({ unitId, abilityId: insertedAbility.id })
                 .onConflictDoNothing();
             }
+          }
+
+          // Insert keywords (e.g., INFANTRY, BLOOD ANGELS, IMPERIUM)
+          if (keywords.length > 0) {
+            await saveUnitKeywords(db, unitId, keywords);
           }
 
           // Update unit_index status to success

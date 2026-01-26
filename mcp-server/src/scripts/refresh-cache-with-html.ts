@@ -175,7 +175,7 @@ async function main(): Promise<void> {
       const result = await client.scrape(cached.url, {
         useCache: true,
         forceRefresh: true, // Force re-scrape
-        includeHtml: true,  // Request HTML this time
+        // HTML is always included now
         extractLinks: true,
       });
 

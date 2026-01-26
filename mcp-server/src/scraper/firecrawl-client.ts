@@ -7,7 +7,12 @@ import { join } from 'path';
 export interface ScrapeResult {
   url: string;
   markdown: string;
-  html?: string;
+  /**
+   * HTML content from Firecrawl. Required for Wahapedia parsing since our parsers
+   * use CSS selectors (e.g., .str10Name, .str10Wrap) that only exist in HTML.
+   * Markdown conversion loses these class names and structural information.
+   */
+  html: string;
   metadata?: Record<string, unknown>;
   links?: string[];
   contentHash: string;
@@ -87,10 +92,10 @@ export const WAHAPEDIA_CSS_SELECTORS: Record<keyof WahapediaSettings, string[]> 
 export interface ScrapeOptions {
   useCache?: boolean;
   forceRefresh?: boolean;
-  includeHtml?: boolean;
   extractLinks?: boolean;
   waitFor?: number; // ms to wait for JS rendering
   timeout?: number; // request timeout in ms (default 30000)
+  // Note: HTML is always fetched for Wahapedia since parsers require CSS selectors
 }
 
 export class FirecrawlClient {
@@ -124,6 +129,14 @@ export class FirecrawlClient {
 
     try {
       const cached = JSON.parse(readFileSync(cachePath, 'utf-8'));
+
+      // Ensure HTML exists (required for Wahapedia parsing)
+      // Legacy cache entries might only have markdown
+      if (!cached.html) {
+        console.warn(`[Cache] Entry missing HTML, will re-fetch: ${url}`);
+        return null;
+      }
+
       return {
         ...cached,
         scrapedAt: new Date(cached.scrapedAt),
@@ -160,7 +173,6 @@ export class FirecrawlClient {
     const {
       useCache = true,
       forceRefresh = false,
-      includeHtml = true,
       extractLinks = true,
       timeout = 30000,
     } = options;
@@ -182,12 +194,9 @@ export class FirecrawlClient {
     let lastError: Error | null = null;
     for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
       try {
-        const formats: ('markdown' | 'html')[] = includeHtml
-          ? ['markdown', 'html']
-          : ['markdown'];
-
+        // Always request both markdown and HTML - HTML is required for CSS selector parsing
         const response = await this.client.scrapeUrl(url, {
-          formats,
+          formats: ['markdown', 'html'],
           timeout,
         });
 
@@ -196,12 +205,17 @@ export class FirecrawlClient {
         }
 
         const markdown = response.markdown || '';
-        const contentHash = createHash('sha256').update(markdown).digest('hex');
+        const html = response.html || '';
+        const contentHash = createHash('sha256').update(html || markdown).digest('hex');
+
+        if (!html) {
+          console.warn(`[Scrape] Warning: No HTML content returned for ${url}`);
+        }
 
         const result: ScrapeResult = {
           url,
           markdown,
-          html: includeHtml ? response.html : undefined,
+          html,
           metadata: response.metadata as Record<string, unknown> | undefined,
           links: extractLinks ? this.extractLinks(markdown, url) : undefined,
           contentHash,
