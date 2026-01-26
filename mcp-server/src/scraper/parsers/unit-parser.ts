@@ -9,6 +9,7 @@ import {
   TABLE_POINTS_FORMAT,
   LEADER_ATTACHMENT_INFO,
   KEYWORDS_SECTION,
+  FACTION_KEYWORDS_SECTION,
   BASE_SIZE,
   BRACKETED_ABILITY,
   FILTER_UI_TEXT,
@@ -41,6 +42,7 @@ interface ParsedUnit {
   unit: Omit<NewUnit, 'factionId'>;
   weapons: NewWeapon[];
   abilities: Omit<NewAbility, 'factionId'>[];
+  keywords: string[];
 }
 
 interface ParseOptions {
@@ -155,8 +157,9 @@ function parseHtmlDatasheet(
   // Extract leader info
   const leaderInfo = extractLeaderInfoFromHtml($);
 
-  // Extract keywords to determine unit type
-  const keywordsText = extractKeywordsFromHtml($);
+  // Extract keywords to determine unit type and for storage
+  const keywordsText = extractKeywordsTextFromHtml($);
+  const keywords = extractKeywordsFromHtml($);
   const isEpicHero = /epic\s*hero/i.test(keywordsText);
   const isBattleline = /battleline/i.test(keywordsText);
   const isDedicatedTransport = /dedicated\s*transport/i.test(keywordsText);
@@ -195,7 +198,7 @@ function parseHtmlDatasheet(
     dataSource: 'wahapedia' as const,
   };
 
-  units.push({ unit, weapons, abilities });
+  units.push({ unit, weapons, abilities, keywords });
   return units;
 }
 
@@ -410,12 +413,53 @@ function extractLeaderInfoFromHtml($: cheerio.CheerioAPI): string | null {
 }
 
 /**
- * Extract keywords from HTML
+ * Parse a keywords text string into an array of normalized keywords.
  */
-function extractKeywordsFromHtml($: cheerio.CheerioAPI): string {
+function parseKeywordsText(keywordsText: string): string[] {
+  if (!keywordsText) return [];
+
+  return keywordsText
+    .split(',')
+    .map(k => k.trim())
+    .filter(k => k.length > 0)
+    // Normalize keywords: uppercase, remove extra whitespace
+    .map(k => k.toUpperCase().replace(/\s+/g, ' '));
+}
+
+/**
+ * Extract all keywords from HTML (both unit keywords and faction keywords).
+ * Returns a combined array of normalized keywords.
+ */
+function extractKeywordsFromHtml($: cheerio.CheerioAPI): string[] {
+  const bodyText = $('body').text();
+
+  // Extract unit keywords (KEYWORDS: ...)
+  const keywordsMatch = bodyText.match(KEYWORDS_SECTION);
+  const unitKeywords = parseKeywordsText(keywordsMatch?.[1] || '');
+
+  // Extract faction keywords (FACTION KEYWORDS: ...)
+  const factionKeywordsMatch = bodyText.match(FACTION_KEYWORDS_SECTION);
+  const factionKeywords = parseKeywordsText(factionKeywordsMatch?.[1] || '');
+
+  // Combine and deduplicate
+  const allKeywords = [...unitKeywords, ...factionKeywords];
+  const seen = new Set<string>();
+  return allKeywords.filter(k => {
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
+/**
+ * Extract keywords from HTML as raw text (for boolean flag checks)
+ */
+function extractKeywordsTextFromHtml($: cheerio.CheerioAPI): string {
   const bodyText = $('body').text();
   const keywordsMatch = bodyText.match(KEYWORDS_SECTION);
-  return keywordsMatch?.[1] || '';
+  const factionKeywordsMatch = bodyText.match(FACTION_KEYWORDS_SECTION);
+  // Combine both sections for boolean checks
+  return (keywordsMatch?.[1] || '') + ' ' + (factionKeywordsMatch?.[1] || '');
 }
 
 /**

@@ -1,12 +1,38 @@
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { Database } from '../db/connection.js';
 import * as schema from '../db/schema.js';
-import { eq, ilike, or, and } from 'drizzle-orm';
+import { eq, ilike, or, and, inArray } from 'drizzle-orm';
 import {
   createValidationTools,
   handleValidationToolCall,
   VALIDATION_TOOL_NAMES,
 } from './validation-tools.js';
+
+/**
+ * Space Marine chapter definitions.
+ * Maps chapter names to their parent faction slug and chapter keyword.
+ */
+const SPACE_MARINE_CHAPTERS: Record<string, { parentFaction: string; keyword: string }> = {
+  'blood angels': { parentFaction: 'space-marines', keyword: 'BLOOD ANGELS' },
+  'dark angels': { parentFaction: 'space-marines', keyword: 'DARK ANGELS' },
+  'space wolves': { parentFaction: 'space-marines', keyword: 'SPACE WOLVES' },
+  'black templars': { parentFaction: 'space-marines', keyword: 'BLACK TEMPLARS' },
+  'deathwatch': { parentFaction: 'space-marines', keyword: 'DEATHWATCH' },
+  'ultramarines': { parentFaction: 'space-marines', keyword: 'ULTRAMARINES' },
+  'imperial fists': { parentFaction: 'space-marines', keyword: 'IMPERIAL FISTS' },
+  'white scars': { parentFaction: 'space-marines', keyword: 'WHITE SCARS' },
+  'raven guard': { parentFaction: 'space-marines', keyword: 'RAVEN GUARD' },
+  'salamanders': { parentFaction: 'space-marines', keyword: 'SALAMANDERS' },
+  'iron hands': { parentFaction: 'space-marines', keyword: 'IRON HANDS' },
+};
+
+/**
+ * Check if a query matches a Space Marine chapter.
+ */
+function getChapterInfo(query: string): { parentFaction: string; keyword: string } | null {
+  const normalized = query.toLowerCase().trim();
+  return SPACE_MARINE_CHAPTERS[normalized] ?? null;
+}
 
 export function createTools(): Tool[] {
   return [
@@ -46,16 +72,24 @@ export function createTools(): Tool[] {
     {
       name: 'get_faction',
       description:
-        'Get detailed information about a specific faction including army rules and lore.',
+        'Get detailed information about a specific faction including army rules and lore. For Space Marine chapters (Blood Angels, Dark Angels, etc.), returns the parent Space Marines faction with chapter-specific context.',
       inputSchema: {
         type: 'object',
         properties: {
           faction: {
             type: 'string',
-            description: 'Faction name or slug (e.g., "Space Marines", "necrons", "Aeldari")',
+            description: 'Faction name or slug (e.g., "Space Marines", "necrons", "Aeldari"). Also accepts Space Marine chapter names like "Blood Angels", "Dark Angels", etc.',
           },
         },
         required: ['faction'],
+      },
+    },
+    {
+      name: 'list_chapters',
+      description: 'List all Space Marine chapters with their unique units count. Useful for understanding chapter-specific content.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
       },
     },
 
@@ -98,7 +132,7 @@ export function createTools(): Tool[] {
     {
       name: 'search_units',
       description:
-        'Search for units by name across all factions or within a specific faction.',
+        'Search for units by name across all factions or within a specific faction. For Space Marines, can filter by chapter keyword.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -109,6 +143,10 @@ export function createTools(): Tool[] {
           faction: {
             type: 'string',
             description: 'Optional: limit search to this faction',
+          },
+          chapter: {
+            type: 'string',
+            description: 'Optional: filter Space Marine units by chapter keyword (e.g., "Blood Angels", "Dark Angels", "Space Wolves")',
           },
         },
         required: ['query'],
@@ -297,6 +335,9 @@ export async function handleToolCall(
       case 'get_faction':
         result = await getFaction(db, args.faction as string);
         break;
+      case 'list_chapters':
+        result = await listChapters(db);
+        break;
       case 'get_detachments':
         result = await getDetachments(db, args.faction as string);
         break;
@@ -308,7 +349,12 @@ export async function handleToolCall(
         );
         break;
       case 'search_units':
-        result = await searchUnits(db, args.query as string, args.faction as string | undefined);
+        result = await searchUnits(
+          db,
+          args.query as string,
+          args.faction as string | undefined,
+          args.chapter as string | undefined
+        );
         break;
       case 'get_unit':
         result = await getUnit(db, args.unit as string, args.faction as string | undefined);
@@ -402,7 +448,108 @@ async function listFactions(db: Database) {
   return { count: factions.length, factions };
 }
 
+async function listChapters(db: Database) {
+  const chapters = [];
+
+  for (const [chapterName, info] of Object.entries(SPACE_MARINE_CHAPTERS)) {
+    // Find the chapter keyword
+    const chapterKeyword = await db
+      .select()
+      .from(schema.keywords)
+      .where(ilike(schema.keywords.name, info.keyword))
+      .limit(1);
+
+    let unitCount = 0;
+    let sampleUnits: string[] = [];
+
+    if (chapterKeyword[0]) {
+      // Get unit IDs with this chapter keyword
+      const unitIdsWithKeyword = await db
+        .select({ unitId: schema.unitKeywords.unitId })
+        .from(schema.unitKeywords)
+        .where(eq(schema.unitKeywords.keywordId, chapterKeyword[0].id));
+
+      unitCount = unitIdsWithKeyword.length;
+
+      // Get sample unit names
+      if (unitIdsWithKeyword.length > 0) {
+        const sampleUnitIds = unitIdsWithKeyword.slice(0, 3).map(u => u.unitId);
+        const sampleUnitRecords = await db
+          .select({ name: schema.units.name })
+          .from(schema.units)
+          .where(inArray(schema.units.id, sampleUnitIds));
+        sampleUnits = sampleUnitRecords.map(u => u.name);
+      }
+    }
+
+    // Capitalize chapter name for display
+    const displayName = chapterName
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+    chapters.push({
+      name: displayName,
+      keyword: info.keyword,
+      parentFaction: 'Space Marines',
+      uniqueUnitsCount: unitCount,
+      sampleUnits,
+    });
+  }
+
+  // Sort by unit count descending
+  chapters.sort((a, b) => b.uniqueUnitsCount - a.uniqueUnitsCount);
+
+  return {
+    count: chapters.length,
+    chapters,
+    note: 'Space Marine chapters share the core Space Marines army rules but have chapter-specific units. Use search_units with chapter filter to find chapter-specific units.',
+  };
+}
+
 async function getFaction(db: Database, factionQuery: string) {
+  // Check if this is a Space Marine chapter
+  const chapterInfo = getChapterInfo(factionQuery);
+
+  if (chapterInfo) {
+    // Get the parent Space Marines faction
+    const faction = await db
+      .select()
+      .from(schema.factions)
+      .where(eq(schema.factions.slug, chapterInfo.parentFaction))
+      .limit(1);
+
+    if (!faction[0]) {
+      return { error: `Parent faction not found: ${chapterInfo.parentFaction}` };
+    }
+
+    // Get chapter-specific units count
+    const chapterKeyword = await db
+      .select()
+      .from(schema.keywords)
+      .where(ilike(schema.keywords.name, chapterInfo.keyword))
+      .limit(1);
+
+    let chapterUnitCount = 0;
+    if (chapterKeyword[0]) {
+      const unitKeywordLinks = await db
+        .select({ unitId: schema.unitKeywords.unitId })
+        .from(schema.unitKeywords)
+        .where(eq(schema.unitKeywords.keywordId, chapterKeyword[0].id));
+      chapterUnitCount = unitKeywordLinks.length;
+    }
+
+    return {
+      ...faction[0],
+      isChapter: true,
+      chapterName: factionQuery,
+      chapterKeyword: chapterInfo.keyword,
+      chapterUnitCount,
+      note: `${factionQuery} is a Space Marine chapter. They share the core Space Marines army rules but have ${chapterUnitCount} chapter-specific units with the "${chapterInfo.keyword}" keyword.`,
+    };
+  }
+
+  // Standard faction lookup
   const faction = await db
     .select()
     .from(schema.factions)
@@ -505,12 +652,18 @@ async function getDetachmentDetails(
   };
 }
 
-async function searchUnits(db: Database, query: string, factionQuery?: string) {
+async function searchUnits(db: Database, query: string, factionQuery?: string, chapterQuery?: string) {
+  // Check if chapter is a Space Marine chapter
+  const chapterInfo = chapterQuery ? getChapterInfo(chapterQuery) : null;
+
   // Build WHERE condition first
   let whereCondition = ilike(schema.units.name, `%${query}%`);
 
-  if (factionQuery) {
-    const faction = await findFaction(db, factionQuery);
+  // If chapter specified, use the parent faction (Space Marines)
+  const effectiveFactionQuery = chapterInfo ? chapterInfo.parentFaction : factionQuery;
+
+  if (effectiveFactionQuery) {
+    const faction = await findFaction(db, effectiveFactionQuery);
     if (faction) {
       whereCondition = and(
         ilike(schema.units.name, `%${query}%`),
@@ -519,8 +672,51 @@ async function searchUnits(db: Database, query: string, factionQuery?: string) {
     }
   }
 
+  // If chapter filtering, we need to get units with that keyword
+  if (chapterInfo) {
+    // Find the chapter keyword
+    const chapterKeyword = await db
+      .select()
+      .from(schema.keywords)
+      .where(ilike(schema.keywords.name, chapterInfo.keyword))
+      .limit(1);
+
+    if (chapterKeyword[0]) {
+      // Get unit IDs with this chapter keyword
+      const unitIdsWithKeyword = await db
+        .select({ unitId: schema.unitKeywords.unitId })
+        .from(schema.unitKeywords)
+        .where(eq(schema.unitKeywords.keywordId, chapterKeyword[0].id));
+
+      const unitIds = unitIdsWithKeyword.map(u => u.unitId);
+
+      if (unitIds.length > 0) {
+        whereCondition = and(
+          ilike(schema.units.name, `%${query}%`),
+          inArray(schema.units.id, unitIds)
+        )!;
+      } else {
+        // No units with this chapter keyword found
+        return {
+          count: 0,
+          units: [],
+          chapter: chapterInfo.keyword,
+          note: `No units found with the "${chapterInfo.keyword}" keyword. You may need to re-scrape units to populate keywords.`,
+        };
+      }
+    } else {
+      return {
+        count: 0,
+        units: [],
+        chapter: chapterInfo.keyword,
+        note: `Chapter keyword "${chapterInfo.keyword}" not found in database. You may need to re-scrape units to populate keywords.`,
+      };
+    }
+  }
+
   const units = await db
     .select({
+      id: schema.units.id,
       name: schema.units.name,
       faction: schema.factions.name,
       movement: schema.units.movement,
@@ -536,7 +732,17 @@ async function searchUnits(db: Database, query: string, factionQuery?: string) {
     .where(whereCondition)
     .limit(20);
 
-  return { count: units.length, units };
+  const result: {
+    count: number;
+    units: typeof units;
+    chapter?: string;
+  } = { count: units.length, units };
+
+  if (chapterInfo) {
+    result.chapter = chapterInfo.keyword;
+  }
+
+  return result;
 }
 
 async function getUnit(db: Database, unitQuery: string, factionQuery?: string) {

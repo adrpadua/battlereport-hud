@@ -96,13 +96,22 @@ export const TABLE_POINTS_FORMAT = /\|\s*\d+\s*model[s]?\s*\|\s*(\d+)\s*\|/i;
 export const LEADER_ATTACHMENT_INFO = /LEADER[\s\S]*?(?:can be attached to the following unit|can attach to)s?:\s*([\s\S]*?)(?=KEYWORDS:|FACTION KEYWORDS:|STRATAGEMS|DETACHMENT|$)/i;
 
 /**
- * Extract keywords section content.
+ * Extract keywords section content (unit keywords like INFANTRY, CHARACTER, etc.).
  *
  * Captures: [1] = keywords text
  *
  * @example "KEYWORDS: Infantry, Imperium" → "Infantry, Imperium"
  */
 export const KEYWORDS_SECTION = /KEYWORDS:?\s*([^\n]+)/i;
+
+/**
+ * Extract faction keywords section content (faction/chapter keywords like ADEPTUS ASTARTES, BLOOD ANGELS).
+ *
+ * Captures: [1] = faction keywords text
+ *
+ * @example "FACTION KEYWORDS: Adeptus Astartes, Blood Angels" → "Adeptus Astartes, Blood Angels"
+ */
+export const FACTION_KEYWORDS_SECTION = /FACTION\s+KEYWORDS:?\s*([^\n]+)/i;
 
 /**
  * Extract base size from text (e.g., "⌀32mm" or "⌀90mm oval").

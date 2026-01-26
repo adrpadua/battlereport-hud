@@ -328,7 +328,7 @@ export function parseStratagems(
     const cpCost = cpMatch ? cpMatch[1] : '1';
 
     // Extract type info from div.str10Type (e.g., "Gladius Task Force – Battle Tactic Stratagem")
-    const typeInfo = $strat.find('.str10Type').text().trim();
+    const _typeInfo = $strat.find('.str10Type').text().trim();
 
     // Get the stratagem content
     const $content = $strat.find('.str10Text');

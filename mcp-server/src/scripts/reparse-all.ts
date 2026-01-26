@@ -6,6 +6,7 @@ import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import type { ScrapeResult } from '../scraper/firecrawl-client.js';
+import { saveUnitKeywords } from '../scraper/save-keywords.js';
 
 interface ReparseOptions {
   dryRun: boolean;
@@ -124,12 +125,12 @@ async function reparseUnit(
     return { success: false, action: 'failed', error: 'Parser returned no units' };
   }
 
-  const { unit, weapons, abilities } = units[0]!;
+  const { unit, weapons, abilities, keywords } = units[0]!;
 
   if (options.verbose) {
     console.log(`  Parsed: ${unit.name}`);
     console.log(`    Movement: ${unit.movement}, T: ${unit.toughness}, Sv: ${unit.save}, W: ${unit.wounds}`);
-    console.log(`    Weapons: ${weapons.length}, Abilities: ${abilities.length}`);
+    console.log(`    Weapons: ${weapons.length}, Abilities: ${abilities.length}, Keywords: ${keywords.length}`);
   }
 
   if (options.dryRun) {
@@ -169,9 +170,15 @@ async function reparseUnit(
 
   const unitId = insertedUnit!.id;
 
-  // Clear existing weapon/ability links
+  // Clear existing weapon/ability/keyword links
   await db.delete(schema.unitWeapons).where(eq(schema.unitWeapons.unitId, unitId));
   await db.delete(schema.unitAbilities).where(eq(schema.unitAbilities.unitId, unitId));
+  await db.delete(schema.unitKeywords).where(eq(schema.unitKeywords.unitId, unitId));
+
+  // Save keywords
+  if (keywords && keywords.length > 0) {
+    await saveUnitKeywords(db, unitId, keywords);
+  }
 
   // Insert weapons
   for (const weapon of weapons) {
