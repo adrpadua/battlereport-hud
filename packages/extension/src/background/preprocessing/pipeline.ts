@@ -667,6 +667,7 @@ function buildEntityMentionsMap(
           entityMention.canonicalName = validation.matchedName;
           entityMention.isValidated = true;
           entityMention.stats = validation.matchedUnit.stats ?? undefined;
+          entityMention.weapons = validation.matchedUnit.weapons;
           entityMention.keywords = validation.matchedUnit.keywords;
           entityMention.pointsCost = validation.matchedUnit.pointsCost ?? undefined;
         } else {

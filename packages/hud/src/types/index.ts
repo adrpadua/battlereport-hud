@@ -25,17 +25,17 @@ export interface UnitStats {
   objectiveControl: number;
 }
 
-// Weapon profile from BSData
+// Weapon profile from database
 export interface WeaponProfile {
   name: string;
   type: 'ranged' | 'melee';
   range: string;
   attacks: string;
   skill: string;
-  strength: number;
-  ap: number;
+  strength: string;
+  ap: string;
   damage: string;
-  keywords?: string[];
+  abilities?: string | null;
 }
 
 // Player in a battle report
@@ -63,6 +63,7 @@ export interface Unit {
   confidence: ConfidenceLevel;
   pointsCost?: number;
   stats?: UnitStats;
+  weapons?: WeaponProfile[];
   keywords?: string[];
   isValidated?: boolean;
   suggestedMatch?: UnitSuggestion;

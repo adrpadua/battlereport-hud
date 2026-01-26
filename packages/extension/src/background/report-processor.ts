@@ -210,6 +210,7 @@ export async function processBattleReport(
         confidence: boostConfidence(cleanedUnit.confidence, validation.confidence),
         pointsCost: cleanedUnit.pointsCost ?? validation.matchedUnit.pointsCost ?? undefined,
         stats: validation.matchedUnit.stats ?? undefined,
+        weapons: validation.matchedUnit.weapons,
         keywords: validation.matchedUnit.keywords,
         isValidated: true,
       };

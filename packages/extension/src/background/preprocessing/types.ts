@@ -157,6 +157,7 @@ export interface EntityMentions {
   source: 'preprocessed' | 'ai-discovered';
   // Optional enrichment data (for units)
   stats?: import('@/types/bsdata').UnitStats;
+  weapons?: import('@/types/bsdata').WeaponProfile[];
   keywords?: string[];
   pointsCost?: number;
   suggestedMatch?: {

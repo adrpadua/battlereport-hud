@@ -25,6 +25,7 @@ export function toBattleReport(game: GameExtraction): BattleReport {
       confidence: assignment?.confidence ?? 'medium',
       pointsCost: entity.pointsCost,
       stats: entity.stats,
+      weapons: entity.weapons,
       keywords: entity.keywords,
       isValidated: entity.isValidated,
       suggestedMatch: entity.suggestedMatch ? {

@@ -13,10 +13,10 @@ export interface WeaponProfile {
   range: string;
   attacks: string;
   skill: string;
-  strength: number;
-  ap: number;
+  strength: string;
+  ap: string;
   damage: string;
-  keywords?: string[];
+  abilities?: string | null;
 }
 
 export interface UnitData {

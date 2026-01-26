@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeftRight } from 'lucide-react';
 import { ConfidenceBadge } from './ConfidenceBadge';
+import { WeaponTable } from './WeaponTable';
 import { stripUnitNameParentheses } from '../utils/text-parser';
 import { useExpandable } from '../hooks/useExpandable';
 import type { Unit, UnitStats } from '../types';
@@ -101,7 +102,11 @@ export function UnitCell({
   onSearchCorrection,
   onDelete,
 }: UnitCellProps): React.ReactElement {
-  const hasExpandableContent = Boolean(unit.stats || (unit.keywords && unit.keywords.length > 0));
+  const hasExpandableContent = Boolean(
+    unit.stats ||
+    (unit.keywords && unit.keywords.length > 0) ||
+    (unit.weapons && unit.weapons.length > 0)
+  );
   const { isExpanded, headerProps, contentClassName } = useExpandable({ hasContent: hasExpandableContent });
 
   const handleTimestampClick = (e: React.MouseEvent): void => {
@@ -209,6 +214,9 @@ export function UnitCell({
       {isExpanded && hasExpandableContent && (
         <div className="unit-details">
           {unit.stats && <UnitStatGrid stats={unit.stats} />}
+          {unit.weapons && unit.weapons.length > 0 && (
+            <WeaponTable weapons={unit.weapons} />
+          )}
           {unit.keywords && unit.keywords.length > 0 && (
             <KeywordTags keywords={unit.keywords} />
           )}

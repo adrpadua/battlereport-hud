@@ -1,4 +1,4 @@
-import type { UnitStats } from './bsdata';
+import type { UnitStats, WeaponProfile } from './bsdata';
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
@@ -25,6 +25,7 @@ export interface Unit {
   pointsCost?: number;
   // BSData enrichment fields
   stats?: UnitStats;
+  weapons?: WeaponProfile[];
   keywords?: string[];
   isValidated?: boolean;
   // Suggestion for non-validated units

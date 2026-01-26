@@ -341,6 +341,7 @@ async function enrichUnitsWithBSData(
         name: validation.matchedName,
         canonicalName: validation.matchedName,
         stats: validation.matchedUnit.stats ?? undefined,
+        weapons: validation.matchedUnit.weapons,
         keywords: validation.matchedUnit.keywords,
         pointsCost: validation.matchedUnit.pointsCost ?? undefined,
         isValidated: true,
@@ -560,6 +561,7 @@ export function toHudBattleReport(result: EnhancedExtractionResult): BattleRepor
       confidence: u.confidence,
       pointsCost: u.pointsCost,
       stats: u.stats,
+      weapons: u.weapons,
       keywords: u.keywords,
       isValidated: u.isValidated,
       suggestedMatch: u.suggestedMatch ? {
