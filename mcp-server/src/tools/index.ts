@@ -7,32 +7,7 @@ import {
   handleValidationToolCall,
   VALIDATION_TOOL_NAMES,
 } from './validation-tools.js';
-
-/**
- * Space Marine chapter definitions.
- * Maps chapter names to their parent faction slug and chapter keyword.
- */
-const SPACE_MARINE_CHAPTERS: Record<string, { parentFaction: string; keyword: string }> = {
-  'blood angels': { parentFaction: 'space-marines', keyword: 'BLOOD ANGELS' },
-  'dark angels': { parentFaction: 'space-marines', keyword: 'DARK ANGELS' },
-  'space wolves': { parentFaction: 'space-marines', keyword: 'SPACE WOLVES' },
-  'black templars': { parentFaction: 'space-marines', keyword: 'BLACK TEMPLARS' },
-  'deathwatch': { parentFaction: 'space-marines', keyword: 'DEATHWATCH' },
-  'ultramarines': { parentFaction: 'space-marines', keyword: 'ULTRAMARINES' },
-  'imperial fists': { parentFaction: 'space-marines', keyword: 'IMPERIAL FISTS' },
-  'white scars': { parentFaction: 'space-marines', keyword: 'WHITE SCARS' },
-  'raven guard': { parentFaction: 'space-marines', keyword: 'RAVEN GUARD' },
-  'salamanders': { parentFaction: 'space-marines', keyword: 'SALAMANDERS' },
-  'iron hands': { parentFaction: 'space-marines', keyword: 'IRON HANDS' },
-};
-
-/**
- * Check if a query matches a Space Marine chapter.
- */
-function getChapterInfo(query: string): { parentFaction: string; keyword: string } | null {
-  const normalized = query.toLowerCase().trim();
-  return SPACE_MARINE_CHAPTERS[normalized] ?? null;
-}
+import { SPACE_MARINE_CHAPTERS, getChapterInfo, getSubfactionInfo } from './subfactions.js';
 
 export function createTools(): Tool[] {
   return [
@@ -1007,15 +982,44 @@ async function searchFaqs(db: Database, query: string, factionQuery?: string) {
 
 // Helper function
 async function findFaction(db: Database, query: string) {
-  const [faction] = await db
+  const normalizedQuery = query.trim();
+  const slug = normalizedQuery.toLowerCase().replace(/\s+/g, '-');
+
+  // First try exact slug match (most reliable)
+  let [faction] = await db
     .select()
     .from(schema.factions)
-    .where(
-      or(
-        ilike(schema.factions.name, `%${query}%`),
-        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
-      )
-    )
+    .where(eq(schema.factions.slug, slug))
+    .limit(1);
+
+  if (faction) return faction;
+
+  // Try exact name match (case-insensitive)
+  [faction] = await db
+    .select()
+    .from(schema.factions)
+    .where(ilike(schema.factions.name, normalizedQuery))
+    .limit(1);
+
+  if (faction) return faction;
+
+  // Check if this is a known subfaction (Space Marine chapter, Craftworld, etc.)
+  const subfactionInfo = getSubfactionInfo(normalizedQuery);
+  if (subfactionInfo) {
+    [faction] = await db
+      .select()
+      .from(schema.factions)
+      .where(eq(schema.factions.slug, subfactionInfo.parentFaction))
+      .limit(1);
+    if (faction) return faction;
+  }
+
+  // Only as a last resort, try fuzzy matching with wildcards
+  // This prevents "space wolves" matching "space marines"
+  [faction] = await db
+    .select()
+    .from(schema.factions)
+    .where(ilike(schema.factions.name, `%${normalizedQuery}%`))
     .limit(1);
 
   return faction;

@@ -6,7 +6,7 @@
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { Database } from '../db/connection.js';
 import * as schema from '../db/schema.js';
-import { eq, ilike, or, sql } from 'drizzle-orm';
+import { eq, ilike, or, sql, inArray, notInArray, and } from 'drizzle-orm';
 import {
   findBestMatches,
   normalizeString,
@@ -722,12 +722,107 @@ function normalizeApostrophes(str: string): string {
   return str.replace(/[\u2019\u2018\u0060\u00B4]/g, "'");
 }
 
+import { getSubfactionInfo, SPACE_MARINE_CHAPTERS, type SubfactionInfo } from './subfactions.js';
+
+/**
+ * Get all exclusive subfaction keywords for a parent faction.
+ * These are keywords that mark a unit as belonging to a specific subfaction.
+ */
+function getExclusiveSubfactionKeywords(parentFactionSlug: string): string[] {
+  switch (parentFactionSlug) {
+    case 'space-marines':
+      return Object.values(SPACE_MARINE_CHAPTERS).map(c => c.keyword).filter((k): k is string => !!k);
+    // Add other factions as needed
+    default:
+      return [];
+  }
+}
+
+/**
+ * Fetch units for a subfaction, filtering to include only:
+ * - Units with the subfaction keyword (e.g., SPACE WOLVES)
+ * - Generic units that don't have ANY exclusive subfaction keyword
+ */
+async function fetchUnitsForSubfaction(
+  db: Database,
+  factionId: number,
+  subfactionInfo: SubfactionInfo
+): Promise<string[]> {
+  // Get all exclusive subfaction keywords for this parent faction
+  const allExclusiveKeywords = getExclusiveSubfactionKeywords(subfactionInfo.parentFaction);
+  const otherExclusiveKeywords = allExclusiveKeywords.filter(k => k !== subfactionInfo.keyword);
+
+  // Get all units from the parent faction
+  const allFactionUnits = await db
+    .select({ id: schema.units.id, name: schema.units.name })
+    .from(schema.units)
+    .where(eq(schema.units.factionId, factionId))
+    .orderBy(schema.units.name);
+
+  if (!subfactionInfo.keyword || otherExclusiveKeywords.length === 0) {
+    // No keyword filtering needed
+    return allFactionUnits.map(u => u.name);
+  }
+
+  // Get keyword IDs for the subfaction keyword and other exclusive keywords
+  const [subfactionKeyword] = await db
+    .select({ id: schema.keywords.id })
+    .from(schema.keywords)
+    .where(ilike(schema.keywords.name, subfactionInfo.keyword))
+    .limit(1);
+
+  const otherKeywords = await db
+    .select({ id: schema.keywords.id, name: schema.keywords.name })
+    .from(schema.keywords)
+    .where(
+      or(...otherExclusiveKeywords.map(k => ilike(schema.keywords.name, k)))
+    );
+
+  const otherKeywordIds = otherKeywords.map(k => k.id);
+
+  // Get unit IDs that have OTHER exclusive keywords (to exclude)
+  let unitsWithOtherKeywords: number[] = [];
+  if (otherKeywordIds.length > 0) {
+    const excluded = await db
+      .select({ unitId: schema.unitKeywords.unitId })
+      .from(schema.unitKeywords)
+      .where(inArray(schema.unitKeywords.keywordId, otherKeywordIds));
+    unitsWithOtherKeywords = excluded.map(e => e.unitId);
+  }
+
+  // Get unit IDs that have the subfaction keyword (to always include)
+  let unitsWithSubfactionKeyword: number[] = [];
+  if (subfactionKeyword) {
+    const included = await db
+      .select({ unitId: schema.unitKeywords.unitId })
+      .from(schema.unitKeywords)
+      .where(eq(schema.unitKeywords.keywordId, subfactionKeyword.id));
+    unitsWithSubfactionKeyword = included.map(i => i.unitId);
+  }
+
+  // Filter: include units that have subfaction keyword OR don't have any other exclusive keyword
+  const excludeSet = new Set(unitsWithOtherKeywords);
+  const includeSet = new Set(unitsWithSubfactionKeyword);
+
+  const filteredUnits = allFactionUnits.filter(unit => {
+    // Always include if has the subfaction keyword
+    if (includeSet.has(unit.id)) return true;
+    // Exclude if has another exclusive keyword
+    if (excludeSet.has(unit.id)) return false;
+    // Include generic units (no exclusive keywords)
+    return true;
+  });
+
+  return filteredUnits.map(u => u.name);
+}
+
 async function fetchNamesForCategory(
   db: Database,
   category: string,
   faction?: string
 ): Promise<string[]> {
   let factionId: number | null = null;
+  let subfactionInfo: SubfactionInfo | null = null;
 
   if (faction) {
     // Normalize apostrophes and generate slug variants
@@ -737,31 +832,55 @@ async function fetchNamesForCategory(
     // Also try with apostrophe removed entirely (e.g., "emperor-s-children" -> "emperors-children")
     const slugNoApostrophe = normalizedFaction.toLowerCase().replace(/[\s']+/g, '').replace(/\s+/g, '-');
 
-    // Search with both straight and curly apostrophe variants
-    const searchWithStraight = `%${normalizedFaction}%`;
-    const searchWithCurly = `%${faction.replace(/'/g, '\u2019')}%`;
-
-    const [factionResult] = await db
+    // First try exact slug match (most reliable)
+    let [factionResult] = await db
       .select({ id: schema.factions.id })
       .from(schema.factions)
       .where(
         or(
-          ilike(schema.factions.name, searchWithStraight),
-          ilike(schema.factions.name, searchWithCurly),
           eq(schema.factions.slug, slug),
           eq(schema.factions.slug, slugNoApostrophe)
         )
       )
       .limit(1);
+
+    // If no exact slug match, try exact name match (case-insensitive)
+    if (!factionResult) {
+      [factionResult] = await db
+        .select({ id: schema.factions.id })
+        .from(schema.factions)
+        .where(ilike(schema.factions.name, normalizedFaction))
+        .limit(1);
+    }
+
+    // Check if this is a known subfaction (Space Marine chapter, Craftworld, etc.)
+    if (!factionResult) {
+      subfactionInfo = getSubfactionInfo(normalizedFaction);
+      if (subfactionInfo) {
+        [factionResult] = await db
+          .select({ id: schema.factions.id })
+          .from(schema.factions)
+          .where(eq(schema.factions.slug, subfactionInfo.parentFaction))
+          .limit(1);
+      }
+    }
+
     factionId = factionResult?.id || null;
 
+    // If faction specified but not found, return empty array instead of all rows
     if (!factionId) {
       console.warn(`Faction not found in database: "${faction}" (tried slug: "${slug}")`);
+      return [];
     }
   }
 
   switch (category) {
     case 'units': {
+      // If this is a subfaction query, we need to filter by keyword
+      if (subfactionInfo && factionId) {
+        return await fetchUnitsForSubfaction(db, factionId, subfactionInfo);
+      }
+
       let query = db.select({ name: schema.units.name }).from(schema.units);
       if (factionId) {
         query = query.where(eq(schema.units.factionId, factionId)) as typeof query;
