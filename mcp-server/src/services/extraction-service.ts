@@ -783,6 +783,89 @@ function normalizeSpaceMarineFaction(player: Player): Player {
 }
 
 /**
+ * Scan transcript for known detachment names to fill in "Unknown" detachments.
+ * Returns updated players with matched detachments from transcript.
+ */
+export function matchDetachmentsFromTranscript(
+  players: Player[],
+  transcript: Array<{ text: string; startTime: number }>,
+  factionDetachmentNames: Map<string, string[]>
+): Player[] {
+  // Check if any player has unknown detachment
+  const unknownPlayers = players.filter(
+    p => !p.detachment || p.detachment === 'Unknown'
+  );
+
+  if (unknownPlayers.length === 0 || factionDetachmentNames.size === 0) {
+    return players;
+  }
+
+  // Build combined transcript text
+  const transcriptText = transcript.map(seg => seg.text).join(' ').toLowerCase();
+
+  // Collect all detachments with faction info
+  const allDetachments: { name: string; faction: string; nameLower: string }[] = [];
+  for (const [faction, detachments] of factionDetachmentNames) {
+    for (const detachment of detachments) {
+      allDetachments.push({
+        name: detachment,
+        faction,
+        nameLower: detachment.toLowerCase(),
+      });
+    }
+  }
+
+  // Sort by name length (longer first) to match specific names before partial matches
+  allDetachments.sort((a, b) => b.name.length - a.name.length);
+
+  // Find detachments mentioned in transcript
+  const foundDetachments: { name: string; faction: string }[] = [];
+  for (const det of allDetachments) {
+    if (transcriptText.includes(det.nameLower)) {
+      foundDetachments.push({ name: det.name, faction: det.faction });
+    }
+  }
+
+  if (foundDetachments.length === 0) {
+    console.log('No detachment names found in transcript during post-processing');
+    return players;
+  }
+
+  console.log(`Found ${foundDetachments.length} detachment(s) in transcript:`, foundDetachments.map(d => d.name));
+
+  // Match found detachments to players with unknown detachments
+  const updatedPlayers = [...players];
+  for (let i = 0; i < updatedPlayers.length; i++) {
+    const player = updatedPlayers[i];
+    if (!player || player.detachment && player.detachment !== 'Unknown') {
+      continue;
+    }
+
+    // Find a detachment matching this player's faction
+    const playerFactionLower = player.faction.toLowerCase();
+    const matchingDetachment = foundDetachments.find(d => {
+      const detFactionLower = d.faction.toLowerCase();
+      return playerFactionLower.includes(detFactionLower) ||
+             detFactionLower.includes(playerFactionLower) ||
+             // Space Marines chapters share detachments
+             (playerFactionLower === 'space marines' || detFactionLower === 'space marines');
+    });
+
+    if (matchingDetachment) {
+      console.log(`Post-processing: Matched detachment "${matchingDetachment.name}" to player "${player.name}" (${player.faction})`);
+      updatedPlayers[i] = { ...player, detachment: matchingDetachment.name };
+      // Remove from found list so it doesn't match another player
+      const idx = foundDetachments.indexOf(matchingDetachment);
+      if (idx !== -1) {
+        foundDetachments.splice(idx, 1);
+      }
+    }
+  }
+
+  return updatedPlayers;
+}
+
+/**
  * Validates and corrects player detachments against the database.
  * Ensures each player's detachment belongs to their faction.
  * Handles subfactions (e.g., Space Marine chapters use parent faction's detachments).

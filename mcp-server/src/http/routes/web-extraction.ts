@@ -19,6 +19,7 @@ import {
   extractBattleReportWithArtifacts,
   enrichUnitsWithStats,
   validateDetachments,
+  matchDetachmentsFromTranscript,
   createStageArtifact,
   completeStageArtifact,
   ALL_FACTIONS,
@@ -372,9 +373,18 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
           { validatedCount, totalUnits: enrichedUnits.length }
         );
 
-        // Stage 6: Validate detachments against database
+        // Stage 6: Match and validate detachments
         let stage6: StageArtifact = createStageArtifact(6, 'validate-detachments');
-        const validatedPlayers = await validateDetachments(report.players, db);
+
+        // First, try to match unknown detachments from transcript
+        const playersWithTranscriptMatch = matchDetachmentsFromTranscript(
+          report.players,
+          videoData.transcript,
+          factionDetachmentNames
+        );
+
+        // Then validate against database
+        const validatedPlayers = await validateDetachments(playersWithTranscriptMatch, db);
         const detachmentChanges = validatedPlayers.filter(
           (p, i) => p.detachment !== report.players[i]?.detachment
         ).length;
