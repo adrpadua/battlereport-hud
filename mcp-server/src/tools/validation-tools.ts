@@ -713,6 +713,15 @@ async function loadCandidates(
   return candidates;
 }
 
+/**
+ * Normalize apostrophes in a string.
+ * Converts curly/smart apostrophes (U+2019) to straight apostrophes (U+0027).
+ * This handles mismatches between user input and database values.
+ */
+function normalizeApostrophes(str: string): string {
+  return str.replace(/[\u2019\u2018\u0060\u00B4]/g, "'");
+}
+
 async function fetchNamesForCategory(
   db: Database,
   category: string,
@@ -721,17 +730,34 @@ async function fetchNamesForCategory(
   let factionId: number | null = null;
 
   if (faction) {
+    // Normalize apostrophes and generate slug variants
+    const normalizedFaction = normalizeApostrophes(faction);
+    // Generate slug: lowercase, replace spaces and apostrophes with hyphens
+    const slug = normalizedFaction.toLowerCase().replace(/[\s']+/g, '-').replace(/-+/g, '-');
+    // Also try with apostrophe removed entirely (e.g., "emperor-s-children" -> "emperors-children")
+    const slugNoApostrophe = normalizedFaction.toLowerCase().replace(/[\s']+/g, '').replace(/\s+/g, '-');
+
+    // Search with both straight and curly apostrophe variants
+    const searchWithStraight = `%${normalizedFaction}%`;
+    const searchWithCurly = `%${faction.replace(/'/g, '\u2019')}%`;
+
     const [factionResult] = await db
       .select({ id: schema.factions.id })
       .from(schema.factions)
       .where(
         or(
-          ilike(schema.factions.name, `%${faction}%`),
-          eq(schema.factions.slug, faction.toLowerCase().replace(/\s+/g, '-'))
+          ilike(schema.factions.name, searchWithStraight),
+          ilike(schema.factions.name, searchWithCurly),
+          eq(schema.factions.slug, slug),
+          eq(schema.factions.slug, slugNoApostrophe)
         )
       )
       .limit(1);
     factionId = factionResult?.id || null;
+
+    if (!factionId) {
+      console.warn(`Faction not found in database: "${faction}" (tried slug: "${slug}")`);
+    }
   }
 
   switch (category) {
