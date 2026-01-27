@@ -4,6 +4,7 @@ import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagemsByDetachment, parseEnhancementsByDetachment } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
+import { extractUnitLinksFromTOC } from './parsers/toc-parser.js';
 import { saveUnitKeywords } from './save-keywords.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
@@ -279,8 +280,8 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
         console.log(`  Fetching datasheets index${refreshIndex ? ' (refresh requested)' : ''}...`);
         const indexResult = await client.scrape(indexUrl, { timeout: 60000 });
 
-        // Extract unit slugs from TOC links
-        unitLinks = extractUnitLinksFromTOC(indexResult.markdown);
+        // Extract unit slugs from TOC links (use HTML to avoid Firecrawl markdown truncation)
+        unitLinks = extractUnitLinksFromTOC(indexResult.html);
         console.log(`  Found ${unitLinks.length} unit links in TOC`);
 
         // Insert/update units in unit_index table
@@ -436,44 +437,6 @@ async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>
       });
     }
   }
-}
-
-/**
- * Extract unit links from the datasheets TOC
- * Format: [Unit Name](https://wahapedia.ru/wh40k10ed/factions/faction-slug/datasheets#Unit-Slug)
- * Skips Legends and Forge World units (marked with logo images in TOC)
- */
-function extractUnitLinksFromTOC(markdown: string): { name: string; slug: string }[] {
-  const units: { name: string; slug: string }[] = [];
-  const seen = new Set<string>();
-
-  // Match links to datasheets with anchor: [Name](/wh40k10ed/factions/slug/datasheets#Unit-Slug)
-  // Also capture any preceding image marker (Legends/FW logos)
-  const linkRegex = /(?:!\[[^\]]*\]\([^)]*?(Legends_logo|FW_logo)[^)]*\))?\s*\[([^\]]+)\]\([^)]*\/factions\/[^/]+\/datasheets#([^)]+)\)/g;
-  let match;
-
-  while ((match = linkRegex.exec(markdown)) !== null) {
-    const logoMarker = match[1]; // Will be "Legends_logo" or "FW_logo" if present
-    const name = match[2]?.trim();
-    const anchorSlug = match[3]?.trim();
-
-    if (!name || !anchorSlug || seen.has(anchorSlug)) continue;
-
-    // Skip Legends and Forge World units
-    if (logoMarker) {
-      console.log(`  [Skip] ${name} (${logoMarker.replace('_logo', '')})`);
-      continue;
-    }
-
-    seen.add(anchorSlug);
-
-    // Keep original casing from anchor (wahapedia requires capitalized slugs)
-    const slug = decodeURIComponent(anchorSlug).replace(/\s+/g, '-');
-
-    units.push({ name, slug });
-  }
-
-  return units;
 }
 
 function extractFactionName(markdown: string): string | null {
