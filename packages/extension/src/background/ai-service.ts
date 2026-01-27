@@ -27,7 +27,7 @@ const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY_MS = 1000;
 
 // Limit transcript analysis to first N seconds for faster extraction
-const MAX_TRANSCRIPT_SECONDS = 300; // 5 minutes
+const MAX_TRANSCRIPT_SECONDS = 420; // 7 minutes
 
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
