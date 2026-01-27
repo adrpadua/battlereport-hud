@@ -26,6 +26,9 @@ const MAX_CONCURRENT_CHUNKS = 3; // Limit concurrent API requests
 const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY_MS = 1000;
 
+// Limit transcript analysis to first N seconds for faster extraction
+const MAX_TRANSCRIPT_SECONDS = 300; // 5 minutes
+
 // Keywords indicating army list chapters in video chapters
 const ARMY_LIST_CHAPTER_KEYWORDS = [
   'army', 'list', 'lists', 'forces', 'armies', 'roster'
@@ -728,10 +731,17 @@ export async function extractBattleReport(
   videoData: VideoData,
   apiKey: string
 ): Promise<BattleReport> {
+  // Limit transcript to first 5 minutes for faster processing
+  const limitedTranscript = videoData.transcript.filter(
+    seg => seg.startTime < MAX_TRANSCRIPT_SECONDS
+  );
+  const limitedVideoData: VideoData = { ...videoData, transcript: limitedTranscript };
+  console.log(`Limiting transcript: ${videoData.transcript.length} → ${limitedTranscript.length} segments (first ${MAX_TRANSCRIPT_SECONDS}s)`);
+
   const openai = new OpenAI({ apiKey });
 
   // Detect factions and get unit names for prompt enhancement
-  const factionUnitNames = await detectFactionsFromVideo(videoData);
+  const factionUnitNames = await detectFactionsFromVideo(limitedVideoData);
   const allUnitNames = [...factionUnitNames.values()].flat();
   const factionNames = [...factionUnitNames.keys()];
 
@@ -743,7 +753,7 @@ export async function extractBattleReport(
 
     if (!llmResult) {
       console.log('Running LLM preprocessing for video:', videoData.videoId);
-      llmResult = await preprocessWithLlm(videoData.transcript, factionNames, apiKey);
+      llmResult = await preprocessWithLlm(limitedVideoData.transcript, factionNames, apiKey);
       await setCachedPreprocess(videoData.videoId, llmResult);
       console.log('LLM preprocessing cached for video:', videoData.videoId);
     } else {
@@ -752,17 +762,17 @@ export async function extractBattleReport(
 
     // Use LLM mappings with pattern-based preprocessing
     preprocessed = preprocessTranscriptWithLlmMappings(
-      videoData.transcript,
+      limitedVideoData.transcript,
       allUnitNames,
       llmResult.termMappings
     );
   } catch (error) {
     console.warn('LLM preprocessing failed, falling back to pattern matching:', error);
-    preprocessed = preprocessTranscript(videoData.transcript, allUnitNames);
+    preprocessed = preprocessTranscript(limitedVideoData.transcript, allUnitNames);
   }
 
   // Build full transcript section to check if chunking is needed
-  const transcriptText = buildTranscriptSection(videoData, preprocessed);
+  const transcriptText = buildTranscriptSection(limitedVideoData, preprocessed);
 
   let validated: BattleReportExtraction;
 
@@ -775,7 +785,7 @@ export async function extractBattleReport(
     try {
       const chunkResults = await processChunksWithConcurrency(
         openai,
-        videoData,
+        limitedVideoData,
         chunks,
         preprocessed,
         factionUnitNames
@@ -792,7 +802,7 @@ export async function extractBattleReport(
         const smallerChunks = chunkTranscriptText(transcriptText.slice(0, transcriptText.length / 2));
         const chunkResults = await processChunksWithConcurrency(
           openai,
-          videoData,
+          limitedVideoData,
           smallerChunks,
           preprocessed,
           factionUnitNames
@@ -812,7 +822,7 @@ export async function extractBattleReport(
         max_completion_tokens: 4000,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(videoData, preprocessed, factionUnitNames) },
+          { role: 'user', content: buildUserPrompt(limitedVideoData, preprocessed, factionUnitNames) },
         ],
         response_format: { type: 'json_object' },
       });
@@ -831,7 +841,7 @@ export async function extractBattleReport(
         const chunks = chunkTranscriptText(transcriptText);
         const chunkResults = await processChunksWithConcurrency(
           openai,
-          videoData,
+          limitedVideoData,
           chunks,
           preprocessed,
           factionUnitNames
