@@ -527,7 +527,8 @@ export function findParentDetachment(
     if (i + 1 < allAnchorNames.length) {
       const nextName = allAnchorNames[i + 1] ?? '';
       if (extractBaseSectionName(nextName).toLowerCase() === 'detachment-rule') {
-        return prevName.replace(/-/g, ' ');
+        // Convert hyphens to spaces and strip trailing numbers (from numbered anchor suffixes)
+        return prevName.replace(/-/g, ' ').replace(/\s+\d+$/, '').trim();
       }
     }
   }

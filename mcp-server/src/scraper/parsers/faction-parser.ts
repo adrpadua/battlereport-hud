@@ -139,6 +139,8 @@ function cleanDetachmentName(name: string): string | null {
     .replace(/https?:\/\/[^\s]+/g, '')
     // Remove # Not Found markers
     .replace(/#+\s*Not\s*Found/gi, '')
+    // Remove trailing numbers that come from numbered anchor suffixes (e.g., "Feast of Pain 1" -> "Feast of Pain")
+    .replace(/\s+\d+$/, '')
     // Clean up whitespace
     .trim();
 
@@ -148,6 +150,17 @@ function cleanDetachmentName(name: string): string | null {
       cleaned.includes('![') ||
       cleaned.startsWith('#') ||
       cleaned.length < 2) {
+    return null;
+  }
+
+  // Skip known non-detachment sections (these are rule subsections, not actual detachments)
+  const invalidDetachmentNames = new Set([
+    'army rule',
+    'army rules',
+    'rules adaptations',
+  ]);
+
+  if (invalidDetachmentNames.has(cleaned.toLowerCase())) {
     return null;
   }
 

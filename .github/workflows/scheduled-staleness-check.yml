@@ -1,0 +1,134 @@
+name: Scheduled Staleness Check
+
+on:
+  schedule:
+    # Run every Monday at 9am UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      factions:
+        description: 'Comma-separated faction slugs to check (empty for all)'
+        required: false
+        default: ''
+        type: string
+
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+
+jobs:
+  staleness-check:
+    name: Check for Stale Data
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run staleness check
+        id: staleness
+        run: |
+          cd mcp-server
+          npx tsx scripts/staleness-check.ts ${{ github.event.inputs.factions }} 2>&1 | tee staleness-report.txt
+
+          # Check if any factions are stale
+          if grep -q "STALE:" staleness-report.txt; then
+            echo "has_stale=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_stale=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload staleness report
+        uses: actions/upload-artifact@v4
+        with:
+          name: staleness-report-${{ github.run_number }}
+          path: mcp-server/staleness-report.txt
+          retention-days: 90
+
+      - name: Create issue for stale data
+        if: steps.staleness.outputs.has_stale == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('mcp-server/staleness-report.txt', 'utf8');
+
+            // Extract stale factions from report
+            const staleLines = report.split('\n').filter(line => line.includes('STALE:'));
+            const staleFactions = staleLines.map(line => line.match(/STALE: (.+)/)?.[1]).filter(Boolean);
+
+            const title = `[Automated] Stale Wahapedia Data Detected - ${new Date().toISOString().split('T')[0]}`;
+
+            const body = `## Stale Data Alert
+
+            The scheduled staleness check has detected that some faction data may be out of date.
+
+            ### Stale Factions
+            ${staleFactions.map(f => `- ${f}`).join('\n')}
+
+            ### Full Report
+            <details>
+            <summary>View Details</summary>
+
+            \`\`\`
+            ${report}
+            \`\`\`
+
+            </details>
+
+            ### Recommended Actions
+            1. Review the Wahapedia pages for the affected factions
+            2. If updates are needed, run: \`npm run cli wahapedia sync faction <faction-slug>\`
+            3. Close this issue once the data has been updated
+
+            ---
+            *This issue was automatically created by the staleness check workflow.*`;
+
+            // Check if a similar issue already exists
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'stale-data'
+            });
+
+            const hasExisting = existingIssues.data.some(issue =>
+              issue.title.includes('[Automated] Stale Wahapedia Data Detected')
+            );
+
+            if (!hasExisting) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['stale-data', 'automated']
+              });
+            } else {
+              console.log('Similar issue already exists, skipping creation');
+            }
+
+      - name: Send notification
+        if: steps.staleness.outputs.has_stale == 'true' && env.DISCORD_WEBHOOK_URL != ''
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "Stale Wahapedia Data Detected",
+                "description": "The scheduled staleness check found outdated data. Check the GitHub repository for details.",
+                "color": 16744448,
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+              }]
+            }'

@@ -11,6 +11,11 @@ dist/
 .cache/
 .scrape-cache/
 .bsdata-cache/
+.data-snapshots/
+
+# Reports
+staleness-report.txt
+integrity-report.txt
 
 # Drizzle
 drizzle/

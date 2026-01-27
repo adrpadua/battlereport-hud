@@ -5,9 +5,9 @@ import * as cheerio from 'cheerio';
 import {
   parseFactionPage,
   parseDetachments,
-  parseStratagems,
-  parseEnhancements,
-  extractDetachmentSection,
+  parseStratagemsByDetachment,
+  parseEnhancementsByDetachment,
+  slugify,
 } from '../scraper/parsers/faction-parser.js';
 import { getDb, closeConnection } from '../db/connection.js';
 import * as schema from '../db/schema.js';
@@ -155,28 +155,45 @@ async function reparseFaction(
   // Parse faction data using HTML
   const faction = parseFactionPage(html, factionSlug, factionName, cached.url);
   const detachments = parseDetachments(html, cached.url);
-  const stratagems = parseStratagems(html, cached.url);
+  const stratagemsByDetachment = parseStratagemsByDetachment(html, cached.url);
+  const enhancementsByDetachment = parseEnhancementsByDetachment(html, cached.url);
+
+  // Count totals for stats
+  let totalStratagems = 0;
+  let totalEnhancements = 0;
+  for (const strats of stratagemsByDetachment.values()) totalStratagems += strats.length;
+  for (const enhs of enhancementsByDetachment.values()) totalEnhancements += enhs.length;
 
   if (options.verbose) {
     console.log(`  Faction: ${faction.name}`);
     console.log(`    Army Rules: ${faction.armyRules ? `${faction.armyRules.length} chars` : 'none'}`);
     console.log(`    Detachments: ${detachments.length}`);
-    console.log(`    Stratagems: ${stratagems.length}`);
+    console.log(`    Stratagems: ${totalStratagems} (across ${stratagemsByDetachment.size} detachments)`);
+    console.log(`    Enhancements: ${totalEnhancements} (across ${enhancementsByDetachment.size} detachments)`);
   }
 
   stats.detachmentsFound += detachments.length;
-  stats.stratagems += stratagems.length;
+  stats.stratagems += totalStratagems;
+  stats.enhancements += totalEnhancements;
 
   if (options.dryRun) {
-    // Count enhancements in dry-run mode
-    for (const detachment of detachments) {
-      const detachmentSection = extractDetachmentSection(html, detachment.name);
-      if (detachmentSection) {
-        const enhancements = parseEnhancements(detachmentSection, cached.url);
-        stats.enhancements += enhancements.length;
-        if (options.verbose) {
-          console.log(`      ${detachment.name}: ${enhancements.length} enhancements`);
-        }
+    // Show detachment mapping in verbose mode (use slug-normalized lookup)
+    if (options.verbose) {
+      // Build slug-normalized lookup for dry-run display
+      const stratagemsBySlug = new Map<string, typeof stratagemsByDetachment extends Map<string, infer V> ? V : never>();
+      for (const [name, strats] of stratagemsByDetachment) {
+        stratagemsBySlug.set(slugify(name), strats);
+      }
+      const enhancementsBySlug = new Map<string, typeof enhancementsByDetachment extends Map<string, infer V> ? V : never>();
+      for (const [name, enhs] of enhancementsByDetachment) {
+        enhancementsBySlug.set(slugify(name), enhs);
+      }
+
+      for (const detachment of detachments) {
+        const detSlug = slugify(detachment.name);
+        const strats = stratagemsBySlug.get(detSlug) || [];
+        const enhs = enhancementsBySlug.get(detSlug) || [];
+        console.log(`      ${detachment.name}: ${strats.length} stratagems, ${enhs.length} enhancements`);
       }
     }
     return { success: true };
@@ -201,6 +218,20 @@ async function reparseFaction(
 
   const factionId = insertedFaction!.id;
 
+  // Build slug-normalized lookup maps for stratagems and enhancements
+  // This handles special characters in detachment names (e.g., "Needgaârd Oathband")
+  const stratagemsBySlug = new Map<string, typeof stratagemsByDetachment extends Map<string, infer V> ? V : never>();
+  for (const [name, strats] of stratagemsByDetachment) {
+    stratagemsBySlug.set(slugify(name), strats);
+  }
+  const enhancementsBySlug = new Map<string, typeof enhancementsByDetachment extends Map<string, infer V> ? V : never>();
+  for (const [name, enhs] of enhancementsByDetachment) {
+    enhancementsBySlug.set(slugify(name), enhs);
+  }
+
+  // Build a map of detachment slug -> id for tracking matched detachments
+  const detachmentIdBySlug = new Map<string, string>();
+
   // Process detachments
   for (const detachment of detachments) {
     const [insertedDetachment] = await db
@@ -220,32 +251,76 @@ async function reparseFaction(
       .returning();
 
     const detachmentId = insertedDetachment!.id;
+    const detachmentSlug = slugify(detachment.name);
+    detachmentIdBySlug.set(detachmentSlug, detachmentId);
 
-    // Parse and insert enhancements for this detachment
-    const detachmentSection = extractDetachmentSection(html, detachment.name);
-    if (detachmentSection) {
-      const enhancements = parseEnhancements(detachmentSection, cached.url);
-      stats.enhancements += enhancements.length;
+    // Insert enhancements for this detachment (use slug-normalized lookup)
+    const enhancements = enhancementsBySlug.get(detachmentSlug) || [];
+    if (options.verbose && enhancements.length > 0) {
+      console.log(`      ${detachment.name}: ${enhancements.length} enhancements`);
+    }
+    for (const enhancement of enhancements) {
+      await db
+        .insert(schema.enhancements)
+        .values({ ...enhancement, detachmentId })
+        .onConflictDoNothing();
+    }
 
-      if (options.verbose) {
-        console.log(`      ${detachment.name}: ${enhancements.length} enhancements`);
-      }
-
-      for (const enhancement of enhancements) {
-        await db
-          .insert(schema.enhancements)
-          .values({ ...enhancement, detachmentId })
-          .onConflictDoNothing();
-      }
+    // Insert stratagems for this detachment (use slug-normalized lookup)
+    const stratagems = stratagemsBySlug.get(detachmentSlug) || [];
+    if (options.verbose && stratagems.length > 0) {
+      console.log(`      ${detachment.name}: ${stratagems.length} stratagems`);
+    }
+    for (const stratagem of stratagems) {
+      await db
+        .insert(schema.stratagems)
+        .values({ ...stratagem, factionId, detachmentId })
+        .onConflictDoUpdate({
+          target: [schema.stratagems.slug, schema.stratagems.factionId],
+          set: {
+            name: stratagem.name,
+            detachmentId,
+            cpCost: stratagem.cpCost,
+            phase: stratagem.phase,
+            when: stratagem.when,
+            target: stratagem.target,
+            effect: stratagem.effect,
+            restrictions: stratagem.restrictions,
+            sourceUrl: stratagem.sourceUrl,
+            updatedAt: new Date(),
+          },
+        });
     }
   }
 
-  // Process stratagems
-  for (const stratagem of stratagems) {
-    await db
-      .insert(schema.stratagems)
-      .values({ ...stratagem, factionId })
-      .onConflictDoNothing();
+  // Handle stratagems that weren't matched to any detachment (faction-level stratagems)
+  const unmatchedSlugs = [...stratagemsBySlug.keys()].filter(
+    slug => !detachmentIdBySlug.has(slug)
+  );
+  for (const slug of unmatchedSlugs) {
+    const stratagems = stratagemsBySlug.get(slug) || [];
+    if (options.verbose && stratagems.length > 0) {
+      console.log(`      [Unmatched: ${slug}]: ${stratagems.length} stratagems (faction-level)`);
+    }
+    for (const stratagem of stratagems) {
+      await db
+        .insert(schema.stratagems)
+        .values({ ...stratagem, factionId, detachmentId: null })
+        .onConflictDoUpdate({
+          target: [schema.stratagems.slug, schema.stratagems.factionId],
+          set: {
+            name: stratagem.name,
+            cpCost: stratagem.cpCost,
+            phase: stratagem.phase,
+            when: stratagem.when,
+            target: stratagem.target,
+            effect: stratagem.effect,
+            restrictions: stratagem.restrictions,
+            sourceUrl: stratagem.sourceUrl,
+            updatedAt: new Date(),
+          },
+        });
+    }
   }
 
   return { success: true };
