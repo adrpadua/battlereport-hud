@@ -16,7 +16,7 @@ import {
 } from './transcript-preprocessor';
 import { getCachedPreprocess, setCachedPreprocess } from './cache-manager';
 import { preprocessWithLlm } from './llm-preprocess-service';
-import { inferFactionsFromText } from '@/utils/faction-loader';
+import { inferFactionsFromText, getFactionDetachments } from '@/utils/faction-loader';
 
 // Chunking configuration for large transcripts
 const MAX_TRANSCRIPT_CHARS_PER_CHUNK = 8000; // Smaller than LLM preprocessing (12K) to leave room for metadata
@@ -331,6 +331,7 @@ Guidelines:
   - If no subfaction is mentioned or identifiable, leave it as null
 - IMPORTANT: When multiple copies of the same unit are in an army list (e.g., "2x Intercessor Squad", "three units of Hormagaunts"), create SEPARATE entries in the units array for each copy. Do NOT combine them into one entry. Each datasheet instance should be its own array element.
 - IMPORTANT: Detachment is REQUIRED for each player. Use EXACT names from the CANONICAL DETACHMENT NAMES section when available. If not explicitly stated, infer from stratagems used or unit composition. Use "Unknown" only as last resort.
+- DETACHMENT DISCUSSION: Players often discuss their detachments near the start of the video (first 7 minutes). Listen for phrases like "what detachment are you running?", "I'm playing [detachment name]", "versus [detachment]", or direct statements of the detachment name. The detachment name may be said conversationally without context.
 - IMPORTANT: Extract ALL units mentioned throughout the entire transcript, not just the army list section
 - Look for [UNIT:...] tags for pre-identified units with official names
 - Look for [STRAT:...] tags for pre-identified stratagems
@@ -500,7 +501,8 @@ async function processTranscriptChunk(
   chunkIndex: number,
   totalChunks: number,
   preprocessed: PreprocessedTranscript,
-  factionUnitNames: Map<string, string[]>
+  factionUnitNames: Map<string, string[]>,
+  factionDetachmentNames?: Map<string, string[]>
 ): Promise<BattleReportExtraction> {
   let lastError: Error | null = null;
 
@@ -513,7 +515,7 @@ async function processTranscriptChunk(
           { role: 'system', content: SYSTEM_PROMPT },
           {
             role: 'user',
-            content: buildUserPrompt(videoData, preprocessed, factionUnitNames, undefined, {
+            content: buildUserPrompt(videoData, preprocessed, factionUnitNames, factionDetachmentNames, {
               transcriptChunk,
               chunkIndex,
               totalChunks,
@@ -587,7 +589,8 @@ async function processChunksWithConcurrency(
   videoData: VideoData,
   chunks: string[],
   preprocessed: PreprocessedTranscript,
-  factionUnitNames: Map<string, string[]>
+  factionUnitNames: Map<string, string[]>,
+  factionDetachmentNames?: Map<string, string[]>
 ): Promise<BattleReportExtraction[]> {
   const results: BattleReportExtraction[] = new Array(chunks.length);
   let currentIdx = 0;
@@ -605,7 +608,8 @@ async function processChunksWithConcurrency(
           idx,
           chunks.length,
           preprocessed,
-          factionUnitNames
+          factionUnitNames,
+          factionDetachmentNames
         );
         console.log(`Processed chunk ${idx + 1}/${chunks.length}`);
       } catch (error) {
@@ -727,11 +731,97 @@ function mergeExtractionResults(results: BattleReportExtraction[]): BattleReport
   };
 }
 
+/**
+ * Post-process players to fill in unknown detachments by scanning the transcript.
+ * Looks for detachment names mentioned conversationally in the video.
+ */
+function matchUnknownDetachments(
+  players: BattleReport['players'],
+  transcript: TranscriptSegment[],
+  factionDetachmentNames: Map<string, string[]>
+): BattleReport['players'] {
+  // Check if any player has unknown detachment
+  const unknownDetachmentPlayers = players.filter(
+    p => !p.detachment || p.detachment === 'Unknown'
+  );
+
+  if (unknownDetachmentPlayers.length === 0) {
+    return players;
+  }
+
+  // Build a combined transcript text for searching
+  const transcriptText = transcript.map(seg => seg.text).join(' ').toLowerCase();
+
+  // Collect all detachment names with their factions
+  const allDetachments: { name: string; faction: string; nameLower: string }[] = [];
+  for (const [faction, detachments] of factionDetachmentNames) {
+    for (const detachment of detachments) {
+      allDetachments.push({
+        name: detachment,
+        faction,
+        nameLower: detachment.toLowerCase(),
+      });
+    }
+  }
+
+  // Sort by name length descending to match longer names first
+  allDetachments.sort((a, b) => b.name.length - a.name.length);
+
+  // Find detachments mentioned in the transcript
+  const foundDetachments: { name: string; faction: string; index: number }[] = [];
+  for (const det of allDetachments) {
+    const index = transcriptText.indexOf(det.nameLower);
+    if (index !== -1) {
+      foundDetachments.push({ name: det.name, faction: det.faction, index });
+    }
+  }
+
+  if (foundDetachments.length === 0) {
+    console.log('No detachment names found in transcript during post-processing');
+    return players;
+  }
+
+  console.log(`Found ${foundDetachments.length} detachment(s) in transcript:`, foundDetachments.map(d => d.name));
+
+  // Helper to match a player to a detachment
+  const matchPlayerToDetachment = (player: BattleReport['players'][0]): BattleReport['players'][0] => {
+    if (!player.detachment || player.detachment === 'Unknown') {
+      const matchingDetachment = foundDetachments.find(d => {
+        const playerFactionLower = player.faction.toLowerCase();
+        const detFactionLower = d.faction.toLowerCase();
+        return playerFactionLower.includes(detFactionLower) ||
+               detFactionLower.includes(playerFactionLower) ||
+               (playerFactionLower === 'space marines' || detFactionLower === 'space marines');
+      });
+
+      if (matchingDetachment) {
+        console.log(`Post-processing: Matched detachment "${matchingDetachment.name}" to player "${player.name}" (${player.faction})`);
+        const idx = foundDetachments.indexOf(matchingDetachment);
+        if (idx !== -1) {
+          foundDetachments.splice(idx, 1);
+        }
+        return { ...player, detachment: matchingDetachment.name };
+      }
+    }
+    return player;
+  };
+
+  // Process players (handle both [Player, Player] and [Player] cases)
+  const updatedPlayer0 = matchPlayerToDetachment(players[0]);
+
+  if (players.length === 2) {
+    const updatedPlayer1 = matchPlayerToDetachment(players[1]);
+    return [updatedPlayer0, updatedPlayer1];
+  }
+
+  return [updatedPlayer0];
+}
+
 export async function extractBattleReport(
   videoData: VideoData,
   apiKey: string
 ): Promise<BattleReport> {
-  // Limit transcript to first 5 minutes for faster processing
+  // Limit transcript to first 7 minutes for faster processing
   const limitedTranscript = videoData.transcript.filter(
     seg => seg.startTime < MAX_TRANSCRIPT_SECONDS
   );
@@ -744,6 +834,16 @@ export async function extractBattleReport(
   const factionUnitNames = await detectFactionsFromVideo(limitedVideoData);
   const allUnitNames = [...factionUnitNames.values()].flat();
   const factionNames = [...factionUnitNames.keys()];
+
+  // Fetch detachment names for each detected faction
+  const factionDetachmentNames = new Map<string, string[]>();
+  for (const factionName of factionNames) {
+    const detachments = await getFactionDetachments(factionName);
+    if (detachments.length > 0) {
+      factionDetachmentNames.set(factionName, detachments);
+    }
+  }
+  console.log(`Loaded detachments for ${factionDetachmentNames.size} factions:`, [...factionDetachmentNames.entries()].map(([f, d]) => `${f}: ${d.length}`).join(', '));
 
   // Try LLM preprocessing with caching
   let preprocessed: PreprocessedTranscript;
@@ -788,7 +888,8 @@ export async function extractBattleReport(
         limitedVideoData,
         chunks,
         preprocessed,
-        factionUnitNames
+        factionUnitNames,
+        factionDetachmentNames
       );
 
       // Merge results from all chunks
@@ -805,7 +906,8 @@ export async function extractBattleReport(
           limitedVideoData,
           smallerChunks,
           preprocessed,
-          factionUnitNames
+          factionUnitNames,
+          factionDetachmentNames
         );
         validated = mergeExtractionResults(chunkResults);
       } else {
@@ -822,7 +924,7 @@ export async function extractBattleReport(
         max_completion_tokens: 4000,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: buildUserPrompt(limitedVideoData, preprocessed, factionUnitNames) },
+          { role: 'user', content: buildUserPrompt(limitedVideoData, preprocessed, factionUnitNames, factionDetachmentNames) },
         ],
         response_format: { type: 'json_object' },
       });
@@ -844,7 +946,8 @@ export async function extractBattleReport(
           limitedVideoData,
           chunks,
           preprocessed,
-          factionUnitNames
+          factionUnitNames,
+          factionDetachmentNames
         );
         validated = mergeExtractionResults(chunkResults);
       } else {
@@ -884,13 +987,21 @@ export async function extractBattleReport(
   }));
   const enrichedEnhancements = enrichEnhancementTimestamps(extractedEnhancements, preprocessed);
 
+  // Convert players and post-process to fill unknown detachments
+  let players = validated.players.map((p) => ({
+    name: p.name,
+    faction: p.faction,
+    detachment: p.detachment ?? undefined,
+    confidence: p.confidence,
+  })) as BattleReport['players'];
+
+  // Post-process: Match unknown detachments from transcript
+  if (factionDetachmentNames.size > 0) {
+    players = matchUnknownDetachments(players, limitedVideoData.transcript, factionDetachmentNames);
+  }
+
   const rawReport: BattleReport = {
-    players: validated.players.map((p) => ({
-      name: p.name,
-      faction: p.faction,
-      detachment: p.detachment ?? undefined,
-      confidence: p.confidence,
-    })) as BattleReport['players'],
+    players,
     units: enrichedUnits,
     stratagems: enrichedStratagems,
     enhancements: enrichedEnhancements.length > 0 ? enrichedEnhancements : undefined,
