@@ -641,26 +641,55 @@ export async function extractBattleReport(
 }
 
 /**
+ * Normalize apostrophes to standard single quotes.
+ */
+function normalizeApostrophes(str: string): string {
+  return str.replace(/[\u2019\u2018\u0060\u00B4]/g, "'");
+}
+
+/**
  * Find a faction by name or slug.
  * Uses exact matching to avoid partial matches (e.g., "Space Marines" matching "Chaos Space Marines").
+ * Handles apostrophe variations (e.g., "Emperors Children" matches "Emperor's Children").
  */
 async function findFaction(db: Database, query: string) {
-  const slug = query.toLowerCase().replace(/\s+/g, '-');
+  const normalized = normalizeApostrophes(query);
+  const slug = normalized.toLowerCase().replace(/[\s']+/g, '-').replace(/-+/g, '-');
+  // Also try without apostrophe (e.g., "emperors-children")
+  const slugNoApostrophe = query.toLowerCase().replace(/'/g, '').replace(/\s+/g, '-');
 
   // First try exact name match (case-insensitive)
   let [faction] = await db
     .select()
     .from(schema.factions)
-    .where(ilike(schema.factions.name, query))
+    .where(ilike(schema.factions.name, normalized))
     .limit(1);
 
   if (faction) return faction;
 
-  // Try exact slug match
+  // Try name with apostrophe added in common positions (e.g., "Emperors" -> "Emperor's")
+  // Common pattern: word ending in 's' might be possessive
+  const withApostrophe = normalized.replace(/(\w)s\s/g, "$1's ");
+  if (withApostrophe !== normalized) {
+    [faction] = await db
+      .select()
+      .from(schema.factions)
+      .where(ilike(schema.factions.name, withApostrophe))
+      .limit(1);
+
+    if (faction) return faction;
+  }
+
+  // Try exact slug match (with apostrophe as hyphen)
   [faction] = await db
     .select()
     .from(schema.factions)
-    .where(eq(schema.factions.slug, slug))
+    .where(
+      or(
+        eq(schema.factions.slug, slug),
+        eq(schema.factions.slug, slugNoApostrophe)
+      )
+    )
     .limit(1);
 
   return faction;
