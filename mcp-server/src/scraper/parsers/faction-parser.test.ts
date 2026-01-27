@@ -73,13 +73,17 @@ const sourceUrl = 'https://wahapedia.ru/wh40k10ed/factions/test-faction/';
 
 describe('parseFactionPage', () => {
   it('extracts army rules from Army-Rules anchor', () => {
+    // HTML structure must match Wahapedia's actual format:
+    // <a name="Army-Rules"> followed by <h2> followed by <div class="Columns2">
     const html = `
       <html>
         <body>
           <a name="Army-Rules"></a>
           <h2>Army Rules</h2>
-          <div>For the Greater Good</div>
-          <p>This is the army rule description with detailed mechanics.</p>
+          <div class="Columns2">
+            <p>For the Greater Good</p>
+            <p>This is the army rule description with detailed mechanics.</p>
+          </div>
         </body>
       </html>
     `;
