@@ -642,17 +642,25 @@ export async function extractBattleReport(
 
 /**
  * Find a faction by name or slug.
+ * Uses exact matching to avoid partial matches (e.g., "Space Marines" matching "Chaos Space Marines").
  */
 async function findFaction(db: Database, query: string) {
-  const [faction] = await db
+  const slug = query.toLowerCase().replace(/\s+/g, '-');
+
+  // First try exact name match (case-insensitive)
+  let [faction] = await db
     .select()
     .from(schema.factions)
-    .where(
-      or(
-        ilike(schema.factions.name, `%${query}%`),
-        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
-      )
-    )
+    .where(ilike(schema.factions.name, query))
+    .limit(1);
+
+  if (faction) return faction;
+
+  // Try exact slug match
+  [faction] = await db
+    .select()
+    .from(schema.factions)
+    .where(eq(schema.factions.slug, slug))
     .limit(1);
 
   return faction;
