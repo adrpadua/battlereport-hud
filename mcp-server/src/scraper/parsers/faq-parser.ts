@@ -8,7 +8,7 @@
 import * as cheerio from 'cheerio';
 import { createHash } from 'crypto';
 import type { NewFAQ } from '../../db/schema.js';
-import { slugify } from './utils.js';
+import { slugify, cleanText } from './utils.js';
 
 export interface ParsedFAQ {
   slug: string;
@@ -138,16 +138,6 @@ function getMonthIndex(monthStr: string): number {
     december: 11, dec: 11,
   };
   return months[monthStr.toLowerCase()] ?? -1;
-}
-
-/**
- * Clean text by removing extra whitespace and normalizing.
- */
-function cleanText(text: string): string {
-  return text
-    .replace(/\s+/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .trim();
 }
 
 /**

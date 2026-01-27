@@ -2,10 +2,13 @@ import * as cheerio from 'cheerio';
 import type { NewFaction, NewDetachment, NewStratagem, NewEnhancement } from '../../db/schema.js';
 import {
   slugify,
-  normalizeKeywords,
-  detectPhase,
   DeduplicationTracker,
   htmlToReadableText,
+  extractRestrictions,
+  extractBaseSectionName,
+  findParentDetachment,
+  parseStratagemCard,
+  parseEnhancementSpans,
 } from './utils.js';
 import {
   CATEGORY_MAX_LENGTH,
@@ -123,14 +126,6 @@ export function parseFactionPage(
     sourceUrl,
     dataSource: 'wahapedia' as const,
   };
-}
-
-/**
- * Wahapedia anchor naming pattern for section deduplication.
- * Handles formats like "Stratagems", "Stratagems-3", "Stratagems-4"
- */
-function extractBaseSectionName(anchorName: string): string {
-  return anchorName.replace(/-\d+$/, '');
 }
 
 /**
@@ -308,69 +303,21 @@ export function parseStratagems(
   const stratagems: Omit<NewStratagem, 'factionId' | 'detachmentId'>[] = [];
   const seen = new DeduplicationTracker(true); // Case-sensitive
 
-  // Each stratagem is wrapped in div.str10Wrap which contains:
-  // - div.str10Name (the stratagem name)
-  // - div.str10Border (the card content with CP, type, effect)
+  // Each stratagem is wrapped in div.str10Wrap
   $('div.str10Wrap').each((_, el) => {
     const $wrap = $(el);
-
-    // Extract stratagem name from div.str10Name
-    const name = $wrap.find('.str10Name').text().trim();
-    if (!name || !seen.addIfNew(name)) return;
-
-    // Get the card content
-    const $strat = $wrap.find('.str10Border');
-    if (!$strat.length) return;
-
-    // Extract CP cost from div.str10CP
-    const cpText = $strat.find('.str10CP').text().trim();
-    const cpMatch = cpText.match(/(\d+)CP/i);
-    const cpCost = cpMatch ? cpMatch[1] : '1';
-
-    // Extract type info from div.str10Type (e.g., "Gladius Task Force – Battle Tactic Stratagem")
-    const _typeInfo = $strat.find('.str10Type').text().trim();
-
-    // Get the stratagem content
-    const $content = $strat.find('.str10Text');
-    const contentHtml = $content.html() || '';
-
-    // Extract WHEN, TARGET, EFFECT, RESTRICTIONS from the content
-    let when: string | null = null;
-    let target: string | null = null;
-    let effect = '';
-    let restrictions: string | null = null;
-
-    // Parse HTML to extract labeled sections
-    const whenMatch = contentHtml.match(/<b>WHEN:<\/b>\s*([^<]*)/i);
-    const targetMatch = contentHtml.match(/<b>TARGET:<\/b>\s*([\s\S]*?)(?=<br><br>|<b>EFFECT:|$)/i);
-    const effectMatch = contentHtml.match(/<b>EFFECT:<\/b>\s*([\s\S]*?)(?=<br><br><b>RESTRICTIONS:|$)/i);
-    const restrictionsMatch = contentHtml.match(/<b>RESTRICTIONS:<\/b>\s*([\s\S]*?)$/i);
-
-    if (whenMatch?.[1]) {
-      when = normalizeKeywords(whenMatch[1].replace(/<[^>]+>/g, '').trim());
-    }
-    if (targetMatch?.[1]) {
-      target = normalizeKeywords(targetMatch[1].replace(/<[^>]+>/g, '').trim());
-    }
-    if (effectMatch?.[1]) {
-      effect = normalizeKeywords(effectMatch[1].replace(/<[^>]+>/g, '').trim());
-    }
-    if (restrictionsMatch?.[1]) {
-      restrictions = normalizeKeywords(restrictionsMatch[1].replace(/<[^>]+>/g, '').trim());
-    }
-
-    // Skip if no effect extracted
-    if (!effect) return;
+    const card = parseStratagemCard($wrap);
+    if (!card || !seen.addIfNew(card.name)) return;
 
     stratagems.push({
-      slug: truncateSlug(slugify(name)),
-      name: truncateName(name),
-      cpCost: (cpCost || '1').slice(0, CP_COST_MAX_LENGTH),
-      phase: detectPhase(when || ''),
-      when,
-      target,
-      effect: effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
-      restrictions,
+      slug: truncateSlug(slugify(card.name)),
+      name: truncateName(card.name),
+      cpCost: (card.cpCost || '1').slice(0, CP_COST_MAX_LENGTH),
+      phase: card.phase,
+      when: card.when,
+      target: card.target,
+      effect: card.effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
+      restrictions: card.restrictions,
       sourceUrl,
       dataSource: 'wahapedia' as const,
       isCore: false,
@@ -394,36 +341,17 @@ export function parseStratagemsByDetachment(
   // Find all Stratagems sections by anchor
   const stratagemAnchors = $('a[name^="Stratagems"]');
 
+  // Pre-build anchor name array for efficient parent lookup
+  const allAnchors = $('a[name]').toArray();
+  const allAnchorNames = allAnchors.map(el => $(el).attr('name') || '');
+
   stratagemAnchors.each((_, anchorEl) => {
     const $anchor = $(anchorEl);
     const anchorName = $anchor.attr('name') || '';
 
-    // Find the parent detachment by looking backwards through anchors
-    let detachmentName = 'unknown';
-
-    // Find previous siblings that are anchors to determine detachment
-    const allAnchors = $('a[name]').toArray();
-    const currentIndex = allAnchors.findIndex(el => $(el).attr('name') === anchorName);
-
-    if (currentIndex > 0) {
-      // Look backwards for a detachment anchor (one followed by Detachment-Rule)
-      for (let i = currentIndex - 1; i >= 0; i--) {
-        const prevName = $(allAnchors[i]).attr('name') || '';
-        const baseName = extractBaseSectionName(prevName).toLowerCase();
-
-        // Skip system sections
-        if (['detachment-rule', 'enhancements', 'stratagems'].includes(baseName)) continue;
-
-        // Check if next anchor is Detachment-Rule
-        if (i + 1 < allAnchors.length) {
-          const nextName = $(allAnchors[i + 1]).attr('name') || '';
-          if (extractBaseSectionName(nextName).toLowerCase() === 'detachment-rule') {
-            detachmentName = prevName.replace(/-/g, ' ');
-            break;
-          }
-        }
-      }
-    }
+    // Find the parent detachment
+    const currentIndex = allAnchorNames.indexOf(anchorName);
+    const detachmentName = findParentDetachment(allAnchorNames, currentIndex);
 
     // Parse stratagems in this section
     const stratagems: Omit<NewStratagem, 'factionId' | 'detachmentId'>[] = [];
@@ -441,43 +369,18 @@ export function parseStratagemsByDetachment(
 
     $stratWraps.each((_, el) => {
       const $wrap = $(el);
-
-      // Extract stratagem name from div.str10Name
-      const name = $wrap.find('.str10Name').text().trim();
-      if (!name || !seen.addIfNew(name)) return;
-
-      const $strat = $wrap.find('.str10Border');
-      if (!$strat.length) return;
-
-      const cpText = $strat.find('.str10CP').text().trim();
-      const cpMatch = cpText.match(/(\d+)CP/i);
-      const cpCost = cpMatch ? cpMatch[1] : '1';
-
-      const $content = $strat.find('.str10Text');
-      const contentHtml = $content.html() || '';
-
-      // Parse WHEN, TARGET, EFFECT, RESTRICTIONS
-      const whenMatch = contentHtml.match(/<b>WHEN:<\/b>\s*([^<]*)/i);
-      const targetMatch = contentHtml.match(/<b>TARGET:<\/b>\s*([\s\S]*?)(?=<br><br>|<b>EFFECT:|$)/i);
-      const effectMatch = contentHtml.match(/<b>EFFECT:<\/b>\s*([\s\S]*?)(?=<br><br><b>RESTRICTIONS:|$)/i);
-      const restrictionsMatch = contentHtml.match(/<b>RESTRICTIONS:<\/b>\s*([\s\S]*?)$/i);
-
-      const when = whenMatch?.[1] ? normalizeKeywords(whenMatch[1].replace(/<[^>]+>/g, '').trim()) : null;
-      const target = targetMatch?.[1] ? normalizeKeywords(targetMatch[1].replace(/<[^>]+>/g, '').trim()) : null;
-      const effect = effectMatch?.[1] ? normalizeKeywords(effectMatch[1].replace(/<[^>]+>/g, '').trim()) : '';
-      const restrictions = restrictionsMatch?.[1] ? normalizeKeywords(restrictionsMatch[1].replace(/<[^>]+>/g, '').trim()) : null;
-
-      if (!effect) return;
+      const card = parseStratagemCard($wrap);
+      if (!card || !seen.addIfNew(card.name)) return;
 
       stratagems.push({
-        slug: truncateSlug(slugify(name)),
-        name: truncateName(name),
-        cpCost: (cpCost || '1').slice(0, CP_COST_MAX_LENGTH),
-        phase: detectPhase(when || ''),
-        when,
-        target,
-        effect: effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
-        restrictions,
+        slug: truncateSlug(slugify(card.name)),
+        name: truncateName(card.name),
+        cpCost: (card.cpCost || '1').slice(0, CP_COST_MAX_LENGTH),
+        phase: card.phase,
+        when: card.when,
+        target: card.target,
+        effect: card.effect.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
+        restrictions: card.restrictions,
         sourceUrl,
         dataSource: 'wahapedia' as const,
         isCore: false,
@@ -508,19 +411,8 @@ export function parseEnhancements(
   // Each enhancement is in a ul.EnhancementsPts
   $('ul.EnhancementsPts').each((_, el) => {
     const $enh = $(el);
-
-    // Get all spans - typically two: name and points
-    const $spans = $enh.find('span');
-    if ($spans.length < 2) return;
-
-    const name = $spans.first().text().trim();
-    const pointsText = $spans.eq(1).text().trim();
-
-    if (!name || !seen.addIfNew(name)) return;
-
-    // Extract points cost
-    const pointsMatch = pointsText.match(/(\d+)\s*pts?/i);
-    const pointsCost = pointsMatch?.[1] ? parseInt(pointsMatch[1], 10) : 0;
+    const card = parseEnhancementSpans($enh);
+    if (!card || !seen.addIfNew(card.name)) return;
 
     // Get description - content after the enhancement header
     // Usually in the next sibling or parent element
@@ -537,17 +429,16 @@ export function parseEnhancements(
     if ($li.length) {
       const liText = $li.text().trim();
       // Remove the name and points from the text
-      description = liText.replace(name, '').replace(pointsText, '').trim();
+      description = liText.replace(card.name, '').replace(card.pointsText, '').trim();
     }
 
     // Extract restriction patterns (e.g., "T'AU EMPIRE model only")
-    const restrictionMatch = description.match(/([A-Z][A-Z\s'-]+(?:model|INFANTRY|PSYKER)[^.]*only\.?)/i);
-    const restrictions = restrictionMatch?.[1]?.trim() || null;
+    const restrictions = extractRestrictions(description);
 
     enhancements.push({
-      slug: truncateSlug(slugify(name)),
-      name: truncateName(name),
-      pointsCost,
+      slug: truncateSlug(slugify(card.name)),
+      name: truncateName(card.name),
+      pointsCost: card.pointsCost,
       description: description.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
       restrictions,
       sourceUrl,
@@ -572,31 +463,17 @@ export function parseEnhancementsByDetachment(
   // Find all Enhancement sections by anchor
   const enhancementAnchors = $('a[name^="Enhancements"]');
 
+  // Pre-build anchor name array for efficient parent lookup
+  const allAnchors = $('a[name]').toArray();
+  const allAnchorNames = allAnchors.map(el => $(el).attr('name') || '');
+
   enhancementAnchors.each((_, anchorEl) => {
     const $anchor = $(anchorEl);
     const anchorName = $anchor.attr('name') || '';
 
     // Find parent detachment
-    let detachmentName = 'unknown';
-    const allAnchors = $('a[name]').toArray();
-    const currentIndex = allAnchors.findIndex(el => $(el).attr('name') === anchorName);
-
-    if (currentIndex > 0) {
-      for (let i = currentIndex - 1; i >= 0; i--) {
-        const prevName = $(allAnchors[i]).attr('name') || '';
-        const baseName = extractBaseSectionName(prevName).toLowerCase();
-
-        if (['detachment-rule', 'enhancements', 'stratagems'].includes(baseName)) continue;
-
-        if (i + 1 < allAnchors.length) {
-          const nextName = $(allAnchors[i + 1]).attr('name') || '';
-          if (extractBaseSectionName(nextName).toLowerCase() === 'detachment-rule') {
-            detachmentName = prevName.replace(/-/g, ' ');
-            break;
-          }
-        }
-      }
-    }
+    const currentIndex = allAnchorNames.indexOf(anchorName);
+    const detachmentName = findParentDetachment(allAnchorNames, currentIndex);
 
     // Parse enhancements in this section
     const enhancements: Omit<NewEnhancement, 'detachmentId'>[] = [];
@@ -618,34 +495,25 @@ export function parseEnhancementsByDetachment(
 
     $enhLists.each((_, el) => {
       const $enh = $(el);
-      const $spans = $enh.find('span');
-      if ($spans.length < 2) return;
-
-      const name = $spans.first().text().trim();
-      const pointsText = $spans.eq(1).text().trim();
-
-      if (!name || !seen.addIfNew(name)) return;
-
-      const pointsMatch = pointsText.match(/(\d+)\s*pts?/i);
-      const pointsCost = pointsMatch?.[1] ? parseInt(pointsMatch[1], 10) : 0;
+      const card = parseEnhancementSpans($enh);
+      if (!card || !seen.addIfNew(card.name)) return;
 
       // Get description from the content between this and the next enhancement
       const $parent = $enh.parent();
       const parentText = $parent.text().trim();
       // Remove name and points to get description
       const description = parentText
-        .replace(name, '')
-        .replace(pointsText, '')
+        .replace(card.name, '')
+        .replace(card.pointsText, '')
         .replace(/^\s*•\s*/, '')
         .trim();
 
-      const restrictionMatch = description.match(/([A-Z][A-Z\s'-]+(?:model|INFANTRY|PSYKER)[^.]*only\.?)/i);
-      const restrictions = restrictionMatch?.[1]?.trim() || null;
+      const restrictions = extractRestrictions(description);
 
       enhancements.push({
-        slug: truncateSlug(slugify(name)),
-        name: truncateName(name),
-        pointsCost,
+        slug: truncateSlug(slugify(card.name)),
+        name: truncateName(card.name),
+        pointsCost: card.pointsCost,
         description: description.slice(0, MEDIUM_DESCRIPTION_MAX_LENGTH),
         restrictions,
         sourceUrl,

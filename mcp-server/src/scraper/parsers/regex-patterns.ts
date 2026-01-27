@@ -213,3 +213,38 @@ export const POINTS_ARTIFACT = /\d{3}\s+\d{3}/g;
  * Match CP cost markers to find section boundaries.
  */
 export const CP_COST_MARKER = /\d+CP/;
+
+// =============================================================================
+// COST EXTRACTION
+// =============================================================================
+
+/**
+ * Extract CP cost value from text like "2CP" or "1 CP".
+ *
+ * Captures: [1] = the numeric CP value
+ *
+ * @example "2CP" → "2"
+ * @example "1 CP" → "1"
+ */
+export const CP_COST_PATTERN = /(\d+)\s*CP/i;
+
+/**
+ * Extract points cost from text like "20 pts" or "35pts".
+ *
+ * Captures: [1] = the numeric points value
+ *
+ * @example "20 pts" → "20"
+ * @example "35pts" → "35"
+ */
+export const POINTS_COST_PATTERN = /(\d+)\s*pts?/i;
+
+/**
+ * Extract restriction patterns for enhancements/abilities.
+ * Matches phrases like "T'AU EMPIRE model only" or "INFANTRY only".
+ *
+ * Captures: [1] = the full restriction text
+ *
+ * @example "T'AU EMPIRE model only." → "T'AU EMPIRE model only."
+ * @example "ADEPTUS ASTARTES INFANTRY only" → "ADEPTUS ASTARTES INFANTRY only"
+ */
+export const RESTRICTION_PATTERN = /([A-Z][A-Z\s'-]+(?:model|INFANTRY|PSYKER)[^.]*only\.?)/i;

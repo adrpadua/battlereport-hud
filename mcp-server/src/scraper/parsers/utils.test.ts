@@ -8,6 +8,12 @@ import {
   DeduplicationTracker,
   detectPhase,
   detectRuleCategory,
+  cleanText,
+  extractCpCost,
+  extractPointsCost,
+  extractRestrictions,
+  extractBaseSectionName,
+  findParentDetachment,
 } from './utils.js';
 
 describe('slugify', () => {
@@ -390,5 +396,197 @@ describe('detectRuleCategory', () => {
       expect(detectRuleCategory('Random Section Title')).toBe('general');
       expect(detectRuleCategory('Introduction')).toBe('general');
     });
+  });
+});
+
+describe('cleanText', () => {
+  it('removes extra whitespace', () => {
+    expect(cleanText('Hello  world')).toBe('Hello world');
+    expect(cleanText('Hello   world')).toBe('Hello world');
+  });
+
+  it('replaces &nbsp; with space', () => {
+    expect(cleanText('Test&nbsp;text')).toBe('Test text');
+    expect(cleanText('Multiple&nbsp;&nbsp;spaces')).toBe('Multiple spaces');
+  });
+
+  it('trims leading and trailing whitespace', () => {
+    expect(cleanText('  Hello world  ')).toBe('Hello world');
+  });
+
+  it('handles empty string', () => {
+    expect(cleanText('')).toBe('');
+  });
+
+  it('normalizes newlines and tabs to spaces', () => {
+    expect(cleanText('Hello\n\nworld')).toBe('Hello world');
+    expect(cleanText('Hello\t\tworld')).toBe('Hello world');
+  });
+});
+
+describe('extractCpCost', () => {
+  it('extracts CP cost from XCP format', () => {
+    expect(extractCpCost('2CP')).toBe('2');
+    expect(extractCpCost('1CP')).toBe('1');
+    expect(extractCpCost('3CP')).toBe('3');
+  });
+
+  it('handles space between number and CP', () => {
+    expect(extractCpCost('2 CP')).toBe('2');
+    expect(extractCpCost('1 CP')).toBe('1');
+  });
+
+  it('is case insensitive', () => {
+    expect(extractCpCost('2cp')).toBe('2');
+    expect(extractCpCost('2Cp')).toBe('2');
+  });
+
+  it('returns 1 as default when no match', () => {
+    expect(extractCpCost('Free')).toBe('1');
+    expect(extractCpCost('')).toBe('1');
+    expect(extractCpCost('No cost')).toBe('1');
+  });
+
+  it('extracts from longer text', () => {
+    expect(extractCpCost('Cost: 2CP per use')).toBe('2');
+  });
+});
+
+describe('extractPointsCost', () => {
+  it('extracts points from X pts format', () => {
+    expect(extractPointsCost('20 pts')).toBe(20);
+    expect(extractPointsCost('35 pts')).toBe(35);
+  });
+
+  it('handles no space between number and pts', () => {
+    expect(extractPointsCost('20pts')).toBe(20);
+    expect(extractPointsCost('35pts')).toBe(35);
+  });
+
+  it('handles singular pt', () => {
+    expect(extractPointsCost('1 pt')).toBe(1);
+  });
+
+  it('is case insensitive', () => {
+    expect(extractPointsCost('20 PTS')).toBe(20);
+    expect(extractPointsCost('20 Pts')).toBe(20);
+  });
+
+  it('returns 0 when no match', () => {
+    expect(extractPointsCost('Free')).toBe(0);
+    expect(extractPointsCost('')).toBe(0);
+    expect(extractPointsCost('No cost')).toBe(0);
+  });
+
+  it('extracts from longer text', () => {
+    expect(extractPointsCost('Enhancement costs 25 pts')).toBe(25);
+  });
+});
+
+describe('extractRestrictions', () => {
+  it('extracts model-based restrictions', () => {
+    expect(extractRestrictions("T'AU EMPIRE model only.")).toBe("T'AU EMPIRE model only.");
+    expect(extractRestrictions('SPACE MARINES model only')).toBe('SPACE MARINES model only');
+  });
+
+  it('extracts INFANTRY restrictions', () => {
+    expect(extractRestrictions('ADEPTUS ASTARTES INFANTRY only.')).toBe('ADEPTUS ASTARTES INFANTRY only.');
+  });
+
+  it('extracts PSYKER restrictions', () => {
+    expect(extractRestrictions('THOUSAND SONS PSYKER only')).toBe('THOUSAND SONS PSYKER only');
+  });
+
+  it('returns null when no restriction found', () => {
+    expect(extractRestrictions('This is a normal ability text.')).toBeNull();
+    expect(extractRestrictions('')).toBeNull();
+  });
+
+  it('extracts from longer text', () => {
+    const text = 'This enhancement grants the bearer +1 Attack. BLOOD ANGELS model only. Use once per battle.';
+    expect(extractRestrictions(text)).toBe('BLOOD ANGELS model only.');
+  });
+
+  it('handles complex faction keywords', () => {
+    expect(extractRestrictions("LEAGUES OF VOTANN model only")).toBe("LEAGUES OF VOTANN model only");
+  });
+});
+
+describe('extractBaseSectionName', () => {
+  it('removes numeric suffix from anchor name', () => {
+    expect(extractBaseSectionName('Stratagems-3')).toBe('Stratagems');
+    expect(extractBaseSectionName('Enhancements-4')).toBe('Enhancements');
+    expect(extractBaseSectionName('Detachment-Rule-2')).toBe('Detachment-Rule');
+  });
+
+  it('preserves anchor names without numeric suffix', () => {
+    expect(extractBaseSectionName('Stratagems')).toBe('Stratagems');
+    expect(extractBaseSectionName('Enhancements')).toBe('Enhancements');
+    expect(extractBaseSectionName('Army-Rules')).toBe('Army-Rules');
+  });
+
+  it('only removes trailing numeric suffix', () => {
+    expect(extractBaseSectionName('Test-3-Name')).toBe('Test-3-Name');
+    expect(extractBaseSectionName('Zone-2-Control')).toBe('Zone-2-Control');
+  });
+
+  it('handles empty string', () => {
+    expect(extractBaseSectionName('')).toBe('');
+  });
+});
+
+describe('findParentDetachment', () => {
+  it('finds detachment followed by Detachment-Rule', () => {
+    const anchors = [
+      'Gladius-Task-Force',
+      'Detachment-Rule',
+      'Enhancements',
+      'Stratagems',
+    ];
+    // From Stratagems (index 3), should find Gladius-Task-Force
+    expect(findParentDetachment(anchors, 3)).toBe('Gladius Task Force');
+  });
+
+  it('returns unknown when no detachment found', () => {
+    const anchors = ['Army-Rules', 'Stratagems'];
+    expect(findParentDetachment(anchors, 1)).toBe('unknown');
+  });
+
+  it('returns unknown when index is 0', () => {
+    const anchors = ['Gladius-Task-Force', 'Detachment-Rule'];
+    expect(findParentDetachment(anchors, 0)).toBe('unknown');
+  });
+
+  it('returns unknown when index is negative', () => {
+    const anchors = ['Gladius-Task-Force', 'Detachment-Rule'];
+    expect(findParentDetachment(anchors, -1)).toBe('unknown');
+  });
+
+  it('skips system sections when searching backwards', () => {
+    const anchors = [
+      'Firestorm-Assault-Force',
+      'Detachment-Rule',
+      'Enhancements',
+      'Stratagems',
+      'Ironstorm-Spearhead',
+      'Detachment-Rule-2',
+      'Enhancements-2',
+      'Stratagems-2',
+    ];
+    // From Stratagems-2 (index 7), should find Ironstorm-Spearhead
+    expect(findParentDetachment(anchors, 7)).toBe('Ironstorm Spearhead');
+  });
+
+  it('handles detachments with hyphens in names', () => {
+    const anchors = [
+      'First-Company-Task-Force',
+      'Detachment-Rule',
+      'Stratagems',
+    ];
+    expect(findParentDetachment(anchors, 2)).toBe('First Company Task Force');
+  });
+
+  it('handles empty anchor array', () => {
+    expect(findParentDetachment([], 0)).toBe('unknown');
   });
 });

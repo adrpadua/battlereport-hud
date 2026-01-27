@@ -13,6 +13,9 @@ import {
   CONCAT_FROM_THE,
   REPEATED_KEYWORD_PHRASE,
   REPEATED_KEYWORD_WORD,
+  CP_COST_PATTERN,
+  POINTS_COST_PATTERN,
+  RESTRICTION_PATTERN,
 } from './regex-patterns.js';
 
 // =============================================================================
@@ -410,4 +413,244 @@ export function htmlToReadableText(html: string): string {
     .trim();
 
   return text;
+}
+
+// =============================================================================
+// TEXT CLEANING
+// =============================================================================
+
+/**
+ * Clean text by removing extra whitespace and HTML entities.
+ * Shared utility for normalizing scraped text content.
+ *
+ * @example "Hello  world" → "Hello world"
+ * @example "Test&nbsp;text" → "Test text"
+ */
+export function cleanText(text: string): string {
+  return text
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// =============================================================================
+// COST EXTRACTION
+// =============================================================================
+
+/**
+ * Extract CP cost from text containing "XCP" pattern.
+ * Returns the numeric value as a string, defaulting to '1' if not found.
+ *
+ * @example "2CP" → "2"
+ * @example "1 CP" → "1"
+ * @example "Free" → "1" (default)
+ */
+export function extractCpCost(text: string): string {
+  const match = text.match(CP_COST_PATTERN);
+  return match?.[1] ?? '1';
+}
+
+/**
+ * Extract points cost from text containing "X pts" pattern.
+ * Returns the numeric value, defaulting to 0 if not found.
+ *
+ * @example "20 pts" → 20
+ * @example "35pts" → 35
+ * @example "Free" → 0 (default)
+ */
+export function extractPointsCost(text: string): number {
+  const match = text.match(POINTS_COST_PATTERN);
+  return match?.[1] ? parseInt(match[1], 10) : 0;
+}
+
+/**
+ * Extract restriction text from description.
+ * Looks for patterns like "FACTION_KEYWORD model only" or "INFANTRY only".
+ *
+ * @example "T'AU EMPIRE model only." → "T'AU EMPIRE model only."
+ * @example "Some ability text" → null
+ */
+export function extractRestrictions(description: string): string | null {
+  const match = description.match(RESTRICTION_PATTERN);
+  return match?.[1]?.trim() || null;
+}
+
+// =============================================================================
+// ANCHOR & SECTION UTILITIES
+// =============================================================================
+
+/**
+ * System sections that should be skipped when searching for parent detachments.
+ * These are standard Wahapedia anchor names that are NOT detachment names.
+ */
+const SYSTEM_SECTIONS = new Set([
+  'detachment-rule', 'enhancements', 'stratagems', 'army-rules',
+  'datasheets', 'books', 'introduction', 'contents', 'boarding-actions',
+  'crusade-rules', 'allied-units', 'requisitions', 'agendas', 'battle-traits',
+  'faq', 'keywords', 'faction-pack',
+]);
+
+/**
+ * Extract base section name from Wahapedia anchor names.
+ * Removes numeric suffixes like "-3", "-4" used for duplicate sections.
+ *
+ * @example "Stratagems-3" → "Stratagems"
+ * @example "Enhancements" → "Enhancements"
+ */
+export function extractBaseSectionName(anchorName: string): string {
+  return anchorName.replace(/-\d+$/, '');
+}
+
+/**
+ * Find the parent detachment for a given anchor position in the page.
+ * Searches backwards through anchors to find one followed by "Detachment-Rule".
+ *
+ * @param allAnchorNames - Array of all anchor names in document order
+ * @param currentIndex - Index of the current anchor (e.g., "Stratagems")
+ * @returns Detachment name (with hyphens replaced by spaces) or 'unknown'
+ */
+export function findParentDetachment(
+  allAnchorNames: string[],
+  currentIndex: number
+): string {
+  if (currentIndex <= 0) return 'unknown';
+
+  // Look backwards for a detachment anchor (one followed by Detachment-Rule)
+  for (let i = currentIndex - 1; i >= 0; i--) {
+    const prevName = allAnchorNames[i] ?? '';
+    const baseName = extractBaseSectionName(prevName).toLowerCase();
+
+    // Skip system sections
+    if (SYSTEM_SECTIONS.has(baseName)) continue;
+
+    // Check if next anchor is Detachment-Rule
+    if (i + 1 < allAnchorNames.length) {
+      const nextName = allAnchorNames[i + 1] ?? '';
+      if (extractBaseSectionName(nextName).toLowerCase() === 'detachment-rule') {
+        return prevName.replace(/-/g, ' ');
+      }
+    }
+  }
+
+  return 'unknown';
+}
+
+// =============================================================================
+// STRATAGEM CARD PARSING
+// =============================================================================
+
+/**
+ * Parsed stratagem card data from Wahapedia HTML.
+ * Contains all extracted fields before database-specific transformations.
+ */
+export interface ParsedStratagemCard {
+  name: string;
+  cpCost: string;
+  phase: GamePhase;
+  when: string | null;
+  target: string | null;
+  effect: string;
+  restrictions: string | null;
+}
+
+/**
+ * Parse a single stratagem card element from Wahapedia HTML.
+ * Extracts name, CP cost, phase, WHEN/TARGET/EFFECT/RESTRICTIONS.
+ *
+ * @param $wrap - Cheerio selection for the .str10Wrap element
+ * @returns Parsed card data or null if invalid
+ */
+export function parseStratagemCard(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  $wrap: any
+): ParsedStratagemCard | null {
+  // Extract stratagem name from div.str10Name
+  const name = $wrap.find('.str10Name').text().trim();
+  if (!name) return null;
+
+  // Get the card content
+  const $strat = $wrap.find('.str10Border');
+  if (!$strat.length) return null;
+
+  // Extract CP cost from div.str10CP
+  const cpText = $strat.find('.str10CP').text().trim();
+  const cpCost = extractCpCost(cpText);
+
+  // Get the stratagem content HTML
+  const $content = $strat.find('.str10Text');
+  const contentHtml = $content.html() || '';
+
+  // Parse WHEN, TARGET, EFFECT, RESTRICTIONS from HTML
+  const whenMatch = contentHtml.match(/<b>WHEN:<\/b>\s*([^<]*)/i);
+  const targetMatch = contentHtml.match(/<b>TARGET:<\/b>\s*([\s\S]*?)(?=<br><br>|<b>EFFECT:|$)/i);
+  const effectMatch = contentHtml.match(/<b>EFFECT:<\/b>\s*([\s\S]*?)(?=<br><br><b>RESTRICTIONS:|$)/i);
+  const restrictionsMatch = contentHtml.match(/<b>RESTRICTIONS:<\/b>\s*([\s\S]*?)$/i);
+
+  const when = whenMatch?.[1]
+    ? normalizeKeywords(whenMatch[1].replace(/<[^>]+>/g, '').trim())
+    : null;
+  const target = targetMatch?.[1]
+    ? normalizeKeywords(targetMatch[1].replace(/<[^>]+>/g, '').trim())
+    : null;
+  const effect = effectMatch?.[1]
+    ? normalizeKeywords(effectMatch[1].replace(/<[^>]+>/g, '').trim())
+    : '';
+  const restrictions = restrictionsMatch?.[1]
+    ? normalizeKeywords(restrictionsMatch[1].replace(/<[^>]+>/g, '').trim())
+    : null;
+
+  // Skip if no effect extracted
+  if (!effect) return null;
+
+  return {
+    name,
+    cpCost,
+    phase: detectPhase(when || ''),
+    when,
+    target,
+    effect,
+    restrictions,
+  };
+}
+
+// =============================================================================
+// ENHANCEMENT CARD PARSING
+// =============================================================================
+
+/**
+ * Parsed enhancement card data from Wahapedia HTML.
+ * Contains the basic extracted fields before database-specific transformations.
+ */
+export interface ParsedEnhancementCard {
+  name: string;
+  pointsCost: number;
+  pointsText: string;
+}
+
+/**
+ * Parse basic fields from an enhancement element.
+ * Extracts name and points cost from the span elements in ul.EnhancementsPts.
+ *
+ * @param $enh - Cheerio selection for the ul.EnhancementsPts element
+ * @returns Parsed card data or null if invalid
+ */
+export function parseEnhancementSpans(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  $enh: any
+): ParsedEnhancementCard | null {
+  const $spans = $enh.find('span');
+  if ($spans.length < 2) return null;
+
+  const name = $spans.first().text().trim();
+  const pointsText = $spans.eq(1).text().trim();
+
+  if (!name) return null;
+
+  const pointsCost = extractPointsCost(pointsText);
+
+  return {
+    name,
+    pointsCost,
+    pointsText,
+  };
 }
