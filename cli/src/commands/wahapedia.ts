@@ -113,6 +113,23 @@ syncCmd
   });
 
 syncCmd
+  .command('subfaction <faction> <subfaction>')
+  .description('Sync a faction subfaction from Wahapedia (e.g., chaos-daemons khorne, aeldari ynnari)')
+  .option('-y, --yes', 'Skip confirmation prompt')
+  .action(async (faction: string, subfaction: string, options: { yes?: boolean }) => {
+    const confirmed = await confirmApiUsage(options, {
+      service: 'Firecrawl',
+      action: `fetch ${faction} subfaction "${subfaction}" from Wahapedia`,
+      estimate: '~1-5 API calls',
+    });
+    if (!confirmed) {
+      console.log('Cancelled.');
+      return;
+    }
+    await runMcpScraper('scrape-subfaction.ts', [faction, subfaction]);
+  });
+
+syncCmd
   .command('mission-pack <packId>')
   .description('Sync a mission pack from Wahapedia')
   .option('-y, --yes', 'Skip confirmation prompt')

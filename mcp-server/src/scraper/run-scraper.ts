@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { FirecrawlClient } from './firecrawl-client.js';
-import { WAHAPEDIA_URLS, FACTION_SLUGS, SPACE_MARINE_CHAPTER_SLUGS } from './config.js';
+import { WAHAPEDIA_URLS, FACTION_SLUGS, SPACE_MARINE_CHAPTER_SLUGS, FACTION_SUBFACTIONS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagemsByDetachment, parseEnhancementsByDetachment } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
@@ -380,6 +380,158 @@ export async function scrapeChapter(client: FirecrawlClient, db: ReturnType<type
     await db.insert(schema.scrapeLog).values({
       url: WAHAPEDIA_URLS.chapterPage(chapterSlug),
       scrapeType: 'chapter',
+      status: 'failed',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
+/**
+ * Scrape a faction's subfaction subpage for subfaction-specific detachments, stratagems, and enhancements.
+ * Works for any faction that has subfaction subpages (Chaos Daemons gods, Aeldari Ynnari/Harlequins, etc.)
+ */
+export async function scrapeSubfaction(
+  client: FirecrawlClient,
+  db: ReturnType<typeof getDb>,
+  factionSlug: string,
+  subfactionSlug: string
+) {
+  console.log(`\n=== Scraping ${factionSlug} subfaction: ${subfactionSlug} ===`);
+
+  // Verify the faction has subfactions defined
+  const validSubfactions = FACTION_SUBFACTIONS[factionSlug];
+  if (!validSubfactions) {
+    console.error(`Faction "${factionSlug}" does not have subfaction subpages defined.`);
+    console.log('Factions with subfactions:', Object.keys(FACTION_SUBFACTIONS).join(', '));
+    return;
+  }
+
+  if (!validSubfactions.includes(subfactionSlug)) {
+    console.error(`Unknown subfaction "${subfactionSlug}" for faction "${factionSlug}".`);
+    console.log('Valid subfactions:', validSubfactions.join(', '));
+    return;
+  }
+
+  // Get the parent faction from database
+  const [faction] = await db
+    .select()
+    .from(schema.factions)
+    .where(eq(schema.factions.slug, factionSlug));
+
+  if (!faction) {
+    console.error(`Faction "${factionSlug}" not found in database. Run faction scrape first.`);
+    return;
+  }
+
+  const factionId = faction.id;
+
+  try {
+    // Scrape subfaction subpage
+    const subfactionUrl = WAHAPEDIA_URLS.subfactionPage(factionSlug, subfactionSlug);
+    console.log(`Fetching: ${subfactionUrl}`);
+    const result = await client.scrape(subfactionUrl);
+
+    const html = result.html || result.markdown;
+
+    // Parse detachments from subfaction page
+    const detachments = parseDetachments(html, result.url);
+    console.log(`  Found ${detachments.length} detachments`);
+
+    // Parse enhancements and stratagems grouped by detachment
+    const enhancementsByDetachment = parseEnhancementsByDetachment(html, result.url);
+    const stratagemsByDetachment = parseStratagemsByDetachment(html, result.url);
+
+    let stratagemCount = 0;
+    let enhancementCount = 0;
+
+    for (const detachment of detachments) {
+      const [insertedDetachment] = await db
+        .insert(schema.detachments)
+        .values({ ...detachment, factionId })
+        .onConflictDoUpdate({
+          target: [schema.detachments.slug, schema.detachments.factionId],
+          set: {
+            name: detachment.name,
+            detachmentRule: detachment.detachmentRule,
+            detachmentRuleName: detachment.detachmentRuleName,
+            lore: detachment.lore,
+            sourceUrl: detachment.sourceUrl,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+
+      const detachmentId = insertedDetachment!.id;
+
+      // Find enhancements for this detachment
+      const detachmentAnchorName = detachment.name.replace(/\s+/g, '-');
+      const matchingEnhancements = enhancementsByDetachment.get(detachment.name) ||
+        enhancementsByDetachment.get(detachmentAnchorName) ||
+        [];
+
+      for (const enhancement of matchingEnhancements) {
+        enhancementCount++;
+        await db
+          .insert(schema.enhancements)
+          .values({ ...enhancement, detachmentId })
+          .onConflictDoUpdate({
+            target: [schema.enhancements.slug, schema.enhancements.detachmentId],
+            set: {
+              name: enhancement.name,
+              pointsCost: enhancement.pointsCost,
+              description: enhancement.description,
+              restrictions: enhancement.restrictions,
+              sourceUrl: enhancement.sourceUrl,
+              updatedAt: new Date(),
+            },
+          });
+      }
+
+      // Find stratagems for this detachment
+      const matchingStratagems = stratagemsByDetachment.get(detachment.name) ||
+        stratagemsByDetachment.get(detachmentAnchorName) ||
+        [];
+
+      for (const stratagem of matchingStratagems) {
+        stratagemCount++;
+        await db
+          .insert(schema.stratagems)
+          .values({ ...stratagem, factionId, detachmentId })
+          .onConflictDoUpdate({
+            target: [schema.stratagems.slug, schema.stratagems.factionId],
+            set: {
+              detachmentId,
+              name: stratagem.name,
+              cpCost: stratagem.cpCost,
+              phase: stratagem.phase,
+              when: stratagem.when,
+              target: stratagem.target,
+              effect: stratagem.effect,
+              restrictions: stratagem.restrictions,
+              sourceUrl: stratagem.sourceUrl,
+              updatedAt: new Date(),
+            },
+          });
+      }
+    }
+
+    console.log(`  Total: ${enhancementCount} enhancements, ${stratagemCount} stratagems`);
+
+    // Log subfaction scrape
+    await db.insert(schema.scrapeLog).values({
+      url: result.url,
+      scrapeType: 'subfaction',
+      status: 'success',
+      contentHash: result.contentHash,
+    });
+
+    console.log(`\nSubfaction ${subfactionSlug} scraping completed!`);
+  } catch (error) {
+    console.error(`Failed to scrape subfaction ${subfactionSlug}:`, error);
+
+    await db.insert(schema.scrapeLog).values({
+      url: WAHAPEDIA_URLS.subfactionPage(factionSlug, subfactionSlug),
+      scrapeType: 'subfaction',
       status: 'failed',
       errorMessage: error instanceof Error ? error.message : 'Unknown error',
     });

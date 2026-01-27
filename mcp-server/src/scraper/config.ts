@@ -34,6 +34,10 @@ export const WAHAPEDIA_URLS = {
   // Space Marine chapter subpages - contain chapter-specific detachments, stratagems, enhancements
   chapterPage: (chapterSlug: string) =>
     `${WAHAPEDIA_BASE_URL}/factions/space-marines/${chapterSlug}`,
+
+  // Generic subfaction subpage - for factions with subfaction-specific content
+  subfactionPage: (factionSlug: string, subfactionSlug: string) =>
+    `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/${subfactionSlug}`,
 };
 
 // Space Marine chapters with their Wahapedia slugs
@@ -53,6 +57,33 @@ export const SPACE_MARINE_CHAPTER_SLUGS = [
 ] as const;
 
 export type ChapterSlug = typeof SPACE_MARINE_CHAPTER_SLUGS[number];
+
+// Chaos Daemons god-specific subfactions
+// These are subpages under /factions/chaos-daemons/{god-slug}
+export const CHAOS_DAEMON_SUBFACTION_SLUGS = [
+  'khorne',
+  'nurgle',
+  'tzeentch',
+  'slaanesh',
+] as const;
+
+export type ChaosDaemonSubfactionSlug = typeof CHAOS_DAEMON_SUBFACTION_SLUGS[number];
+
+// Aeldari subfactions (Ynnari and Harlequins have separate pages)
+// These are subpages under /factions/aeldari/{subfaction-slug}
+export const AELDARI_SUBFACTION_SLUGS = [
+  'ynnari',
+  'harlequins',
+] as const;
+
+export type AeldariSubfactionSlug = typeof AELDARI_SUBFACTION_SLUGS[number];
+
+// All factions that have subfaction subpages
+export const FACTION_SUBFACTIONS: Record<string, readonly string[]> = {
+  'space-marines': SPACE_MARINE_CHAPTER_SLUGS,
+  'chaos-daemons': CHAOS_DAEMON_SUBFACTION_SLUGS,
+  'aeldari': AELDARI_SUBFACTION_SLUGS,
+};
 
 // Known factions with their Wahapedia slugs (updated Jan 2026)
 export const FACTION_SLUGS = [
