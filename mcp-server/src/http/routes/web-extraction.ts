@@ -376,12 +376,17 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
         // Stage 6: Match and validate detachments
         let stage6: StageArtifact = createStageArtifact(6, 'validate-detachments');
 
+        // Debug: Log what we're passing to the function
+        console.log(`Detachment matching - Players: ${report.players.map(p => `${p.name}(${p.faction}):${p.detachment}`).join(', ')}`);
+        console.log(`Detachment matching - Factions with detachments: ${[...factionDetachmentNames.entries()].map(([f, d]) => `${f}:${d.length}`).join(', ')}`);
+
         // First, try to match unknown detachments from transcript
         const playersWithTranscriptMatch = matchDetachmentsFromTranscript(
           report.players,
           videoData.transcript,
           factionDetachmentNames
         );
+        console.log(`Detachment matching - After: ${playersWithTranscriptMatch.map(p => `${p.name}:${p.detachment}`).join(', ')}`);
 
         // Then validate against database
         const validatedPlayers = await validateDetachments(playersWithTranscriptMatch, db);
@@ -431,7 +436,7 @@ export function registerWebExtractionRoutes(fastify: FastifyInstance, db: Databa
 
         return reply.send({
           ...finalReport,
-          artifacts: [...artifacts, stage5],
+          artifacts: [...artifacts, stage5, stage6],
         });
       } catch (error) {
         console.error('Error extracting battle report:', error);
