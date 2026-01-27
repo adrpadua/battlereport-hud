@@ -96,6 +96,23 @@ syncCmd
   });
 
 syncCmd
+  .command('chapter <slug>')
+  .description('Sync a Space Marine chapter from Wahapedia (e.g., space-wolves, blood-angels)')
+  .option('-y, --yes', 'Skip confirmation prompt')
+  .action(async (slug: string, options: { yes?: boolean }) => {
+    const confirmed = await confirmApiUsage(options, {
+      service: 'Firecrawl',
+      action: `fetch Space Marine chapter "${slug}" from Wahapedia`,
+      estimate: '~1-5 API calls',
+    });
+    if (!confirmed) {
+      console.log('Cancelled.');
+      return;
+    }
+    await runMcpScraper('scrape-chapter.ts', [slug]);
+  });
+
+syncCmd
   .command('mission-pack <packId>')
   .description('Sync a mission pack from Wahapedia')
   .option('-y, --yes', 'Skip confirmation prompt')

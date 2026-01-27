@@ -30,7 +30,29 @@ export const WAHAPEDIA_URLS = {
   // Individual unit datasheets - pattern: /wh40k10ed/factions/{faction-slug}/{unit-name}
   unitDatasheet: (factionSlug: string, unitSlug: string) =>
     `${WAHAPEDIA_BASE_URL}/factions/${factionSlug}/${unitSlug}`,
+
+  // Space Marine chapter subpages - contain chapter-specific detachments, stratagems, enhancements
+  chapterPage: (chapterSlug: string) =>
+    `${WAHAPEDIA_BASE_URL}/factions/space-marines/${chapterSlug}`,
 };
+
+// Space Marine chapters with their Wahapedia slugs
+// These are subpages under /factions/space-marines/{chapter-slug}
+export const SPACE_MARINE_CHAPTER_SLUGS = [
+  'blood-angels',
+  'dark-angels',
+  'space-wolves',
+  'black-templars',
+  'deathwatch',
+  'ultramarines',
+  'imperial-fists',
+  'white-scars',
+  'raven-guard',
+  'salamanders',
+  'iron-hands',
+] as const;
+
+export type ChapterSlug = typeof SPACE_MARINE_CHAPTER_SLUGS[number];
 
 // Known factions with their Wahapedia slugs (updated Jan 2026)
 export const FACTION_SLUGS = [

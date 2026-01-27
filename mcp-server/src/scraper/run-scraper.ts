@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { FirecrawlClient } from './firecrawl-client.js';
-import { WAHAPEDIA_URLS, FACTION_SLUGS } from './config.js';
+import { WAHAPEDIA_URLS, FACTION_SLUGS, SPACE_MARINE_CHAPTER_SLUGS } from './config.js';
 import { parseCoreRules } from './parsers/core-rules-parser.js';
 import { parseFactionPage, parseDetachments, parseStratagemsByDetachment, parseEnhancementsByDetachment } from './parsers/faction-parser.js';
 import { parseDatasheets } from './parsers/unit-parser.js';
@@ -243,6 +243,149 @@ async function scrapeFactions(client: FirecrawlClient, db: ReturnType<typeof get
   }
 }
 
+/**
+ * Scrape a Space Marine chapter subpage for chapter-specific detachments, stratagems, and enhancements.
+ * Chapter content is stored under the parent "Space Marines" faction but with chapter-specific detachment names.
+ */
+export async function scrapeChapter(client: FirecrawlClient, db: ReturnType<typeof getDb>, chapterSlug: string) {
+  console.log(`\n=== Scraping Space Marine Chapter: ${chapterSlug} ===`);
+
+  // Verify the chapter slug is valid
+  if (!SPACE_MARINE_CHAPTER_SLUGS.includes(chapterSlug as any)) {
+    console.error(`Unknown chapter slug: ${chapterSlug}`);
+    console.log('Valid chapters:', SPACE_MARINE_CHAPTER_SLUGS.join(', '));
+    return;
+  }
+
+  // Get the parent Space Marines faction from database
+  const [spaceMarine] = await db
+    .select()
+    .from(schema.factions)
+    .where(eq(schema.factions.slug, 'space-marines'));
+
+  if (!spaceMarine) {
+    console.error('Space Marines faction not found. Run faction scrape first.');
+    return;
+  }
+
+  const factionId = spaceMarine.id;
+
+  try {
+    // Scrape chapter subpage
+    const chapterUrl = WAHAPEDIA_URLS.chapterPage(chapterSlug);
+    console.log(`Fetching: ${chapterUrl}`);
+    const chapterResult = await client.scrape(chapterUrl);
+
+    const chapterHtml = chapterResult.html || chapterResult.markdown;
+
+    // Parse detachments from chapter page
+    const detachments = parseDetachments(chapterHtml, chapterResult.url);
+    console.log(`  Found ${detachments.length} detachments`);
+
+    // Parse enhancements and stratagems grouped by detachment
+    const enhancementsByDetachment = parseEnhancementsByDetachment(chapterHtml, chapterResult.url);
+    const stratagemsByDetachment = parseStratagemsByDetachment(chapterHtml, chapterResult.url);
+
+    let stratagemCount = 0;
+    let enhancementCount = 0;
+
+    for (const detachment of detachments) {
+      const [insertedDetachment] = await db
+        .insert(schema.detachments)
+        .values({ ...detachment, factionId })
+        .onConflictDoUpdate({
+          target: [schema.detachments.slug, schema.detachments.factionId],
+          set: {
+            name: detachment.name,
+            detachmentRule: detachment.detachmentRule,
+            detachmentRuleName: detachment.detachmentRuleName,
+            lore: detachment.lore,
+            sourceUrl: detachment.sourceUrl,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+
+      const detachmentId = insertedDetachment!.id;
+
+      // Find enhancements for this detachment
+      // Map keys use anchor name format (e.g., "Champions of Fenris" with spaces)
+      // Try detachment.name first (same as scrapeFactions), then anchor-name format with hyphens
+      const detachmentAnchorName = detachment.name.replace(/\s+/g, '-');
+      const matchingEnhancements = enhancementsByDetachment.get(detachment.name) ||
+        enhancementsByDetachment.get(detachmentAnchorName) ||
+        [];
+
+      for (const enhancement of matchingEnhancements) {
+        enhancementCount++;
+        await db
+          .insert(schema.enhancements)
+          .values({ ...enhancement, detachmentId })
+          .onConflictDoUpdate({
+            target: [schema.enhancements.slug, schema.enhancements.detachmentId],
+            set: {
+              name: enhancement.name,
+              pointsCost: enhancement.pointsCost,
+              description: enhancement.description,
+              restrictions: enhancement.restrictions,
+              sourceUrl: enhancement.sourceUrl,
+              updatedAt: new Date(),
+            },
+          });
+      }
+
+      // Find stratagems for this detachment
+      // Use same matching strategy as enhancements - name with spaces first, then anchor format
+      const matchingStratagems = stratagemsByDetachment.get(detachment.name) ||
+        stratagemsByDetachment.get(detachmentAnchorName) ||
+        [];
+
+      for (const stratagem of matchingStratagems) {
+        stratagemCount++;
+        await db
+          .insert(schema.stratagems)
+          .values({ ...stratagem, factionId, detachmentId })
+          .onConflictDoUpdate({
+            target: [schema.stratagems.slug, schema.stratagems.factionId],
+            set: {
+              detachmentId,
+              name: stratagem.name,
+              cpCost: stratagem.cpCost,
+              phase: stratagem.phase,
+              when: stratagem.when,
+              target: stratagem.target,
+              effect: stratagem.effect,
+              restrictions: stratagem.restrictions,
+              sourceUrl: stratagem.sourceUrl,
+              updatedAt: new Date(),
+            },
+          });
+      }
+    }
+
+    console.log(`  Total: ${enhancementCount} enhancements, ${stratagemCount} stratagems`);
+
+    // Log chapter scrape
+    await db.insert(schema.scrapeLog).values({
+      url: chapterResult.url,
+      scrapeType: 'chapter',
+      status: 'success',
+      contentHash: chapterResult.contentHash,
+    });
+
+    console.log(`\nChapter ${chapterSlug} scraping completed!`);
+  } catch (error) {
+    console.error(`Failed to scrape chapter ${chapterSlug}:`, error);
+
+    await db.insert(schema.scrapeLog).values({
+      url: WAHAPEDIA_URLS.chapterPage(chapterSlug),
+      scrapeType: 'chapter',
+      status: 'failed',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
 async function scrapeUnits(client: FirecrawlClient, db: ReturnType<typeof getDb>, singleFaction: string | null = null, refreshIndex: boolean = false) {
   console.log('\n=== Scraping Units ===');
 
@@ -459,7 +602,14 @@ function extractFactionName(markdown: string): string | null {
   return null;
 }
 
-main().catch((error) => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+// Only run main() when executed directly, not when imported as a module
+// This prevents concurrent scrapes when scrape-chapter.ts imports scrapeChapter
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+
+if (process.argv[1] === __filename) {
+  main().catch((error) => {
+    console.error('Fatal error:', error);
+    process.exit(1);
+  });
+}
