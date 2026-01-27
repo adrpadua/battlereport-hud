@@ -146,9 +146,10 @@ export function registerFactionRoutes(fastify: FastifyInstance, db: Database): v
     '/api/factions/:name',
     async (request, reply) => {
       const { name } = request.params;
+      const decodedName = decodeURIComponent(name);
 
-      // Normalize faction name for matching
-      const normalizedName = name.toLowerCase().replace(/\s+/g, '-');
+      // Normalize faction name for matching - handle apostrophes in slug
+      const normalizedName = decodedName.toLowerCase().replace(/'/g, '-').replace(/\s+/g, '-');
 
       const [faction] = await db
         .select({
@@ -159,7 +160,7 @@ export function registerFactionRoutes(fastify: FastifyInstance, db: Database): v
         .from(schema.factions)
         .where(
           or(
-            ilike(schema.factions.name, `%${name}%`),
+            ilike(schema.factions.name, `%${decodedName}%`),
             eq(schema.factions.slug, normalizedName)
           )
         )
@@ -167,7 +168,7 @@ export function registerFactionRoutes(fastify: FastifyInstance, db: Database): v
 
       if (!faction) {
         return reply.status(404).send({
-          error: `Faction not found: ${name}`
+          error: `Faction not found: ${decodedName}`
         });
       }
 

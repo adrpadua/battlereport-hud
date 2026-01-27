@@ -119,13 +119,17 @@ export function registerStratagemRoutes(fastify: FastifyInstance, db: Database):
 
 // Helper function to find faction by name or slug
 async function findFaction(db: Database, query: string) {
+  const decodedQuery = decodeURIComponent(query);
+  // Handle apostrophes in slug (e.g., "Emperor's Children" -> "emperor-s-children")
+  const normalizedSlug = decodedQuery.toLowerCase().replace(/'/g, '-').replace(/\s+/g, '-');
+
   const [faction] = await db
     .select()
     .from(schema.factions)
     .where(
       or(
-        ilike(schema.factions.name, `%${query}%`),
-        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
+        ilike(schema.factions.name, `%${decodedQuery}%`),
+        eq(schema.factions.slug, normalizedSlug)
       )
     )
     .limit(1);
