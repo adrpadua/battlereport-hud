@@ -371,9 +371,9 @@ export function htmlToReadableText(html: string): string {
     // Add newlines before headers
     .replace(/<h[1-6][^>]*>/gi, '\n\n')
     .replace(/<\/h[1-6]>/gi, '\n\n')
-    // Add newlines before/after paragraphs
+    // Add newlines before/after paragraphs (double newlines for proper separation)
     .replace(/<p[^>]*>/gi, '\n\n')
-    .replace(/<\/p>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
     // Convert <br> to newlines
     .replace(/<br\s*\/?>/gi, '\n')
     // Add newlines before divs with class containing "BreakInside"

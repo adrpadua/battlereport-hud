@@ -280,13 +280,17 @@ export function parseDetachments(
         const text = $el.text().trim();
         $el.replaceWith(text);
       });
-      detachmentRule = $clone.text().trim();
+      // Use htmlToReadableText to preserve paragraph structure
+      const ruleHtml = $.html($clone);
+      detachmentRule = htmlToReadableText(ruleHtml);
     } else {
       // Fallback: look for h3 in next sibling elements
       const $siblingH3 = $ruleAnchor.nextAll('h3').first();
       if ($siblingH3.length) {
         detachmentRuleName = $siblingH3.text().trim();
-        detachmentRule = $siblingH3.parent().text().replace(detachmentRuleName, '').trim();
+        // Use htmlToReadableText to preserve paragraph structure
+        const parentHtml = $.html($siblingH3.parent());
+        detachmentRule = htmlToReadableText(parentHtml).replace(detachmentRuleName, '').trim();
       }
     }
 
