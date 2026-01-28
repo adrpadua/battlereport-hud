@@ -280,6 +280,8 @@ export function parseDetachments(
         const text = $el.text().trim();
         $el.replaceWith(text);
       });
+      // Remove hidden elements (Wahapedia uses display:none for alternate detachment variants)
+      $clone.find('[style*="display:none"], [style*="display: none"]').remove();
       // Use htmlToReadableText to preserve paragraph structure
       const ruleHtml = $.html($clone);
       detachmentRule = htmlToReadableText(ruleHtml);
@@ -288,8 +290,10 @@ export function parseDetachments(
       const $siblingH3 = $ruleAnchor.nextAll('h3').first();
       if ($siblingH3.length) {
         detachmentRuleName = $siblingH3.text().trim();
-        // Use htmlToReadableText to preserve paragraph structure
-        const parentHtml = $.html($siblingH3.parent());
+        // Clone, remove hidden elements, then extract text
+        const $fallbackClone = $siblingH3.parent().clone();
+        $fallbackClone.find('[style*="display:none"], [style*="display: none"]').remove();
+        const parentHtml = $.html($fallbackClone);
         detachmentRule = htmlToReadableText(parentHtml).replace(detachmentRuleName, '').trim();
       }
     }
