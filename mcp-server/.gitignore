@@ -17,9 +17,6 @@ dist/
 staleness-report.txt
 integrity-report.txt
 
-# Drizzle
-drizzle/
-
 # IDE
 .vscode/
 .idea/
