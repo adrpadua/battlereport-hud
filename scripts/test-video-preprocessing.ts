@@ -18,6 +18,65 @@ import { loadFactionById, factionIndex } from '../packages/extension/src/data/ge
 const CAPTIONS_DIR = path.join(process.cwd(), 'test-data', 'captions');
 
 /**
+ * Detect factions from video title/description using faction index.
+ * Returns up to 2 faction IDs detected via name or alias matching.
+ * Uses overlap detection to avoid matching substrings of already-matched factions
+ * (e.g., "Knights" inside "Grey Knights").
+ */
+function detectFactionsFromText(text: string): string[] {
+  if (!text) return [];
+
+  // Build all candidate patterns sorted by length (longest first)
+  const candidates: { pattern: RegExp; factionId: string; length: number }[] = [];
+
+  for (const faction of factionIndex.factions) {
+    const escapedName = faction.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    candidates.push({
+      pattern: new RegExp(`\\b${escapedName}\\b`, 'i'),
+      factionId: faction.id,
+      length: faction.name.length,
+    });
+
+    for (const alias of faction.aliases) {
+      if (alias.length < 3) continue;
+      const escapedAlias = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+      candidates.push({
+        pattern: new RegExp(`\\b${escapedAlias}\\b`, 'i'),
+        factionId: faction.id,
+        length: alias.length,
+      });
+    }
+  }
+
+  // Sort longest first so "Grey Knights" beats "Knights"
+  candidates.sort((a, b) => b.length - a.length);
+
+  const detected: string[] = [];
+  const matchedRanges: { start: number; end: number }[] = [];
+
+  for (const { pattern, factionId } of candidates) {
+    if (detected.includes(factionId)) continue;
+
+    const match = pattern.exec(text);
+    if (!match) continue;
+
+    const start = match.index;
+    const end = start + match[0].length;
+
+    // Skip if overlapping with an already-matched range
+    const overlaps = matchedRanges.some(r => start < r.end && end > r.start);
+    if (overlaps) continue;
+
+    detected.push(factionId);
+    matchedRanges.push({ start, end });
+
+    if (detected.length >= 2) break;
+  }
+
+  return detected;
+}
+
+/**
  * Save transcript to a JSON file in the captions directory.
  */
 function saveTranscript(transcript: TranscriptResult): void {
@@ -47,8 +106,28 @@ async function main() {
   }
 
   const videoId = args[0];
-  const faction1Id = args[1] || 'thousand-sons';
-  const faction2Id = args[2] || 'adepta-sororitas';
+  let faction1Id = args[1];
+  let faction2Id = args[2];
+
+  // If factions not provided, extract transcript first to detect from title
+  if (!faction1Id || !faction2Id) {
+    console.log('No factions specified, detecting from video title...');
+    const preTranscript = await extractTranscript(videoId);
+    const detected = detectFactionsFromText(preTranscript.title);
+    if (detected.length >= 1) faction1Id = faction1Id || detected[0];
+    if (detected.length >= 2) faction2Id = faction2Id || detected[1];
+
+    if (!faction1Id || !faction2Id) {
+      console.log('  Could not auto-detect factions from title: ' + preTranscript.title);
+      console.log('  Please provide faction IDs as arguments.');
+      console.log('  Available factions:');
+      factionIndex.factions.forEach(f => {
+        console.log('    ' + f.id + ' (' + f.name + ')');
+      });
+      process.exit(1);
+    }
+    console.log('  Detected: ' + faction1Id + ' vs ' + faction2Id);
+  }
 
   console.log('='.repeat(80));
   console.log('Testing preprocessing for video: ' + videoId);
