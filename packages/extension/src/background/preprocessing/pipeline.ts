@@ -15,6 +15,7 @@ import {
   buildFuzzyUnitAliasesSync,
   detectTermsInText,
   categorizeTermType,
+  resetDynamicState,
 } from './phases/term-detection';
 import {
   applyNormalization,
@@ -248,6 +249,9 @@ export async function preprocessTranscript(
     detectFactions = true,
     detectDetachments = true,
   } = options;
+
+  // Clear stale module-level state from any previous extraction
+  resetDynamicState();
 
   // Step 1: Deduplicate segments
   const segments = deduplicateSegments(transcript);

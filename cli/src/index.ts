@@ -40,9 +40,21 @@ program.addCommand(serveCommand);
 // Build operations
 program.addCommand(buildCommand);
 
+// Global unhandled rejection handler
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled rejection:', err);
+  process.exit(1);
+});
+
 // If no arguments provided, run interactive mode
 if (process.argv.length <= 2) {
-  runInteractive().catch(console.error);
+  runInteractive().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 } else {
-  program.parse();
+  program.parseAsync().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }

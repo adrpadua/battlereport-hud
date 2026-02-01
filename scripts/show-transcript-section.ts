@@ -58,4 +58,7 @@ async function main() {
   console.log('Total segments in range: ' + combined.length);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

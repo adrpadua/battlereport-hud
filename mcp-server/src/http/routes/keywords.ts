@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
 import { eq, ilike, or } from 'drizzle-orm';
+import { escapeIlike } from '../../utils/escape-ilike.js';
 
 interface KeywordParams {
   name: string;
@@ -84,7 +85,7 @@ export function registerKeywordRoutes(fastify: FastifyInstance, db: Database): v
         .from(schema.keywords)
         .where(
           or(
-            ...keywordNames.map((name) => ilike(schema.keywords.name, name))
+            ...keywordNames.map((name) => ilike(schema.keywords.name, escapeIlike(name)))
           )
         );
 
@@ -108,7 +109,7 @@ export function registerKeywordRoutes(fastify: FastifyInstance, db: Database): v
         .from(schema.abilities)
         .where(
           or(
-            ...keywordNames.map((name) => ilike(schema.abilities.name, name))
+            ...keywordNames.map((name) => ilike(schema.abilities.name, escapeIlike(name)))
           )
         );
 
@@ -190,7 +191,7 @@ async function lookupKeyword(
       type: schema.keywords.keywordType,
     })
     .from(schema.keywords)
-    .where(ilike(schema.keywords.name, name))
+    .where(ilike(schema.keywords.name, escapeIlike(name)))
     .limit(1);
 
   if (keyword) {
@@ -209,7 +210,7 @@ async function lookupKeyword(
       type: schema.abilities.abilityType,
     })
     .from(schema.abilities)
-    .where(ilike(schema.abilities.name, name))
+    .where(ilike(schema.abilities.name, escapeIlike(name)))
     .limit(1);
 
   if (ability) {

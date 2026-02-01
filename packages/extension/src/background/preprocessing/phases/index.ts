@@ -24,6 +24,7 @@ export {
   buildFuzzyUnitAliasesSync,
   detectTermsInText,
   setDynamicObjectives,
+  resetDynamicState,
   getAllObjectives,
   getObjectiveAliases,
   type TermDetectionResult,

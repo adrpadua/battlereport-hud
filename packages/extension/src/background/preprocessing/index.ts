@@ -77,6 +77,7 @@ export {
   buildFuzzyUnitAliasesSync,
   detectTermsInText,
   setDynamicObjectives,
+  resetDynamicState,
   getAllObjectives,
   getObjectiveAliases,
   scanForPhoneticMatches,

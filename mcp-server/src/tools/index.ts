@@ -8,6 +8,7 @@ import {
   VALIDATION_TOOL_NAMES,
 } from './validation-tools.js';
 import { SPACE_MARINE_CHAPTERS, getChapterInfo, getSubfactionInfo } from './subfactions.js';
+import { escapeIlike } from '../utils/escape-ilike.js';
 
 export function createTools(): Tool[] {
   return [
@@ -393,8 +394,8 @@ async function getCoreRules(db: Database, args: Record<string, unknown>) {
   if (search) {
     query = query.where(
       or(
-        ilike(schema.coreRules.title, `%${search}%`),
-        ilike(schema.coreRules.content, `%${search}%`)
+        ilike(schema.coreRules.title, `%${escapeIlike(search)}%`),
+        ilike(schema.coreRules.content, `%${escapeIlike(search)}%`)
       )
     ) as typeof query;
   }
@@ -581,7 +582,7 @@ async function getDetachmentDetails(
     .where(
       and(
         eq(schema.detachments.factionId, faction.id),
-        ilike(schema.detachments.name, `%${detachmentQuery}%`)
+        ilike(schema.detachments.name, `%${escapeIlike(detachmentQuery)}%`)
       )
     )
     .limit(1);
@@ -632,7 +633,7 @@ async function searchUnits(db: Database, query: string, factionQuery?: string, c
   const chapterInfo = chapterQuery ? getChapterInfo(chapterQuery) : null;
 
   // Build WHERE condition first
-  let whereCondition = ilike(schema.units.name, `%${query}%`);
+  let whereCondition = ilike(schema.units.name, `%${escapeIlike(query)}%`);
 
   // If chapter specified, use the parent faction (Space Marines)
   const effectiveFactionQuery = chapterInfo ? chapterInfo.parentFaction : factionQuery;
@@ -641,7 +642,7 @@ async function searchUnits(db: Database, query: string, factionQuery?: string, c
     const faction = await findFaction(db, effectiveFactionQuery);
     if (faction) {
       whereCondition = and(
-        ilike(schema.units.name, `%${query}%`),
+        ilike(schema.units.name, `%${escapeIlike(query)}%`),
         eq(schema.units.factionId, faction.id)
       )!;
     }
@@ -667,7 +668,7 @@ async function searchUnits(db: Database, query: string, factionQuery?: string, c
 
       if (unitIds.length > 0) {
         whereCondition = and(
-          ilike(schema.units.name, `%${query}%`),
+          ilike(schema.units.name, `%${escapeIlike(query)}%`),
           inArray(schema.units.id, unitIds)
         )!;
       } else {
@@ -722,13 +723,13 @@ async function searchUnits(db: Database, query: string, factionQuery?: string, c
 
 async function getUnit(db: Database, unitQuery: string, factionQuery?: string) {
   // Build WHERE condition first
-  let whereCondition = ilike(schema.units.name, `%${unitQuery}%`);
+  let whereCondition = ilike(schema.units.name, `%${escapeIlike(unitQuery)}%`);
 
   if (factionQuery) {
     const faction = await findFaction(db, factionQuery);
     if (faction) {
       whereCondition = and(
-        ilike(schema.units.name, `%${unitQuery}%`),
+        ilike(schema.units.name, `%${escapeIlike(unitQuery)}%`),
         eq(schema.units.factionId, faction.id)
       )!;
     }
@@ -880,11 +881,11 @@ async function getEnhancements(
 
 async function searchWeapons(db: Database, query: string, type?: string) {
   // Build WHERE condition first
-  let whereCondition = ilike(schema.weapons.name, `%${query}%`);
+  let whereCondition = ilike(schema.weapons.name, `%${escapeIlike(query)}%`);
 
   if (type) {
     whereCondition = and(
-      ilike(schema.weapons.name, `%${query}%`),
+      ilike(schema.weapons.name, `%${escapeIlike(query)}%`),
       eq(schema.weapons.weaponType, type as any)
     )!;
   }
@@ -901,15 +902,15 @@ async function searchWeapons(db: Database, query: string, type?: string) {
 async function searchAbilities(db: Database, query: string, type?: string) {
   // Build WHERE condition first
   let whereCondition = or(
-    ilike(schema.abilities.name, `%${query}%`),
-    ilike(schema.abilities.description, `%${query}%`)
+    ilike(schema.abilities.name, `%${escapeIlike(query)}%`),
+    ilike(schema.abilities.description, `%${escapeIlike(query)}%`)
   );
 
   if (type) {
     whereCondition = and(
       or(
-        ilike(schema.abilities.name, `%${query}%`),
-        ilike(schema.abilities.description, `%${query}%`)
+        ilike(schema.abilities.name, `%${escapeIlike(query)}%`),
+        ilike(schema.abilities.description, `%${escapeIlike(query)}%`)
       ),
       eq(schema.abilities.abilityType, type)
     );
@@ -952,9 +953,9 @@ async function getMissions(db: Database, type?: string) {
 async function searchFaqs(db: Database, query: string, factionQuery?: string) {
   // Build WHERE condition first
   let whereCondition = or(
-    ilike(schema.faqs.question, `%${query}%`),
-    ilike(schema.faqs.answer, `%${query}%`),
-    ilike(schema.faqs.content, `%${query}%`)
+    ilike(schema.faqs.question, `%${escapeIlike(query)}%`),
+    ilike(schema.faqs.answer, `%${escapeIlike(query)}%`),
+    ilike(schema.faqs.content, `%${escapeIlike(query)}%`)
   );
 
   if (factionQuery) {
@@ -962,9 +963,9 @@ async function searchFaqs(db: Database, query: string, factionQuery?: string) {
     if (faction) {
       whereCondition = and(
         or(
-          ilike(schema.faqs.question, `%${query}%`),
-          ilike(schema.faqs.answer, `%${query}%`),
-          ilike(schema.faqs.content, `%${query}%`)
+          ilike(schema.faqs.question, `%${escapeIlike(query)}%`),
+          ilike(schema.faqs.answer, `%${escapeIlike(query)}%`),
+          ilike(schema.faqs.content, `%${escapeIlike(query)}%`)
         ),
         eq(schema.faqs.factionId, faction.id)
       );
@@ -998,7 +999,7 @@ async function findFaction(db: Database, query: string) {
   [faction] = await db
     .select()
     .from(schema.factions)
-    .where(ilike(schema.factions.name, normalizedQuery))
+    .where(ilike(schema.factions.name, escapeIlike(normalizedQuery)))
     .limit(1);
 
   if (faction) return faction;
@@ -1019,7 +1020,7 @@ async function findFaction(db: Database, query: string) {
   [faction] = await db
     .select()
     .from(schema.factions)
-    .where(ilike(schema.factions.name, `%${normalizedQuery}%`))
+    .where(ilike(schema.factions.name, `%${escapeIlike(normalizedQuery)}%`))
     .limit(1);
 
   return faction;

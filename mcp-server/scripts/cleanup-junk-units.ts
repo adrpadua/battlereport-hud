@@ -41,32 +41,31 @@ async function main() {
   }
 
   const ids = (junkUnits.rows as any[]).map(r => r.id);
-  const idList = ids.join(', ');
 
   console.log('\nDeleting associated data...');
 
   // Delete unit_keywords
-  const kwResult = await db.execute(sql.raw(
-    'DELETE FROM unit_keywords WHERE unit_id IN (' + idList + ')'
-  ));
+  const kwResult = await db.execute(
+    sql`DELETE FROM unit_keywords WHERE unit_id = ANY(${ids})`
+  );
   console.log('  Deleted unit_keywords: ' + kwResult.rowCount);
 
   // Delete unit_abilities
-  const abResult = await db.execute(sql.raw(
-    'DELETE FROM unit_abilities WHERE unit_id IN (' + idList + ')'
-  ));
+  const abResult = await db.execute(
+    sql`DELETE FROM unit_abilities WHERE unit_id = ANY(${ids})`
+  );
   console.log('  Deleted unit_abilities: ' + abResult.rowCount);
 
   // Delete unit_weapons junction records
-  const uwResult = await db.execute(sql.raw(
-    'DELETE FROM unit_weapons WHERE unit_id IN (' + idList + ')'
-  ));
+  const uwResult = await db.execute(
+    sql`DELETE FROM unit_weapons WHERE unit_id = ANY(${ids})`
+  );
   console.log('  Deleted unit_weapons: ' + uwResult.rowCount);
 
   // Delete the units
-  const unitResult = await db.execute(sql.raw(
-    'DELETE FROM units WHERE id IN (' + idList + ')'
-  ));
+  const unitResult = await db.execute(
+    sql`DELETE FROM units WHERE id = ANY(${ids})`
+  );
   console.log('  Deleted units: ' + unitResult.rowCount);
 
   console.log('\nCleanup complete!');
@@ -74,4 +73,7 @@ async function main() {
   await closeConnection();
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

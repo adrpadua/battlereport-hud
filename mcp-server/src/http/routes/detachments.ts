@@ -2,6 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
 import { eq, ilike, or, and } from 'drizzle-orm';
+import { findFaction } from '../../utils/find-faction.js';
+import { escapeIlike } from '../../utils/escape-ilike.js';
 
 interface DetachmentQuery {
   faction: string;
@@ -43,7 +45,7 @@ export function registerDetachmentRoutes(fastify: FastifyInstance, db: Database)
           and(
             eq(schema.detachments.factionId, factionRecord.id),
             or(
-              ilike(schema.detachments.name, `%${name}%`),
+              ilike(schema.detachments.name, `%${escapeIlike(name)}%`),
               eq(schema.detachments.slug, normalizedName)
             )
           )
@@ -105,22 +107,3 @@ export function registerDetachmentRoutes(fastify: FastifyInstance, db: Database)
   );
 }
 
-// Helper function to find faction by name or slug
-async function findFaction(db: Database, query: string) {
-  const decodedQuery = decodeURIComponent(query);
-  // Handle apostrophes in slug (e.g., "Emperor's Children" -> "emperor-s-children")
-  const normalizedSlug = decodedQuery.toLowerCase().replace(/'/g, '-').replace(/\s+/g, '-');
-
-  const [faction] = await db
-    .select()
-    .from(schema.factions)
-    .where(
-      or(
-        ilike(schema.factions.name, `%${decodedQuery}%`),
-        eq(schema.factions.slug, normalizedSlug)
-      )
-    )
-    .limit(1);
-
-  return faction;
-}

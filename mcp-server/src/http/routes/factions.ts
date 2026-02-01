@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
 import { eq, ilike, or } from 'drizzle-orm';
+import { escapeIlike } from '../../utils/escape-ilike.js';
 
 interface FactionParams {
   name: string;
@@ -160,7 +161,7 @@ export function registerFactionRoutes(fastify: FastifyInstance, db: Database): v
         .from(schema.factions)
         .where(
           or(
-            ilike(schema.factions.name, `%${decodedName}%`),
+            ilike(schema.factions.name, `%${escapeIlike(decodedName)}%`),
             eq(schema.factions.slug, normalizedName)
           )
         )

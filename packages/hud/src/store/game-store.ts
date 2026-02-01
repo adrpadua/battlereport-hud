@@ -19,6 +19,7 @@ import type {
   GameEvent,
   GameResult,
 } from '../types/game-state';
+import { phaseDisplayNames, getPhaseFromStateValue } from './game-store-utils';
 
 // State value type from XState snapshot
 type GameStateValue =
@@ -77,28 +78,6 @@ interface GameStoreActions {
 }
 
 type GameStore = GameStoreState & GameStoreActions;
-
-// Phase display names
-const phaseDisplayNames: Record<TurnPhase, string> = {
-  command: 'Command Phase',
-  movement: 'Movement Phase',
-  shooting: 'Shooting Phase',
-  charge: 'Charge Phase',
-  fight: 'Fight Phase',
-  scoring: 'Scoring',
-};
-
-// Helper to extract current phase from state value
-const getPhaseFromStateValue = (stateValue: GameStateValue | null): TurnPhase | null => {
-  if (!stateValue || typeof stateValue === 'string') return null;
-
-  if ('round' in stateValue) {
-    const round = stateValue.round;
-    if ('player1Turn' in round) return round.player1Turn;
-    if ('player2Turn' in round) return round.player2Turn;
-  }
-  return null;
-};
 
 // Create the store
 export const useGameStore = create<GameStore>((set, get) => ({

@@ -304,4 +304,7 @@ async function main(): Promise<void> {
   await runComparison(transcript, factions, unitNames, apiKey);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

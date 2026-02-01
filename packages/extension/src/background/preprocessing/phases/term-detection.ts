@@ -45,6 +45,22 @@ let dynamicEnhancementAliases = new Map<string, string>();
 let cachedEnhancementAliasesWithCase: Map<string, string> | null = null;
 
 /**
+ * Reset all module-level dynamic state.
+ * Must be called at the start of each new extraction to prevent
+ * stale data from a previous video leaking into the next one.
+ */
+export function resetDynamicState(): void {
+  dynamicSecondaryObjectives = [];
+  dynamicPrimaryObjectives = [];
+  dynamicGambits = [];
+  dynamicObjectiveAliases = new Map();
+  cachedObjectiveAliasesWithCase = null;
+  dynamicEnhancements = [];
+  dynamicEnhancementAliases = new Map();
+  cachedEnhancementAliasesWithCase = null;
+}
+
+/**
  * Update dynamic objectives from API data.
  */
 export function setDynamicObjectives(

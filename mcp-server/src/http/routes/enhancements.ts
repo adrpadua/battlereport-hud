@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
-import { eq, ilike, or } from 'drizzle-orm';
+import { eq, ilike } from 'drizzle-orm';
+import { findFaction } from '../../utils/find-faction.js';
+import { escapeIlike } from '../../utils/escape-ilike.js';
 
 interface EnhancementQuery {
   faction?: string;
@@ -63,7 +65,7 @@ export function registerEnhancementRoutes(fastify: FastifyInstance, db: Database
         .from(schema.enhancements)
         .innerJoin(schema.detachments, eq(schema.enhancements.detachmentId, schema.detachments.id))
         .innerJoin(schema.factions, eq(schema.detachments.factionId, schema.factions.id))
-        .where(ilike(schema.enhancements.name, name));
+        .where(ilike(schema.enhancements.name, escapeIlike(name)));
 
       const results = await query;
 
@@ -110,18 +112,3 @@ export function registerEnhancementRoutes(fastify: FastifyInstance, db: Database
   );
 }
 
-// Helper function to find faction by name or slug
-async function findFaction(db: Database, query: string) {
-  const [faction] = await db
-    .select()
-    .from(schema.factions)
-    .where(
-      or(
-        ilike(schema.factions.name, `%${query}%`),
-        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
-      )
-    )
-    .limit(1);
-
-  return faction;
-}

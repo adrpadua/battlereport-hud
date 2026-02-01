@@ -2,6 +2,8 @@ import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
 import { eq, ilike, or, and } from 'drizzle-orm';
+import { findFaction } from '../../utils/find-faction.js';
+import { escapeIlike } from '../../utils/escape-ilike.js';
 
 interface AbilityParams {
   name: string;
@@ -29,7 +31,7 @@ export function registerAbilityRoutes(fastify: FastifyInstance, db: Database): v
 
       // Build where conditions - search by name or slug
       let whereCondition = or(
-        ilike(schema.abilities.name, `%${decodedName}%`),
+        ilike(schema.abilities.name, `%${escapeIlike(decodedName)}%`),
         eq(schema.abilities.slug, slug)
       );
 
@@ -95,7 +97,7 @@ export function registerAbilityRoutes(fastify: FastifyInstance, db: Database): v
           and(
             eq(schema.abilities.abilityType, 'weapon'),
             or(
-              ilike(schema.abilities.name, `%${decodedName}%`),
+              ilike(schema.abilities.name, `%${escapeIlike(decodedName)}%`),
               eq(schema.abilities.slug, slug)
             )
           )
@@ -186,18 +188,3 @@ export function registerAbilityRoutes(fastify: FastifyInstance, db: Database): v
   });
 }
 
-// Helper function to find faction by name or slug
-async function findFaction(db: Database, query: string) {
-  const [faction] = await db
-    .select()
-    .from(schema.factions)
-    .where(
-      or(
-        ilike(schema.factions.name, `%${query}%`),
-        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
-      )
-    )
-    .limit(1);
-
-  return faction;
-}

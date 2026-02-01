@@ -17,6 +17,7 @@ import type { BattleReport, Unit, Stratagem } from '@/types/battle-report';
 
 let currentVideoId: string | null = null;
 let navigationObserver: MutationObserver | null = null;
+let extractionAbortController: AbortController | null = null;
 
 // Expose extraction functions globally for HUD to call
 declare global {
@@ -44,6 +45,14 @@ async function initialize(): Promise<void> {
   }
 
   currentVideoId = videoId;
+
+  // Abort any previous extraction and create a fresh controller
+  if (extractionAbortController) {
+    extractionAbortController.abort();
+  }
+  extractionAbortController = new AbortController();
+  const { signal } = extractionAbortController;
+
   const store = useBattleStore.getState();
 
   // Reset state
@@ -56,6 +65,7 @@ async function initialize(): Promise<void> {
 
   // Check cache first - if cached, show results immediately
   const cachedReport = await checkCache(videoId);
+  if (signal.aborted) return;
   if (cachedReport) {
     console.log('Battle Report HUD: Using cached report');
     store.setReport(cachedReport, videoId);
@@ -216,9 +226,12 @@ async function startExtraction(): Promise<void> {
   const store = useBattleStore.getState();
   store.startExtraction();
 
+  const signal = extractionAbortController?.signal;
+
   try {
     // Check for cached video data first
     let videoData = await getCachedVideoData(videoId);
+    if (signal?.aborted) return;
 
     if (videoData) {
       console.log('Battle Report HUD: Using cached video data', {
@@ -228,6 +241,7 @@ async function startExtraction(): Promise<void> {
     } else {
       // Extract video data from DOM
       videoData = await extractVideoData();
+      if (signal?.aborted) return;
       if (!videoData) {
         store.setError('Failed to extract video data');
         return;
@@ -250,6 +264,7 @@ async function startExtraction(): Promise<void> {
       type: 'DETECT_FACTIONS',
       payload: videoData,
     });
+    if (signal?.aborted) return;
 
     if (response.type === 'FACTIONS_DETECTED') {
       const { detectedFactions, allFactions } = response.payload;
@@ -262,6 +277,7 @@ async function startExtraction(): Promise<void> {
       store.setError('Failed to detect factions');
     }
   } catch (error) {
+    if (signal?.aborted) return;
     console.error('Battle Report HUD: Extraction error', error);
     store.setError(
       error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -283,12 +299,15 @@ async function continueWithFactions(factions: [string, string]): Promise<void> {
   store.setPhase('ai-extracting', 'Extracting army lists...');
   store.setLoading(true);
 
+  const signal = extractionAbortController?.signal;
+
   try {
     // Send to service worker for AI processing with selected factions
     const response = await sendMessageWithRetry({
       type: 'EXTRACT_WITH_FACTIONS',
       payload: { videoData, factions },
     });
+    if (signal?.aborted) return;
 
     if (response.type === 'EXTRACTION_RESULT') {
       // Payload now contains { report, artifacts? }
@@ -299,6 +318,7 @@ async function continueWithFactions(factions: [string, string]): Promise<void> {
       store.setError(response.payload.error);
     }
   } catch (error) {
+    if (signal?.aborted) return;
     console.error('Battle Report HUD: Extraction error', error);
     store.setError(
       error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -369,6 +389,11 @@ window.battleReportContinueWithFactions = continueWithFactions;
 window.battleReportClearCache = clearCacheOnly;
 
 function cleanup(): void {
+  // Abort any in-flight extraction to prevent stale writes on SPA navigation
+  if (extractionAbortController) {
+    extractionAbortController.abort();
+    extractionAbortController = null;
+  }
   stopCaptionObserver();
   cleanupTooltipManager();
   removeHud();

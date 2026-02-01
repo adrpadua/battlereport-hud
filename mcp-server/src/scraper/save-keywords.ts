@@ -1,5 +1,5 @@
 import * as schema from '../db/schema.js';
-import { eq, ilike } from 'drizzle-orm';
+import { eq, ilike, or } from 'drizzle-orm';
 import type { Database } from '../db/connection.js';
 
 /**
@@ -47,50 +47,67 @@ function determineKeywordType(keyword: string): 'faction' | 'unit_type' | 'abili
 /**
  * Save keywords for a unit to the database.
  * Creates keyword records if they don't exist and links them to the unit.
+ *
+ * Uses batched queries instead of per-keyword lookups to avoid N+1.
  */
 export async function saveUnitKeywords(
   db: Database,
   unitId: number,
   keywords: string[]
 ): Promise<void> {
-  for (const keywordName of keywords) {
-    if (!keywordName || keywordName.length < 2) continue;
+  const validKeywords = keywords.filter(k => k && k.length >= 2);
+  if (validKeywords.length === 0) return;
 
-    const keywordType = determineKeywordType(keywordName);
+  // Batch-find existing keywords (single query)
+  const existingKeywords = await db
+    .select()
+    .from(schema.keywords)
+    .where(or(...validKeywords.map(k => ilike(schema.keywords.name, k)))!);
 
-    // Find or create keyword
-    let keyword = await db
-      .select()
-      .from(schema.keywords)
-      .where(ilike(schema.keywords.name, keywordName))
-      .limit(1)
-      .then(rows => rows[0]);
+  const existingByName = new Map(
+    existingKeywords.map(k => [k.name.toUpperCase(), k])
+  );
 
-    if (!keyword) {
-      const [inserted] = await db
-        .insert(schema.keywords)
-        .values({
-          name: keywordName,
-          keywordType,
-        })
-        .onConflictDoNothing()
-        .returning();
+  // Insert missing keywords in one batch
+  const missingNames = validKeywords.filter(k => !existingByName.has(k.toUpperCase()));
+  if (missingNames.length > 0) {
+    const inserted = await db
+      .insert(schema.keywords)
+      .values(missingNames.map(name => ({
+        name,
+        keywordType: determineKeywordType(name),
+      })))
+      .onConflictDoNothing()
+      .returning();
 
-      keyword = inserted ?? await db
+    for (const kw of inserted) {
+      existingByName.set(kw.name.toUpperCase(), kw);
+    }
+
+    // Re-fetch any that hit onConflictDoNothing (concurrent race)
+    const stillMissing = missingNames.filter(k => !existingByName.has(k.toUpperCase()));
+    if (stillMissing.length > 0) {
+      const refetched = await db
         .select()
         .from(schema.keywords)
-        .where(ilike(schema.keywords.name, keywordName))
-        .limit(1)
-        .then(rows => rows[0]);
+        .where(or(...stillMissing.map(k => ilike(schema.keywords.name, k)))!);
+      for (const kw of refetched) {
+        existingByName.set(kw.name.toUpperCase(), kw);
+      }
     }
+  }
 
-    if (keyword) {
-      // Link keyword to unit
-      await db
-        .insert(schema.unitKeywords)
-        .values({ unitId, keywordId: keyword.id })
-        .onConflictDoNothing();
-    }
+  // Batch-insert junction records (single query)
+  const junctionValues = validKeywords
+    .map(k => existingByName.get(k.toUpperCase()))
+    .filter((kw): kw is NonNullable<typeof kw> => !!kw)
+    .map(kw => ({ unitId, keywordId: kw.id }));
+
+  if (junctionValues.length > 0) {
+    await db
+      .insert(schema.unitKeywords)
+      .values(junctionValues)
+      .onConflictDoNothing();
   }
 }
 

@@ -15,8 +15,13 @@ interface KeywordResult {
 const keywordCache = new Map<string, string | null>();
 const pendingRequests = new Map<string, Promise<string | null>>();
 
-// API base URL - defaults to local MCP server
-const API_BASE = 'http://localhost:40401';
+// API base URL - configurable via setApiBase(), defaults to local MCP server
+let API_BASE = 'http://localhost:40401';
+
+/** Override the API base URL used by keyword hooks. */
+export function setApiBase(url: string): void {
+  API_BASE = url;
+}
 
 /**
  * Hardcoded fallback descriptions for common weapon abilities.
@@ -261,7 +266,8 @@ export function useKeywordDescriptions(keywords: string[]) {
       .then(setDescriptions)
       .catch((err) => setError(err))
       .finally(() => setIsLoading(false));
-  }, [keywords.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keywords.length, keywords.join('\0')]);
 
   return { descriptions, isLoading, error };
 }

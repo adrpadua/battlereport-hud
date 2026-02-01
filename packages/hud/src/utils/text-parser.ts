@@ -4,6 +4,7 @@
  * Functions for parsing and cleaning ability descriptions from Wahapedia data.
  * Handles markdown links, keyword brackets, and concatenated ability names.
  */
+import { KEYWORD_MAPPINGS } from './rule-text-parser';
 
 /**
  * Strip parenthetical content from unit names for display.
@@ -198,43 +199,29 @@ export function normalizeKeyword(keyword: string): string {
   normalized = normalized.replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
 
   // Handle all-caps concatenation: SUSTAINEDHITS -> SUSTAINED HITS
-  // Look for common weapon ability patterns
-  const knownKeywords: Record<string, string> = {
-    LETHALHITS: 'LETHAL HITS',
-    SUSTAINEDHITS: 'SUSTAINED HITS',
-    DEVASTATINGWOUNDS: 'DEVASTATING WOUNDS',
-    RAPIDFIRE: 'RAPID FIRE',
+  // Uses shared KEYWORD_MAPPINGS from rule-text-parser, plus extra entries
+  // for single-word keywords that map to themselves and typo variants.
+  const extraMappings: Record<string, string> = {
     TORRENT: 'TORRENT',
     BLAST: 'BLAST',
     MELTA: 'MELTA',
     HAZARDOUS: 'HAZARDOUS',
     PRECISION: 'PRECISION',
     INDIRECT: 'INDIRECT FIRE',
-    INDIRECTFIRE: 'INDIRECT FIRE',
-    ONESHOT: 'ONE SHOT',
     ASSAULT: 'ASSAULT',
     HEAVY: 'HEAVY',
     PISTOL: 'PISTOL',
     PSYCHIC: 'PSYCHIC',
-    IGNORESCOVER: 'IGNORES COVER',
-    ANTIVEHICLE: 'ANTI-VEHICLE',
-    ANTIINFANTRY: 'ANTI-INFANTRY',
-    ANTIMONSTER: 'ANTI-MONSTER',
-    ANTITITAN: 'ANTI-TITAN',
-    ANTIFLY: 'ANTI-FLY',
-    FIGHTSFIRST: 'FIGHTS FIRST',
-    FEELNOPAIN: 'FEEL NO PAIN',
-    LONEOPPERATIVE: 'LONE OPERATIVE',
-    LONEOPERATIVE: 'LONE OPERATIVE',
-    DEEPSTRIKE: 'DEEP STRIKE',
-    DEADLYDEMISE: 'DEADLY DEMISE',
-    FIRINGDECK: 'FIRING DECK',
+    LONEOPPERATIVE: 'LONE OPERATIVE', // common typo variant
   };
 
   // Check for known keywords (case-insensitive)
   const upperNormalized = normalized.toUpperCase().replace(/\s+/g, '');
-  if (knownKeywords[upperNormalized]) {
-    return knownKeywords[upperNormalized];
+  if (KEYWORD_MAPPINGS[upperNormalized]) {
+    return KEYWORD_MAPPINGS[upperNormalized];
+  }
+  if (extraMappings[upperNormalized]) {
+    return extraMappings[upperNormalized];
   }
 
   // Clean up extra spaces

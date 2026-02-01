@@ -274,4 +274,7 @@ async function main(): Promise<void> {
   await testWithVideoId(videoId);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn, type SpawnOptions } from 'child_process';
 import { join } from 'path';
 
 /**
@@ -9,32 +9,53 @@ export function getMonorepoRoot(): string {
 }
 
 /**
+ * Spawn a child process with signal forwarding and proper cleanup.
+ * Forwards SIGINT/SIGTERM to the child so it can shut down gracefully.
+ */
+function spawnWithCleanup(
+  command: string,
+  args: string[],
+  options: SpawnOptions,
+  label: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(command, args, { stdio: 'inherit', shell: true, ...options });
+
+    const forwardSignal = (signal: NodeJS.Signals) => {
+      proc.kill(signal);
+    };
+    process.on('SIGINT', forwardSignal);
+    process.on('SIGTERM', forwardSignal);
+
+    const cleanup = () => {
+      process.off('SIGINT', forwardSignal);
+      process.off('SIGTERM', forwardSignal);
+    };
+
+    proc.on('close', (code) => {
+      cleanup();
+      if (code === 0 || code === null) {
+        resolve();
+      } else {
+        reject(new Error(`${label} exited with code ${code}`));
+      }
+    });
+
+    proc.on('error', (error) => {
+      cleanup();
+      reject(error);
+    });
+  });
+}
+
+/**
  * Run a script from the scripts directory with the given arguments.
  * Uses tsx to execute TypeScript files directly.
  */
 export async function runScript(scriptName: string, args: string[] = []): Promise<void> {
   const root = getMonorepoRoot();
   const scriptPath = join(root, 'scripts', scriptName);
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['tsx', scriptPath, ...args], {
-      stdio: 'inherit',
-      cwd: root,
-      shell: true,
-    });
-
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Script ${scriptName} exited with code ${code}`));
-      }
-    });
-
-    proc.on('error', (error) => {
-      reject(error);
-    });
-  });
+  return spawnWithCleanup('npx', ['tsx', scriptPath, ...args], { cwd: root }, `Script ${scriptName}`);
 }
 
 /**
@@ -43,26 +64,7 @@ export async function runScript(scriptName: string, args: string[] = []): Promis
 export async function runMcpScript(scriptName: string, args: string[] = []): Promise<void> {
   const root = getMonorepoRoot();
   const scriptPath = join(root, 'mcp-server', 'src', 'scripts', scriptName);
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['tsx', scriptPath, ...args], {
-      stdio: 'inherit',
-      cwd: join(root, 'mcp-server'),
-      shell: true,
-    });
-
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`MCP script ${scriptName} exited with code ${code}`));
-      }
-    });
-
-    proc.on('error', (error) => {
-      reject(error);
-    });
-  });
+  return spawnWithCleanup('npx', ['tsx', scriptPath, ...args], { cwd: join(root, 'mcp-server') }, `MCP script ${scriptName}`);
 }
 
 /**
@@ -71,26 +73,7 @@ export async function runMcpScript(scriptName: string, args: string[] = []): Pro
 export async function runMcpCli(command: string, args: string[] = []): Promise<void> {
   const root = getMonorepoRoot();
   const cliPath = join(root, 'mcp-server', 'src', 'cli', 'index.ts');
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['tsx', cliPath, command, ...args], {
-      stdio: 'inherit',
-      cwd: join(root, 'mcp-server'),
-      shell: true,
-    });
-
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`MCP CLI ${command} exited with code ${code}`));
-      }
-    });
-
-    proc.on('error', (error) => {
-      reject(error);
-    });
-  });
+  return spawnWithCleanup('npx', ['tsx', cliPath, command, ...args], { cwd: join(root, 'mcp-server') }, `MCP CLI ${command}`);
 }
 
 /**
@@ -99,26 +82,7 @@ export async function runMcpCli(command: string, args: string[] = []): Promise<v
 export async function runMcpServer(): Promise<void> {
   const root = getMonorepoRoot();
   const serverPath = join(root, 'mcp-server', 'src', 'http', 'server.ts');
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['tsx', serverPath], {
-      stdio: 'inherit',
-      cwd: join(root, 'mcp-server'),
-      shell: true,
-    });
-
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`MCP server exited with code ${code}`));
-      }
-    });
-
-    proc.on('error', (error) => {
-      reject(error);
-    });
-  });
+  return spawnWithCleanup('npx', ['tsx', serverPath], { cwd: join(root, 'mcp-server') }, 'MCP server');
 }
 
 /**
@@ -126,26 +90,7 @@ export async function runMcpServer(): Promise<void> {
  */
 export async function runTurbo(command: string, args: string[] = []): Promise<void> {
   const root = getMonorepoRoot();
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['turbo', command, ...args], {
-      stdio: 'inherit',
-      cwd: root,
-      shell: true,
-    });
-
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Turbo ${command} exited with code ${code}`));
-      }
-    });
-
-    proc.on('error', (error) => {
-      reject(error);
-    });
-  });
+  return spawnWithCleanup('npx', ['turbo', command, ...args], { cwd: root }, `Turbo ${command}`);
 }
 
 /**
@@ -162,24 +107,5 @@ export async function runTurboDev(filter?: string): Promise<void> {
 export async function runMcpScraper(scriptName: string, args: string[] = []): Promise<void> {
   const root = getMonorepoRoot();
   const scriptPath = join(root, 'mcp-server', 'src', 'scraper', scriptName);
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn('npx', ['tsx', scriptPath, ...args], {
-      stdio: 'inherit',
-      cwd: join(root, 'mcp-server'),
-      shell: true,
-    });
-
-    proc.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`MCP scraper ${scriptName} exited with code ${code}`));
-      }
-    });
-
-    proc.on('error', (error) => {
-      reject(error);
-    });
-  });
+  return spawnWithCleanup('npx', ['tsx', scriptPath, ...args], { cwd: join(root, 'mcp-server') }, `MCP scraper ${scriptName}`);
 }

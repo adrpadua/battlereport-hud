@@ -65,4 +65,7 @@ async function main() {
   await closeConnection();
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 import type { Database } from '../../db/connection.js';
 import * as schema from '../../db/schema.js';
-import { eq, ilike, or, and } from 'drizzle-orm';
+import { eq, ilike, and } from 'drizzle-orm';
+import { findFaction } from '../../utils/find-faction.js';
+import { escapeIlike } from '../../utils/escape-ilike.js';
 
 /**
  * Patterns that indicate a corrupted weapon name (ability keywords concatenated into name).
@@ -42,13 +44,13 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
       }
 
       // Build where conditions
-      let whereCondition = ilike(schema.units.name, `%${q}%`);
+      let whereCondition = ilike(schema.units.name, `%${escapeIlike(q)}%`);
 
       if (faction) {
         const factionRecord = await findFaction(db, faction);
         if (factionRecord) {
           whereCondition = and(
-            ilike(schema.units.name, `%${q}%`),
+            ilike(schema.units.name, `%${escapeIlike(q)}%`),
             eq(schema.units.factionId, factionRecord.id)
           )!;
         }
@@ -85,13 +87,13 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
       const decodedName = decodeURIComponent(name);
 
       // Build where conditions
-      let whereCondition = ilike(schema.units.name, `%${decodedName}%`);
+      let whereCondition = ilike(schema.units.name, `%${escapeIlike(decodedName)}%`);
 
       if (faction) {
         const factionRecord = await findFaction(db, faction);
         if (factionRecord) {
           whereCondition = and(
-            ilike(schema.units.name, `%${decodedName}%`),
+            ilike(schema.units.name, `%${escapeIlike(decodedName)}%`),
             eq(schema.units.factionId, factionRecord.id)
           )!;
         }
@@ -214,18 +216,3 @@ export function registerUnitRoutes(fastify: FastifyInstance, db: Database): void
   );
 }
 
-// Helper function to find faction by name or slug
-async function findFaction(db: Database, query: string) {
-  const [faction] = await db
-    .select()
-    .from(schema.factions)
-    .where(
-      or(
-        ilike(schema.factions.name, `%${query}%`),
-        eq(schema.factions.slug, query.toLowerCase().replace(/\s+/g, '-'))
-      )
-    )
-    .limit(1);
-
-  return faction;
-}
