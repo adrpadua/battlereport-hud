@@ -24,6 +24,7 @@ async function main() {
       OR u.slug = 'not-found'
       OR u.name LIKE '%Verifying Browser%'
       OR u.name LIKE '%Boarding Actions%'
+      OR u.name LIKE '%]'
       OR u.name IN (SELECT name FROM factions)
     ORDER BY f.name, u.name
   `);

@@ -427,10 +427,72 @@ function parseKeywordsText(keywordsText: string): string[] {
 }
 
 /**
+ * Extract keywords from the DOM-structured keywords section.
+ *
+ * Wahapedia datasheets have a specific structure for the keywords section:
+ *   <div class="ds2col">
+ *     <div class="dsLeftCol">KEYWORDS: Monster, Aeldari, ...</div>
+ *     <div class="dsRightColKW">FACTION KEYWORDS: Asuryani</div>
+ *   </div>
+ *
+ * Using DOM structure avoids false matches from ability text that contains
+ * the word "keywords" (e.g., Wraithlord's Fated Hero: "select one of the
+ * following keywords: INFANTRY; MONSTER; MOUNTED; VEHICLE").
+ */
+function extractKeywordsFromDom($: cheerio.CheerioAPI): { unitKeywords: string[]; factionKeywords: string[] } | null {
+  // .dsRightColKW uniquely identifies the keywords row in the datasheet
+  const $factionKwCol = $('div.dsRightColKW');
+  if ($factionKwCol.length === 0) return null;
+
+  // Extract faction keywords from .dsRightColKW
+  const factionFullText = $factionKwCol.text();
+  const factionPrefixIdx = factionFullText.indexOf('FACTION KEYWORDS');
+  let factionKeywords: string[] = [];
+  if (factionPrefixIdx >= 0) {
+    const afterPrefix = factionFullText.slice(factionPrefixIdx + 'FACTION KEYWORDS'.length);
+    const factionText = afterPrefix.replace(/^:?\s*/, '').trim();
+    factionKeywords = parseKeywordsText(factionText);
+  }
+
+  // Extract unit keywords from the sibling .dsLeftCol within the same parent
+  const $parent = $factionKwCol.parent();
+  const $unitKwCol = $parent.find('div.dsLeftCol');
+  let unitKeywords: string[] = [];
+  if ($unitKwCol.length > 0) {
+    const unitFullText = $unitKwCol.text();
+    const kwPrefixIdx = unitFullText.indexOf('KEYWORDS');
+    if (kwPrefixIdx >= 0) {
+      const afterPrefix = unitFullText.slice(kwPrefixIdx + 'KEYWORDS'.length);
+      const unitText = afterPrefix.replace(/^:?\s*/, '').trim();
+      unitKeywords = parseKeywordsText(unitText);
+    }
+  }
+
+  return { unitKeywords, factionKeywords };
+}
+
+/**
  * Extract all keywords from HTML (both unit keywords and faction keywords).
  * Returns a combined array of normalized keywords.
+ *
+ * Tries DOM-based extraction first (reliable for real Wahapedia HTML),
+ * then falls back to case-sensitive regex on body text.
  */
 function extractKeywordsFromHtml($: cheerio.CheerioAPI): string[] {
+  // Strategy 1: DOM-based extraction using Wahapedia's CSS structure
+  const domResult = extractKeywordsFromDom($);
+  if (domResult && (domResult.unitKeywords.length > 0 || domResult.factionKeywords.length > 0)) {
+    const allKeywords = [...domResult.unitKeywords, ...domResult.factionKeywords];
+    const seen = new Set<string>();
+    return allKeywords.filter(k => {
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
+
+  // Strategy 2: Fall back to case-sensitive regex on body text
+  // (works for simple test HTML without Wahapedia's DOM structure)
   const bodyText = $('body').text();
 
   // Extract unit keywords (KEYWORDS: ...)
@@ -452,9 +514,17 @@ function extractKeywordsFromHtml($: cheerio.CheerioAPI): string[] {
 }
 
 /**
- * Extract keywords from HTML as raw text (for boolean flag checks)
+ * Extract keywords from HTML as raw text (for boolean flag checks like isEpicHero).
+ * Uses DOM-based extraction first, falls back to case-sensitive regex.
  */
 function extractKeywordsTextFromHtml($: cheerio.CheerioAPI): string {
+  // Try DOM-based extraction first
+  const domResult = extractKeywordsFromDom($);
+  if (domResult && (domResult.unitKeywords.length > 0 || domResult.factionKeywords.length > 0)) {
+    return domResult.unitKeywords.join(', ') + ' ' + domResult.factionKeywords.join(', ');
+  }
+
+  // Fall back to case-sensitive regex
   const bodyText = $('body').text();
   const keywordsMatch = bodyText.match(KEYWORDS_SECTION);
   const factionKeywordsMatch = bodyText.match(FACTION_KEYWORDS_SECTION);

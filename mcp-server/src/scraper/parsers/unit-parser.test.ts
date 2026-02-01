@@ -301,6 +301,69 @@ describe('parseDatasheets', () => {
       expect(result[0]?.unit.isBattleline).toBe(false);
       expect(result[0]?.unit.isDedicatedTransport).toBe(false);
     });
+
+    it('extracts keywords from Wahapedia DOM structure (.dsLeftCol / .dsRightColKW)', () => {
+      const html = `
+        <html>
+          <head><title>Aeldari – Wraithlord</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>8"</td><td>10</td><td>2+</td><td>10</td><td>7+</td><td>4</td></tr>
+            </table>
+            <div>
+              <b>Fated Hero:</b> At the start of the battle, select one of the following keywords: INFANTRY; MONSTER; MOUNTED; VEHICLE. Each time this model makes an attack that targets a unit with that keyword, you can re-roll the Hit roll.
+            </div>
+            <div class="ds2col">
+              <div class="dsLeftCol">KEYWORDS: Monster, Aeldari, Walker, Wraith Construct, Wraithlord</div>
+              <div class="dsRightColKW">FACTION KEYWORDS: Asuryani</div>
+            </div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, 'https://wahapedia.ru/wh40k10ed/factions/aeldari/Wraithlord');
+
+      // Should extract actual keywords, NOT the ability text "INFANTRY; MONSTER; MOUNTED; VEHICLE"
+      expect(result[0]?.keywords).toContain('MONSTER');
+      expect(result[0]?.keywords).toContain('AELDARI');
+      expect(result[0]?.keywords).toContain('WALKER');
+      expect(result[0]?.keywords).toContain('WRAITH CONSTRUCT');
+      expect(result[0]?.keywords).toContain('WRAITHLORD');
+      expect(result[0]?.keywords).toContain('ASURYANI');
+      // Should NOT contain keywords from ability text
+      expect(result[0]?.keywords).not.toContain('INFANTRY');
+      expect(result[0]?.keywords).not.toContain('VEHICLE');
+      expect(result[0]?.keywords).not.toContain('MOUNTED');
+    });
+
+    it('does not match lowercase "keywords:" in ability text (regex fallback)', () => {
+      // Without Wahapedia DOM structure, the case-sensitive regex fallback
+      // should not match lowercase "keywords:" in ability text
+      const html = `
+        <html>
+          <head><title>Test – Wraithlord</title></head>
+          <body>
+            <table>
+              <tr><th>M</th><th>T</th><th>SV</th><th>W</th><th>LD</th><th>OC</th></tr>
+              <tr><td>8"</td><td>10</td><td>2+</td><td>10</td><td>7+</td><td>4</td></tr>
+            </table>
+            <div>select one of the following keywords: INFANTRY; MONSTER; MOUNTED; VEHICLE</div>
+            <div>KEYWORDS: Monster, Aeldari, Walker, Wraith Construct, Wraithlord</div>
+            <div>FACTION KEYWORDS: Asuryani</div>
+          </body>
+        </html>
+      `;
+
+      const result = parseDatasheets(html, sourceUrl);
+
+      expect(result[0]?.keywords).toContain('MONSTER');
+      expect(result[0]?.keywords).toContain('WRAITHLORD');
+      expect(result[0]?.keywords).toContain('ASURYANI');
+      // Should NOT contain keywords parsed from the ability text
+      expect(result[0]?.keywords).not.toContain('INFANTRY');
+      expect(result[0]?.keywords).not.toContain('VEHICLE');
+    });
   });
 
   describe('weapons extraction', () => {

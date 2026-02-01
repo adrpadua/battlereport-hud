@@ -102,7 +102,7 @@ export const LEADER_ATTACHMENT_INFO = /LEADER[\s\S]*?(?:can be attached to the f
  *
  * @example "KEYWORDS: Infantry, Imperium" → "Infantry, Imperium"
  */
-export const KEYWORDS_SECTION = /KEYWORDS:?\s*([^\n]+)/i;
+export const KEYWORDS_SECTION = /KEYWORDS:?\s*([^\n]+)/;
 
 /**
  * Extract faction keywords section content (faction/chapter keywords like ADEPTUS ASTARTES, BLOOD ANGELS).
@@ -111,7 +111,7 @@ export const KEYWORDS_SECTION = /KEYWORDS:?\s*([^\n]+)/i;
  *
  * @example "FACTION KEYWORDS: Adeptus Astartes, Blood Angels" → "Adeptus Astartes, Blood Angels"
  */
-export const FACTION_KEYWORDS_SECTION = /FACTION\s+KEYWORDS:?\s*([^\n]+)/i;
+export const FACTION_KEYWORDS_SECTION = /FACTION\s+KEYWORDS:?\s*([^\n]+)/;
 
 /**
  * Extract base size from text (e.g., "⌀32mm" or "⌀90mm oval").
